@@ -11,7 +11,7 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 ### Phase 1: Setup and Introduction
 | Week | Date | Event | Track Details | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|---------------|:-----------:|:--------:|:------:|
-| Week 19 | May 8 | **Kick-off Meeting** 🎓 | • Explain the different phases of Chipathon (Mehdi Saligane) | TBA | TBA | TBA |
+| Week 19 | May 8 | **Kick-off Meeting** 🎓 | • Explain the different phases of Chipathon (Mehdi Saligane) | [Watch](https://us06web.zoom.us/rec/share/07_DhzSlcTsmN3bu7aywRbFPnLhD2eCVr7WB68pr3RIIAhzZagIXxDmd7w3K_1Tf.hBahD5f9Td4Zo-Pl ) | [View](https://docs.google.com/presentation/d/e/2PACX-1vS0FR0zXk5OT03u0vTPz__WF2TcbxiVppoEyPhbsLTgC3EPxX-VpvyrcpCeCY_emw/pub) | [Submit](https://forms.gle/YCCcBHDXqvfZC9Xh9) |
 | Week 20 | May 15 | **Tool Installation** 🎓 | • Tutorial on xschem in GF from schematic to Layout & Spice Simulation (Saroj) <br> • Charlib (James) <br> • DRC/LVS (Mitch) <br> • ORFS Tutorial (Gaurav) <br> • Librelane Tutorial (Mauricio) <br> • Overview of MEMS sensors (Camilo) |  |  |  |
 | Week 21 | May 22 | **Tutorial Sessions** 🎓 | • MOSbius Overview (Peter)<br>• gLayout [Tutorial 1 FVF](https://github.com/ReaLLMASIC/gLayout/blob/main/tutorial/glayout_tutorial_FVF_part1.ipynb) (Luighi/Sapta) <br>• Analog devices for RF applications (Sadayuki) |  |  |  |
 | Week 22 | May 29 | **Tutorial Sessions** 🎓 | • Hands-on Tutorial on MOSbius (Juan)<br>• gLayout [Tutorial 2 OTA]() (Luighi/Sapta)<br>• Full custom analog design flow (Vipul) |  |  |  |
