@@ -4,7 +4,7 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 <br>All dates and activities are subject to confirmation.
 <br>This is the [weekly zoom meeting link](https://us06web.zoom.us/j/87694732928?pwd=gjUePaAEKDJB2G3f2d4iPIqyYe0qBx.1).
 <br>Please follow the Chipathon Discord Server [Join_server](https://discord.gg/tvZcQzvt7q) for up-to-date information and **announcements**. 
-<br>All participants should complete a report by Wednesday of **each** week (TBD).
+<br>All participants should complete a report by Wednesday of **each** week.
 
 ## 🗓️ Detailed Timeline
 
@@ -12,14 +12,14 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 | Week | Date | Event | Track Details | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|---------------|:-----------:|:--------:|:------:|
 | Week 19 | May 8 | **Kick-off Meeting** 🎓 | • Explain the different phases of Chipathon (Mehdi Saligane) | [Watch](https://us06web.zoom.us/rec/share/xhAeTdAPaU77YRsU4t_Q-E41hRicV-ab5xPvtx_s73yeb8BakzFSihVeXmSdaLQF.pho0MkNOSw_0mVMb) | [View](https://docs.google.com/presentation/d/e/2PACX-1vS0FR0zXk5OT03u0vTPz__WF2TcbxiVppoEyPhbsLTgC3EPxX-VpvyrcpCeCY_emw/pub) | closed |
-| Week 20 | May 15 | **Tool Installation** 🎓 | • Tutorial on xschem in GF from schematic to Layout & Spice Simulation (Saroj) <br> • Librelane Tutorial (Mauricio)| [Watch](https://us06web.zoom.us/rec/share/7zD5YMcYuP_7zsn03mudSRr1iZ_iZvFGw_r3zQALDaS0kD1FwE4AAih6qV63WzpB.rxw93Cc6FIBtpyRp) | [View](https://docs.google.com/presentation/d/e/2PACX-1vSFLC4CtHCYh4NrQxUPHT01zM8Mj39ZOmFqZuFMlWBCxX44cPWaUJRWhY8hl38a_Q/pub) | [Submit](https://forms.gle/YCCcBHDXqvfZC9Xh9) |
-| Week 21 | May 22 | **Tutorial Sessions** 🎓 | • MOSbius Overview (Peter)<br>• gLayout [Tutorial 1 FVF](https://github.com/ReaLLMASIC/gLayout/blob/main/tutorial/glayout_tutorial_FVF_part1.ipynb) (Luighi/Sapta) <br>• Analog devices for RF applications (Sadayuki)  <br> • Charlib (James) <br> • DRC/LVS (Mitch) <br> • ORFS Tutorial (Gaurav) <br>  • Overview of MEMS sensors (Camilo) <br> (tentative)|  |  |  |
-| Week 22 | May 29 | **Tutorial Sessions** 🎓 | • Hands-on Tutorial on MOSbius (Juan)<br>• gLayout [Tutorial 2 OTA]() (Luighi/Sapta)<br>• Full custom analog design flow (Vipul) |  |  |  |
+| Week 20 | May 15 | **Tool Installation** 🎓 | • Tutorial on xschem in GF from schematic to Layout & Spice Simulation (Saroj) <br> • Librelane Tutorial (Mauricio) <br> • DRC/LVS (Mitch) | [Watch](https://us06web.zoom.us/rec/share/7zD5YMcYuP_7zsn03mudSRr1iZ_iZvFGw_r3zQALDaS0kD1FwE4AAih6qV63WzpB.rxw93Cc6FIBtpyRp) | [View](https://docs.google.com/presentation/d/e/2PACX-1vSFLC4CtHCYh4NrQxUPHT01zM8Mj39ZOmFqZuFMlWBCxX44cPWaUJRWhY8hl38a_Q/pub) | [Submit](https://forms.gle/YCCcBHDXqvfZC9Xh9) |
+| Week 21 | May 22 | **Tutorial Sessions** 🎓 | • MOSbius Overview (Andrew Chon)<br>• gLayout [Tutorial 1 FVF](https://github.com/ReaLLMASIC/gLayout/blob/main/tutorial/glayout_tutorial_FVF_part1.ipynb) (Luighi/Sapta) <br> • ORFS Tutorial (Gaurav) |  |  |  |
+| Week 22 | May 29 | **Tutorial Sessions** 🎓 | • Hands-on Tutorial on MOSbius (Juan)<br>• gLayout [Tutorial 2 OTA]() (Luighi/Sapta) <br> • Charlib (James)<br>• Full custom analog design flow (Vipul) |  |  |  |
 
 ### Phase 2: Team Formation and Project Planning
 | Week | Date | Event | Details | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|----------|:-----------:|:--------:|:------:|
-| Week 23 | June 5 | **Team Formation Deadline** |  |  |
+| Week 23 | June 5 | **Team Formation Deadline**<br>• Analog devices for RF applications (Sadayuki)<br>  • Overview of MEMS sensors (Camilo) <br> (tentative) |  |  |
 | Week 24 | June 12 | **Project Proposal Review** 👥 | - |  |  |  |
 | Week 25 | June 19 | **Advanced Topics** 🎓 | • Systematic Design of Analog CMOS Circuits (Boris) |  |  |  |
 | Week 26 | June 26 | **Analog Design Ideas** 🎓 | • Introduction to CACE (Tim) <br>• Tutorial: Schematic Database & Simulations (Peter)|  |  |  |
