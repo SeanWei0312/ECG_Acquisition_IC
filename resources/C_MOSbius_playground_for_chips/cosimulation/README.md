@@ -43,6 +43,51 @@ We are working to solve this issue in the Docker container. We will keep you pos
 
 All the material associated with this part of the flow is in the [`schematic_view/`](schematic_view/) folder.
 
+First of all, it is necessary to run the RTL-to-GDS flow with Librelane, all the files are in the [`schematic_view/Librelane/`](schematic_view/) folder.
+
+The command for running the Librelane Flow is: **librelane --pdk gf180mcuD config.json**
+
+Once the flow ends, you can check all the files with all the reports associated with the different steps in the runs folder.
+
+<p align="center">
+   <img src="./img/librealane1.png" width="600" />
+</p> 
+
+For opening the final layout, use the following command in the final/klayout_gds/ folder: **klayout -e counter.gds**
+
+<p align="center">
+   <img src="./img/klayout1.png" width="600" />
+</p> 
+
+The file with the schematic netlist is in the **final/spice/** folder.
+
+Copy the netlist file to the folder where you will run the cosimulation. In this repository, all the files are in [`schematic_view/cosimulation/`](schematic_view/) folder.
+
+Some changes need to be made in the **counter.spice** file, as indicated in the figure below. Filler cells and decap cells need to be eliminated.
+
+<p align="center">
+   <img src="./img/cosimulation1.png" width="600" />
+</p> 
+
+The sequence to run the simulations in the following:
+
+1) In the **Simulation** tab, select the **Use 'simulation' dir in schematic dir** option.
+2) Click on the **Netlist** button.
+3) Click on the **Simulation** button.
+4) Once the simulation ended, close the ngspice window. Then **'Ctrl' + left click button of the mouse** on the **load waves** symbol. It should take a couple of seconds loading the 
+waveforms, as indicated in the figure below.
+
+<p align="center">
+   <img src="./img/cosimulation2.png" width="600" />
+</p> 
+
+<p align="center">
+   <img src="./img/cosimulation3.png" width="600" />
+</p> 
+
+<p align="center">
+   <img src="./img/cosimulation4.png" width="600" />
+</p> 
 
 ## PEX view
 

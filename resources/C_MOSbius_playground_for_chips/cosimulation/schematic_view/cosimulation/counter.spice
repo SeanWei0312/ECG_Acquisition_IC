@@ -1,0 +1,20 @@
+.subckt counter VDD VSS clk count[0] count[1] count[2] count[3]
+X_09_ _15_/Q _09_/A2 _15_/D VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__xnor2_1
+X_08_ _14_/Q _12_/Q _13_/Q _09_/A2 VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__nand3_1
+Xclkbuf_0_clk clk clkbuf_0_clk/Z VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__clkbuf_16
+X_07_ _12_/Q _13_/Q _10_/A2 VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__nand2_1
+X_06_ _12_/Q _12_/D VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__clkinv_1
+Xclkbuf_1_0__f_clk clkbuf_0_clk/Z _13_/CLK VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__clkbuf_16
+Xclkbuf_1_1__f_clk clkbuf_0_clk/Z _15_/CLK VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__clkbuf_16
+X_15_ _15_/D _15_/CLK _15_/Q VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dffq_1
+X_14_ _14_/D _15_/CLK _14_/Q VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dffq_1
+X_13_ _13_/D _13_/CLK _13_/Q VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dffq_1
+X_12_ _12_/D _13_/CLK _12_/Q VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dffq_1
+Xoutput1 _12_/Q count[0] VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dlyb_1
+X_11_ _12_/Q _13_/Q _13_/D VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__xor2_1
+Xoutput2 _13_/Q count[1] VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dlyb_1
+X_10_ _14_/Q _10_/A2 _14_/D VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__xnor2_1
+Xoutput3 _14_/Q count[2] VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dlyb_1
+Xoutput4 _15_/Q count[3] VDD VDD VSS VSS gf180mcu_fd_sc_mcu7t5v0__dlyb_1
+.ends
+
