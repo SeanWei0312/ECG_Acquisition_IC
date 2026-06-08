@@ -14,15 +14,15 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 | Week 19 | May 8 | **Kick-off Meeting** 🎓 | • Explain the different phases of Chipathon (Mehdi Saligane) | [Watch](https://us06web.zoom.us/rec/share/xhAeTdAPaU77YRsU4t_Q-E41hRicV-ab5xPvtx_s73yeb8BakzFSihVeXmSdaLQF.pho0MkNOSw_0mVMb) | [View](https://docs.google.com/presentation/d/e/2PACX-1vS0FR0zXk5OT03u0vTPz__WF2TcbxiVppoEyPhbsLTgC3EPxX-VpvyrcpCeCY_emw/pub) | closed |
 | Week 20 | May 15 | **Tool Installation** 🎓 | • Tutorial on xschem in GF from schematic to Layout & Spice Simulation (Saroj) <br> • Librelane Tutorial (Mauricio) <br> • DRC/LVS (Mitch) | [Watch](https://us06web.zoom.us/rec/share/7zD5YMcYuP_7zsn03mudSRr1iZ_iZvFGw_r3zQALDaS0kD1FwE4AAih6qV63WzpB.rxw93Cc6FIBtpyRp) | [View](https://docs.google.com/presentation/d/e/2PACX-1vSFLC4CtHCYh4NrQxUPHT01zM8Mj39ZOmFqZuFMlWBCxX44cPWaUJRWhY8hl38a_Q/pub) | closed |
 | Week 21 | May 22 | **Tutorial Sessions** 🎓 | • MOSbius Overview (Andrew Chon)<br>• gLayout [Tutorial 1 FVF](https://github.com/ReaLLMASIC/gLayout/blob/main/tutorial/glayout_tutorial_FVF_part1.ipynb) (Luighi) | [Watch](https://us06web.zoom.us/rec/share/i6gGItWpTriycR9Vz1Rcwi5HxPswXAdAXv9iy_UUyQIKtjeq1cgjDXfQwc3FVlXj.y_eDORm6bc2WuAs-) | [View](https://docs.google.com/presentation/d/e/2PACX-1vSMgWGc4wd2y3oCXPovcalyahoOMKKFyx0ZqtsaBfOtss39HV3pLOSkca_K4jcmtg/pub) | closed |
-| Week 22 | May 29 | **Tutorial Sessions** 🎓 | • Charlib (James)<br>• Full custom analog design flow (Vipul)<br> • ORFS Tutorial (Gaurav) <br>• gLayout [Tutorial 2 OTA]() (Anhang) | [Watch](https://us06web.zoom.us/rec/share/MLNBCb7vB8ggzrkPwc0yAslUJFi819PqMK6GzwiTdWhMRykd2PMECP5OVaj9fJtg.FKPz8puBRcpvN9k1) | [View](https://docs.google.com/presentation/d/e/2PACX-1vQTP6VWPEWemqOwfaWyAoGDvfKKkSd3Na3WMATTWCTAIPIPWx0YFB2lkzolOIVV8w/pub) | [Submit](https://forms.gle/YCCcBHDXqvfZC9Xh9) |
+| Week 22 | May 29 | **Tutorial Sessions** 🎓 | • Charlib (James)<br>• Full custom analog design flow (Vipul)<br> • ORFS Tutorial (Gaurav) <br>• gLayout [Tutorial 2 OTA]() (Anhang) | [Watch](https://us06web.zoom.us/rec/share/MLNBCb7vB8ggzrkPwc0yAslUJFi819PqMK6GzwiTdWhMRykd2PMECP5OVaj9fJtg.FKPz8puBRcpvN9k1) | [View](https://docs.google.com/presentation/d/e/2PACX-1vQTP6VWPEWemqOwfaWyAoGDvfKKkSd3Na3WMATTWCTAIPIPWx0YFB2lkzolOIVV8w/pub) | closed |
 
 ### Phase 2: Team Formation and Project Planning
 | Week | Date | Event | Details | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|----------|:-----------:|:--------:|:------:|
-| Week 23 | June 5 | **Team Formation Deadline**| • Chip design with AI/LLM (Mehdi) <br>• Hands-on Tutorial on MOSbius (Juan)| [Watch](https://us06web.zoom.us/rec/share/6HKiL_V6Q2qIHlUATzowm-JPvQfVBzhtgoYucraFsrqWDz5I0N-DnuCeEoQ5sW3D.raKGLGNCKkB7via-) <br> Passcode: &!Lusy9l | | |
+| Week 23 | June 5 | **Team Formation Deadline**| • Chip design with AI/LLM (Mehdi) <br>• Hands-on Tutorial on MOSbius (Juan)| [Watch](https://us06web.zoom.us/rec/share/6HKiL_V6Q2qIHlUATzowm-JPvQfVBzhtgoYucraFsrqWDz5I0N-DnuCeEoQ5sW3D.raKGLGNCKkB7via-) <br> Passcode: &!Lusy9l | | [Submit](https://forms.gle/6839F1Jppxx42yw5A) |
 | Week 24 | June 12 | **Project Proposal Review** 👥 | - |  |  |  |
-| Week 25 | June 19 | **Advanced Topics** 🎓 | • Systematic Design of Analog CMOS Circuits (Boris)<br>• Introduction to CACE (Leo) |  |  |  |
-| Week 26 | June 26 | **Analog Design Ideas** 🎓 | • Tutorial: Schematic Database & Simulations (Peter)<br>• Overview of MEMS sensors (Camilo) <br>• Analog devices for RF applications (Sadayuki) <br> (tentative)|  |  |  |
+| Week 25 | June 19 | **Advanced Topics** 🎓 | • Systematic Design of Analog CMOS Circuits (Boris) |  |  |  |
+| Week 26 | June 26 | **Analog Design Ideas** 🎓 | • Tutorial: Schematic Database & Simulations (Peter)<br>• Overview of MEMS sensors (Camilo) <br>• Introduction to CACE (Leo)<br>• Analog devices for RF applications (Sadayuki) <br> (tentative)|  |  |  |
 
 
 ### Phase 3: Design and Simulation
