@@ -22,7 +22,7 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 | Week 23 | June 5 | **Team Formation Deadline**| • Chip design with AI/LLM (Mehdi) <br>• Hands-on Tutorial on MOSbius (Juan)| [Watch]( https://us06web.zoom.us/rec/share/lz8rKOhmYU-1TsQuje8IZh32oWiNp8pjVdyQ4QdtBKiGaN21z6OqeIRHgq0hYxV8.zMbz-0kW_5zsKOk8) | [View](https://docs.google.com/presentation/d/e/2PACX-1vQI_AdDKBr6G66_IMallotI_idrNMwKabdypLI7G8iEzwwMeTTeQIN3yLcrxRuJxQ/pub) | closed |
 | Week 24 | June 12 | **Project Proposal Review** 👥 | - | [Watch A01-A35](https://drive.google.com/file/d/1L1Z3aQcKbWLOrGrg6Hj4yo3hvyqHSkSH/view?usp=drive_link) <br>[Watch A36-A70](https://drive.google.com/file/d/1zNI8uM8IrhVsJ0CvSOXPGysJ70YsLTbz/view?usp=drive_link) <br> [Watch B01-B30](https://drive.google.com/file/d/186RtQrj5eBq5YQaNelR__m42KvpKolv7/view?usp=drive_link) <br> [Watch C01-D16](https://drive.google.com/file/d/1WcvnuNNZa5OvVjBBpA2cFpxIVmz5NF8p/view?usp=drive_link)| [View A01-A35](https://docs.google.com/presentation/d/1YiHz-10-ayeriHM-xqGJkT-SbB14Z78Zl8ZGlZeix68/edit?usp=sharing)  <br>[View A36-A70](https://docs.google.com/presentation/d/1hOIqOPzlGIcLJ2AFiHNvrpxC8wyUOxMAJF15Aqmjsis/edit?usp=sharing) <br> [View B01-B30](https://docs.google.com/presentation/d/1q4hdv7IWDyOom2BOauEokjyfa9oZNoGCGBChGqaYRIs/edit?usp=sharing) <br> [View C01-D16](https://docs.google.com/presentation/d/1fg-tLoPCH4SCN_3tkq7wYo87EJUDZR3OUUjlz6IXLH8/edit?usp=sharing)| closed |
 | Week 25 | June 19 | **Advanced Topics** 🎓 | • Systematic Design of Analog CMOS Circuits (Boris) | [Watch](https://us06web.zoom.us/rec/share/3vk6f6Bt4MRCwtoFo-XEr-KmHi765R8c8R6uieeFrG9smnGP3wtC_eQlbBFLzGra.8AWW7h7pANInL2vD) | [View](https://docs.google.com/presentation/d/e/2PACX-1vQskh77zL1A6RuCtjrjYBFjEMV9KKKAnJLeW1QzCBsPwpewTReR5-Y35LPDksaUCA/pub)| [Submit](https://forms.gle/6839F1Jppxx42yw5A) |
-| Week 26 | June 26 | **Analog Design Ideas** 🎓 | • Tutorial: Schematic Database & Simulations (Peter)<br>• Overview of MEMS sensors (Camilo) <br>• Introduction to CACE (Leo)<br>• Analog devices for RF applications (Sadayuki) <br> (tentative)|  |  |  |
+| Week 26 | June 26 | **Analog Design Ideas** 🎓 | • Overview of MEMS sensors (Camilo) <br>• Introduction to CACE (Leo)|  |  |  |
 
 
 ### Phase 3: Design and Simulation
@@ -36,7 +36,7 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 ### Phase 4: Layout and Verification
 | Week | Date | Event | Details | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|----------|:-----------:|:--------:|:------:|
-| Week 30 | July 24 | **Layout Tutorial** 🎓 | DRC, LVS, PEX (Mitch, Juan) |  |  |  |
+| Week 30 | July 24 | **Layout Tutorial** 🎓 | • Tutorial: Schematic Database & Simulations (Peter)<br>• DRC, LVS, PEX (Mitch, Juan) <br>• Analog devices for RF applications (Sadayuki)<br> (tentative) |  |  |  |
 | Week 31 | July 31 | **DRC Dry-run** | GDS to Channel Partner |  |  |  |  |
 | Week 32 | Aug. 7 | **Integration Tutorial** 🎓 | Layout, Top level, ESD, padframe, packaging (Tim, Juan) |  |  |  |
 | Week 33 | Aug. 14 | **Layout Review (blocks)** 👥 | - |  |  |  |
