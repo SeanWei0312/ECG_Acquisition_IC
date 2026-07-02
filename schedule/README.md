@@ -28,7 +28,7 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 ### Phase 3: Design and Simulation
 | Week | Date | Event | Review Focus | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|--------------|:-----------:|:--------:|:------:|
-| Week 27 | July 3 | **Analog Design Ideas** 👥  | • Analog devices for RF applications (Sadayuki) |  |  |  |
+| Week 27 | July 3 | **Analog Design Ideas** 👥  | • Tutorial: Schematic Database & Simulations (Peter)<br>• Analog devices for RF applications (Sadayuki) |  |  |  |
 | Week 28 | July 10 | **Simulation Review ** 👥 | All Tracks |  |  |  |
 | Week 29 | July 17 | **Simulation Review ** 👥 | - |  |  |  |
 |  | | **READiness Check & Go/No-go Decision** |  |  |  |  |
@@ -36,7 +36,7 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 ### Phase 4: Layout and Verification
 | Week | Date | Event | Details | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|----------|:-----------:|:--------:|:------:|
-| Week 30 | July 24 | **Layout Tutorial** 🎓 | • Tutorial: Schematic Database & Simulations (Peter)<br>• DRC, LVS, PEX (Mitch, Juan) <br> (tentative) |  |  |  |
+| Week 30 | July 24 | **Layout Tutorial** 🎓 | • DRC, LVS, PEX (Mitch, Juan) <br> (tentative) |  |  |  |
 | Week 31 | July 31 | **DRC Dry-run** | GDS to Channel Partner |  |  |  |  |
 | Week 32 | Aug. 7 | **Integration Tutorial** 🎓 | Layout, Top level, ESD, padframe, packaging (Tim, Juan) |  |  |  |
 | Week 33 | Aug. 14 | **Layout Review (blocks)** 👥 | - |  |  |  |
