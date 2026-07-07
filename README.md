@@ -1,14 +1,25 @@
-# SSCS Chipathon 2026 Project
+# ECG Acquisition IC
 
-This repository contains the working files for my SSCS Chipathon 2026 project. It is organized around the official Chipathon files, IC design, PCB design, simulation outputs, measurement results, Docker instructions, and project documentation.
+This repository contains the working files for an ECG acquisition integrated circuit developed for the SSCS Chipathon 2026 flow. The project combines system-level planning, GF180 analog IC schematics, device characterization data, simulation results, PCB planning, Docker setup notes, and the project report.
 
-## Upstream Repository
+## Project Focus
 
-The official Chipathon files were cloned from:
+The current design work is centered on the analog front end for ECG acquisition:
+
+- System-level ECG acquisition architecture and specifications.
+- Gm/Id characterization for GF180 NMOS and PMOS devices.
+- Single-ended two-stage OTA schematic development.
+- Planned expansion toward full differential OTA blocks, ADC integration, layout, PCB support, and measurement.
+
+## Upstream Chipathon Files
+
+The official Chipathon files are included under `2026-sscs-chipathon/` and were cloned from:
 
 [sscs-ose/sscs-chipathon-2026](https://github.com/sscs-ose/sscs-chipathon-2026)
 
-## Project Structure
+These files provide the workshop documentation, examples, resources, and IIC-OSIC-TOOLS Docker setup used for the design environment.
+
+## Repository Structure
 
 ```text
 .
@@ -18,35 +29,53 @@ The official Chipathon files were cloned from:
 │   ├── resources/
 │   └── schedule/
 ├── Design_Files/
+│   ├── System Design/
+│   │   ├── ECG Acquisition IC with 10-bit SAR ADC SPEC.xlsx
+│   │   ├── System_Block.drawio
+│   │   └── System_Block.png
 │   ├── IC Design/
 │   │   ├── Schematic/
+│   │   │   ├── Gm_Id/
+│   │   │   └── Single_ended_OTA/
+│   │   ├── Testbench/
 │   │   └── Layout/
 │   └── PCB Design/
-│       ├── Schematic/
-│       └── Layout/
 ├── Measurement_Results/
-│   ├── IC_Simulation/
-│   ├── PCB_Simulation/
-│   └── Test_Measurement/
+│   └── IC_Simulation/
+│       └── Gm_Id/
 ├── Docker_Instructions.md
 ├── Project_Report.md
 └── README.md
 ```
 
-## Directory Guide
+## Key Files
 
-- `2026-sscs-chipathon/` - Official SSCS Chipathon 2026 files, examples, resources, and documentation cloned from [sscs-ose/sscs-chipathon-2026](https://github.com/sscs-ose/sscs-chipathon-2026).
-- `Design_Files/IC Design/Schematic/` - IC schematics, symbols, design notes, and related source files.
-- `Design_Files/IC Design/Layout/` - IC layout files, layout exports, DRC/LVS notes, and verification outputs.
-- `Design_Files/PCB Design/Schematic/` - PCB schematic files, component notes, and design documentation.
-- `Design_Files/PCB Design/Layout/` - PCB layout files, board outputs, manufacturing files, and design checks.
-- `Measurement_Results/IC_Simulation/` - IC simulation testbenches, raw outputs, plots, and summaries.
-- `Measurement_Results/PCB_Simulation/` - PCB-level simulation files, signal integrity checks, and analysis results.
-- `Measurement_Results/Test_Measurement/` - Lab measurements, instrument captures, data files, plots, and post-processing notes.
-- `Docker_Instructions.md` - Mac and Windows commands for starting, opening, checking, stopping, and deleting the Docker container.
-- `Project_Report.md` - Main project report draft.
+| Path | Purpose |
+| --- | --- |
+| `Design_Files/System Design/System_Block.drawio` | Editable system block diagram. |
+| `Design_Files/System Design/System_Block.png` | Exported system block diagram image. |
+| `Design_Files/System Design/ECG Acquisition IC with 10-bit SAR ADC SPEC.xlsx` | System-level specification spreadsheet. |
+| `Design_Files/IC Design/Schematic/Gm_Id/NMOS_Gm_Id.sch` | Xschem/ngspice NMOS Gm/Id characterization sweep. |
+| `Design_Files/IC Design/Schematic/Gm_Id/PMOS_Gm_Id.sch` | Xschem/ngspice PMOS Gm/Id characterization sweep. |
+| `Design_Files/IC Design/Schematic/Single_ended_OTA/Single_ended_OTA.sch` | Single-ended two-stage OTA schematic in progress. |
+| `Measurement_Results/IC_Simulation/Gm_Id/` | Raw and processed Gm/Id simulation outputs. |
+| `Docker_Instructions.md` | Commands for starting, accessing, stopping, and deleting the Chipathon Docker container. |
+| `Project_Report.md` | Project report draft and running design log. |
 
-## Docker Instructions
+## Current Design Status
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| System architecture | In progress | Block diagram and ECG acquisition specification files are present. |
+| Device characterization | In progress | NMOS and PMOS Gm/Id xschem sweeps and result files are present. |
+| Single-ended OTA schematic | In progress | Initial GF180 3.3 V MOS schematic exists in `Single_ended_OTA.sch`. |
+| Fully differential OTA | Planned | Represented in the system diagram; schematic implementation still to be added. |
+| IC testbenches | Planned | `Design_Files/IC Design/Testbench/` is available for future OTA and system simulations. |
+| IC layout | Not started | Layout directory is present for future physical design and verification files. |
+| PCB design | Not started | PCB design folders are available for later board-level support. |
+| Measurements | Not started | Measurement folder should be added once lab or post-silicon data is available. |
+
+## Docker Environment
 
 Use `Docker_Instructions.md` to start the Chipathon Docker environment.
 
@@ -55,28 +84,30 @@ Main access options:
 - TigerVNC Viewer: `localhost:5901`
 - Web browser / noVNC: `http://localhost:80/?password=abc123`
 
-Inside Docker, the shared design folder is:
+Inside Docker, the shared design folder is mounted at:
 
 ```text
 /foss/designs
 ```
 
+The current xschem Gm/Id simulation files write results under:
+
+```text
+/foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/
+```
+
 ## Suggested Workflow
 
-1. Start Docker using `Docker_Instructions.md`.
-2. Store source design files in the matching `Design_Files/` schematic or layout folder.
-3. Save simulation outputs and plots in the matching `Measurement_Results/` simulation folder.
-4. Save lab data and measurement plots in `Measurement_Results/Test_Measurement/`.
-5. Update `Project_Report.md` whenever design decisions, simulation results, and measurement results change.
+1. Start the Docker environment using `Docker_Instructions.md`.
+2. Open or edit system-level files in `Design_Files/System Design/`.
+3. Use the Gm/Id schematics in `Design_Files/IC Design/Schematic/Gm_Id/` to regenerate device characterization data.
+4. Store raw and processed IC simulation outputs under `Measurement_Results/IC_Simulation/`.
+5. Continue OTA development in `Design_Files/IC Design/Schematic/Single_ended_OTA/`.
+6. Add OTA testbenches under `Design_Files/IC Design/Testbench/`.
+7. Update `Project_Report.md` when requirements, design decisions, simulation results, or measurement results change.
 
-## Project Status
+## Notes
 
-| Area | Status | Notes |
-| --- | --- | --- |
-| IC schematic | In progress | Add current design files and notes. |
-| IC layout | Not started | Add layout files and verification results when available. |
-| IC simulation | In progress | Save plots and simulation summaries in `Measurement_Results/IC_Simulation/`. |
-| PCB schematic | Not started | Add schematic files and component decisions when available. |
-| PCB layout | Not started | Add board files and checks when available. |
-| PCB simulation | Not started | Save simulation outputs in `Measurement_Results/PCB_Simulation/`. |
-| Measurement | Not started | Save lab results in `Measurement_Results/Test_Measurement/`. |
+- Xschem files currently reference GF180 3.3 V transistor symbols and the `$::180MCU_MODELS` ngspice model path provided by the Chipathon/IIC-OSIC-TOOLS environment.
+- Keep generated data in `Measurement_Results/` and source design files in `Design_Files/` so the repository stays easy to navigate.
+- Avoid committing temporary OS files such as `.DS_Store` when possible.
