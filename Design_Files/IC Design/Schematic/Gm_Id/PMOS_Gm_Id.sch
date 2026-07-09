@@ -21,7 +21,7 @@ N 960 -500 960 -450 {lab=VDD}
 N 960 -390 960 -320 {lab=GND}
 C {devices/lab_pin.sym} 1280 -420 0 0 {name=l1 sig_type=std_logic lab=PG}
 C {devices/lab_pin.sym} 1360 -320 0 0 {name=l3 sig_type=std_logic lab=PD}
-C {devices/code_shown.sym} 1670 -1660 0 0 {name=NGSPICE only_toplevel=true
+C {devices/code_shown.sym} 1540 -3210 0 0 {name=NGSPICE only_toplevel=true
 value="
 
 .param PWid=10u
@@ -37,71 +37,156 @@ set wr_vecnames
 set wr_singlescale
 
 * =========================================================
-* PMOS gm/Id 2D DC sweep
+* PMOS gm/Id + fT 2D DC sweep
 * W fixed at 10u
-* Sweep VSG and VSD
-* Export VSG, VSD, ID, ID/W for MATLAB
+* VSG: 0 to 3.3 V
+* VSD: 0 to 3.3 V
+* Export: VSG VSD ID ID/W gm gds Cgs Cgd Cgb Cgg fT
 * =========================================================
 
 alterparam PLen = 0.28u
 reset
-save all
-dc VSG 0 3.3 0.01 VSD 0.05 3.3 0.05
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
 let vsg_out = v(vdd)-v(pg)
 let vsd_out = v(vdd)-v(pd)
 let id = abs(vsd#branch)
 let id_w = id/10e-6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L0p28u_W10u.txt vsg_out vsd_out id id_w
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L0p28u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 0.5u
 reset
-save all
-dc VSG 0 3.3 0.01 VSD 0.05 3.3 0.05
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
 let vsg_out = v(vdd)-v(pg)
 let vsd_out = v(vdd)-v(pd)
 let id = abs(vsd#branch)
 let id_w = id/10e-6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L0p5u_W10u.txt vsg_out vsd_out id id_w
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L0p5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 1u
 reset
-save all
-dc VSG 0 3.3 0.01 VSD 0.05 3.3 0.05
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
 let vsg_out = v(vdd)-v(pg)
 let vsd_out = v(vdd)-v(pd)
 let id = abs(vsd#branch)
 let id_w = id/10e-6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L1u_W10u.txt vsg_out vsd_out id id_w
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L1u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 1.5u
 reset
-save all
-dc VSG 0 3.3 0.01 VSD 0.05 3.3 0.05
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
 let vsg_out = v(vdd)-v(pg)
 let vsd_out = v(vdd)-v(pd)
 let id = abs(vsd#branch)
 let id_w = id/10e-6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L1p5u_W10u.txt vsg_out vsd_out id id_w
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L1p5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 2u
 reset
-save all
-dc VSG 0 3.3 0.01 VSD 0.05 3.3 0.05
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
 let vsg_out = v(vdd)-v(pg)
 let vsd_out = v(vdd)-v(pd)
 let id = abs(vsd#branch)
 let id_w = id/10e-6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L2u_W10u.txt vsg_out vsd_out id id_w
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L2u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 3u
 reset
-save all
-dc VSG 0 3.3 0.01 VSD 0.05 3.3 0.05
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
 let vsg_out = v(vdd)-v(pg)
 let vsd_out = v(vdd)-v(pd)
 let id = abs(vsd#branch)
 let id_w = id/10e-6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L3u_W10u.txt vsg_out vsd_out id id_w
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L3u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+
+alterparam PLen = 4u
+reset
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
+let vsg_out = v(vdd)-v(pg)
+let vsd_out = v(vdd)-v(pd)
+let id = abs(vsd#branch)
+let id_w = id/10e-6
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L4u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+
+alterparam PLen = 5u
+reset
+save v(vdd) v(pg) v(pd) vsd#branch @m.xm1.m0[gm] @m.xm1.m0[gds] @m.xm1.m0[cgs] @m.xm1.m0[cgd] @m.xm1.m0[cgb]
+dc VSG 0 3.3 0.01 VSD 0 3.3 0.05
+let vsg_out = v(vdd)-v(pg)
+let vsd_out = v(vdd)-v(pd)
+let id = abs(vsd#branch)
+let id_w = id/10e-6
+let gm = abs(@m.xm1.m0[gm])
+let gds = abs(@m.xm1.m0[gds])
+let cgs = abs(@m.xm1.m0[cgs])
+let cgd = abs(@m.xm1.m0[cgd])
+let cgb = abs(@m.xm1.m0[cgb])
+let cgg = cgs + cgd + cgb
+let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
+let ft_mhz = ft_hz/1e6
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 .endc
 "}
