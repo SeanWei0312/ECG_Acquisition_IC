@@ -1,4 +1,4 @@
-%% Single_ended_OTA_Sizing.m
+%% SE_OTA_Sizing
 % 2-stage Miller compensated single-ended OTA sizing
 %
 % Topology assumed:
