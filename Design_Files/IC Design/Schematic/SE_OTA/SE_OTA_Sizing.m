@@ -367,9 +367,10 @@ L_um = [
 ];
 
 W_over_L = W_um ./ L_um;
+nf = max(round(W_um / 4), 1);
 
 result_table = table(device, role, Id_uA, gm_uS, gds_uS, ro_kohm, ...
-                     W_um, L_um, W_over_L);
+                     W_um, L_um, nf, W_over_L);
 
 disp(' ');
 disp(result_table);
