@@ -1,0 +1,2 @@
+ onoise_total    fmin            fmax            in_total        out_total      
+ 5.27400623e-01  5.00000000e-02  1.50000000e+02  1.25944403e-05  5.27400623e-01 

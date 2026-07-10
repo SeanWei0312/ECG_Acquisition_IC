@@ -5,142 +5,200 @@ V {}
 S {}
 F {}
 E {}
-N 180 -640 180 -620 {lab=B}
-N 500 -640 520 -640 {lab=B}
-N 500 -680 520 -680 {lab=INP}
-N 500 -600 520 -600 {lab=INN}
-N 680 -640 760 -640 {lab=OUT}
-N 280 -640 280 -620 {lab=INP}
-N 380 -640 380 -620 {lab=INN}
+P 4 1 270 -300 {}
+N 80 -780 80 -760 {lab=B}
+N 480 -970 500 -970 {lab=B}
+N 480 -1010 500 -1010 {lab=INP}
+N 480 -930 500 -930 {lab=INN}
+N 660 -970 740 -970 {lab=OUT}
+N 360 -780 360 -760 {lab=VCM}
+N 360 -640 360 -620 {lab=VDIFF}
+N 200 -640 200 -620 {lab=AGND}
+N 580 -910 580 -890 {lab=AGND}
+N 80 -700 80 -680 {lab=AGND}
+N 360 -700 360 -680 {lab=AGND}
+N 740 -910 740 -890 {lab=AGND}
+N 360 -560 360 -540 {lab=AGND}
+N 620 -780 620 -760 {lab=INP}
+N 620 -640 620 -620 {lab=INN}
+N 620 -700 620 -680 {lab=VCM}
+N 620 -560 620 -540 {lab=VCM}
+N 560 -750 580 -750 {lab=#net1}
+N 560 -710 580 -710 {lab=AGND}
+N 560 -610 580 -610 {lab=#net2}
+N 560 -570 580 -570 {lab=AGND}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
-C {vdd.sym} 600 -700 0 0 {name=l2 lab=AVDD}
-C {gnd.sym} 600 -580 0 0 {name=l3 lab=AGND}
-C {isource.sym} 180 -590 0 0 {name=IBIAS   value="dc 40u"}
-C {vsource.sym} 20 -590 0 0 {name=VADD    value="dc \{AVDD_SET\} ac 0"    savecurrent=true}
-C {vdd.sym} 20 -620 0 0 {name=l4 lab=AVDD}
-C {gnd.sym} 20 -560 0 0 {name=l5 lab=AGND}
-C {gnd.sym} 180 -560 0 0 {name=l6 lab=AGND}
-C {capa.sym} 760 -610 0 0 {name=CL
+C {vdd.sym} 580 -1030 0 0 {name=l2 lab=AVDD}
+C {isource.sym} 80 -730 0 0 {name=IBIAS   value="dc 40u"}
+C {vsource.sym} 200 -730 0 0 {name=VAVDD   value="dc \{AVDD_SET\} ac 0"      savecurrent=true}
+C {vdd.sym} 200 -760 0 0 {name=l4 lab=AVDD}
+C {gnd.sym} 200 -700 0 0 {name=l5 lab=0}
+C {capa.sym} 740 -940 0 0 {name=CL
 m=1
 value=10p
 footprint=1206
 device="ceramic capacitor"}
-C {gnd.sym} 760 -580 0 0 {name=l7 lab=AGND}
-C {vsource.sym} 280 -590 0 0 {name=VP      value="dc \{IP\} ac 0"          savecurrent=false}
-C {gnd.sym} 280 -560 0 0 {name=l8 lab=AGND}
-C {vsource.sym} 380 -590 0 0 {name=VN      value="dc \{IN\} ac 0"          savecurrent=false}
-C {gnd.sym} 380 -560 0 0 {name=l9 lab=AGND}
-C {lab_wire.sym} 180 -640 0 0 {name=p1 sig_type=std_logic lab=B}
-C {lab_wire.sym} 500 -640 0 0 {name=p2 sig_type=std_logic lab=B}
-C {lab_wire.sym} 280 -640 0 0 {name=p3 sig_type=std_logic lab=INP}
-C {lab_wire.sym} 500 -680 0 0 {name=p4 sig_type=std_logic lab=INP}
-C {lab_wire.sym} 380 -640 0 0 {name=p5 sig_type=std_logic lab=INN}
-C {lab_wire.sym} 500 -600 0 0 {name=p6 sig_type=std_logic lab=INN}
-C {lab_wire.sym} 760 -640 0 1 {name=p7 sig_type=std_logic lab=OUT}
+C {vsource.sym} 360 -730 0 0 {name=VVCM    value="dc \{VCM_SET\} ac 0"       savecurrent=false}
+C {vsource.sym} 360 -590 0 0 {name=VDIFF   value="dc \{VOSDC\} ac 1"         savecurrent=false}
+C {lab_wire.sym} 80 -780 0 0 {name=p1 sig_type=std_logic lab=B}
+C {lab_wire.sym} 480 -970 0 0 {name=p2 sig_type=std_logic lab=B}
+C {lab_wire.sym} 360 -780 0 0 {name=p3 sig_type=std_logic lab=VCM}
+C {lab_wire.sym} 480 -1010 0 0 {name=p4 sig_type=std_logic lab=INP}
+C {lab_wire.sym} 360 -640 0 0 {name=p5 sig_type=std_logic lab=VDIFF}
+C {lab_wire.sym} 480 -930 0 0 {name=p6 sig_type=std_logic lab=INN}
+C {lab_wire.sym} 740 -970 0 1 {name=p7 sig_type=std_logic lab=OUT}
 C {devices/code_shown.sym} 80 -480 0 0 {name=MODELS only_toplevel=true
 format="tcleval( @value )"
 value="
 .include $::180MCU_MODELS/design.ngspice
 .lib $::180MCU_MODELS/sm141064.ngspice typical
 "}
-C {devices/code_shown.sym} 800 -1700 0 0 {name=NGSPICE only_toplevel=true
+C {devices/code_shown.sym} 870 -2130 0 0 {name=NGSPICE only_toplevel=true
 value="
 .control
 destroy all
 save all
+set wr_vecnames
 set wr_singlescale
+set noaskquit
 
 shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA
 
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.op.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_ac.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_icmr.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.cm_ac.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.psrrp_ac.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.psrrn_ac.txt
+
 let avdd_run = 3.3
 let vcm_run  = avdd_run/2
-let off_lo   = vcm_run - 0.05
-let off_hi   = vcm_run + 0.05
-let off_step = 10u
 
 * OP
+alter @VVCM[DC] = $&vcm_run
+alter @VDIFF[DC] = \{VOSDC\}
+alter @VVCM[ACMAG] = 0
+alter @VDIFF[ACMAG] = 0
+alter @VAVDD[ACMAG] = 0
+alter @VAVSS[ACMAG] = 0
+
 op
-let op_avdd  = v(AVDD)
-let op_inp   = v(INP)
-let op_inn   = v(INN)
-let op_out   = v(OUT)
-let op_b     = v(B)
-let op_idd   = -vadd#branch
+let op_vdd   = v(avdd) - v(agnd)
+let op_vinp  = v(inp)  - v(agnd)
+let op_vinn  = v(inn)  - v(agnd)
+let op_vout  = v(out)  - v(agnd)
 let op_ibias = 40e-6
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_op.txt op_avdd op_inp op_inn op_out op_b op_idd op_ibias
+let op_idd   = -vavdd#branch
+let op_iout  = 0
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.op.txt op_vdd op_vinp op_vinn op_vout op_ibias op_idd op_iout
 
-* Offset
-dc VP $&off_lo $&off_hi $&off_step
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_offset.txt v(INP) v(INN) v(OUT)
-
-* Diff AC
-alter @VP[DC] = $&vcm_run
-alter @VN[DC] = $&vcm_run
-alter @VP[ACMAG] = 0.5
-alter @VP[ACPHASE] = 0
-alter @VN[ACMAG] = 0.5
-alter @VN[ACPHASE] = 180
-alter @VADD[ACMAG] = 0
-alter @VAGND[ACMAG] = 0
+* Differential AC
+alter @VVCM[DC] = $&vcm_run
+alter @VDIFF[DC] = \{VOSDC\}
+alter @VVCM[ACMAG] = 0
+alter @VDIFF[ACMAG] = 1
+alter @VDIFF[ACPHASE] = 0
+alter @VAVDD[ACMAG] = 0
+alter @VAVSS[ACMAG] = 0
 
 ac dec 200 1 1G
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_ac_diff.txt db(v(OUT,AGND)) ph(v(OUT,AGND)) mag(v(OUT,AGND))
+let ol_out = v(out) - v(agnd)
+let ad_mag = mag(ol_out)
+let ad_db  = db(ol_out)
+let ad_ph  = ph(ol_out)
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_ac.txt ad_mag ad_db ad_ph
 
-* CMRR
-alter @VP[ACMAG] = 1
-alter @VP[ACPHASE] = 0
-alter @VN[ACMAG] = 1
-alter @VN[ACPHASE] = 0
-alter @VADD[ACMAG] = 0
-alter @VAGND[ACMAG] = 0
+* ICMR DC grid
+alter @VVCM[ACMAG] = 0
+alter @VDIFF[ACMAG] = 0
+alter @VAVDD[ACMAG] = 0
+alter @VAVSS[ACMAG] = 0
+
+dc VVCM 0 $&avdd_run 0.01 VDIFF -0.2 0.2 0.001
+let icmr_vcm   = v(vcm) - v(agnd)
+let icmr_vdiff = v(vdiff) - v(agnd)
+let icmr_vout  = v(out) - v(agnd)
+let icmr_ibias = 40e-6
+let icmr_idd   = -vavdd#branch
+let icmr_iout  = 0
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_icmr.txt icmr_vcm icmr_vdiff icmr_vout icmr_ibias icmr_idd icmr_iout
+
+* Common-mode AC
+alter @VVCM[DC] = $&vcm_run
+alter @VDIFF[DC] = \{VOSDC\}
+alter @VVCM[ACMAG] = 1
+alter @VVCM[ACPHASE] = 0
+alter @VDIFF[ACMAG] = 0
+alter @VAVDD[ACMAG] = 0
+alter @VAVSS[ACMAG] = 0
 
 ac dec 200 1 1G
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_ac_cm.txt db(v(OUT,AGND)) mag(v(OUT,AGND))
+let cm_out  = v(out) - v(agnd)
+let acm_mag = mag(cm_out)
+let acm_db  = db(cm_out)
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.cm_ac.txt acm_mag acm_db
 
 * PSRR+
-alter @VP[ACMAG] = 0
-alter @VN[ACMAG] = 0
-alter @VADD[ACMAG] = 1
-alter @VADD[ACPHASE] = 0
-alter @VAGND[ACMAG] = 0
+alter @VVCM[ACMAG] = 0
+alter @VDIFF[ACMAG] = 0
+alter @VAVDD[ACMAG] = 1
+alter @VAVDD[ACPHASE] = 0
+alter @VAVSS[ACMAG] = 0
 
 ac dec 200 1 1G
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_ac_psrrp.txt db(v(OUT,AGND)) mag(v(OUT,AGND))
+let psrrp_out = v(out) - v(agnd)
+let psrrp_mag = mag(psrrp_out)
+let psrrp_db  = db(psrrp_out)
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.psrrp_ac.txt psrrp_mag psrrp_db
 
 * PSRR-
-alter @VP[ACMAG] = 0
-alter @VN[ACMAG] = 0
-alter @VADD[ACMAG] = 0
-alter @VAGND[ACMAG] = 1
-alter @VAGND[ACPHASE] = 0
+alter @VVCM[ACMAG] = 0
+alter @VDIFF[ACMAG] = 0
+alter @VAVDD[ACMAG] = 0
+alter @VAVSS[ACMAG] = 1
+alter @VAVSS[ACPHASE] = 0
 
 ac dec 200 1 1G
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_ac_psrrn.txt db(v(OUT,AGND)) mag(v(OUT,AGND))
+let psrrn_out = v(out) - v(agnd)
+let psrrn_mag = mag(psrrn_out)
+let psrrn_db  = db(psrrn_out)
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.psrrn_ac.txt psrrn_mag psrrn_db
 
-* Noise total only
-alter @VADD[ACMAG] = 0
-alter @VAGND[ACMAG] = 0
-alter @VP[ACMAG] = 1
-alter @VN[ACMAG] = 0
-
-noise v(OUT,AGND) VP dec 100 0.05 150
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.ol_noise_total.txt inoise_total onoise_total
+quit
 
 .endc
 "}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/SE_OTA/SE_OTA.sym} 440 -500 0 0 {name=xSEOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/SE_OTA/SE_OTA.sym} 420 -830 0 0 {name=xSEOTA1}
 C {devices/code_shown.sym} 80 -380 0 0 {name=SETUP only_toplevel=true
 value="
 .param AVDD_SET=3.3
+.param AVSS_SET=0
 .param TEMP_SET=27
 .param VCM_SET=\{AVDD_SET/2\}
-.param IP=\{VCM_SET\}
-.param IN=\{VCM_SET\}
+
+* Set from offset centering result
+.param VOSDC=0
 
 .temp \{TEMP_SET\}
-
-VAGND AGND 0 dc 0 ac 0
 
 .options gmin=1e-12 rshunt=1e12 method=gear
 .nodeset v(B)=2.3 v(OUT)=\{VCM_SET\}
 "}
+C {vsource.sym} 200 -590 0 0 {name=VAVSS   value="dc \{AVSS_SET\} ac 0"      savecurrent=true}
+C {gnd.sym} 200 -560 0 0 {name=l11 lab=0}
+C {lab_wire.sym} 200 -640 0 0 {name=p8 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 580 -890 2 0 {name=p9 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 360 -540 2 0 {name=p10 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 360 -680 2 0 {name=p11 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 80 -680 2 0 {name=p12 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 740 -890 2 1 {name=p13 sig_type=std_logic lab=AGND}
+C {vcvs.sym} 620 -590 0 0 {name=EINN    value=-0.5}
+C {vcvs.sym} 620 -730 0 0 {name=EINP    value=0.5}
+C {lab_wire.sym} 620 -780 0 0 {name=p14 sig_type=std_logic lab=INP}
+C {lab_wire.sym} 620 -640 0 0 {name=p15 sig_type=std_logic lab=INN}
+C {lab_wire.sym} 620 -680 2 0 {name=p16 sig_type=std_logic lab=VCM}
+C {lab_wire.sym} 620 -540 2 0 {name=p17 sig_type=std_logic lab=VCM}
+C {lab_wire.sym} 560 -570 2 1 {name=p18 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 560 -710 2 1 {name=p19 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 560 -610 0 0 {name=p20 sig_type=std_logic lab=VDIFF}
+C {lab_wire.sym} 560 -750 0 0 {name=p21 sig_type=std_logic lab=VDIFF}

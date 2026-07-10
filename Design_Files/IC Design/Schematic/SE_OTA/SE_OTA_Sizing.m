@@ -366,11 +366,14 @@ L_um = [
     L8_um
 ];
 
-W_over_L = W_um ./ L_um;
-nf = max(round(W_um / 4), 1);
+W_round_um = max(4 * round(W_um / 4), 4);
+m = 2 * ones(size(W_round_um));
+W_layout_um = W_round_um ./ m;
+W_over_L = W_layout_um ./ L_um;
+nf = max(round(W_layout_um / 2), 1);
 
 result_table = table(device, role, Id_uA, gm_uS, gds_uS, ro_kohm, ...
-                     W_um, L_um, nf, W_over_L);
+                     W_um, W_round_um, m, W_layout_um, L_um, nf, W_over_L);
 
 disp(' ');
 disp(result_table);
