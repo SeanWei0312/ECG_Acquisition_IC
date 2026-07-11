@@ -4,16 +4,18 @@ Bias current	uA	40.000	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 Total current	uA	280.343	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 Total power	mW	0.9251	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 Vin,cm	V	1.6500	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
-Vout,DC	V	1.0910	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
-Input CM range	V	0.000–2.180	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
-Output swing	V	0.047–2.881	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+Vout,DC	V	1.6500	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+Input CM low	V	0.000	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+Input CM high	V	2.130	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+Output swing low	V	0.047	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+Output swing high	V	2.881	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 DC gain	dB	92.54	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 UGF	MHz	9.5191	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 Phase margin	deg	66.35	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
-CLoad (fixed)	pF	10	10	10	10	10	10	10	10	10
-Slew rate rising	V/us	7.470	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
-Slew rate falling	V/us	7.752	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
-Settling time	ns	147.07	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+CLoad	pF	10	10	10	10	10	10	10	10	10
+Slew rate rising	V/us	7.463	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+Slew rate falling	V/us	7.748	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
+Settling time	ns	150.07	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 Input-referred noise	uVrms	12.594	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 Input offset	mV	0.253	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A
 CMRR @ 1 Hz	dB	107.86	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A

@@ -42,36 +42,36 @@ destroy all
 save all
 set wr_vecnames
 set wr_singlescale
-set noaskquit
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.Result_txt
 
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.cl_dc.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.cl_tran.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.Result_txt/NOM.cl_dc.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.Result_txt/NOM.cl_tran.txt
 
 let avdd_run = 3.3
-let vcm_run  = avdd_run/2
 
 * CL DC
 dc VIN 0 $&avdd_run 0.001
+
 let cl_vin   = v(inp) - v(agnd)
 let cl_vout  = v(out) - v(agnd)
 let cl_ibias = 40e-6
 let cl_idd   = -vavdd#branch
 let cl_iout  = 0
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.cl_dc.txt cl_vin cl_vout cl_ibias cl_idd cl_iout
 
-* CL transient
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.Result_txt/NOM.cl_dc.txt cl_vin cl_vout cl_ibias cl_idd cl_iout
+
+* CL TRAN
 alter @VIN[PULSE] = [ 1.0 2.0 1u 1n 1n 10u 20u 0 ]
 
 tran 1n 30u
+
 let tr_vin   = v(inp) - v(agnd)
 let tr_vout  = v(out) - v(agnd)
 let tr_idd   = -vavdd#branch
 let tr_iout  = 10e-12*deriv(tr_vout)
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.cl_tran.txt tr_vin tr_vout tr_idd tr_iout
 
-quit
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.Result_txt/NOM.cl_tran.txt tr_vin tr_vout tr_idd tr_iout
 
 .endc
 "}

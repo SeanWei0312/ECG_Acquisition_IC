@@ -14,17 +14,14 @@ end
 
 tags = ["NOM","FF","SS","FS","SF","V30","V36","Cn40","C125"];
 pvtNames = ["Nominal","ff","ss","fs","sf","3.0 V","3.6 V","-40 C","125 C"];
-avddList = [3.3 3.3 3.3 3.3 3.3 3.0 3.6 3.3 3.3];
 
 swingErrLimit = 2e-3;      % valid unity-gain range: |Vout - Vin| <= 2 mV
 icmrOffsetLimit = 5e-3;    % valid ICMR point: required |Vin,diff| <= 5 mV
-icmrCurrentTol = 0.20;     % valid ICMR point: IDD within +/-20% of nominal
+icmrCurrentTol = 0.10;     % valid ICMR point: IDD/Ibias within +/-10% of nominal
 icmrGainDrop_dB = 3;       % valid ICMR point: local gain no more than 3 dB below nominal
-settleErr = 10e-3;         % settling band for 1 V step
-slewLow_V = 1.1;           % 10% point for 1 V -> 2 V step
-slewHigh_V = 1.9;          % 90% point for 1 V -> 2 V step
+settleErr = 5e-3;          % settling band around final output value
 settleStart_s = 1e-6;      % rising step starts at 1 us
-settleFinal_V = 2.0;       % final value after rising step
+settleFinal_V = NaN;       % NaN means use final waveform average
 settleEnd_s = 10e-6;
 CLoad_pF = 10;
 
@@ -32,10 +29,9 @@ R = cell(1, numel(tags));
 
 for k = 1:numel(tags)
     fprintf("Analyzing %s...\n", tags(k));
-    R{k} = analyze_one_safe(baseDir, tags(k), avddList(k), swingErrLimit, ...
+    R{k} = analyze_one_safe(baseDir, tags(k), swingErrLimit, ...
                             icmrOffsetLimit, icmrCurrentTol, icmrGainDrop_dB, ...
-                            settleErr, slewLow_V, slewHigh_V, ...
-                            settleStart_s, settleFinal_V, settleEnd_s);
+                            settleErr, settleStart_s, settleFinal_V, settleEnd_s);
 end
 
 %% =========================================================
@@ -48,12 +44,14 @@ Parameter = [
     "Total power"
     "Vin,cm"
     "Vout,DC"
-    "Input CM range"
-    "Output swing"
+    "Input CM low"
+    "Input CM high"
+    "Output swing low"
+    "Output swing high"
     "DC gain"
     "UGF"
     "Phase margin"
-    "CLoad (fixed)"
+    "CLoad"
     "Slew rate rising"
     "Slew rate falling"
     "Settling time"
@@ -78,6 +76,8 @@ Unit = [
     "uA"
     "uA"
     "mW"
+    "V"
+    "V"
     "V"
     "V"
     "V"
@@ -118,8 +118,10 @@ for k = 1:numel(tags)
         fmt(R{k}.Power_mW, "%.4f")
         fmt(R{k}.Vin_cm, "%.4f")
         fmt(R{k}.Vout_DC, "%.4f")
-        fmt_range(R{k}.Input_cm_min, R{k}.Input_cm_max, "%.3f")
-        fmt_range(R{k}.Output_swing_min, R{k}.Output_swing_max, "%.3f")
+        fmt(R{k}.Input_cm_min, "%.3f")
+        fmt(R{k}.Input_cm_max, "%.3f")
+        fmt(R{k}.Output_swing_min, "%.3f")
+        fmt(R{k}.Output_swing_max, "%.3f")
         fmt(R{k}.DC_gain_dB, "%.2f")
         fmt(R{k}.UGF_MHz, "%.4f")
         fmt(R{k}.PM_deg, "%.2f")
@@ -247,37 +249,25 @@ saveas(gcf, fullfile(plotDir, "plot2_closed_loop_step_response.png"));
 % 3 Output swing / DC transfer
 figure;
 if ~isempty(N.sw_inp)
-    tiledlayout(2,1);
-
-    ax1 = nexttile;
-    plot(N.sw_inp, N.sw_out, "LineWidth", 1.5);
-    hold on;
-    plot(N.sw_inp, N.sw_inp, "--", "LineWidth", 1.0);
-    grid on;
-    ylabel("Vout (V)");
-    title("3. Closed-loop Output Swing / DC Tracking");
-    legend("Vout", "Ideal Vout = Vin", "Location", "best");
-
-    if isfinite(N.Output_swing_min) && isfinite(N.Output_swing_max)
-        yline(N.Output_swing_min, "--", sprintf("Vout,min: %.3fV", N.Output_swing_min), ...
-              "HandleVisibility", "off");
-        yline(N.Output_swing_max, "--", sprintf("Vout,max: %.3fV", N.Output_swing_max), ...
-              "HandleVisibility", "off");
-    end
-
-    ax2 = nexttile;
-    plot(N.sw_inp, N.sw_err*1e3, "LineWidth", 1.2);
+    plot(N.sw_inp, N.sw_err*1e3, "LineWidth", 1.5);
     hold on;
     yline(swingErrLimit*1e3, "--", "+2mV", "HandleVisibility", "off");
     yline(-swingErrLimit*1e3, "--", "-2mV", "HandleVisibility", "off");
     grid on;
     xlabel("Vin (V)");
     ylabel("Vout - Vin (mV)");
-    linkaxes([ax1 ax2], "x");
+    title("3. Output Swing / DC Tracking Error");
+
+    if isfinite(N.CL_input_min) && isfinite(N.CL_input_max)
+        xline(N.CL_input_min, "--", sprintf("Vin,min: %.3fV", N.CL_input_min), ...
+              "HandleVisibility", "off");
+        xline(N.CL_input_max, "--", sprintf("Vin,max: %.3fV", N.CL_input_max), ...
+              "HandleVisibility", "off");
+    end
 else
     text(0.1, 0.5, "NOM closed-loop DC data missing");
     axis off;
-    title("3. Closed-loop Output Swing / DC Tracking");
+    title("3. Output Swing / DC Tracking Error");
 end
 saveas(gcf, fullfile(plotDir, "plot3_output_swing_dc_transfer.png"));
 
@@ -297,7 +287,6 @@ if ~isempty(N.icmr_line_vcm)
         hold on;
         plot(N.icmr_line_vcm(icmrValid), N.icmr_line_vid(icmrValid)*1e3, ...
              "Color", annotationColor, "LineWidth", 2.0);
-        labelVosPoint(N);
         ylabel("Req. Vin,diff (mV)");
     else
         plot(N.icmr_line_vcm(icmrAll), N.icmr_line_out(icmrAll), "LineWidth", 1.2);
@@ -312,12 +301,18 @@ if ~isempty(N.icmr_line_vcm)
     labelNoValidIcmr(N, icmrValid);
 
     ax2 = nexttile;
-    plot(N.icmr_line_vcm(icmrAll), N.icmr_line_idd(icmrAll)*1e6, "LineWidth", 1.2);
+    plot(N.icmr_line_vcm(icmrAll), N.icmr_line_idd(icmrAll)*1e6, ...
+         "LineWidth", 1.2, "DisplayName", "IDD");
     hold on;
     plot(N.icmr_line_vcm(icmrValid), N.icmr_line_idd(icmrValid)*1e6, ...
-         "Color", annotationColor, "LineWidth", 2.0);
+         "Color", annotationColor, "LineWidth", 2.0, "HandleVisibility", "off");
+    if any(isfinite(N.icmr_line_ibias))
+        plot(N.icmr_line_vcm(icmrAll), N.icmr_line_ibias(icmrAll)*1e6, ...
+             "--", "LineWidth", 1.2, "DisplayName", "Ibias");
+    end
     grid on;
-    ylabel("Total current (uA)");
+    ylabel("Current (uA)");
+    legend("Location", "best");
     labelCmRange(N);
 
     ax3 = nexttile;
@@ -420,20 +415,59 @@ else
 end
 saveas(gcf, fullfile(plotDir, "plot7_input_referred_noise_density.png"));
 
+% 8 Open-loop VTC
+figure;
+if ~isempty(N.vtc_vid)
+    plot(N.vtc_vid*1e3, N.vtc_out, "LineWidth", 1.5);
+    hold on;
+    if isfinite(N.offset_vid)
+        xline(N.offset_vid*1e3, "--", sprintf("Vos: %.3fmV", N.Input_offset_mV), ...
+              "HandleVisibility", "off");
+    end
+    yline(N.AVDD/2, "--", sprintf("Vo=VDD/2: %.3fV", N.AVDD/2), ...
+          "HandleVisibility", "off");
+    grid on;
+    xlabel("Vin,diff (mV)");
+    ylabel("Vout (V)");
+    title("8. Open-loop VTC");
+else
+    text(0.1, 0.5, "NOM open-loop VTC data missing");
+    axis off;
+    title("8. Open-loop VTC");
+end
+saveas(gcf, fullfile(plotDir, "plot8_open_loop_vtc.png"));
+
+% 9 Closed-loop VTC
+figure;
+if ~isempty(N.sw_inp)
+    plot(N.sw_inp, N.sw_out, "LineWidth", 1.5);
+    hold on;
+    plot(N.sw_inp, N.sw_inp, "--", "LineWidth", 1.0);
+    grid on;
+    xlabel("Vin (V)");
+    ylabel("Vout (V)");
+    title("9. Closed-loop VTC");
+    labelOutputSwingRange(N);
+    legend("Vout", "Ideal Vout = Vin", "Location", "best");
+else
+    text(0.1, 0.5, "NOM closed-loop DC data missing");
+    axis off;
+    title("9. Closed-loop VTC");
+end
+saveas(gcf, fullfile(plotDir, "plot9_closed_loop_vtc.png"));
+
 fprintf("\nSaved plots in:\n%s\n", plotDir);
 
 %% =========================================================
 % Functions
 % =========================================================
-function R = analyze_one_safe(baseDir, tag, avddSet, swingErrLimit, ...
+function R = analyze_one_safe(baseDir, tag, swingErrLimit, ...
                               icmrOffsetLimit, icmrCurrentTol, icmrGainDrop_dB, settleErr, ...
-                              slewLow_V, slewHigh_V, settleStart_s, ...
-                              settleFinal_V, settleEnd_s)
+                              settleStart_s, settleFinal_V, settleEnd_s)
     try
-        R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
+        R = analyze_one(baseDir, tag, swingErrLimit, ...
                         icmrOffsetLimit, icmrCurrentTol, icmrGainDrop_dB, settleErr, ...
-                        slewLow_V, slewHigh_V, settleStart_s, ...
-                        settleFinal_V, settleEnd_s);
+                        settleStart_s, settleFinal_V, settleEnd_s);
     catch ME
         warning("Failed to analyze %s: %s", tag, ME.message);
         R = empty_result(tag);
@@ -451,6 +485,8 @@ function R = empty_result(tag)
     R.Vout_DC = NaN;
     R.Input_cm_min = NaN;
     R.Input_cm_max = NaN;
+    R.CL_input_min = NaN;
+    R.CL_input_max = NaN;
     R.Output_swing_min = NaN;
     R.Output_swing_max = NaN;
     R.DC_gain_dB = NaN;
@@ -489,12 +525,11 @@ function R = empty_result(tag)
     R.PSRRN_curve = [];
     R.noise_f = [];
     R.noise_in = [];
+    R.vtc_vid = [];
+    R.vtc_out = [];
     R.t_slew = [];
     R.slew_inp = [];
     R.slew_out = [];
-
-    R.vid_offset = [];
-    R.out_offset = [];
 
     R.icmr_line_vcm = [];
     R.icmr_line_vid = [];
@@ -514,13 +549,13 @@ function R = empty_result(tag)
 
 end
 
-function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
+function R = analyze_one(baseDir, tag, swingErrLimit, ...
                          icmrOffsetLimit, icmrCurrentTol, icmrGainDrop_dB, settleErr, ...
-                         slewLow_V, slewHigh_V, settleStart_s, ...
-                         settleFinal_V, settleEnd_s)
+                         settleStart_s, settleFinal_V, settleEnd_s)
 
-    ol_op    = parse_file(baseDir, tag + ".op.txt", 7);
-    ol_ac    = parse_file(baseDir, tag + ".ol_ac.txt", 3);
+    ol_op    = parse_file(baseDir, tag + ".op.txt", 10);
+    ol_vtc   = parse_file(baseDir, tag + ".ol_vtc.txt", 7);
+    ol_ac    = parse_file(baseDir, tag + ".ol_ac.txt", 5);
     cm_ac    = parse_file(baseDir, tag + ".cm_ac.txt", 2);
     psrrp_ac = parse_file(baseDir, tag + ".psrrp_ac.txt", 2);
     psrrn_ac = parse_file(baseDir, tag + ".psrrn_ac.txt", 2);
@@ -533,30 +568,32 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
     %% OP
     op = ol_op.data(end,:);
 
-    R.AVDD = op(1);
-    ol_inp = op(2);
-    ol_inn = op(3);
-    op_out = op(4);
-    R.Ibias = abs(op(5));
-    R.Idd_OL = abs(op(6));
+    vdd = op(1);
+    vss = op(2);
+    op_vcm = op(3);
+    ol_inp = op(5);
+    ol_inn = op(6);
+    R.Ibias = abs(op(8));
+    R.Idd_OL = abs(op(9));
+    R.AVDD = vdd - vss;
 
     cl_vin = cl_dc.data(:,1);
     cl_out = cl_dc.data(:,2);
-    cl_ibias = abs(cl_dc.data(:,3));
     cl_idd = abs(cl_dc.data(:,4));
-    vcm = avddSet / 2;
+    vcm = op_vcm;
     cl_idd_nom = interp1(cl_vin, cl_idd, vcm, "linear", "extrap");
-    cl_ibias_nom = interp1(cl_vin, cl_ibias, vcm, "linear", "extrap");
 
-    R.Ibias_uA = cl_ibias_nom * 1e6;
+    R.Ibias_uA = R.Ibias * 1e6;
     R.Idd_uA = cl_idd_nom * 1e6;
-    R.Power_mW = avddSet * cl_idd_nom * 1e3;
+    R.Power_mW = R.AVDD * cl_idd_nom * 1e3;
 
     R.Vin_cm = 0.5 * (ol_inp + ol_inn);
-    R.Vout_DC = op_out;
+    R.vtc_vid = ol_vtc.data(:,1);
+    R.vtc_out = ol_vtc.data(:,4);
+    R.Vout_DC = interp1(cl_vin, cl_out, vss + R.AVDD/2, "linear", "extrap");
 
     %% Open-loop ICMR and differential DC sweeps
-    icmrLine = read_icmr_line(baseDir, tag, avddSet/2);
+    icmrLine = read_icmr_line(baseDir, tag, R.AVDD/2);
 
     R.icmr_line_vcm = icmrLine.vcm;
     R.icmr_line_vid = icmrLine.vid;
@@ -566,7 +603,7 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
     R.icmr_line_gain = icmrLine.gain;
     R.icmr_line_mode = icmrLine.mode;
 
-    offsetIdx = nearest_index(icmrLine.vcm, avddSet/2, icmrLine.valid);
+    offsetIdx = nearest_index(icmrLine.vcm, vcm, icmrLine.valid);
 
     if isfinite(offsetIdx)
         R.Input_offset_V = icmrLine.vid(offsetIdx);
@@ -576,11 +613,8 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
 
     R.Input_offset_mV = abs(R.Input_offset_V) * 1e3;
 
-    R.vid_offset = icmrLine.vid;
-    R.out_offset = icmrLine.vout;
-
     nominalIdx = nominal_icmr_index(icmrLine.vcm, icmrLine.idd, ...
-                                    icmrLine.gain, avddSet/2);
+                                    icmrLine.gain, vcm);
     icmrValid = false(size(icmrLine.valid));
 
     isForcedIcmr = startsWith(icmrLine.mode, "forced_vout");
@@ -608,7 +642,7 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
             icmrValid = icmrValid & abs(icmrLine.gain) >= minGain;
         end
 
-        icmrValid = true_run_containing_x(icmrValid, icmrLine.vcm, avddSet/2);
+        icmrValid = true_run_containing_x(icmrValid, icmrLine.vcm, vcm);
     end
 
     R.icmr_line_valid = icmrValid;
@@ -620,14 +654,13 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
 
     %% Gain and phase
     R.f = ol_ac.scale;
-    R.gain_dB = ol_ac.data(:,2);
-    phase_rad = ol_ac.data(:,3);
-    phase_deg = phase_rad * 180/pi;
+    ad = complex(ol_ac.data(:,1), ol_ac.data(:,2));
+    R.gain_dB = complex_db(real(ad), imag(ad));
+    phase_deg = unwrap(angle(ad)) * 180/pi;
 
     R.DC_gain_dB = interp_log(R.f, R.gain_dB, 1);
 
-    phase_unwrap = unwrap(phase_deg*pi/180)*180/pi;
-    R.phase_rel = phase_unwrap - phase_unwrap(1);
+    R.phase_rel = phase_deg - phase_deg(1);
 
     idxUGF = find(R.gain_dB(1:end-1) >= 0 & R.gain_dB(2:end) <= 0, 1, "first");
 
@@ -644,7 +677,7 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
     R.UGF_MHz = R.UGF_Hz / 1e6;
 
     %% CMRR
-    cmDB = cm_ac.data(:,2);
+    cmDB = complex_db(cm_ac.data(:,1), cm_ac.data(:,2));
     cmInterp = interp1(log10(cm_ac.scale), cmDB, log10(R.f), "linear", "extrap");
     R.CMRR_curve = R.gain_dB - cmInterp;
 
@@ -654,7 +687,7 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
     R.CMRR_1k  = interp_log(R.f, R.CMRR_curve, 1e3);
 
     %% PSRR+
-    pspDB = psrrp_ac.data(:,2);
+    pspDB = complex_db(psrrp_ac.data(:,1), psrrp_ac.data(:,2));
     pspInterp = interp1(log10(psrrp_ac.scale), pspDB, log10(R.f), "linear", "extrap");
     R.PSRRP_curve = R.gain_dB - pspInterp;
 
@@ -664,7 +697,7 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
     R.PSRRP_1k  = interp_log(R.f, R.PSRRP_curve, 1e3);
 
     %% PSRR-
-    psnDB = psrrn_ac.data(:,2);
+    psnDB = complex_db(psrrn_ac.data(:,1), psrrn_ac.data(:,2));
     psnInterp = interp1(log10(psrrn_ac.scale), psnDB, log10(R.f), "linear", "extrap");
     R.PSRRN_curve = R.gain_dB - psnInterp;
 
@@ -702,12 +735,16 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
 
     % This range is defined by unity-follower tracking error, not MOS saturation.
     valid = abs(R.sw_err) <= swingErrLimit;
-    valid = true_run_containing_x(valid, R.sw_inp, avddSet/2);
+    valid = true_run_containing_x(valid, R.sw_inp, vcm);
 
     if any(valid)
+        R.CL_input_min = min(R.sw_inp(valid));
+        R.CL_input_max = max(R.sw_inp(valid));
         R.Output_swing_min = min(R.sw_out(valid));
         R.Output_swing_max = max(R.sw_out(valid));
     else
+        R.CL_input_min = NaN;
+        R.CL_input_max = NaN;
         R.Output_swing_min = NaN;
         R.Output_swing_max = NaN;
     end
@@ -719,6 +756,7 @@ function R = analyze_one(baseDir, tag, avddSet, swingErrLimit, ...
     R.slew_inp = cl_tran.data(:,1);
     R.slew_out = cl_tran.data(:,2);
 
+    [slewLow_V, slewHigh_V] = slew_levels(R.slew_out);
     t10r = cross_time(R.t_slew, R.slew_out, slewLow_V, "rise");
     t90r = cross_time(R.t_slew, R.slew_out, slewHigh_V, "rise");
     t90f = cross_time(R.t_slew, R.slew_out, slewHigh_V, "fall");
@@ -858,6 +896,25 @@ function y0 = interp_log(f, y, f0)
     y0 = interp1(log10(f), y, log10(f0), "linear", "extrap");
 end
 
+function y_dB = complex_db(realPart, imagPart)
+    y_dB = 20 * log10(abs(complex(realPart, imagPart)));
+end
+
+function [v10, v90] = slew_levels(y)
+    y = y(isfinite(y));
+
+    if isempty(y)
+        v10 = NaN;
+        v90 = NaN;
+        return;
+    end
+
+    vInitial = min(y);
+    vFinal = max(y);
+    v10 = vInitial + 0.10 * (vFinal - vInitial);
+    v90 = vInitial + 0.90 * (vFinal - vInitial);
+end
+
 function tc = cross_time(t, y, level, type)
     switch type
         case "rise"
@@ -887,6 +944,11 @@ function ts = settling_ns(t, y, finalVal, tStart, tEnd, errBand)
 
     tw = t(idx);
     yw = y(idx);
+
+    if ~isfinite(finalVal)
+        nTail = max(3, ceil(0.10 * numel(yw)));
+        finalVal = mean(yw(end-nTail+1:end));
+    end
 
     good = abs(yw - finalVal) <= errBand;
     ts_s = NaN;
@@ -976,25 +1038,15 @@ function labelNoValidIcmr(R, valid)
     styleAnnotationText(hText, [1 1 1]);
 end
 
-function labelVosPoint(R)
-    annotationColor = [1 0 0];
-    annotationTextColor = [0 0 0];
-    annotationBackgroundColor = [1 1 1];
-
-    if ~isfinite(R.Vin_cm) || ~isfinite(R.Input_offset_V)
+function labelOutputSwingRange(R)
+    if ~isfinite(R.Output_swing_min) || ~isfinite(R.Output_swing_max)
         return;
     end
 
-    x = R.Vin_cm;
-    y = R.Input_offset_V * 1e3;
-
-    plot(x, y, "o", "Color", annotationColor, ...
-         "MarkerFaceColor", annotationColor, "HandleVisibility", "off");
-    hText = text(x, y, sprintf(" Vos: %.3fmV", R.Input_offset_mV), ...
-                 "VerticalAlignment", "bottom", ...
-                 "HorizontalAlignment", "left", ...
-                 "Color", annotationTextColor);
-    styleAnnotationText(hText, annotationBackgroundColor);
+    yline(R.Output_swing_min, "--", sprintf("Out Lo: %.3fV", R.Output_swing_min), ...
+          "HandleVisibility", "off");
+    yline(R.Output_swing_max, "--", sprintf("Out Hi: %.3fV", R.Output_swing_max), ...
+          "HandleVisibility", "off");
 end
 
 function S = read_icmr_line(baseDir, tag, targetVout)
@@ -1214,13 +1266,5 @@ function s = fmt(x, f)
         s = "N/A";
     else
         s = string(sprintf(f, x));
-    end
-end
-
-function s = fmt_range(a, b, f)
-    if isnan(a) || isnan(b)
-        s = "N/A";
-    else
-        s = string(sprintf(f, a)) + "–" + string(sprintf(f, b));
     end
 end
