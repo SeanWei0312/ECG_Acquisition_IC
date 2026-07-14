@@ -1,0 +1,25 @@
+Parameter,Unit,Value
+"Set conditions",,
+"AVDD",V,3.3
+"Bias current",uA,40
+"CLoad per output",pF,10
+"Vin,cm",V,1.65
+"Vout,cm target",V,1.65
+"",,
+"Operating",,
+"Total current",uA,741.494
+"Total power",mW,2.44693
+"VOUTP,DC",V,1.65
+"VOUTN,DC",V,1.65
+"VOUT,CM",V,1.65
+"VOUT,diff,DC",V,-8.70939e-10
+"Required VCMFB",V,2.4981
+"",,
+"Open-loop",,
+"Differential DC gain",dB,92.0571
+"Differential UGF",MHz,14.5367
+"Differential PM",deg,78.8405
+"",,
+"Noise/Offset",,
+"Input offset",mV,-1.63989e-07
+"Input noise, 1-150 Hz",uVrms,1.86167

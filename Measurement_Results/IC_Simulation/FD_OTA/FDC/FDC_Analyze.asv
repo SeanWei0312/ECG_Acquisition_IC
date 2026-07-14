@@ -1,0 +1,251 @@
+% FDC nominal analysis
+clear; clc; close all;
+
+baseDir = ['/Users/sean/Documents/GitHub//ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt'];
+outputDir = ['/Users/sean/Documents/GitHub//ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC']
+
+VOUT_CM_TARGET = 1.65;
+VOUT_MIN = 0.3;
+VOUT_MAX = 3.0;
+
+%% 1. Operating point
+D = numdata(fullfile(baseDir,'NOM.ol_op.txt'));
+op = D(end,end-11:end);
+
+vdd_V       = op(1);
+voutp_V     = op(5);
+voutn_V     = op(6);
+voutcm_V    = op(7);
+voutdiff_V  = op(8);
+ibias_A     = op(9);
+idd_A       = op(10);
+power_W     = op(11);
+cmfb_op_V   = op(12);
+
+%% 2. Differential AC
+D = numdata(fullfile(baseDir,'NOM.ol_diff_ac.txt'));
+
+f_Hz = D(:,1);
+Ad = D(:,2) + 1j*D(:,3);
+
+phase_deg = unwrap(angle(Ad))*180/pi;
+
+% Correct differential polarity
+if abs(phase_deg(1)) > 90
+    Ad = -Ad;
+    phase_deg = unwrap(angle(Ad))*180/pi;
+end
+
+gain_dB = 20*log10(abs(Ad));
+dcGain_dB = gain_dB(1);
+
+k = find(gain_dB(1:end-1) >= 0 & gain_dB(2:end) < 0,1);
+
+if isempty(k)
+    ugf_Hz = NaN;
+    pm_deg = NaN;
+else
+    ugf_Hz = 10^interp1( ...
+        gain_dB(k:k+1),log10(f_Hz(k:k+1)),0);
+
+    phaseUGF_deg = interp1( ...
+        log10(f_Hz(k:k+1)),phase_deg(k:k+1),log10(ugf_Hz));
+
+    pm_deg = 180 + phaseUGF_deg;
+end
+
+figure;
+yyaxis left
+semilogx(f_Hz,gain_dB,'LineWidth',1.5);
+ylabel('Differential gain (dB)');
+yline(0,'--');
+if isfinite(ugf_Hz)
+    xline(ugf_Hz,'--');
+end
+
+yyaxis right
+semilogx(f_Hz,phase_deg,'LineWidth',1.5);
+ylabel('Differential phase (deg)');
+
+xlabel('Frequency (Hz)');
+title('FDC Differential Open-Loop Response');
+grid on;
+
+exportgraphics(gcf,fullfile(outputDir,'NOM.diff_ac.png'), ...
+    'Resolution',300);
+
+%% 3. Input offset
+D = numdata(fullfile(baseDir,'NOM.ol_offset.txt'));
+
+vinDiff_V  = D(:,1);
+voutDiff_V = D(:,7);
+
+offset_V = zeroCross(vinDiff_V,voutDiff_V,0);
+
+figure;
+plot(vinDiff_V*1e3,voutDiff_V,'LineWidth',1.5);
+yline(0,'--');
+
+if isfinite(offset_V)
+    xline(offset_V*1e3,'--');
+end
+
+xlabel('Differential input (mV)');
+ylabel('Differential output (V)');
+title('FDC Input Offset');
+grid on;
+
+exportgraphics(gcf,fullfile(outputDir,'NOM.offset.png'), ...
+    'Resolution',300);
+
+%% 4. Input-referred noise
+D = numdata(fullfile(baseDir,'NOM.ol_noise.txt'));
+
+noiseFreq_Hz = D(:,1);
+inputNoise_VrtHz = D(:,2);
+
+N = numdata(fullfile(baseDir,'NOM.ol_noise_integrated.txt'));
+inputNoise_Vrms = N(end,3);
+
+figure;
+loglog(noiseFreq_Hz,inputNoise_VrtHz*1e9,'LineWidth',1.5);
+xline(0.05,'--');
+xline(150,'--');
+
+xlabel('Frequency (Hz)');
+ylabel('Input noise (nV/\surdHz)');
+title('FDC Input-Referred Noise');
+grid on;
+
+exportgraphics(gcf,fullfile(outputDir,'NOM.noise.png'), 'Resolution',300);
+
+%% 5. Output voltages versus VCMFB
+D = numdata(fullfile(baseDir,'NOM.vcmfb_sweep.txt'));
+
+vcmfb_V = D(:,1);
+voutpSweep_V = D(:,2);
+voutnSweep_V = D(:,3);
+voutcmSweep_V = D(:,4);
+voutdiffSweep_V = D(:,5);
+
+requiredVCMFB_V = zeroCross(vcmfb_V,voutcmSweep_V,VOUT_CM_TARGET);
+
+valid = ...
+    voutpSweep_V >= VOUT_MIN & ...
+    voutpSweep_V <= VOUT_MAX & ...
+    voutnSweep_V >= VOUT_MIN & ...
+    voutnSweep_V <= VOUT_MAX;
+
+figure;
+
+yyaxis left
+plot(vcmfb_V,voutpSweep_V,'LineWidth',1.4);
+hold on;
+plot(vcmfb_V,voutnSweep_V,'LineWidth',1.4);
+plot(vcmfb_V,voutcmSweep_V,'LineWidth',1.4);
+yline(VOUT_CM_TARGET,'--');
+
+ylabel('Output voltage (V)');
+
+yyaxis right
+plot(vcmfb_V,voutdiffSweep_V,'LineWidth',1.4);
+ylabel('Differential output (V)');
+
+if isfinite(requiredVCMFB_V)
+    xline(requiredVCMFB_V,'--');
+end
+
+if any(valid)
+    validVCMFB = vcmfb_V(valid);
+    xline(min(validVCMFB),':');
+    xline(max(validVCMFB),':');
+end
+
+xlabel('VCMFB (V)');
+title('FDC Outputs versus VCMFB');
+grid on;
+
+legend('VOUTP','VOUTN','VOUTCM','Target VOUTCM', 'VOUT,diff','Location','best');
+
+exportgraphics(gcf,fullfile(outputDir,'NOM.vcmfb_sweep.png'), 'Resolution',300);
+
+%% 6. Summary table
+Parameter = [
+    "AVDD"
+    "Bias current"
+    "Total current"
+    "Total power"
+    "VOUTP,DC"
+    "VOUTN,DC"
+    "VOUT,CM"
+    "VOUT,diff,DC"
+    "Required VCMFB"
+    "Differential DC gain"
+    "Differential UGF"
+    "Differential phase margin"
+    "Input offset"
+    "Integrated input noise"
+];
+
+Value = [
+    vdd_V
+    ibias_A*1e6
+    idd_A*1e6
+    power_W*1e3
+    voutp_V
+    voutn_V
+    voutcm_V
+    voutdiff_V
+    requiredVCMFB_V
+    dcGain_dB
+    ugf_Hz/1e6
+    pm_deg
+    offset_V*1e3
+    inputNoise_Vrms*1e6
+];
+
+Unit = [
+    "V"
+    "uA"
+    "uA"
+    "mW"
+    "V"
+    "V"
+    "V"
+    "V"
+    "V"
+    "dB"
+    "MHz"
+    "deg"
+    "mV"
+    "uVrms"
+];
+
+Result = table(Parameter,Value,Unit);
+disp(Result);
+
+writetable(Result,fullfile(baseDir,'NOM.FDC_summary.csv'));
+
+%% Functions
+function D = numdata(file)
+    D = readmatrix(file,'FileType','text');
+    D = D(any(isfinite(D),2),:);
+    D = D(:,any(isfinite(D),1));
+
+    if isempty(D)
+        error('No numeric data found in %s',file);
+    end
+end
+
+function x0 = zeroCross(x,y,target)
+    z = y-target;
+    k = find(z(1:end-1).*z(2:end) <= 0,1);
+
+    if isempty(k)
+        x0 = NaN;
+    elseif z(k) == 0
+        x0 = x(k);
+    else
+        x0 = interp1(z(k:k+1),x(k:k+1),0);
+    end
+end

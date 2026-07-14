@@ -1,0 +1,2 @@
+f_low_Hz f_high_Hz input_noise_Vrms output_noise_Vrms
+0.05 150 2.39111E-06 0.095337
