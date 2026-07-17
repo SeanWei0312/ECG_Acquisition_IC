@@ -58,7 +58,7 @@ C {vdd.sym} 40 -820 0 0 {name=l4 lab=AVDD}
 C {gnd.sym} 40 -760 0 0 {name=l5 lab=0}
 C {capa.sym} 580 -1030 0 0 {name=CLP
 m=1
-value=10p
+value=40p
 footprint=1206
 device="ceramic capacitor"}
 C {vsource.sym} 200 -790 0 0 {name=VVCM        value="dc \{VCM_SET\} ac 0"        savecurrent=false}
@@ -158,7 +158,7 @@ alter @VDIFF[ACMAG] = 0
 alter @VAVDD[ACMAG] = 0
 alter @VAVSS[ACMAG] = 0
 
-dc VDIFF -0.02 0.02 1e-6
+dc VDIFF -0.02 0.02 1e-5
 
 let off_vdiff  = v(vdiff)-v(agnd)
 let off_vinp   = v(inp)-v(agnd)
@@ -210,10 +210,7 @@ setscale frequency
 
 wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_noise.txt input_noise_VrtHz output_noise_VrtHz
 
-op
-set altshow
-show m : vgs vth vds vdsat id gm gds
-
+quit
 .endc
 "}
 C {devices/code_shown.sym} 80 -440 0 0 {name=SETUP only_toplevel=true
@@ -224,8 +221,8 @@ value="
 .param VCM_SET=\{AVDD_SET/2\}
 
 .param VOSDC=0
-.param CMFB_BIAS=2.4981
-.param CMFB_GAIN=246.093
+.param CMFB_BIAS=2.4849
+.param CMFB_GAIN=500
 
 .temp \{TEMP_SET\}
 
@@ -253,7 +250,7 @@ C {lab_wire.sym} 560 -810 0 0 {name=p21 sig_type=std_logic lab=VDIFF}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sym} 220 -900 0 0 {name=xSEOTA1}
 C {capa.sym} 680 -1030 0 0 {name=CLN
 m=1
-value=10p
+value=40p
 footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 680 -980 2 0 {name=CLN2 sig_type=std_logic lab=AGND}

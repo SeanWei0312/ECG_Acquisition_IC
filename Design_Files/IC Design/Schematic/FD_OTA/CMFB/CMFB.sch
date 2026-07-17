@@ -51,17 +51,18 @@ N 760 -360 760 -120 {lab=CMFB_SS}
 N 140 -400 160 -400 {lab=CMFB_B}
 N 340 -200 360 -200 {lab=CMFB_B}
 N 300 -120 760 -120 {lab=CMFB_SS}
-N 540 -440 660 -440 {lab=#net2}
-N 660 -520 660 -440 {lab=#net2}
-N 580 -520 660 -520 {lab=#net2}
-N 720 -520 740 -520 {lab=#net2}
-N 660 -520 720 -520 {lab=#net2}
+N 540 -440 620 -440 {lab=#net2}
+N 620 -520 620 -440 {lab=#net2}
+N 580 -520 620 -520 {lab=#net2}
+N 700 -520 740 -520 {lab=CMFB_OUT}
+N 700 -520 700 -440 {lab=CMFB_OUT}
+N 700 -440 780 -440 {lab=CMFB_OUT}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {symbols/pfet_03v3.sym} 760 -520 0 0 {name=M4
 L=1u
 W=1u
 nf=1
-m=100
+m=19
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -74,7 +75,7 @@ C {symbols/pfet_03v3.sym} 560 -520 0 1 {name=M3
 L=1u
 W=1u
 nf=1
-m=100
+m=19
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -89,7 +90,7 @@ C {symbols/nfet_03v3.sym} 520 -360 0 0 {name=M1
 L=1u
 W=1u
 nf=1
-m=100
+m=30
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -102,7 +103,7 @@ C {symbols/nfet_03v3.sym} 800 -360 0 1 {name=M2
 L=1u
 W=1u
 nf=1
-m=100
+m=30
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -112,10 +113,10 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X}
 C {symbols/nfet_03v3.sym} 640 -200 0 0 {name=M5
-L=1u
+L=2u
 W=1u
 nf=1
-m=20
+m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -125,10 +126,10 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X}
 C {symbols/nfet_03v3.sym} 320 -200 0 1 {name=M10
-L=1u
+L=2u
 W=1u
 nf=1
-m=50
+m=10
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -140,8 +141,7 @@ spiceprefix=X}
 C {lab_wire.sym} 660 -600 2 1 {name=p2 sig_type=std_logic lab=CMFB_DD}
 C {lab_wire.sym} 360 -200 2 0 {name=p5 sig_type=std_logic lab=CMFB_B
 }
-C {lab_wire.sym} 840 -360 2 0 {name=p6 sig_type=std_logic lab=CMFB_IN
-}
+C {lab_wire.sym} 840 -360 2 0 {name=p6 sig_type=std_logic lab=CMFB_IN}
 C {iopin.sym} 140 -600 0 1 {name=p8 lab=CMFB_DD}
 C {iopin.sym} 140 -560 0 1 {name=p9 lab=CMFB_SS}
 C {lab_wire.sym} 660 -120 2 1 {name=p10 sig_type=std_logic lab=CMFB_SS}

@@ -43,7 +43,7 @@ C {vdd.sym} 200 -760 0 0 {name=l4 lab=AVDD}
 C {gnd.sym} 200 -700 0 0 {name=l5 lab=0}
 C {capa.sym} 740 -930 0 0 {name=CL
 m=1
-value=2p
+value=10p
 footprint=1206
 device="ceramic capacitor"}
 C {vsource.sym} 360 -730 0 0 {name=VVCM              value="dc \{VCM_SET\} ac 0"                savecurrent=false}
@@ -100,6 +100,7 @@ setscale frequency
 
 wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.Result_txt/NOM.ol_ac.txt loop_real loop_imag
 
+quit
 .endc
 "}
 C {devices/code_shown.sym} 80 -380 0 0 {name=SETUP only_toplevel=true
@@ -110,9 +111,9 @@ value="
 
 .param VCM_SET=\{AVDD_SET/2\}
 .param VOUT_CM_BIAS=\{AVDD_SET/2\}
-.param CMFB_OUT_BIAS=2.4981
+.param CMFB_OUT_BIAS=2.4849
 
-.param PLANT_GAIN=1
+.param PLANT_GAIN=500
 
 .temp \{TEMP_SET\}
 

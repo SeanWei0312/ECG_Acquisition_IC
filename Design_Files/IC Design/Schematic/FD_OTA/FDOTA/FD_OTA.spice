@@ -1,0 +1,84 @@
+** sch_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDOTA/FD_OTA.sch
+**.subckt FD_OTA FDOTA_DD FDOTA_SS FDOTA_INP FDOTA_INN FDOTA_OUTN FDOTA_BFDC FDOTA_OUTP FDOTA_BCMFB FDOTA_REF FDOTA_VOCM
+*.iopin FDOTA_DD
+*.iopin FDOTA_SS
+*.ipin FDOTA_INP
+*.ipin FDOTA_INN
+*.opin FDOTA_OUTP
+*.iopin FDOTA_BFDC
+*.opin FDOTA_OUTN
+*.iopin FDOTA_BCMFB
+*.iopin FDOTA_REF
+*.iopin FDOTA_VOCM
+R1 FDOTA_OUTP FDOTA_VOCM 100k
+R2 FDOTA_VOCM FDOTA_OUTN 100k
+C1 FDOTA_OUTP FDOTA_VOCM 50f
+C2 FDOTA_VOCM FDOTA_OUTN 50f
+xFDC1 FDOTA_DD FDOTA_SS FDOTA_INP FDOTA_INN FDOTA_OUTN FDOTA_BFDC FDOTA_OUTP FDOTA_VCMFB FDC
+xCMFB1 FDOTA_DD FDOTA_SS FDOTA_VOCM FDOTA_REF FDOTA_VCMFB FDOTA_BCMFB CMFB
+**.ends
+
+* expanding   symbol:  ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sym # of pins=8
+** sym_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sym
+** sch_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sch
+.subckt FDC FDC_DD FDC_SS FDC_INP FDC_INN FDC_OUTN FDC_B FDC_OUTP FDC_CMFB
+*.iopin FDC_DD
+*.iopin FDC_SS
+*.ipin FDC_INP
+*.ipin FDC_INN
+*.opin FDC_OUTP
+*.iopin FDC_B
+*.opin FDC_OUTN
+*.iopin FDC_CMFB
+XM3 net4 FDC_CMFB FDC_DD FDC_DD pfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM8 FDC_OUTP FDC_B FDC_SS FDC_SS nfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=50
+Rz net1 net2 1k
+XM5 net3 FDC_B FDC_SS FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=4
+XM6 FDC_OUTP net1 FDC_DD FDC_DD pfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM10 FDC_B FDC_B FDC_SS FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+Cc net2 FDC_OUTP 3p
+XM9 FDC_OUTN FDC_B FDC_SS FDC_SS nfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=50
+Rz1 net4 net5 1k
+XM7 FDC_OUTN net4 FDC_DD FDC_DD pfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+Cc1 net5 FDC_OUTN 3p
+XM4 net1 FDC_CMFB FDC_DD FDC_DD pfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM1 net4 FDC_INN net3 FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM2 net1 FDC_INP net3 FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+.ends
+
+
+* expanding   symbol:  ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/CMFB/CMFB.sym # of pins=6
+** sym_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/CMFB/CMFB.sym
+** sch_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/CMFB/CMFB.sch
+.subckt CMFB CMFB_DD CMFB_SS CMFB_IN CMFB_REF CMFB_OUT CMFB_B
+*.iopin CMFB_DD
+*.iopin CMFB_SS
+*.ipin CMFB_IN
+*.ipin CMFB_REF
+*.opin CMFB_OUT
+*.iopin CMFB_B
+XM4 CMFB_OUT CMFB_OUT CMFB_DD CMFB_DD pfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=22
+XM3 net2 net2 CMFB_DD CMFB_DD pfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=22
+XM1 net2 CMFB_REF net1 CMFB_SS nfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=6
+XM2 CMFB_OUT CMFB_IN net1 CMFB_SS nfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=6
+XM5 net1 CMFB_B CMFB_SS CMFB_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM10 CMFB_B CMFB_B CMFB_SS CMFB_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+.ends
+
+.end

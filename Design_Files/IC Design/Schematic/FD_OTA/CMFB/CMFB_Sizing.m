@@ -19,16 +19,16 @@ Ibias_uA = 40;      % uA
 W_unit   = 1;        % uA
 
 % M1, M2 NMOS differential input pair
-L12_um          = 1.00;
-gmid12_1perV    = 16.00;
-idw12_uA_per_um = 0.1264;
-gmgds12         = 861.69;
+L12_um          = 0.50;
+gmid12_1perV    = 4.00;
+idw12_uA_per_um = 25.15;
+gmgds12         = 126.56;
 
 % M3, M4 PMOS 1st-stage current-source loads controlled by VCMFB
-L34_um          = 2.00;
-gmid34_1perV    = 8.00;
-idw34_uA_per_um = 1.796;
-gmgds34         = 561.04;
+L34_um          = 0.50;
+gmid34_1perV    = 4.00;
+idw34_uA_per_um = 7.602;
+gmgds34         = 127.77;
 
 % M5 NMOS 1st-stage tail current source
 L5_um          = 2.00;

@@ -28,7 +28,7 @@ C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {vdd.sym} 560 -1340 0 0 {name=l2 lab=AVDD}
 C {capa.sym} 720 -1250 0 0 {name=CL
 m=1
-value=2p
+value=10p
 footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 460 -1280 0 0 {name=p2 sig_type=std_logic lab=B}
@@ -108,6 +108,7 @@ setscale time
 
 wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.Result_txt/NOM.cl_tran.txt tr_ref tr_voutcm tr_vcmfb tr_error
 
+quit
 .endc
 "}
 C {devices/code_shown.sym} 80 -620 0 0 {name=SETUP only_toplevel=true
@@ -118,9 +119,9 @@ value="
 
 .param VCM_REF_DC=\{AVDD_SET/2\}
 .param VOUT_CM_BIAS=\{AVDD_SET/2\}
-.param CMFB_OUT_BIAS=2.4981
+.param CMFB_OUT_BIAS=2.4849
 
-.param PLANT_GAIN=1
+.param PLANT_GAIN=500
 
 .param VCM_LOW=1.55
 .param VCM_HIGH=1.75

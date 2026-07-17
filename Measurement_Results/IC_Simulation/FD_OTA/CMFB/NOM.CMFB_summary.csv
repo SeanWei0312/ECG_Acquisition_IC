@@ -8,20 +8,20 @@ Parameter,Unit,Value
 "Vout,cm target",V,1.65
 "",,
 "Operating",,
-"Total current",uA,16.0176
-"Total power",mW,0.052858
-"VCMFB,OUT",V,2.49815
-"VCMFB,IN",V,1.65005
-"VCMFB,OUT target",V,2.4981
+"Total current",uA,3.9842
+"Total power",mW,0.0131479
+"VCMFB,OUT",V,2.4849
+"VCMFB,IN",V,1.6489
+"VCMFB,OUT target",V,2.4849
 "",,
 "Open-loop",,
-"DC gain",dB,47.8223
-"UGF",MHz,12.1614
-"PM",deg,77.2892
+"DC gain",dB,51.0311
+"UGF",MHz,184.895
+"PM",deg,74.482
 "",,
 "Closed-loop",,
-"VCMFB,OUT err",mV,0.0501897
-"VCMFB,IN err",mV,0.0501897
-"Valid VCMFB,REF",V,0.33-2.15
-"tsettle low",ns,43
-"tsettle high",ns,38
+"VCMFB,OUT err",mV,-0.0021909
+"VCMFB,IN err",mV,-1.09545
+"Valid VCMFB,REF",V,0.93-3.3
+"tsettle low",ns,10
+"tsettle high",ns,8

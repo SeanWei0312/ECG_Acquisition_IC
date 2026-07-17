@@ -1,0 +1,45 @@
+Parameter,Unit,Value
+"Set conditions",,
+"AVDD",V,3.300
+"Bias current",uA,40.000
+"CLoad",pF,10
+"Vin,cm",V,1.6500
+"Vout target",V,1.6500
+"Closed-loop gain",V/V,1
+"",,
+"Operating",,
+"Total current",uA,280.343
+"Total power",mW,0.9251
+"Vout,DC",V,1.6500
+"",,
+"Open-loop",,
+"DC gain",dB,92.54
+"UGF",MHz,9.5191
+"Phase margin",deg,66.35
+"",,
+"Noise/Offset",,
+"Input offset",mV,0.253
+"Input noise",uVrms,12.594
+"",,
+"Rejection",,
+"CMRR @ 1 Hz",dB,107.86
+"CMRR @ 60 Hz",dB,107.86
+"CMRR @ 150 Hz",dB,107.86
+"CMRR @ 1 kHz",dB,107.86
+"PSRR+ @ 1 Hz",dB,107.60
+"PSRR+ @ 60 Hz",dB,107.60
+"PSRR+ @ 150 Hz",dB,107.59
+"PSRR+ @ 1 kHz",dB,107.56
+"PSRR- @ 1 Hz",dB,107.61
+"PSRR- @ 60 Hz",dB,107.61
+"PSRR- @ 150 Hz",dB,107.61
+"PSRR- @ 1 kHz",dB,107.58
+"",,
+"Closed-loop",,
+"Input CM low",V,0.000
+"Input CM high",V,2.130
+"Output swing low",V,0.047
+"Output swing high",V,2.881
+"Slew rate rising",V/us,7.463
+"Slew rate falling",V/us,7.748
+"Settling time",ns,150.07

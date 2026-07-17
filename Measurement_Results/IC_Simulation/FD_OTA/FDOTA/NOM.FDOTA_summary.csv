@@ -1,0 +1,45 @@
+Parameter,Unit,Value
+"Open-loop simulation",,
+"Total current",uA,1685.35
+"Total power",mW,5.56166
+"Diff DC gain",dB,89.1368
+"Diff UGF",MHz,11.4114
+"Diff Phase margin",deg,68.895
+"Input offset",mV,-1.10563e-08
+"CMRR @ 0.05 Hz",dB,280.879
+"CMRR @ 60 Hz",dB,280.925
+"CMRR @ 150 Hz",dB,281.004
+"CMRR @ 1 kHz",dB,280.879
+"PSRR+ @ 0.05 Hz",dB,260.095
+"PSRR+ @ 60 Hz",dB,259.907
+"PSRR+ @ 150 Hz",dB,259.735
+"PSRR+ @ 1 kHz",dB,259.504
+"PSRR- @ 0.05 Hz",dB,260.774
+"PSRR- @ 60 Hz",dB,260.828
+"PSRR- @ 150 Hz",dB,260.797
+"PSRR- @ 1 kHz",dB,260.768
+"Input-referred noise",uVrms,2.20061
+"",,
+"Closed-loop simulation",,
+"Gain error",%,-0.0103032
+"Voutp,DC",V,1.64911
+"Voutn,DC",V,1.64911
+"Vout,cm",V,1.64911
+"Vout,cm error",mV,-0.89133
+"Vout,diff,DC",V,-7.12963e-10
+"Input CM low",V,0.529
+"Input CM high",V,3.3
+"Diff Input low",V,-2.96
+"Diff Input high",V,2.96
+"Diff Output swing low",V,-2.95801
+"Diff Output swing high",V,2.95801
+"SR rise +",V/us,2.96369
+"SR fall +",V/us,3.26231
+"SR rise -",V/us,2.8812
+"SR fall -",V/us,3.30841
+"Diff rise",V/us,6.25315
+"Diff fall",V/us,6.13153
+"Settling time + OUTP",ns,531
+"Settling time - OUTN",ns,531
+"Diff Settling time",ns,311
+"Output CM settling time",ns,756

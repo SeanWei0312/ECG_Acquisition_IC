@@ -1,0 +1,122 @@
+** sch_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Testbench/FD_OTA/FDC/Open_Loop/FDC_TB_VCMFB_NOM.sch
+**.subckt FDC_TB_VCMFB_NOM
+IBIAS AGND B dc 40u
+VAVDD AVDD 0 dc {AVDD_SET} ac 0
+.save i(vavdd)
+CLP OUTP AGND 40p
+VVCM VCM AGND dc {VCM_SET} ac 0
+VDIFF VDIFF AGND dc {VOSDC} ac 1
+VAVSS AGND 0 dc {AVSS_SET} ac 0
+.save i(vavss)
+EINN INN VCM VDIFF AGND -0.5
+EINP INP VCM VDIFF AGND 0.5
+xSEOTA1 AVDD AGND INP INN OUTN B OUTP CMFB FDC
+CLN OUTN AGND 40p
+VCMFBBIAS CMFB AGND dc {CMFB_BIAS} ac 0
+**** begin user architecture code
+
+.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+
+
+
+.control
+destroy all
+save all
+set wr_vecnames
+set wr_singlescale
+option numdgt=15
+
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt
+
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.vcmfb_sweep.txt
+
+let avdd_run = 3.3
+let vcm_run  = avdd_run/2
+let vos_run  = 0
+
+alter @VAVDD[DC] = $&avdd_run
+alter @VVCM[DC]  = $&vcm_run
+alter @VDIFF[DC] = $&vos_run
+
+alter @VVCM[ACMAG]  = 0
+alter @VDIFF[ACMAG] = 0
+alter @VAVDD[ACMAG] = 0
+alter @VAVSS[ACMAG] = 0
+
+* VCMFB sweep
+dc VCMFBBIAS 0 $&avdd_run 1e-4
+
+let sweep_vcmfb  = v(cmfb)-v(agnd)
+let sweep_voutp  = v(outp)-v(agnd)
+let sweep_voutn  = v(outn)-v(agnd)
+let sweep_voutcm = (sweep_voutp+sweep_voutn)/2
+let sweep_vod    = sweep_voutp-sweep_voutn
+
+setscale sweep_vcmfb
+
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.vcmfb_sweep.txt sweep_voutp sweep_voutn sweep_voutcm sweep_vod
+
+quit
+.endc
+
+
+
+
+.param AVDD_SET=3.3
+.param AVSS_SET=0
+.param TEMP_SET=27
+.param VCM_SET={AVDD_SET/2}
+
+.param VOSDC=0
+.param CMFB_BIAS={VCM_SET}
+
+.temp {TEMP_SET}
+
+.options gmin=1e-12 rshunt=1e12 method=gear
+.nodeset v(B)=2.3 v(CMFB)={CMFB_BIAS} v(OUTP)={VCM_SET} v(OUTN)={VCM_SET}
+
+
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sym # of pins=8
+** sym_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sym
+** sch_path: /foss/designs/ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sch
+.subckt FDC FDC_DD FDC_SS FDC_INP FDC_INN FDC_OUTN FDC_B FDC_OUTP FDC_CMFB
+*.iopin FDC_DD
+*.iopin FDC_SS
+*.ipin FDC_INP
+*.ipin FDC_INN
+*.opin FDC_OUTP
+*.iopin FDC_B
+*.opin FDC_OUTN
+*.iopin FDC_CMFB
+XM3 net4 FDC_CMFB FDC_DD FDC_DD pfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM8 FDC_OUTP FDC_B FDC_SS FDC_SS nfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+Rz net1 net2 6k
+XM5 net3 FDC_B FDC_SS FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=10
+XM6 FDC_OUTP net1 FDC_DD FDC_DD pfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM10 FDC_B FDC_B FDC_SS FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=20
+Cc net2 FDC_OUTP 3p
+XM9 FDC_OUTN FDC_B FDC_SS FDC_SS nfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+Rz1 net4 net5 6k
+XM7 FDC_OUTN net4 FDC_DD FDC_DD pfet_03v3 L=1u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+Cc1 net5 FDC_OUTN 3p
+XM4 net1 FDC_CMFB FDC_DD FDC_DD pfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM1 net4 FDC_INN net3 FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+XM2 net1 FDC_INP net3 FDC_SS nfet_03v3 L=2u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=200
+.ends
+
+.GLOBAL AVDD
+.end

@@ -127,6 +127,12 @@ legend('VOUT,CM','Target VOUT,CM','VOUT,diff','Location','best');
 stylePlot('VCMFB (V)','FDC Outputs versus VCMFB');
 saveFig(plotDir,'NOM.vcmfb_sweep.png');
 
+%% Plant gain at 1 Hz
+D = numdata(fullfile(baseDir,'NOM.plant_ac.txt'));
+plantFreq_Hz = D(:,1);
+Aplant = D(:,2) + 1j*D(:,3);
+plantGain1Hz_VV = abs(interpAtFreq(plantFreq_Hz,Aplant,1));
+
 %% Summary table
 rows = [
     "Set conditions",        "",      ""
@@ -149,6 +155,7 @@ rows = [
     "Differential DC gain",  "dB",    fmt(dcGain_dB)
     "Differential UGF",      "MHz",   fmt(ugf_Hz/1e6)
     "Differential PM",       "deg",   fmt(pm_deg)
+    "Plant gain",            "V/V",   fmt(plantGain1Hz_VV)
     "",                      "",      ""
     "Noise/Offset",          "",      ""
     "Input offset",          "mV",    fmt(offset_V*1e3)

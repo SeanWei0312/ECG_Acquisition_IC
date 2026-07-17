@@ -42,7 +42,7 @@ C {vdd.sym} 40 -800 0 0 {name=l4 lab=AVDD}
 C {gnd.sym} 40 -740 0 0 {name=l5 lab=0}
 C {capa.sym} 580 -1010 0 0 {name=CLP
 m=1
-value=10p
+value=40p
 footprint=1206
 device="ceramic capacitor"}
 C {vsource.sym} 200 -770 0 0 {name=VVCM        value="dc \{VCM_SET\} ac 0"        savecurrent=false}
@@ -99,6 +99,7 @@ setscale sweep_vcmfb
 
 wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.vcmfb_sweep.txt sweep_voutp sweep_voutn sweep_voutcm sweep_vod
 
+quit
 .endc
 "}
 C {devices/code_shown.sym} 80 -420 0 0 {name=SETUP only_toplevel=true
@@ -138,7 +139,7 @@ C {lab_wire.sym} 560 -790 0 0 {name=p21 sig_type=std_logic lab=VDIFF}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sym} 220 -880 0 0 {name=xSEOTA1}
 C {capa.sym} 680 -1010 0 0 {name=CLN
 m=1
-value=10p
+value=40p
 footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 680 -960 2 0 {name=CLN2 sig_type=std_logic lab=AGND}
