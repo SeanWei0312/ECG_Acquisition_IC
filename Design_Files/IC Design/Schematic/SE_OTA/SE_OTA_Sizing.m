@@ -20,43 +20,43 @@ GBW_MHz  = 15;      % MHz
 Cc_pF    = 2;       % pF
 CL_pF    = 10;      % pF
 Ibias_uA = 40;      % uA
-W_unit   = 4;        % uA
+W_unit   = 1;        % uA
 
 % M1, M2 PMOS 1st-stage differential input pair
-L12_um          = 1.00;
+L12_um          = 2.00;
 gmid12_1perV    = 16.00;
-idw12_uA_per_um = 0.1264;
-gmgds12         = 861.69;
+idw12_uA_per_um = 0.05669;
+gmgds12         = 1608.33;
 
 % M3, M4 NMOS 1st-stage current-source loads
 L34_um          = 2.00;
-gmid34_1perV    = 8.00;
-idw34_uA_per_um = 1.796;
-gmgds34         = 561.04;
+gmid34_1perV    = 16.00;
+idw34_uA_per_um = 0.2441;
+gmgds34         = 563.45;
 
 % M5 PMOS tail 1st-stage tail current source
 L5_um          = 2.00;
-gmid5_1perV    = 8.00;
+gmid5_1perV    = 6.00;
 idw5_uA_per_um = 0.397;
 gmgds5         = 1066.90;
 
 % M6 NMOS 2nd-stage common-source amplifier
 L6_um          = 0.50;
-gmid6_1perV    = 8.00;
-idw6_uA_per_um = 7.241;
-gmgds6         = 165.52;
+gmid6_1perV    = 6.00;
+idw6_uA_per_um = 12.67;
+gmgds6         = 151.15;
 
 % M7 PMOS 2nd-stage current-source load
 L7_um          = 0.50;
-gmid7_1perV    = 8.00;
-idw7_uA_per_um = 2.067;
-gmgds7         = 225.52;
+gmid7_1perV    = 6.00;
+idw7_uA_per_um = 3.641;
+gmgds7         = 181.72;
 
 % M8 PMOS bias current mirror device
 L8_um          = 2.00;
-gmid8_1perV    = 8.00;
-idw8_uA_per_um = 0.397;
-gmgds8         = 1066.90;
+gmid8_1perV    = 5.00;
+idw8_uA_per_um = 1.027;
+gmgds8         = 711.03;
 
 
 %% STAGE 1 SIZING
@@ -74,7 +74,7 @@ W5_um  = Id5_uA / idw5_uA_per_um;
 
 
 %% STAGE 2 SIZING
-gm6_uS = kp2 * gm12_uS * (CL_pF / Cc_pF);
+gm6_uS = kp2 * gm12_uS * (1 + (CL_pF / Cc_pF));
 Id6_uA = gm6_uS / gmid6_1perV;
 W6_um  = Id6_uA / idw6_uA_per_um;
 

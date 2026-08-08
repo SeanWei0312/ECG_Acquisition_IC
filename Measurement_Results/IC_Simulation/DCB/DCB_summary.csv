@@ -1,0 +1,9 @@
+Parameter,Unit,Value
+Total current,nA,0.0033
+Output common mode,V,1.64997
+Output common-mode error,mV,-0.0263996
+High-pass corner,Hz,0.000997111
+Gain at 0.05 Hz,dB,-0.0017204
+Gain at 150 Hz,dB,-1.73737e-06
+Differential gain error,%,0
+Maximum input DC offset blocked,V,0.5

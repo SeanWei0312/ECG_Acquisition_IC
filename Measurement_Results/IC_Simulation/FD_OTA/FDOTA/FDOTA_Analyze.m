@@ -1,4 +1,5 @@
 
+
 % FDOTA nominal analysis
 clear; clc; close all;
 
@@ -8,14 +9,12 @@ plotDir = fullfile(scriptDir,'Plots');
 if ~exist(plotDir,'dir'), mkdir(plotDir); end
 
 TAG = "NOM";
-VOUT_CM_TARGET = 1.65;
 TRACK_LIMIT = 2e-3;
-OFFSET_LIMIT = 2e-3;
-ICMR_CURRENT_TOL = 0.20;
-ICMR_GAIN_DROP_DB = 0.1;
+OFFSET_LIMIT = 1e-3;
+ICMR_CURRENT_TOL = 0.10;
+ICMR_GAIN_TOL_DB = 0.01;
 VOUT_CM_TOL = 2e-3;
-OUTPUT_MARGIN = 0.10;
-SETTLE_LIMIT = 10e-3;
+SETTLE_LIMIT = 2e-3;
 NOISE_BAND_HZ = [0.05 150];
 MARK_FREQ_HZ = [0.05 60 150 1e3];
 NOISE_MARK_HZ = [NOISE_BAND_HZ(1) 60 NOISE_BAND_HZ(2)];
@@ -25,6 +24,7 @@ op = cols(numdata(fullfile(baseDir,TAG + ".ol_op.txt")),14);
 op = op(end,:);
 
 vdd_V = op(1);
+VOUT_CM_TARGET = vdd_V/2;
 vinCm_V = 0.5*(op(2) + op(3));
 idd_A = abs(op(12));
 ibiasFdc_A = abs(op(13));
@@ -32,7 +32,7 @@ ibiasCmfb_A = abs(op(14));
 totalCurrent_A = idd_A + ibiasFdc_A + ibiasCmfb_A;
 totalPower_W = vdd_V*totalCurrent_A;
 
-%% Open-loop gain and phase
+%% Open-loop: gain and phase
 [f_Hz,Ad] = transferFromFile(fullfile(baseDir,TAG + ".ol_diff_ac.txt"));
 [gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f_Hz,Ad);
 dcGain_dB = gain_dB(1);
@@ -52,7 +52,7 @@ ylabel('Differential phase (deg)');
 stylePlot('Frequency (Hz)','FDOTA Open-Loop Gain and Phase');
 saveFig(plotDir,'NOM.open_loop_gain_phase.png');
 
-%% CMRR and PSRR
+%% Open-loop: CMRR and PSRR
 [fCm_Hz,Acm] = transferFromFile(fullfile(baseDir,TAG + ".ol_cm_ac.txt"));
 [fP_Hz,AsupP] = transferFromFile(fullfile(baseDir,TAG + ".ol_psrrp_ac.txt"));
 [fN_Hz,AsupN] = transferFromFile(fullfile(baseDir,TAG + ".ol_psrrn_ac.txt"));
@@ -88,7 +88,7 @@ ylabel('PSRR- (dB)');
 stylePlot('Frequency (Hz)','FDOTA PSRR-');
 saveFig(plotDir,'NOM.psrr.png');
 
-%% Input-referred noise
+%% Open-loop: input-referred noise
 [fNoise_Hz,outNoise_VrtHz] = readNoise(baseDir,TAG);
 inNoise_VrtHz = outNoise_VrtHz ./ interpAtFreq(f_Hz,abs(Ad),fNoise_Hz);
 inputNoise_Vrms = integrateNoise(fNoise_Hz,inNoise_VrtHz,NOISE_BAND_HZ);
@@ -106,7 +106,7 @@ xlim(NOISE_BAND_HZ);
 stylePlot('Frequency (Hz)','FDOTA Input-Referred Noise Density versus Frequency');
 saveFig(plotDir,'NOM.input_referred_noise_density.png');
 
-%% Open-loop VTC
+%% Open-loop: VTC
 vtc = cols(numdata(fullfile(baseDir,TAG + ".ol_vtc.txt")),9);
 vtcVinDiff_V = vtc(:,1);
 vtcVoutDiff_V = vtc(:,7);
@@ -120,7 +120,7 @@ ylabel('Vout,diff (V)');
 stylePlot('Vin,diff (mV)','FDOTA Open-Loop VTC');
 saveFig(plotDir,'NOM.open_loop_vtc.png');
 
-%% Closed-loop VTC and output swing
+%% Closed-loop: VTC and output swing
 cl = cols(numdata(fullfile(baseDir,TAG + ".cl_diff_dc.txt")),8);
 clCmd_V = cl(:,1);
 clVoutp_V = cl(:,3);
@@ -159,6 +159,10 @@ else
 end
 
 figure;
+tiledlayout(2,1);
+sgtitle('FDOTA Output Swing and Closed-Loop VTC');
+
+nexttile;
 plot(clCmd_V,trackError_V*1e3,'LineWidth',1.5); hold on;
 yline(TRACK_LIMIT*1e3,'--','+2mV','HandleVisibility','off');
 yline(-TRACK_LIMIT*1e3,'--','-2mV','HandleVisibility','off');
@@ -167,10 +171,9 @@ if isfinite(iLow)
     xline(clCmd_V(iHigh),'--',sprintf('High: %.4g V',clCmd_V(iHigh)),'HandleVisibility','off');
 end
 ylabel('Tracking error (mV)');
-stylePlot('Vin,diff command (V)','FDOTA Output Swing / DC Tracking Error');
-saveFig(plotDir,'NOM.output_swing_tracking_error.png');
+stylePlot('Vin,diff command (V)','');
 
-figure;
+nexttile;
 plot(clCmd_V,clVoutdiff_V,'LineWidth',1.5); hold on;
 plot(clCmd_V,clCmd_V,'--','LineWidth',1.2);
 if isfinite(iLow)
@@ -181,50 +184,52 @@ if isfinite(iLow)
 end
 ylabel('Vout,diff (V)');
 legend('Measured','Ideal','Location','best');
-stylePlot('Vin,diff command (V)','FDOTA Closed-Loop VTC');
-saveFig(plotDir,'NOM.closed_loop_vtc.png');
+stylePlot('Vin,diff command (V)','');
+saveFig(plotDir,'NOM.output_swing_and_closed_loop_vtc.png');
 
-%% Input common-mode range
+%% Closed-loop: input common-mode range
 ic = cols(numdata(fullfile(baseDir,TAG + ".cl_icmr.txt")),12);
 [icmrLow_V,icmrHigh_V,icmr] = analyzeICMRSweep(ic(:,2),ic(:,5),ic(:,6),ic(:,7), ...
     ic(:,8),ic(:,9),ic(:,10),abs(ic(:,12)),vinCm_V,VOUT_CM_TARGET,vdd_V, ...
-    OFFSET_LIMIT,ICMR_CURRENT_TOL,ICMR_GAIN_DROP_DB,VOUT_CM_TOL,OUTPUT_MARGIN);
+    OFFSET_LIMIT,ICMR_CURRENT_TOL,ICMR_GAIN_TOL_DB,VOUT_CM_TOL);
+icmrPlotValid = icmr.valid & icmr.vcm >= icmrLow_V & icmr.vcm <= icmrHigh_V;
+icmrLimit = limitingIcmrRules(icmr,vinCm_V);
 
 figure;
 tiledlayout(4,1);
 nexttile;
 plot(icmr.vcm,icmr.reqVinDiff*1e3,'LineWidth',1.5); hold on;
-plot(icmr.vcm(icmr.valid),icmr.reqVinDiff(icmr.valid)*1e3,'r','LineWidth',2.0);
-labelRange(icmrLow_V,icmrHigh_V);
+plotIfLimit(icmrLimit.offset,icmr.vcm,icmr.reqVinDiff*1e3,icmrPlotValid);
+labelRange(icmrLimit.range.offset(1),icmrLimit.range.offset(2));
 ylabel('Req Vin,diff (mV)');
 stylePlot('','FDOTA Input Common-Mode Range');
 
 nexttile;
 plot(icmr.vcm,icmr.idd*1e6,'LineWidth',1.5); hold on;
-plot(icmr.vcm(icmr.valid),icmr.idd(icmr.valid)*1e6,'r','LineWidth',2.0);
-labelRange(icmrLow_V,icmrHigh_V);
+plotIfLimit(icmrLimit.current,icmr.vcm,icmr.idd*1e6,icmrPlotValid);
+labelRange(icmrLimit.range.current(1),icmrLimit.range.current(2));
 ylabel('IDD (uA)');
 stylePlot('','');
 
 nexttile;
 plot(icmr.vcm,20*log10(abs(icmr.gain)),'LineWidth',1.5); hold on;
-plot(icmr.vcm(icmr.valid),20*log10(abs(icmr.gain(icmr.valid))),'r','LineWidth',2.0);
-labelRange(icmrLow_V,icmrHigh_V);
+plotIfLimit(icmrLimit.gain,icmr.vcm,20*log10(abs(icmr.gain)),icmrPlotValid);
+labelRange(icmrLimit.range.gain(1),icmrLimit.range.gain(2));
 ylabel('Local gain (dB)');
 stylePlot('','');
 
 nexttile;
 voutCmErr_mV = 1e3*(icmr.voutcm - VOUT_CM_TARGET);
 plot(icmr.vcm,voutCmErr_mV,'LineWidth',1.5); hold on;
-plot(icmr.vcm(icmr.valid),voutCmErr_mV(icmr.valid),'r','LineWidth',2.0);
+plotIfLimit(icmrLimit.vout,icmr.vcm,voutCmErr_mV,icmrPlotValid);
 yline(VOUT_CM_TOL*1e3,'--',sprintf('+%.4gmV',VOUT_CM_TOL*1e3),'HandleVisibility','off');
 yline(-VOUT_CM_TOL*1e3,'--',sprintf('-%.4gmV',VOUT_CM_TOL*1e3),'HandleVisibility','off');
-labelRange(icmrLow_V,icmrHigh_V);
+labelRange(icmrLimit.range.vout(1),icmrLimit.range.vout(2));
 ylabel('Vout,cm err (mV)');
 stylePlot('Vin,cm (V)','');
 saveFig(plotDir,'NOM.input_common_mode_range.png');
 
-%% Closed-loop transient
+%% Closed-loop: transient
 tr = cols(numdata(fullfile(baseDir,TAG + ".cl_diff_tran.txt")),9);
 tDiff_s = tr(:,1);
 trCmd_V = tr(:,2);
@@ -252,6 +257,9 @@ addSrCursor(outpRisePt,sprintf('OUTP rise: %.4g V/us',srOutpRise_Vus));
 addSrCursor(outpFallPt,sprintf('OUTP fall: %.4g V/us',srOutpFall_Vus));
 addSrCursor(outnRisePt,sprintf('OUTN rise: %.4g V/us',srOutnRise_Vus));
 addSrCursor(outnFallPt,sprintf('OUTN fall: %.4g V/us',srOutnFall_Vus));
+addMetricBox({ ...
+    sprintf('OUTP settle: %s ns',fmt(settleOutp_s*1e9)), ...
+    sprintf('OUTN settle: %s ns',fmt(settleOutn_s*1e9))});
 ylabel('Output voltage (V)');
 legend('OUTP target','OUTN target','OUTP','OUTN','Location','best');
 stylePlot('','FDOTA Closed-Loop Step Response');
@@ -263,6 +271,7 @@ plot(tDiff_s*1e6,trCmd_V-TRACK_LIMIT,':','LineWidth',1.0,'HandleVisibility','off
 plot(tDiff_s*1e6,trVoutdiff_V,'LineWidth',1.5);
 addSrCursor(diffRisePt,sprintf('Diff rise: %.4g V/us',srDiffRise_Vus));
 addSrCursor(diffFallPt,sprintf('Diff fall: %.4g V/us',srDiffFall_Vus));
+addMetricBox({sprintf('Diff settle: %s ns',fmt(settleDiff_s*1e9))});
 ylabel('Differential voltage (V)');
 legend('Command','Output','Location','best');
 stylePlot('Time (us)','FDOTA Closed-Loop Step Response');
@@ -282,6 +291,7 @@ plot(tCm_s*1e6,trVocm_V,'LineWidth',1.2);
 plot(tCm_s*1e6,trVoutcm_V,'LineWidth',1.5);
 yline(VOUT_CM_TARGET+SETTLE_LIMIT,':','HandleVisibility','off');
 yline(VOUT_CM_TARGET-SETTLE_LIMIT,':','HandleVisibility','off');
+addMetricBox({sprintf('CM settle: %s ns',fmt(outputCmSettling_s*1e9))});
 ylabel('Common-mode voltage (V)');
 legend('VREF','VOCM pin','Vout,cm','Location','best');
 stylePlot('Time (us)','FDOTA Output CM Settling: VREF L to VDD/2 and H to VDD/2');
@@ -311,12 +321,13 @@ rows = [
     "Input-referred noise",  "uVrms", fmt(inputNoise_Vrms*1e6)
     "",                      "",      ""
     "Closed-loop simulation","",      ""
+    "Closed-loop gain",      "dB",    fmt(20*log10(abs(clGain)))
     "Gain error",            "%",     fmt(gainError_pct)
     "Voutp,DC",              "V",     fmt(voutpDC_V)
     "Voutn,DC",              "V",     fmt(voutnDC_V)
     "Vout,cm",               "V",     fmt(voutcmDC_V)
     "Vout,cm error",         "mV",    fmt(voutcmError_mV)
-    "Vout,diff,DC",          "V",     fmt(voutdiffDC_V)
+    "Vout,diff,DC",          "mV",    fmt(voutdiffDC_V*1e3)
     "Input CM low",          "V",     fmt(icmrLow_V)
     "Input CM high",         "V",     fmt(icmrHigh_V)
     "Diff Input low",        "V",     fmt(inputLow_V)
@@ -461,7 +472,7 @@ function g = localSlope(x,y,x0)
 end
 
 function [lo,hi,icmr] = analyzeICMRSweep(vcm,cmd,vinDiff,voutp,voutn,voutcm,voutdiff,idd, ...
-    vinCmNom,voutCmTarget,vdd,offsetLimit,currentTol,gainDrop_dB,cmTol,outputMargin)
+    vinCmNom,voutCmTarget,vdd,offsetLimit,currentTol,gainTol_dB,cmTol)
     vcmKey = round(vcm*1e9)/1e9;
     vcmList = unique(vcmKey);
     n = numel(vcmList);
@@ -489,6 +500,10 @@ function [lo,hi,icmr] = analyzeICMRSweep(vcm,cmd,vinDiff,voutp,voutn,voutcm,vout
     valid = false(n,1);
     lo = NaN; hi = NaN;
     finite = isfinite(reqVinDiff) & isfinite(gain) & isfinite(current) & isfinite(outcm);
+    passOffset = false(n,1);
+    passCurrent = false(n,1);
+    passGain = false(n,1);
+    passVout = false(n,1);
 
     if any(finite)
         idxFinite = find(finite);
@@ -496,14 +511,13 @@ function [lo,hi,icmr] = analyzeICMRSweep(vcm,cmd,vinDiff,voutp,voutn,voutcm,vout
         iNom = idxFinite(j);
         gainNom = abs(gain(iNom));
         currentNom = current(iNom);
-        gainDrop = abs(20*log10(abs(gain)/gainNom));
+        gainError_dB = abs(20*log10(abs(gain)/gainNom));
 
-        valid = finite & abs(reqVinDiff) <= offsetLimit & ...
-            abs(current-currentNom) <= currentTol*currentNom & ...
-            gainDrop <= gainDrop_dB & ...
-            abs(outcm-voutCmTarget) <= cmTol & ...
-            outp >= outputMargin & outp <= vdd-outputMargin & ...
-            outn >= outputMargin & outn <= vdd-outputMargin;
+        passOffset = finite & abs(reqVinDiff) <= offsetLimit;
+        passCurrent = finite & abs(current-currentNom) <= currentTol*currentNom;
+        passGain = finite & gainError_dB <= gainTol_dB;
+        passVout = finite & abs(outcm-voutCmTarget) <= cmTol;
+        valid = passOffset & passCurrent & passGain & passVout;
 
         [iLow,iHigh] = continuousIndices(valid,iNom);
         if isfinite(iLow)
@@ -513,7 +527,9 @@ function [lo,hi,icmr] = analyzeICMRSweep(vcm,cmd,vinDiff,voutp,voutn,voutcm,vout
     end
 
     icmr = struct('vcm',vcmList,'reqVinDiff',reqVinDiff,'gain',gain, ...
-        'idd',current,'voutcm',outcm,'valid',valid);
+        'idd',current,'voutcm',outcm,'valid',valid, ...
+        'passOffset',passOffset,'passCurrent',passCurrent, ...
+        'passGain',passGain,'passVout',passVout);
 end
 
 function [iLow,iHigh] = continuousIndices(valid,iCenter)
@@ -567,6 +583,39 @@ function [srRise,srFall,tsRise,tsFall,risePt,fallPt] = stepMetrics(t,target,out,
     [srFall,fallPt] = worstSrWithPoint(srFallList,fallPtList);
     tsRise = maxFinite(tsRiseList);
     tsFall = maxFinite(tsFallList);
+end
+
+function limit = limitingIcmrRules(icmr,vinCmNom)
+    names = ["offset","current","gain","vout"];
+    masks = {icmr.passOffset,icmr.passCurrent,icmr.passGain,icmr.passVout};
+    widths = inf(size(names));
+    ranges = repmat({[NaN NaN]},size(names));
+    for k = 1:numel(names)
+        finite = isfinite(icmr.vcm);
+        idx = find(finite & masks{k});
+        if isempty(idx), continue; end
+        [~,j] = min(abs(icmr.vcm(idx)-vinCmNom));
+        iNom = idx(j);
+        [iLow,iHigh] = continuousIndices(finite & masks{k},iNom);
+        if isfinite(iLow)
+            widths(k) = icmr.vcm(iHigh)-icmr.vcm(iLow);
+            ranges{k} = [icmr.vcm(iLow) icmr.vcm(iHigh)];
+        end
+    end
+    minWidth = min(widths);
+    limit = struct('offset',false,'current',false,'gain',false,'vout',false);
+    limit.range = struct('offset',[NaN NaN],'current',[NaN NaN], ...
+        'gain',[NaN NaN],'vout',[NaN NaN]);
+    for k = 1:numel(names)
+        limit.(char(names(k))) = isfinite(widths(k)) && abs(widths(k)-minWidth) < 1e-12;
+        limit.range.(char(names(k))) = ranges{k};
+    end
+end
+
+function plotIfLimit(isLimit,x,y,mask)
+    if isLimit
+        plot(x(mask),y(mask),'r','LineWidth',2.0);
+    end
 end
 
 function [value,point] = worstSrWithPoint(values,points)
@@ -641,6 +690,13 @@ end
 
 function addSrCursor(point,labelText)
     addCursor(point(1),point(2),labelText);
+end
+
+function addMetricBox(lines)
+    text(0.02,0.94,strjoin(lines,newline),'Units','normalized', ...
+        'BackgroundColor','w','Color','k','Margin',4, ...
+        'VerticalAlignment','top','HorizontalAlignment','left', ...
+        'HandleVisibility','off');
 end
 
 function labelRange(lo,hi)

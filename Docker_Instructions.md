@@ -21,7 +21,7 @@ $env:DESIGNS="D:\Documents\GitHub"
 ### Mac Terminal
 
 ```bash
-cd /Users/sean/Documents/GitHub/SSCS_Chipathon_2026/2026-sscs-chipathon/resources/IIC-OSIC-TOOLS
+cd /Users/sean/Documents/GitHub/ECG_Acquisition_IC/2026-sscs-chipathon/resources/IIC-OSIC-TOOLS
 export DESIGNS="/Users/sean/Documents/GitHub"
 ./start_chipathon_vnc.sh
 ```

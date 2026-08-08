@@ -1,0 +1,31 @@
+Parameter,Unit,Value
+"Open-loop simulation",,
+"Total current",uA,827.64
+"Total power",mW,2.73121
+"DC gain",dB,93.8621
+"UGF",MHz,12.0784
+"Phase margin",deg,70.7878
+"Input offset",mV,0.0145174
+"CMRR @ 1 Hz",dB,110.82
+"CMRR @ 60 Hz",dB,110.82
+"CMRR @ 150 Hz",dB,110.82
+"CMRR @ 1 kHz",dB,110.813
+"PSRR+ @ 1 Hz",dB,104.716
+"PSRR+ @ 60 Hz",dB,103.175
+"PSRR+ @ 150 Hz",dB,99.079
+"PSRR+ @ 1 kHz",dB,83.9496
+"PSRR- @ 1 Hz",dB,104.723
+"PSRR- @ 60 Hz",dB,103.18
+"PSRR- @ 150 Hz",dB,99.0811
+"PSRR- @ 1 kHz",dB,83.9497
+"Input-referred noise",uVrms,1.87606
+"",,
+"Closed-loop simulation",,
+"Closed-loop gain",dB,-0.000117799
+"Gain error",%,-0.0013562
+"Vout,DC",V,1.64999
+"Output swing low",V,0.317012
+"Output swing high",V,3.22022
+"SR rise",V/us,10.0718
+"SR fall",V/us,7.76717
+"Settling time",ns,163.4

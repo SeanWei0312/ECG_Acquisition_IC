@@ -112,7 +112,7 @@ value="
 
 .nodeset v(OUTP)=\{VCM_SET\} v(OUTN)=\{VCM_SET\}
 .nodeset v(REF)=\{VCM_SET\} v(VOCM)=\{VCM_SET\}
-.nodeset v(BFDC)=2.3 v(BCMFB)=2.3
+.nodeset v(BFDC)=1.65 v(BCMFB)=1.65
 "}
 C {vsource.sym} 200 -590 0 0 {name=VAVSS value="dc 0 ac 0"          savecurrent=true}
 C {gnd.sym} 200 -560 0 0 {name=l11 lab=0}

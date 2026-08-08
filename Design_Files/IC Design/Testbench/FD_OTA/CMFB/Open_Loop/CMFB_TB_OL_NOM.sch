@@ -88,7 +88,7 @@ alter @VAVDD[ACMAG]  = 0
 alter @VAVSS[ACMAG]  = 0
 
 * Open-loop AC
-ac dec 200 1 1G
+ac dec 200 1 100G
 
 let error_ac = v(cmfb_ref)-v(cmfb_in)
 let loop_ac  = v(voutcm)/error_ac
@@ -111,7 +111,7 @@ value="
 
 .param VCM_SET=\{AVDD_SET/2\}
 .param VOUT_CM_BIAS=\{AVDD_SET/2\}
-.param CMFB_OUT_BIAS=2.4849
+.param CMFB_OUT_BIAS=2.4847
 
 .param PLANT_GAIN=500
 

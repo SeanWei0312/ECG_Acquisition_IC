@@ -1,0 +1,106 @@
+Category,Parameter,Unit,Value
+Operating point,"Supply voltage",V,3.3
+Operating point,"Total supply current",mA,0.04
+Operating point,"Total power",mW,10.6037
+Operating point,"Bias current diagnostic",uA,1.65e+06
+Operating point,"Input common mode",V,1.65
+Operating point,"Input differential DC",mV,0
+Operating point,"OUTP DC",V,1.64998
+Operating point,"OUTN DC",V,1.64998
+Operating point,"Output common mode",V,1.64998
+Operating point,"Output CM error",mV,-0.0233555
+Operating point,"Output differential DC",mV,0.000400176
+Operating point,"RLD DC",V,0.825
+Operating point,"Output low headroom",V,1.64998
+Operating point,"Output high headroom",V,1.65002
+AC response,"Expected gain",V/V,3840
+AC response,"Expected gain",dB,71.6866
+AC response,"Midband gain",V/V,3555.29
+AC response,"Midband gain",dB,71.0175
+AC response,"Gain error",%,-0.933388
+AC response,"Gain @ 0.05 Hz",dB,70.1401
+AC response,"Gain @ 60 Hz",dB,70.8741
+AC response,"Gain @ 150 Hz",dB,70.1031
+AC response,"Gain @ 1 kHz",dB,60.3656
+AC response,"Phase @ 0.05 Hz",deg,25.595
+AC response,"Phase @ 60 Hz",deg,-11.0883
+AC response,"Phase @ 150 Hz",deg,-26.1492
+AC response,"HP -1dB corner",Hz,0.0465589
+AC response,"HP -3dB corner",Hz,0.0239052
+AC response,"LP -1dB corner",Hz,157.516
+AC response,"LP -3dB corner",Hz,306.784
+AC response,"Gain flatness 0.05-150 Hz",dB,0.929919
+AC rejection,"CMRR @ 0.05 Hz",dB,234.597
+AC rejection,"CMRR @ 60 Hz",dB,234.934
+AC rejection,"CMRR @ 150 Hz",dB,234.933
+AC rejection,"CMRR @ 1 kHz",dB,234.888
+AC rejection,"PSRR+ @ 0.05 Hz",dB,189.59
+AC rejection,"PSRR+ @ 60 Hz",dB,190.48
+AC rejection,"PSRR+ @ 150 Hz",dB,190.48
+AC rejection,"PSRR+ @ 1 kHz",dB,190.475
+AC rejection,"PSRR- @ 0.05 Hz",dB,233.213
+AC rejection,"PSRR- @ 60 Hz",dB,233.256
+AC rejection,"PSRR- @ 150 Hz",dB,231.348
+AC rejection,"PSRR- @ 1 kHz",dB,218.503
+Noise,"Input noise 0.05-150 Hz",uVrms,7.40667
+Noise,"Input noise 0.01-1 kHz",uVrms,15.1027
+Noise,"Input noise density @ 0.05 Hz",nV/rtHz,29131.6
+Noise,"Input noise density @ 1 Hz",nV/rtHz,1963.98
+Noise,"Input noise density @ 10 Hz",nV/rtHz,440.368
+Noise,"Input noise density @ 60 Hz",nV/rtHz,171.754
+Noise,"Input noise density @ 150 Hz",nV/rtHz,110.502
+Noise,"Input noise density @ 1 kHz",nV/rtHz,52.2101
+Noise,"Input-referred SNR, 0.5 mVpp",dB,27.556
+Transient response,"Gain @ 0.05 Hz",dB,47.957
+Transient response,"Gain @ 60 Hz",dB,70.7853
+Transient response,"Gain @ 150 Hz",dB,70.0088
+Transient response,"Gain error @ 0.05 Hz vs AC",dB,-22.1831
+Transient response,"Gain error @ 60 Hz vs AC",dB,-0.0888968
+Transient response,"Gain error @ 150 Hz vs AC",dB,-0.0942688
+Transient rejection,"CMRR tran @ 0.05 Hz",dB,78.3607
+Transient rejection,"CMRR tran @ 60 Hz",dB,112.908
+Transient rejection,"CMRR tran @ 150 Hz",dB,130.45
+Transient rejection,"CMRR tran @ 1 kHz",dB,120.574
+Transient rejection,"PSRR+ tran @ 0.05 Hz",dB,82.8748
+Transient rejection,"PSRR+ tran @ 60 Hz",dB,114.994
+Transient rejection,"PSRR+ tran @ 150 Hz",dB,121.996
+Transient rejection,"PSRR+ tran @ 1 kHz",dB,119.225
+Transient rejection,"PSRR- tran @ 0.05 Hz",dB,85.5496
+Transient rejection,"PSRR- tran @ 60 Hz",dB,113.194
+Transient rejection,"PSRR- tran @ 150 Hz",dB,123.633
+Transient rejection,"PSRR- tran @ 1 kHz",dB,118.891
+Offset tolerance,"VCM offset post-reset max CM error",mV,0.049488
+Offset tolerance,"VCM offset post-reset max |VOUT,diff|",V,1.17165
+Offset tolerance,"VCM offset post-reset clipped",,0
+Offset tolerance,"VCM offset post-reset gain 0.5 mVpp",V/V,3450.65
+Offset tolerance,"VCM offset post-reset gain 5 mVpp",V/V,441.09
+Offset tolerance,"VDIFF offset post-reset max CM error",mV,0.0494873
+Offset tolerance,"VDIFF offset post-reset max |VOUT,diff|",V,1.17165
+Offset tolerance,"VDIFF offset post-reset clipped",,0
+Offset tolerance,"VDIFF offset post-reset gain 0.5 mVpp",V/V,3450.65
+Offset tolerance,"VDIFF offset post-reset gain 5 mVpp",V/V,441.09
+Startup reset,"VIN,diff pre-reset",mV,300
+Startup reset,"VIN,diff post-reset",mV,300
+Startup reset,"VIN,CM final",V,1.65
+Startup reset,"VOUT,diff pre-reset",V,3.19748
+Startup reset,"VOUT,diff post-reset",mV,-11.5362
+Startup reset,"Offset removal",%,99.6392
+Startup reset,"Reset attenuation",dB,-48.8549
+Startup reset,"No-reset final VOUT,diff",V,3.17674
+Startup reset,"Reset improvement vs no reset",dB,48.7984
+Startup reset,"Settling to +/-10 mV",ms,1.9781
+Startup reset,"Settling to 1% of pre-reset",ms,1.9781
+Startup reset,"Post-reset ripple p-p",mV,1.60838
+Startup reset,"Post-reset ripple RMS",mV,0.491204
+Startup reset,"VOUT,CM final",V,1.65005
+Startup reset,"VOUT,CM final error",mV,0.0488023
+Startup reset,"Max CM deviation during reset",mV,0.0488059
+Startup reset,"Max CM deviation after reset",mV,0.0488074
+Startup reset,"Final OUTP",V,1.64403
+Startup reset,"Final OUTN",V,1.65607
+Startup reset,"Output stuck near rail",,0
+Startup reset,"Pass",,1
+RLD,"Input CM improvement",dB,13.3417
+RLD,"Output diff improvement",dB,9.09956
+RLD,"RLD drive max on",V,1.47877
+THD,"Maximum THD",%,0.519744

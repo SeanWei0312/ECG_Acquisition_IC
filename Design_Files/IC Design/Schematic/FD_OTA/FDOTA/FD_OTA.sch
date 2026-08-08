@@ -95,4 +95,4 @@ device="ceramic capacitor"}
 C {iopin.sym} 140 -200 0 1 {name=p6 lab=FDOTA_VOCM}
 C {lab_wire.sym} 160 -200 0 1 {name=p7 sig_type=std_logic lab=FDOTA_VOCM}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDC/FDC.sym} 360 -300 0 0 {name=xFDC1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/CMFB/CMFB.sym} 860 -50 0 1 {name=xCMFB1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/CMFB/CMFB.sym} 860 -60 0 1 {name=xCMFB1}

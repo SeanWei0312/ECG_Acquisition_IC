@@ -136,9 +136,9 @@ let vcm_run = avdd_run/2
 
 alter @VCM[DC] = $&vcm_run
 alter @VREF[DC] = $&vcm_run
-alter @VDIFFCMD[PWL] = [ 0 0 1u 0 1.01u 1.0 11u 1.0 11.01u 0 21u 0 21.01u -1.0 31u -1.0 31.01u 0 40u 0 ]
+alter @VDIFFCMD[PWL] = [ 0 0 1u 0 1.001u 1.0 11u 1.0 11.001u 0 21u 0 21.001u -1.0 31u -1.0 31.001u 0 40u 0 ]
 
-tran 5n 40u
+tran 0.5n 40u
 
 let tr_vin_diff = v(INP)-v(INN)
 let tr_voutcm = 0.5*(v(OUTP)+v(OUTN))
@@ -163,9 +163,9 @@ let vref_low_step = vcm_run - 0.80
 let vref_high_step = vcm_run + 0.80
 
 alter @VDIFFCMD[PWL] = [ 0 0 40u 0 ]
-alter @VREF[PWL] = [ 0 $&vref_low_step 1u $&vref_low_step 1.01u $&vcm_run 11u $&vcm_run 11.01u $&vref_high_step 21u $&vref_high_step 21.01u $&vcm_run 40u $&vcm_run ]
+alter @VREF[PWL] = [ 0 $&vref_low_step 1u $&vref_low_step 1.001u $&vcm_run 11u $&vcm_run 11.001u $&vref_high_step 21u $&vref_high_step 21.001u $&vcm_run 40u $&vcm_run ]
 
-tran 5n 40u
+tran 0.5n 40u
 
 let cm_voutcm = 0.5*(v(OUTP)+v(OUTN))
 let cm_voutdiff = v(OUTP)-v(OUTN)
@@ -187,7 +187,7 @@ value="
 .nodeset v(OUTP)=\{VCM_SET\} v(OUTN)=\{VCM_SET\}
 .nodeset v(INP)=\{VCM_SET\} v(INN)=\{VCM_SET\}
 .nodeset v(REF)=\{VCM_SET\} v(VOCM)=\{VCM_SET\}
-.nodeset v(BFDC)=2.3 v(BCMFB)=2.3
+.nodeset v(BFDC)=1.65 v(BCMFB)=1.65
 "}
 C {isource.sym} 120 -810 2 1 {name=IBFDC  value="dc 40u"}
 C {vsource.sym} 240 -810 0 0 {name=VAVDD    value="dc \{VDD_SET\} ac 0" savecurrent=true}
