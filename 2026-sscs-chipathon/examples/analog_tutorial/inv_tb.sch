@@ -1,9 +1,8 @@
-v {xschem version=3.4.8RC file_version=1.3}
+v {xschem version=3.4.7 file_version=1.2}
 G {}
 K {}
 V {}
 S {}
-F {}
 E {}
 N 640 -330 640 -290 {lab=GND}
 N 760 -330 760 -290 {lab=GND}
@@ -14,7 +13,7 @@ N 950 -550 950 -500 {lab=VDD}
 N 950 -340 950 -290 {lab=GND}
 N 1020 -420 1110 -420 {lab=out}
 C {devices/title.sym} 170 -40 0 0 {name=l1 author="M. Koefinger"}
-C {ECG_Acquisition_IC/2026-sscs-chipathon/examples/analog_tutorial/inv.sym} 870 -500 0 0 {name=xinv1}
+C {inv.sym} 870 -500 0 0 {name=xinv1}
 C {devices/vsource.sym} 640 -360 0 0 {name=V1 value=3.3 savecurrent=false}
 C {devices/vsource.sym} 760 -360 0 0 {name=VIN value=3.3 savecurrent=false}
 C {devices/vdd.sym} 640 -450 0 0 {name=l2 lab=VDD}

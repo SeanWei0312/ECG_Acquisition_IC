@@ -2,9 +2,9 @@
 
 This document outlines the official schedule for the SSCS Chipathon 2026 event.
 <br>All dates and activities are subject to confirmation.
-<br>This is the 8am PT [weekly zoom meeting link](https://us06web.zoom.us/j/87694732928?pwd=gjUePaAEKDJB2G3f2d4iPIqyYe0qBx.1). One time [link for July 3](https://umich.zoom.us/j/96117721621?jst=2)
+<br>This is the 8am PT [weekly zoom meeting link](https://us06web.zoom.us/j/87694732928?pwd=gjUePaAEKDJB2G3f2d4iPIqyYe0qBx.1).
 <br>Please follow the Chipathon Discord Server [Join_server](https://discord.gg/tvZcQzvt7q) for up-to-date information and **announcements**. 
-<br>All participants should complete a report by Wednesday of **each** week.
+<br>All participants should complete a report by Thursday of **each** week.
 
 ## 🗓️ Detailed Timeline
 
@@ -22,24 +22,26 @@ This document outlines the official schedule for the SSCS Chipathon 2026 event.
 | Week 23 | June 5 | **Team Formation Deadline**| • Chip design with AI/LLM (Mehdi) <br>• Hands-on Tutorial on MOSbius (Juan)| [Watch]( https://us06web.zoom.us/rec/share/lz8rKOhmYU-1TsQuje8IZh32oWiNp8pjVdyQ4QdtBKiGaN21z6OqeIRHgq0hYxV8.zMbz-0kW_5zsKOk8) | [View](https://docs.google.com/presentation/d/e/2PACX-1vQI_AdDKBr6G66_IMallotI_idrNMwKabdypLI7G8iEzwwMeTTeQIN3yLcrxRuJxQ/pub) | closed |
 | Week 24 | June 12 | **Project Proposal Review** 👥 | - | [Watch A01-A35](https://drive.google.com/file/d/1L1Z3aQcKbWLOrGrg6Hj4yo3hvyqHSkSH/view?usp=drive_link) <br>[Watch A36-A70](https://drive.google.com/file/d/1zNI8uM8IrhVsJ0CvSOXPGysJ70YsLTbz/view?usp=drive_link) <br> [Watch B01-B30](https://drive.google.com/file/d/186RtQrj5eBq5YQaNelR__m42KvpKolv7/view?usp=drive_link) <br> [Watch C01-D16](https://drive.google.com/file/d/1WcvnuNNZa5OvVjBBpA2cFpxIVmz5NF8p/view?usp=drive_link)| [View A01-A35](https://docs.google.com/presentation/d/1YiHz-10-ayeriHM-xqGJkT-SbB14Z78Zl8ZGlZeix68/edit?usp=sharing)  <br>[View A36-A70](https://docs.google.com/presentation/d/1hOIqOPzlGIcLJ2AFiHNvrpxC8wyUOxMAJF15Aqmjsis/edit?usp=sharing) <br> [View B01-B30](https://docs.google.com/presentation/d/1q4hdv7IWDyOom2BOauEokjyfa9oZNoGCGBChGqaYRIs/edit?usp=sharing) <br> [View C01-D16](https://docs.google.com/presentation/d/1fg-tLoPCH4SCN_3tkq7wYo87EJUDZR3OUUjlz6IXLH8/edit?usp=sharing)| closed |
 | Week 25 | June 19 | **Advanced Topics** 🎓 | • Systematic Design of Analog CMOS Circuits (Boris) | [Watch](https://us06web.zoom.us/rec/share/3vk6f6Bt4MRCwtoFo-XEr-KmHi765R8c8R6uieeFrG9smnGP3wtC_eQlbBFLzGra.8AWW7h7pANInL2vD) | [View](https://docs.google.com/presentation/d/e/2PACX-1vQskh77zL1A6RuCtjrjYBFjEMV9KKKAnJLeW1QzCBsPwpewTReR5-Y35LPDksaUCA/pub)| closed |
-| Week 26 | June 26 | **Analog Design Ideas** 🎓 | • Overview of MEMS sensors (Camilo) <br>• Introduction to CACE (Leo)| [Watch](https://us06web.zoom.us/rec/share/F5SoZ1tjJ3ukiBgUIBTINPDOeT-OkPaO-5CeIl7zW6LeFi0y_aNfPbf5_4uGC8Wb.u2S9Jk62cXnbVsac) | [View](https://docs.google.com/presentation/d/e/2PACX-1vTqOtDIIBs6RNZgejP_mli8eXTi4CajlAEZ0-tehu2-FIgI78x62veDrAMgh-xYEQ/pub) | [Submit](https://forms.gle/6839F1Jppxx42yw5A) |
+| Week 26 | June 26 | **Analog Design Ideas** 🎓 | • Overview of MEMS sensors (Camilo) <br>• Introduction to CACE (Leo)| [Watch](https://us06web.zoom.us/rec/share/F5SoZ1tjJ3ukiBgUIBTINPDOeT-OkPaO-5CeIl7zW6LeFi0y_aNfPbf5_4uGC8Wb.u2S9Jk62cXnbVsac) | [View](https://docs.google.com/presentation/d/e/2PACX-1vTqOtDIIBs6RNZgejP_mli8eXTi4CajlAEZ0-tehu2-FIgI78x62veDrAMgh-xYEQ/pub) | closed |
 
 
 ### Phase 3: Design and Simulation
 | Week | Date | Event | Review Focus | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|--------------|:-----------:|:--------:|:------:|
-| Week 27 | July 3 | **Analog Design Ideas** 👥  | • Tutorial: Schematic Database & Simulations (Peter)<br>• Analog devices for RF applications (Sadayuki) |  |  |  |
-| Week 28 | July 10 | **Simulation Review ** 👥 | All Tracks |  |  |  |
-| Week 29 | July 17 | **Simulation Review ** 👥 | - |  |  |  |
-|  | | **READiness Check & Go/No-go Decision** |  |  |  |  |
+| Week 27 | July 3 | **Analog Design Ideas** 👥  | • Tutorial: Schematic Database & Simulations (Peter)<br>• Analog devices for RF applications (Sadayuki) | [Watch](https://umich.zoom.us/rec/share/G1UI1TosjYKMwKF4Ch-825-VkSVN8HsssF5V2BszuauIvt-E1fwuxImJwqmELOdT.DvgOEzMRptvZiIXK) | [View](https://docs.google.com/presentation/d/e/2PACX-1vT6_7SeMOCoETnaTSsmBUs8t7HBvNqna3o8iZrcOSkAemD8K-OZi1ihgp5ifIU_RQ/pub) | closed |
+| Week 28 | July 10 | **Simulation Review ** 👥 | All Tracks | [Watch](https://us06web.zoom.us/rec/share/vYH0AHVXKRxuB5qv7Qa5zLBaJmBCuDbb7Mlhprb4NFNlV_We-RuGdIWAwGqj9Ev5.85soQjXpRPLCV61x) | [View](https://docs.google.com/presentation/d/e/2PACX-1vQu4OL4bGMeo0tYBlg5y0VrtAt3enfcN0XMSJuuREcCLNH0gHLj2LPLzJXg_QDgnA/pub) | closed |
+| Week 29 | July 17 | **Simulation Review ** 👥 | All Tracks | [Watch](https://us06web.zoom.us/rec/share/rVKq9P6aNYnIyOC4rONpGl17jMk2AUJuBcUPCTiQ-JiEZYYMozKvwM6q6iFpmDlm.1WvQOFobTc1nwQ4m) | N/A | closed |
+|  | July 29 | **READiness Check & Go/No-go Decision** |  |  |  |  |
 
 ### Phase 4: Layout and Verification
 | Week | Date | Event | Details | 🔴 Recording | 📊 Slides | 📄 Report |
 |------|------|-------|----------|:-----------:|:--------:|:------:|
-| Week 30 | July 24 | **Layout Tutorial** 🎓 | • DRC, LVS, PEX (Mitch, Juan) <br> (tentative) |  |  |  |
-| Week 31 | July 31 | **DRC Dry-run** | GDS to Channel Partner |  |  |  |  |
-| Week 32 | Aug. 7 | **Integration Tutorial** 🎓 | Layout, Top level, ESD, padframe, packaging (Tim, Juan) |  |  |  |
-| Week 33 | Aug. 14 | **Layout Review (blocks)** 👥 | - |  |  |  |
+| Week 30 | July 24 | **Layout Tutorial** 🎓 | • Multi project integration (Kevin/Camilo) | [Watch](https://drive.google.com/file/d/1IAf3W2IWuYzNrSMNgAEH3uIleoFttFvY/view?usp=drive_link) | [View](https://docs.google.com/presentation/d/1VLdZGv5mM02g3VPxl28PMymxcQm1z8lniKxDtyPx3s4/edit?slide=id.p1#slide=id.p1) | closed |
+| Week 31 | July 31 | **Layout Tutorial** | • Layout with Magic (Tim) <Tim> | [Watch](https://us06web.zoom.us/rec/share/lVaD79B6jKntMzZz0C2xVqkWM8nBpbEDJ80HO9V-N553lhdMxdHk4PtrTprP56pN.MzmIbUBbEY1KPKRV) | [View](https://drive.google.com/file/d/1ThvY7gLRgJ4xpwUJcNzq9kU-S7qUDn6j/view?usp=drive_link) | closed |
+| | Aug. 6 | **DRC Dry-run** | System test |  |  |  |  |
+| Week 32 | Aug. 7 | **Layout Review** 🎓 | Sample layout review (Track leads) <br>• PEX and ESD (Juan) | [Watch](https://us06web.zoom.us/rec/share/qWLiUpnli6qmPoZfl0v00WrM5xPhG5q0mpdJCJBO_q74fJ8-iT_WZBLHjqV_52IE.C4dPJJCx3b5r1GJl) | [View](https://docs.google.com/presentation/d/e/2PACX-1vSgM4jEmZZVc_Ugfvpucf_9Q3ZjshnYkhOSNY2Ij0Yr92uAn24Pxv7kgcRpm1LDBw/pub) | closed |
+| | Aug. 10 | **Layout reviews due** |  |  |  |  |  |
+| Week 33 | Aug. 14 | **Layout Review (blocks)** 👥 | - | [Watch](https://us06web.zoom.us/rec/share/Mg_P-wWLp9x3jzMtugEtEymm8yqwpq3khrInKVpGH3qZBtqvr8nvAqHmXq2BdcNe.6VoYzwtYRhhxS9lD) | [View](https://docs.google.com/presentation/d/e/2PACX-1vRkx1NHWg3xox0615_BWJWWQnz0gzQK8vJi_DDQ9U0VyBzSXouGzxDDeQcUNQ80pA/pub) | [Submit](https://forms.gle/ytv6YV2bAfUheLri8) |
 | Week 34 | Aug. 21 | **Layout Review (top level)** 👥 | - |  |  |  |
 |  | | **DRC Dry-run GDS to Channel Partner**  | |  |  |  |
 | Week 35 | Aug. 28 | **Verification** 👥 | Secondary ESD (Juan/Luighi) |  |  |  |
