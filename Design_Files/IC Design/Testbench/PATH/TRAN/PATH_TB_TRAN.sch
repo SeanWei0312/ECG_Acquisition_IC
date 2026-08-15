@@ -110,33 +110,33 @@ N 640 -1240 640 -1220 {lab=AGND}
 N 520 -1240 520 -1220 {lab=AGND}
 N 400 -1240 400 -1220 {lab=AGND}
 N 280 -1240 280 -1220 {lab=AGND}
-N 220 -2240 240 -2240 {lab=INA_INP}
-N 220 -2200 240 -2200 {lab=INA_INN}
-N 220 -2160 240 -2160 {lab=INA_OUTP}
-N 220 -2120 240 -2120 {lab=INA_OUTN}
-N 220 -2080 240 -2080 {lab=LPF_INP}
-N 220 -2040 240 -2040 {lab=LPF_INN}
-N 220 -2000 240 -2000 {lab=LPF_OUTP}
-N 220 -1960 240 -1960 {lab=LPF_OUTN}
-N 220 -1920 240 -1920 {lab=PGA_INP}
-N 220 -1880 240 -1880 {lab=PGA_INN}
-N 220 -1840 240 -1840 {lab=PGA_OUTP}
-N 220 -1800 240 -1800 {lab=PGA_OUTN}
-N 220 -1760 240 -1760 {lab=BUFFER_INP}
-N 220 -1720 240 -1720 {lab=BUFFER_INN}
-N 220 -1680 240 -1680 {lab=BUFFER_OUTP}
-N 220 -1640 240 -1640 {lab=BUFFER_OUTN}
-N 220 -1600 240 -1600 {lab=ADC_INP}
-N 220 -1560 240 -1560 {lab=ADC_INN}
+N 220 -2320 240 -2320 {lab=INA_INP}
+N 220 -2280 240 -2280 {lab=INA_INN}
+N 220 -2240 240 -2240 {lab=INA_OUTP}
+N 220 -2200 240 -2200 {lab=INA_OUTN}
+N 220 -2160 240 -2160 {lab=LPF_INP}
+N 220 -2120 240 -2120 {lab=LPF_INN}
+N 220 -2080 240 -2080 {lab=LPF_OUTP}
+N 220 -2040 240 -2040 {lab=LPF_OUTN}
+N 220 -2000 240 -2000 {lab=PGA_INP}
+N 220 -1960 240 -1960 {lab=PGA_INN}
+N 220 -1920 240 -1920 {lab=PGA_OUTP}
+N 220 -1880 240 -1880 {lab=PGA_OUTN}
+N 220 -1840 240 -1840 {lab=BUFFER_INP}
+N 220 -1800 240 -1800 {lab=BUFFER_INN}
+N 220 -1760 240 -1760 {lab=BUFFER_OUTP}
+N 220 -1720 240 -1720 {lab=BUFFER_OUTN}
+N 220 -1680 240 -1680 {lab=ADC_INP}
+N 220 -1640 240 -1640 {lab=ADC_INN}
 N 160 -1240 160 -1220 {lab=AGND}
 N 160 -1320 160 -1300 {lab=DCB_SEL}
 N 1560 -980 1560 -960 {lab=RST}
 N 1560 -900 1560 -880 {lab=AGND}
 N 220 -2400 240 -2400 {lab=AVDD}
 N 220 -2360 240 -2360 {lab=AGND}
-N 220 -1520 240 -1520 {lab=SEOP}
-N 220 -1480 240 -1480 {lab=SEON}
-N 220 -1440 240 -1440 {lab=RLD}
+N 220 -1600 240 -1600 {lab=SEOP}
+N 220 -1560 240 -1560 {lab=SEON}
+N 220 -1520 240 -1520 {lab=RLD}
 N 480 -1840 520 -1840 {lab=RLD}
 N 1560 -1120 1560 -1100 {lab=CLK}
 N 1560 -1040 1560 -1020 {lab=AGND}
@@ -1292,42 +1292,42 @@ C {lab_wire.sym} 640 -1220 2 0 {name=p138 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 520 -1220 2 0 {name=p139 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 400 -1220 2 0 {name=p140 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 280 -1220 2 0 {name=p144 sig_type=std_logic lab=AGND}
-C {iopin.sym} 220 -2240 0 1 {name=p56 lab=INA_INP}
-C {iopin.sym} 220 -2200 0 1 {name=p57 lab=INA_INN}
-C {lab_wire.sym} 240 -2240 0 1 {name=p58 sig_type=std_logic lab=INA_INP}
-C {lab_wire.sym} 240 -2200 0 1 {name=p59 sig_type=std_logic lab=INA_INN}
-C {iopin.sym} 220 -2160 0 1 {name=p102 lab=INA_OUTP}
-C {iopin.sym} 220 -2120 0 1 {name=p103 lab=INA_OUTN}
-C {lab_wire.sym} 240 -2160 0 1 {name=p104 sig_type=std_logic lab=INA_OUTP}
-C {lab_wire.sym} 240 -2120 0 1 {name=p105 sig_type=std_logic lab=INA_OUTN}
-C {iopin.sym} 220 -2080 0 1 {name=p106 lab=LPF_INP}
-C {iopin.sym} 220 -2040 0 1 {name=p107 lab=LPF_INN}
-C {lab_wire.sym} 240 -2080 0 1 {name=p108 sig_type=std_logic lab=LPF_INP}
-C {lab_wire.sym} 240 -2040 0 1 {name=p109 sig_type=std_logic lab=LPF_INN}
-C {iopin.sym} 220 -2000 0 1 {name=p110 lab=LPF_OUTP}
-C {iopin.sym} 220 -1960 0 1 {name=p111 lab=LPF_OUTN}
-C {lab_wire.sym} 240 -2000 0 1 {name=p112 sig_type=std_logic lab=LPF_OUTP}
-C {lab_wire.sym} 240 -1960 0 1 {name=p113 sig_type=std_logic lab=LPF_OUTN}
-C {iopin.sym} 220 -1920 0 1 {name=p114 lab=PGA_INP}
-C {iopin.sym} 220 -1880 0 1 {name=p115 lab=PGA_INN}
-C {lab_wire.sym} 240 -1920 0 1 {name=p116 sig_type=std_logic lab=PGA_INP}
-C {lab_wire.sym} 240 -1880 0 1 {name=p117 sig_type=std_logic lab=PGA_INN}
-C {iopin.sym} 220 -1840 0 1 {name=p118 lab=PGA_OUTP}
-C {iopin.sym} 220 -1800 0 1 {name=p119 lab=PGA_OUTN}
-C {lab_wire.sym} 240 -1840 0 1 {name=p120 sig_type=std_logic lab=PGA_OUTP}
-C {lab_wire.sym} 240 -1800 0 1 {name=p121 sig_type=std_logic lab=PGA_OUTN}
-C {iopin.sym} 220 -1760 0 1 {name=p122 lab=BUFFER_INP}
-C {iopin.sym} 220 -1720 0 1 {name=p123 lab=BUFFER_INN}
-C {lab_wire.sym} 240 -1760 0 1 {name=p124 sig_type=std_logic lab=BUFFER_INP}
-C {lab_wire.sym} 240 -1720 0 1 {name=p125 sig_type=std_logic lab=BUFFER_INN}
-C {iopin.sym} 220 -1680 0 1 {name=p147 lab=BUFFER_OUTP}
-C {iopin.sym} 220 -1640 0 1 {name=p148 lab=BUFFER_OUTN}
-C {lab_wire.sym} 240 -1680 0 1 {name=p149 sig_type=std_logic lab=BUFFER_OUTP}
-C {lab_wire.sym} 240 -1640 0 1 {name=p150 sig_type=std_logic lab=BUFFER_OUTN}
-C {iopin.sym} 220 -1600 0 1 {name=p151 lab=ADC_INP}
-C {iopin.sym} 220 -1560 0 1 {name=p152 lab=ADC_INN}
-C {lab_wire.sym} 240 -1600 0 1 {name=p153 sig_type=std_logic lab=ADC_INP}
-C {lab_wire.sym} 240 -1560 0 1 {name=p154 sig_type=std_logic lab=ADC_INN}
+C {iopin.sym} 220 -2320 0 1 {name=p56 lab=INA_INP}
+C {iopin.sym} 220 -2280 0 1 {name=p57 lab=INA_INN}
+C {lab_wire.sym} 240 -2320 0 1 {name=p58 sig_type=std_logic lab=INA_INP}
+C {lab_wire.sym} 240 -2280 0 1 {name=p59 sig_type=std_logic lab=INA_INN}
+C {iopin.sym} 220 -2240 0 1 {name=p102 lab=INA_OUTP}
+C {iopin.sym} 220 -2200 0 1 {name=p103 lab=INA_OUTN}
+C {lab_wire.sym} 240 -2240 0 1 {name=p104 sig_type=std_logic lab=INA_OUTP}
+C {lab_wire.sym} 240 -2200 0 1 {name=p105 sig_type=std_logic lab=INA_OUTN}
+C {iopin.sym} 220 -2160 0 1 {name=p106 lab=LPF_INP}
+C {iopin.sym} 220 -2120 0 1 {name=p107 lab=LPF_INN}
+C {lab_wire.sym} 240 -2160 0 1 {name=p108 sig_type=std_logic lab=LPF_INP}
+C {lab_wire.sym} 240 -2120 0 1 {name=p109 sig_type=std_logic lab=LPF_INN}
+C {iopin.sym} 220 -2080 0 1 {name=p110 lab=LPF_OUTP}
+C {iopin.sym} 220 -2040 0 1 {name=p111 lab=LPF_OUTN}
+C {lab_wire.sym} 240 -2080 0 1 {name=p112 sig_type=std_logic lab=LPF_OUTP}
+C {lab_wire.sym} 240 -2040 0 1 {name=p113 sig_type=std_logic lab=LPF_OUTN}
+C {iopin.sym} 220 -2000 0 1 {name=p114 lab=PGA_INP}
+C {iopin.sym} 220 -1960 0 1 {name=p115 lab=PGA_INN}
+C {lab_wire.sym} 240 -2000 0 1 {name=p116 sig_type=std_logic lab=PGA_INP}
+C {lab_wire.sym} 240 -1960 0 1 {name=p117 sig_type=std_logic lab=PGA_INN}
+C {iopin.sym} 220 -1920 0 1 {name=p118 lab=PGA_OUTP}
+C {iopin.sym} 220 -1880 0 1 {name=p119 lab=PGA_OUTN}
+C {lab_wire.sym} 240 -1920 0 1 {name=p120 sig_type=std_logic lab=PGA_OUTP}
+C {lab_wire.sym} 240 -1880 0 1 {name=p121 sig_type=std_logic lab=PGA_OUTN}
+C {iopin.sym} 220 -1840 0 1 {name=p122 lab=BUFFER_INP}
+C {iopin.sym} 220 -1800 0 1 {name=p123 lab=BUFFER_INN}
+C {lab_wire.sym} 240 -1840 0 1 {name=p124 sig_type=std_logic lab=BUFFER_INP}
+C {lab_wire.sym} 240 -1800 0 1 {name=p125 sig_type=std_logic lab=BUFFER_INN}
+C {iopin.sym} 220 -1760 0 1 {name=p147 lab=BUFFER_OUTP}
+C {iopin.sym} 220 -1720 0 1 {name=p148 lab=BUFFER_OUTN}
+C {lab_wire.sym} 240 -1760 0 1 {name=p149 sig_type=std_logic lab=BUFFER_OUTP}
+C {lab_wire.sym} 240 -1720 0 1 {name=p150 sig_type=std_logic lab=BUFFER_OUTN}
+C {iopin.sym} 220 -1680 0 1 {name=p151 lab=ADC_INP}
+C {iopin.sym} 220 -1640 0 1 {name=p152 lab=ADC_INN}
+C {lab_wire.sym} 240 -1680 0 1 {name=p153 sig_type=std_logic lab=ADC_INP}
+C {lab_wire.sym} 240 -1640 0 1 {name=p154 sig_type=std_logic lab=ADC_INN}
 C {vsource.sym} 400 -1270 0 0 {name=VEN2 value="dc 0 ac 0"         savecurrent=true}
 C {vsource.sym} 520 -1270 0 0 {name=VEN3 value="dc 0 ac 0"         savecurrent=true}
 C {vsource.sym} 640 -1270 0 0 {name=VEN4 value="dc 0 ac 0"         savecurrent=true}
@@ -1341,12 +1341,12 @@ C {iopin.sym} 220 -2400 0 1 {name=p158 lab=AVDD}
 C {iopin.sym} 220 -2360 0 1 {name=p159 lab=AGND}
 C {lab_wire.sym} 240 -2400 0 1 {name=p160 sig_type=std_logic lab=AVDD}
 C {lab_wire.sym} 240 -2360 0 1 {name=p161 sig_type=std_logic lab=AGND}
-C {iopin.sym} 220 -1520 0 1 {name=p162 lab=SEOP}
-C {iopin.sym} 220 -1480 0 1 {name=p163 lab=SEON}
-C {lab_wire.sym} 240 -1520 0 1 {name=p164 sig_type=std_logic lab=SEOP}
-C {lab_wire.sym} 240 -1480 0 1 {name=p165 sig_type=std_logic lab=SEON}
-C {iopin.sym} 220 -1440 0 1 {name=p166 lab=RLD}
-C {lab_wire.sym} 240 -1440 0 1 {name=p167 sig_type=std_logic lab=RLD}
+C {iopin.sym} 220 -1600 0 1 {name=p162 lab=SEOP}
+C {iopin.sym} 220 -1560 0 1 {name=p163 lab=SEON}
+C {lab_wire.sym} 240 -1600 0 1 {name=p164 sig_type=std_logic lab=SEOP}
+C {lab_wire.sym} 240 -1560 0 1 {name=p165 sig_type=std_logic lab=SEON}
+C {iopin.sym} 220 -1520 0 1 {name=p166 lab=RLD}
+C {lab_wire.sym} 240 -1520 0 1 {name=p167 sig_type=std_logic lab=RLD}
 C {lab_wire.sym} 480 -1840 0 0 {name=p168 sig_type=std_logic lab=RLD}
 C {vsource.sym} 1560 -1070 0 0 {name=VCLK
 value="PULSE(0 \{VDD_SET\} \{CLK_DELAY_SET\} \{CLK_TR\} \{CLK_TF\} \{CLK_PW\} \{1/CLK_FREQ\})"
