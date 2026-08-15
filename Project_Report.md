@@ -1,21 +1,21 @@
 # ECG Acquisition IC Project Report
 
-Last updated: 2026-08-14
+Last updated: 2026-08-15
 
-Project stage: nominal pre-layout schematic verification
+Project stage: pre-layout schematic verification; nominal integrated PATH and PVT-characterized BIAS/SEL
 
 ## 1. Executive Summary
 
-This project develops a GF180 integrated circuit for electrocardiogram (ECG) acquisition in the SSCS Chipathon 2026 flow. The current verified scope is the analog signal path (`PATH`), including the input amplifier, switched filter and selection network, programmable gain, output buffering, common-mode control, reset behavior, and right-leg drive (RLD).
+This project develops a GF180 integrated circuit for electrocardiogram (ECG) acquisition in the SSCS Chipathon 2026 flow. The current verified scope includes the bias/reference and internal/external selection block (`BIAS`/`SEL`) and the analog signal path (`PATH`). PATH verification covers the input amplifier, switched filter and selection network, programmable gain, output buffering, common-mode control, reset behavior, and right-leg drive (RLD).
 
 The integrated path has two gain settings:
 
 - G2: nominal overall differential gain of 480 V/V (53.625 dB).
 - G16: nominal overall differential gain of 3840 V/V (71.687 dB).
 
-Nominal schematic simulations cover operating point, differential AC response, differential transient response, CMRR, PSRR+/PSRR-, input-referred noise, common-mode and differential input offset, startup with and without reset, RLD, THD, and SNR. MATLAB post-processing generates a complete CSV summary, a compact terminal/CSV table, and 12 current report figures.
+Nominal PATH simulations cover operating point, differential AC response, differential transient response, CMRR, PSRR+/PSRR-, input-referred noise, common-mode and differential input offset, startup with and without reset, RLD, THD, and SNR. Dedicated BIAS/SEL simulations cover five process corners, seven transient environmental cases per process, and complete -40 C to 125 C / 3.0 V to 3.6 V DC surfaces. MATLAB post-processing generates compact CSV reports and current figures for both flows.
 
-The latest results show approximately 8.857 mA total current, 29.23 mW total power, 3.245 uVrms input-referred noise over 0.05-150 Hz, about 20.25 dB RLD common-mode suppression at 60 Hz, and less than 0.101% THD in the tested 60 Hz and 150 Hz cases. The most important unresolved issue is the very low transient gain at 0.05 Hz and 0.1 Hz compared with ordinary AC analysis. This discrepancy requires dedicated validation of the periodically switched path before low-frequency performance can be considered final.
+The last documented PATH results show approximately 8.857 mA total current, 29.23 mW total power, 3.245 uVrms input-referred noise over 0.05-150 Hz, about 20.25 dB RLD common-mode suppression at 60 Hz, and less than 0.101% THD in the tested 60 Hz and 150 Hz cases. The BIAS flow reports 39.997 uA nominal current, a 31.054-49.441 uA full-grid range, a worst startup time of 1180.295 us, and zero failures in 35 startup runs. The most important unresolved PATH issue is the very low transient gain at 0.05 Hz and 0.1 Hz compared with ordinary AC analysis. The BIAS NOM device-vector and DC2D exports also require regeneration before their device-level sweep extrema are complete.
 
 ## 2. Design Scope and Conditions
 
@@ -47,7 +47,19 @@ These are testbench conditions or nominal design values, not post-layout or meas
 
 ## 3. IC Architecture and Implementation
 
-### 3.1 Integrated Signal Path
+### 3.1 Bias Reference and Selection
+
+The BIAS block generates the internal `BPINT` and `VREFINT` references. The separate SEL block selects between those internal references and the external `BPEXT`/`VREFEXT` inputs to produce the distributed `BP` and `VREF` outputs:
+
+```text
+BIAS: BPINT/VREFINT ----+
+                        +--> SEL --> BP/VREF
+External: BPEXT/VREFEXT +
+```
+
+The BIAS characterization testbench also includes the 40 uA output mirror load and startup device. The reported `IDD` and power values are the exported BIAS+SEL supply quantities defined by the testbench, not complete-chip consumption.
+
+### 3.2 Integrated Signal Path
 
 The integrated testbenches instantiate the following analog hierarchy:
 
@@ -65,10 +77,11 @@ $$
 
 The RLD block senses common-mode behavior and drives the body/electrode model in the transient RLD test. Reset tests exercise removal of a large differential DC condition and compare startup with reset against startup without reset.
 
-### 3.2 Implemented Building Blocks
+### 3.3 Implemented Building Blocks
 
 | Block | Design files | Verification status |
 | --- | --- | --- |
+| BIAS and SEL | `Schematic/BIAS/`, `Schematic/SEL/`, and `Testbench/BIAS/` | Five-process environmental transient and 2-D temperature/supply characterization implemented |
 | INA, LPF, PGA, selectors, buffer, RLD | `Design_Files/IC Design/Schematic/` | Instantiated in the integrated PATH tests |
 | Single-ended OTA | `Schematic/SE_OTA/` and `Testbench/SE_OTA/` | Nominal open-loop, closed-loop, noise, CMRR, and PSRR results present |
 | Fully differential core | `Schematic/FD_OTA/FDC/` | Nominal AC, noise, offset, and plant results present |
@@ -76,7 +89,7 @@ The RLD block senses common-mode behavior and drives the body/electrode model in
 | Fully differential OTA | `Schematic/FD_OTA/FDOTA/` | Nominal open-loop and closed-loop results present |
 | Integrated PATH | `Testbench/PATH/` | AC, noise, and multi-case transient verification implemented |
 
-### 3.3 Layout, ADC, and PCB Status
+### 3.4 Layout, ADC, and PCB Status
 
 No completed integrated PATH layout, parasitic extraction, DRC/LVS result, ADC integration, PCB implementation, or laboratory measurement is reported yet. All results in this document are pre-layout simulations.
 
@@ -88,6 +101,7 @@ Xschem and ngspice generate raw text data. MATLAB R2025b has been used to analyz
 
 | Testbench | Analyses |
 | --- | --- |
+| `BIAS/BIAS_TB_{NOM,FF,SS,FS,SF}.sch` | Bias startup, internal/external selection, and 2-D temperature/VDD characterization |
 | `PATH/AC/PATH_TB_AC.sch` | Operating point, differential AC response, CMRR, PSRR+, PSRR- |
 | `PATH/NOISE/PATH_TB_NOISE.sch` | Output and input-referred noise |
 | `PATH/TRAN/PATH_TB_TRAN.sch` | Differential response, transient CMRR/PSRR, offsets, startup/reset, RLD, THD |
@@ -184,9 +198,66 @@ $$
 
 The THD plot displays H2-H10 in dBc with H1 stated as 0 dBc. Both 60 Hz and 150 Hz subplots use the same -100 dBc to 0 dBc scale.
 
-## 5. Nominal Simulation Results
+### 4.5 BIAS Process, Environment, and 2-D Sweep Flow
 
-All values below come from the checked-in `PATH_summary.csv` or `PATH_table_report.csv`. They are nominal schematic results and should be regenerated after any design or testbench change.
+The BIAS analyzer processes five process corners (`NOM`, `FF`, `SS`, `FS`, and `SF`) and seven transient conditions per process:
+
+| Condition | Temperature | VDD |
+| --- | ---: | ---: |
+| NOM | 27 C | 3.3 V |
+| VL | 27 C | 3.0 V |
+| VH | 27 C | 3.6 V |
+| TL | -40 C | 3.3 V |
+| TH | 125 C | 3.3 V |
+| TLVL | -40 C | 3.0 V |
+| THVH | 125 C | 3.6 V |
+
+The resulting 35 transient runs use a 100 us supply-ramp delay, a ramp ending at 1.1 ms, and an automatically detected `INT -> EXT -> INT` selector sequence. Settled operating values are means over the final 10% of the initial INT plateau. The first compact table presents `NOM FF SS FS SF VL VH TL TH`: the process columns use nominal conditions, while VL/VH/TL/TH use the actual NOM-process environmental transient files.
+
+For each run, the startup threshold is relative to that run's own settled current. Startup time is measured from the fixed 100 us VDD-ramp start to the final entry into the 90-110% band that remains valid through the initial INT interval. A settled current at or below 4 uA or the absence of a permanent band entry is counted as a startup failure.
+
+Selector edges are excluded by trimming 10% of each detected plateau. The analyzer searches all 35 runs for the maximum absolute errors:
+
+$$
+e_{BP,INT}=BP-BPINT,\qquad e_{BP,EXT}=BP-BPEXT
+$$
+
+$$
+e_{VREF,INT}=VREF-VREFINT,\qquad e_{VREF,EXT}=VREF-VREFEXT
+$$
+
+Each process also supplies a 166 x 61 DC grid: -40 C to 125 C in 1 C steps and 3.0 V to 3.6 V in 10 mV steps, for 10,126 coordinate pairs. Extrema are selected from the actual temperature/VDD coordinates. The principal calculations are:
+
+$$
+I_{BIAS,error}=100\frac{I_{BIAS}-40\ \mathrm{uA}}{40\ \mathrm{uA}}
+$$
+
+$$
+Mirror\ error=100\frac{I_{BIAS}-I_{RS}}{I_{RS}},\qquad
+VREF\ error=VREF-\frac{VDD}{2}
+$$
+
+$$
+MST\ margin=VTH_{MST}-VGS_{MST}
+$$
+
+At VDD = 3.3 V, the reported temperature coefficient is the full-range current variation normalized by the 27 C current and the 165 C span:
+
+$$
+TC=\frac{I_{max}-I_{min}}{I_{27}\times165}\times10^6\ \mathrm{ppm/C}
+$$
+
+At 27 C, line regulation is the full 3.0-3.6 V current range normalized by the 3.3 V current and the 0.6 V span:
+
+$$
+Line\ regulation=100\frac{I_{max}-I_{min}}{I_{3.3}\times0.6}\ \%/V
+$$
+
+These two values are range-normalized summaries, not signed local slopes or fitted derivatives.
+
+## 5. Simulation Results
+
+Sections 5.1-5.7 retain values from the last generated `PATH_summary.csv` and `PATH_table_report.csv` result set. The corresponding PATH CSVs and PNGs are currently absent from the worktree; these nominal schematic results must be regenerated before formal use. Section 5.8 uses the current generated BIAS CSVs.
 
 ### 5.1 Operating Point
 
@@ -213,7 +284,7 @@ All values below come from the checked-in `PATH_summary.csv` or `PATH_table_repo
 
 At 60 Hz, the transient fitted gains are 445.75 V/V for G2 and 3380.39 V/V for G16. AC and transient results agree reasonably at 60 Hz and 150 Hz, but not at 0.05 Hz.
 
-![PATH differential AC response with transient gain points](Measurement_Results/IC_Simulation/PATH/Plots/NOM.diff_response.png)
+The PATH differential-response figure is regenerated as `PATH/Plots/NOM.diff_response.png`.
 
 ### 5.3 AC Band Edges and Noise
 
@@ -286,7 +357,65 @@ With reset enabled under the 300 mV differential-DC startup test, the current su
 | 0.5 mVpp, G16, 150 Hz | 0.10015% | Not included in compact report |
 | 5 mVpp, G2, 150 Hz | 0.08243% | Not included in compact report |
 
-![PATH output harmonics at 60 Hz and 150 Hz](Measurement_Results/IC_Simulation/PATH/Plots/NOM.thd.png)
+The PATH harmonic figure is regenerated as `PATH/Plots/NOM.thd.png`.
+
+### 5.8 BIAS and Selector Characterization
+
+The normal-process columns below use the 27 C, 3.3 V transient for each process. Values come from `BIAS_table_report.csv`.
+
+| Metric | NOM | FF | SS | FS | SF |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| IBIAS (uA) | 39.997 | 45.168 | 35.799 | 40.621 | 39.350 |
+| IBIAS error (%) | -0.007499 | 12.920 | -10.503 | 1.553 | -1.626 |
+| BP (V) | 1.643 | 1.748 | 1.533 | 1.523 | 1.763 |
+| VREF (V) | 1.650 | 1.650 | 1.650 | 1.650 | 1.650 |
+| BIAS+SEL current (uA) | 83.192 | 94.351 | 74.243 | 84.477 | 81.858 |
+| BIAS+SEL power (uW) | 274.532 | 311.359 | 245.001 | 278.773 | 270.131 |
+| Startup time (us) | 807.362 | 777.960 | 839.332 | 838.091 | 804.619 |
+
+The environmental columns in the same compact table use the NOM process:
+
+| Metric | VL | VH | TL | TH |
+| --- | ---: | ---: | ---: | ---: |
+| Temperature (C) | 27 | 27 | -40 | 125 |
+| VDD (V) | 3.0 | 3.6 | 3.3 | 3.3 |
+| IBIAS (uA) | 39.393 | 40.423 | 35.353 | 43.171 |
+| IBIAS error (%) | -1.517 | 1.056 | -11.619 | 7.926 |
+| Startup time (us) | 882.469 | 743.647 | 896.673 | 807.833 |
+
+Across the complete 35-run startup matrix, the fastest reported startup is 716.718 us at FF/VH and the worst is 1180.295 us at SS/TLVL (-40 C, 3.0 V). No startup failures were detected (`0 / 35`).
+
+![NOM BIAS startup current](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png)
+
+The global 2-D extrema are:
+
+| Metric | Value | Process | Temperature | VDD |
+| --- | ---: | --- | ---: | ---: |
+| IBIAS minimum | 31.054 uA | SS | -40 C | 3.0 V |
+| IBIAS maximum | 49.441 uA | FF | 125 C | 3.6 V |
+| Worst absolute IBIAS error | 23.603% | FF | 125 C | 3.6 V |
+| BP minimum | 1.138 V | FS | 125 C | 3.0 V |
+| BP maximum | 2.146 V | SF | -40 C | 3.6 V |
+| Maximum absolute VREF error | 6.155 uV | SS | -40 C | 3.6 V |
+| Maximum absolute mirror error | 0.1490% | FS | 125 C | 3.0 V |
+| Minimum MST margin | 0.7415 V | FF | 125 C | 3.6 V |
+| Maximum BIAS+SEL current | 103.971 uA | FF | 125 C | 3.6 V |
+| Maximum BIAS+SEL power | 374.297 uW | FF | 125 C | 3.6 V |
+
+![NOM BIAS current-error heat map](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png)
+
+Reference-quality summaries derived from the complete temperature and supply slices are:
+
+| Metric | NOM | FF | SS | FS | SF |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Temperature coefficient (ppm/C) | 1184.627 | 1223.228 | 1150.065 | 1177.302 | 1193.652 |
+| Temperature variation (%) | 19.546 | 20.183 | 18.976 | 19.425 | 19.695 |
+| Line regulation (%/V) | 4.290 | 3.889 | 5.185 | 4.598 | 4.361 |
+| Supply variation (%) | 2.574 | 2.333 | 3.111 | 2.759 | 2.616 |
+
+The maximum selector errors over all 35 transient runs are 12.493 nV for BP internal selection, 25.466 nV for BP external selection, 18.750 nV for VREF internal selection, and 10.951 nV for VREF external selection. These nanovolt values reflect ideal pre-layout schematic switching and may be close to numerical floors.
+
+![NOM BIAS internal/external selection](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_SEL.png)
 
 ## 6. Interpretation and Limitations
 
@@ -312,11 +441,19 @@ CMRR and PSRR from the compact report are AC values. Transient markers use fitte
 
 The THD analyzer avoids independent one-tone fits. It solves H1-H10 simultaneously and includes non-overlapping clock harmonics as nuisance tones. This is important because signal harmonics can lie near the 500 Hz switched-capacitor clock. The reported THD remains a finite-record, nominal schematic result and should be repeated across process, temperature, input amplitude, clock timing, and extracted parasitics.
 
-### 6.4 Verification Coverage
+### 6.4 BIAS Data and Coverage Limitations
 
-The current flow is nominal-only and pre-layout. It does not yet establish:
+The BIAS results are deterministic pre-layout schematic corners without mismatch, Monte Carlo, or extracted parasitics. The 2-D DC sweeps establish static temperature/supply surfaces but do not prove startup or selection dynamics between the seven discrete transient environments, and all current startup runs use the same 100 us to 1.1 ms VDD ramp.
 
-- Process, voltage, and temperature margins.
+The current NOM transient exports repeat scalar `IRS`, `IMST`, `VGS_MST`, and `VTH_MST` values across the time rows. Those final operating-point values remain usable in the compact table, but the NOM IMST startup waveform is unavailable. The current `NOM.dc2d.txt` is also the legacy 12-column export. Its current, voltage, power, temperature-coefficient, and line-regulation results are usable, but NOM mirror-error, IMST, and MST-margin sweep extrema require regeneration. Consequently, the reported global mirror-error and MST-margin extrema currently search FF/SS/FS/SF data but cannot prove that NOM is not worse.
+
+No mirror drain-voltage compliance sweep is included. The reported mirror error applies only to the present testbench operating points and DC grids. The range-normalized TC and line-regulation metrics can also hide curvature or local slope changes.
+
+### 6.5 Verification Coverage
+
+The integrated PATH flow remains nominal-only. The dedicated BIAS flow includes process, voltage, and temperature characterization, but this is not complete-chip PVT sign-off. The project still does not establish:
+
+- Integrated PATH and complete-chip process, voltage, and temperature margins.
 - Device mismatch or Monte Carlo yield.
 - Extracted bandwidth, noise, distortion, or settling.
 - ESD, pad, package, electrode, or board parasitics beyond the present test models.
@@ -327,9 +464,10 @@ The current flow is nominal-only and pre-layout. It does not yet establish:
 
 | Priority | Item | Completion criterion |
 | --- | --- | --- |
+| P0 | Refresh NOM BIAS exports | Seven NOM transients contain true IRS/IMST/VGS/VTH vectors and `NOM.dc2d.txt` uses the current 14-column schema |
 | P0 | Resolve 0.05 Hz and 0.1 Hz transient gain | Stable repeated result with documented steady-state method and agreement with an appropriate periodically switched analysis |
 | P0 | Confirm gain accuracy | Explain or correct the approximately -7% G2 and -12% G16 error at 60 Hz |
-| P1 | Add PVT coverage | Automated summaries for process, supply, and temperature corners |
+| P1 | Add integrated PATH PVT coverage | Automated PATH summaries for process, supply, and temperature corners |
 | P1 | Add mismatch/Monte Carlo | Statistical offset, CMRR, PSRR, gain, and yield results |
 | P1 | Recheck THD/SNR | Sweep amplitude and clock timing; verify noise bandwidth and clock-sideband handling |
 | P1 | Complete layout | DRC/LVS-clean PATH layout with extracted simulations |
@@ -344,13 +482,26 @@ Run the MATLAB analyzer from the repository root with:
 matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','PATH','PATH_Analyze.m'))"
 ```
 
-Current authoritative artifacts are:
+Run the function-based BIAS analyzer with:
+
+```bash
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
+```
+
+Calculation sources and generated artifacts are:
 
 - `PATH_Analyze.m`: calculation and plotting rules.
 - `PATH_TB_AC.sch`, `PATH_TB_NOISE.sch`, and `PATH_TB_TRAN.sch`: applied conditions and simulation schedules.
-- `PATH_summary.csv`: complete result set, including all transient cases.
-- `PATH_table_report.csv`: concise G2/G16/RLD/THD report without a category column.
-- The 12 figures directly generated by the current `PATH_Analyze.m` in `PATH/Plots/`.
+- `PATH_summary.csv`: generated complete result set, including all transient cases; currently requires regeneration.
+- `PATH_table_report.csv`: generated G2/G16/RLD/THD report; currently requires regeneration.
+- The 12 PATH figures generated by `PATH_Analyze.m`; currently requires regeneration.
+- `BIAS_Analyze.m`: BIAS calculation, table, CSV, and plotting rules.
+- `BIAS_table_report.csv`: process and NOM environmental operating-point/startup table.
+- `BIAS_startup_report.csv` and `BIAS_startup_summary.csv`: all 35 startup values and the worst-case/failure summary.
+- `BIAS_sel_report.csv`: global BP/VREF internal/external selection errors.
+- `BIAS_dc2d_report.csv` and `BIAS_global_worst_case.csv`: per-process surfaces and global extrema with locations.
+- `BIAS_reference_report.csv`: temperature and supply variation summaries.
+- The six NOM figures directly generated by the current `BIAS_Analyze.m` in `BIAS/Plots/`.
 
 Raw ngspice `*.txt` exports remain local and are ignored by Git. Re-running MATLAB without regenerating the raw data only re-analyzes the local simulation state; therefore, the schematics, testbench revision, CSV timestamp, and plot timestamp should be recorded together for formal design reviews.
 

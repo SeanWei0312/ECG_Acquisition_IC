@@ -1,8 +1,8 @@
 # ECG Acquisition IC
 
-This repository contains the design and verification work for a GF180 ECG acquisition integrated circuit developed for the SSCS Chipathon 2026 flow. The current focus is the fully differential analog signal path (`PATH`): device characterization, amplifier and common-mode building blocks, the integrated ECG front end, Xschem/ngspice testbenches, MATLAB post-processing, and nominal schematic-level results.
+This repository contains the design and verification work for a GF180 ECG acquisition integrated circuit developed for the SSCS Chipathon 2026 flow. The current verified scope includes the bias/reference and internal/external selection block (`BIAS`) and the fully differential analog signal path (`PATH`), together with device characterization, amplifier and common-mode building blocks, Xschem/ngspice testbenches, MATLAB post-processing, and schematic-level results.
 
-> Current status: nominal, pre-layout schematic verification. Layout, extracted verification, PVT/Monte Carlo coverage, PCB implementation, ADC integration, and laboratory measurements are still pending.
+> Current status: pre-layout schematic verification. BIAS has process, temperature, supply, startup, and selector coverage; PATH remains nominal. Extracted verification, Monte Carlo coverage, PCB implementation, ADC integration, and laboratory measurements are still pending.
 
 ## Signal Path
 
@@ -35,7 +35,8 @@ The testbenches use a 3.3 V supply, 1.65 V input/output common-mode target, 40 u
 | GF180 device characterization | Implemented | NMOS/PMOS Gm/Id testbenches, MATLAB scripts, and plots are present. |
 | Single-ended OTA | Nominal simulation complete | Open-loop, closed-loop, noise, CMRR, and PSRR results are present. |
 | Fully differential OTA and CMFB | Nominal simulation complete | FDC, CMFB, and FDOTA schematics, analyzers, summaries, and plots are present. |
-| Integrated ECG path | Nominal simulation in progress | AC, noise, transient, offset, startup, RLD, THD, and SNR tests are implemented. |
+| Bias reference and selector | PVT simulation implemented | Five process corners, 35 environmental transients, five temperature/supply grids, MATLAB reports, and NOM plots are present; the NOM device-vector export still needs refresh. |
+| Integrated ECG path | Nominal simulation flow implemented | AC, noise, transient, offset, startup, RLD, THD, and SNR testbenches/analyzers are implemented; generated PATH CSVs and plots currently need regeneration. |
 | IC layout and extracted simulation | Not started | Layout directory exists; no completed PATH layout is reported. |
 | SAR ADC integration | Planned | System specification references a 10-bit SAR ADC; circuit integration is pending. |
 | PCB and measurement | Not started | PCB and measurement directories are placeholders for later work. |
@@ -68,14 +69,64 @@ The testbenches use a 3.3 V supply, 1.65 V input/output common-mode target, 40 u
 | `Design_Files/System Design/System_Block.drawio` | Editable system block diagram. |
 | `Design_Files/System Design/ECG Acquisition IC with 10-bit SAR ADC SPEC.xlsx` | System-level specification workbook. |
 | `Design_Files/IC Design/Schematic/` | Analog building-block schematics and symbols. |
+| `Design_Files/IC Design/Schematic/BIAS/BIAS.sch` | Bias-reference generator; produces internal BP and VREF references. |
+| `Design_Files/IC Design/Testbench/BIAS/BIAS_TB_{NOM,FF,SS,FS,SF}.sch` | BIAS process, environmental transient, selector, and 2-D temperature/supply testbenches. |
+| `Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m` | Five-process BIAS analyzer, report generator, and NOM plot generator. |
+| `Measurement_Results/IC_Simulation/BIAS/BIAS_table_report.csv` | Compact BIAS operating-point and startup table for process and NOM environmental cases. |
+| `Measurement_Results/IC_Simulation/BIAS/BIAS_global_worst_case.csv` | Global BIAS extrema with process, temperature, and supply locations. |
+| `Measurement_Results/IC_Simulation/BIAS/Plots/` | Six current NOM BIAS figures, including startup, selector, sweeps, and the 2-D error heat map. |
 | `Design_Files/IC Design/Testbench/PATH/AC/PATH_TB_AC.sch` | PATH operating-point, differential AC, CMRR, and PSRR testbench. |
 | `Design_Files/IC Design/Testbench/PATH/NOISE/PATH_TB_NOISE.sch` | PATH input/output-noise testbench. |
 | `Design_Files/IC Design/Testbench/PATH/TRAN/PATH_TB_TRAN.sch` | PATH differential, rejection, offset, startup, RLD, and THD transient testbench. |
 | `Measurement_Results/IC_Simulation/PATH/PATH_Analyze.m` | Main MATLAB analyzer, plot generator, and report generator. |
-| `Measurement_Results/IC_Simulation/PATH/PATH_summary.csv` | Complete machine-readable PATH result summary. |
-| `Measurement_Results/IC_Simulation/PATH/PATH_table_report.csv` | Compact G2/G16/RLD/THD report without a category column. |
-| `Measurement_Results/IC_Simulation/PATH/Plots/` | Current generated PATH figures. |
+| `Measurement_Results/IC_Simulation/PATH/PATH_summary.csv` | Generated complete machine-readable PATH result summary. |
+| `Measurement_Results/IC_Simulation/PATH/PATH_table_report.csv` | Generated compact G2/G16/RLD/THD report without a category column. |
+| `Measurement_Results/IC_Simulation/PATH/Plots/` | Generated PATH figure directory. |
 | `Project_Report.md` | Verification methodology, current results, limitations, and next steps. |
+
+## BIAS Characterization
+
+`BIAS` generates `BPINT` and `VREFINT`. The separate selector chooses the internal or external references presented at `BP` and `VREF`:
+
+```text
+BIAS: BPINT/VREFINT ----+
+                        +--> SEL --> BP/VREF
+External: BPEXT/VREFEXT +
+```
+
+The automated flow analyzes five process corners (`NOM`, `FF`, `SS`, `FS`, and `SF`). Each process has seven 10 ms transient conditions:
+
+| Condition | Temperature | VDD |
+| --- | ---: | ---: |
+| NOM | 27 C | 3.3 V |
+| VL | 27 C | 3.0 V |
+| VH | 27 C | 3.6 V |
+| TL | -40 C | 3.3 V |
+| TH | 125 C | 3.3 V |
+| TLVL | -40 C | 3.0 V |
+| THVH | 125 C | 3.6 V |
+
+This produces 35 startup and selector runs. Every process also has a 2-D DC sweep from -40 C to 125 C in 1 C steps and from 3.0 V to 3.6 V in 10 mV steps, for 10,126 coordinate pairs per process. The analyzer uses the final 10% of the initial internal-selection plateau for settled values. Startup is measured from the 100 us VDD-ramp start to permanent entry within 90-110% of the run's own settled bias current before the first selector transition.
+
+The first report table uses the columns `NOM FF SS FS SF VL VH TL TH`. The process columns use nominal conditions; VL/VH/TL/TH use the corresponding NOM-process transient runs. TLVL and THVH remain in the complete startup matrix and selector search.
+
+Current BIAS highlights from the generated CSV reports are:
+
+| Metric | Result |
+| --- | ---: |
+| NOM bias current | 39.997 uA |
+| NOM bias-current error | -0.007499% |
+| Worst startup time | 1180.295 us, SS/TLVL (-40 C, 3.0 V) |
+| Startup failures | 0 / 35 |
+| 2-D bias-current range | 31.054-49.441 uA |
+| Worst absolute bias-current error | 23.603%, FF/125 C/3.6 V |
+| Maximum absolute VREF error | 6.155 uV |
+| Maximum absolute mirror error | 0.149% |
+| Minimum reported MST margin | 0.7415 V |
+| Maximum BIAS+SEL current / power | 103.971 uA / 374.297 uW |
+| Largest selector error | 25.466 nV |
+
+Two NOM export limitations remain visible by design. The seven NOM transient files contain constant `IRS`, `IMST`, `VGS_MST`, and `VTH_MST` exports, so their final scalar values can be reported but the NOM IMST startup waveform cannot. `NOM.dc2d.txt` is still the legacy 12-column format, so NOM mirror-error, IMST, and MST-margin sweep extrema are unavailable; the corresponding global extrema currently come from FF/SS/FS/SF only.
 
 ## PATH Transient Settings
 
@@ -103,7 +154,30 @@ The normal clock is 500 Hz (`T = 2 ms`) with 80 us rise/fall times and a 920 us 
 | THD | 60 and 150 Hz | 31 | final 30 cycles |
 | Startup with/without reset | No sine-cycle rule | 200 ms time-domain run | settling criteria |
 
-## Run the Verification Flow
+## Run the Verification Flows
+
+### BIAS
+
+1. Run `BIAS_TB_NOM.sch`, `BIAS_TB_FF.sch`, `BIAS_TB_SS.sch`, `BIAS_TB_FS.sch`, and `BIAS_TB_SF.sch` in Xschem/ngspice. Each testbench writes seven transient files and one 2-D DC file under its process result directory.
+2. From the repository root, run the function-based MATLAB analyzer:
+
+```bash
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
+```
+
+The BIAS analyzer prints the operating-point, 35-run startup, selector, 2-D PVT, global-worst-case, and reference-quality tables. It writes seven CSV reports:
+
+- `BIAS_table_report.csv`
+- `BIAS_startup_report.csv`
+- `BIAS_startup_summary.csv`
+- `BIAS_sel_report.csv`
+- `BIAS_dc2d_report.csv`
+- `BIAS_global_worst_case.csv`
+- `BIAS_reference_report.csv`
+
+It also generates six NOM figures: startup current, startup voltage, selector operation, current versus temperature, current versus VDD, and a signed bias-current-error heat map with contour lines.
+
+### PATH
 
 1. Start the IIC-OSIC-TOOLS environment using [Docker_Instructions.md](Docker_Instructions.md). The repository is expected under `/foss/designs/ECG_Acquisition_IC/` inside the container.
 2. Run the PATH AC, noise, and transient Xschem/ngspice testbenches. They write raw data under `Measurement_Results/IC_Simulation/PATH/NOM.Result_txt/`.
@@ -113,7 +187,7 @@ The normal clock is 500 Hz (`T = 2 ms`) with 80 us rise/fall times and a 920 us 
 matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','PATH','PATH_Analyze.m'))"
 ```
 
-The MATLAB flow has been verified with R2025b. It prints a compact terminal table and regenerates:
+The MATLAB flows have been verified with R2025b. The PATH analyzer prints a compact terminal table and regenerates:
 
 - `PATH_summary.csv`: full operating-point, AC, noise, transient, offset, startup, RLD, and THD metrics.
 - `PATH_table_report.csv`: concise G2, G16, RLD, and 60 Hz THD/SNR rows.
@@ -121,7 +195,7 @@ The MATLAB flow has been verified with R2025b. It prints a compact terminal tabl
 
 ## Latest Nominal PATH Highlights
 
-These values come from the checked-in `PATH_table_report.csv` and are schematic-level nominal results, not silicon specifications.
+These values are retained from the last documented `PATH_table_report.csv` result set and are schematic-level nominal results, not silicon specifications. The generated PATH CSVs and plots are currently absent from the worktree and must be regenerated before formal use.
 
 | Metric | G2 | G16 |
 | --- | ---: | ---: |
@@ -141,7 +215,7 @@ The 0.05 Hz transient gain is currently much lower than the ordinary AC result (
 ## Generated Data and Git
 
 - Raw `*.txt` simulator exports are intentionally ignored by Git and remain local.
-- MATLAB source, compact CSV summaries, and selected PNG plots are retained as reproducible project artifacts.
+- MATLAB source, BIAS CSV summaries, and BIAS PNG plots are retained as current reproducible artifacts; PATH CSVs and figures are regenerated from the local raw data as needed.
 - `.DS_Store` is ignored; macOS Finder may recreate it locally without affecting Git.
 - Re-run the testbenches before MATLAB whenever the schematic, clock, stimulus, or cycle schedule changes.
 
