@@ -1,106 +1,405 @@
 Category,Parameter,Unit,Value
 Operating point,"Supply voltage",V,3.3
-Operating point,"Total supply current",mA,0.04
-Operating point,"Total power",mW,10.6037
-Operating point,"Bias current diagnostic",uA,1.65e+06
+Operating point,"Total supply current",mA,8.85684
+Operating point,"Total power",mW,29.2276
+Operating point,"Bias current diagnostic",uA,40
 Operating point,"Input common mode",V,1.65
 Operating point,"Input differential DC",mV,0
-Operating point,"OUTP DC",V,1.64998
-Operating point,"OUTN DC",V,1.64998
+Operating point,"OUTP DC",V,1.60522
+Operating point,"OUTN DC",V,1.69473
 Operating point,"Output common mode",V,1.64998
-Operating point,"Output CM error",mV,-0.0233555
-Operating point,"Output differential DC",mV,0.000400176
+Operating point,"Output CM error",mV,-0.0233689
+Operating point,"Output differential DC",mV,-89.5153
 Operating point,"RLD DC",V,0.825
-Operating point,"Output low headroom",V,1.64998
-Operating point,"Output high headroom",V,1.65002
+Operating point,"Output low headroom",V,1.60522
+Operating point,"Output high headroom",V,1.60527
 AC response,"Expected gain",V/V,3840
 AC response,"Expected gain",dB,71.6866
-AC response,"Midband gain",V/V,3555.29
-AC response,"Midband gain",dB,71.0175
-AC response,"Gain error",%,-0.933388
-AC response,"Gain @ 0.05 Hz",dB,70.1401
-AC response,"Gain @ 60 Hz",dB,70.8741
-AC response,"Gain @ 150 Hz",dB,70.1031
-AC response,"Gain @ 1 kHz",dB,60.3656
-AC response,"Phase @ 0.05 Hz",deg,25.595
-AC response,"Phase @ 60 Hz",deg,-11.0883
-AC response,"Phase @ 150 Hz",deg,-26.1492
-AC response,"HP -1dB corner",Hz,0.0465589
-AC response,"HP -3dB corner",Hz,0.0239052
-AC response,"LP -1dB corner",Hz,157.516
-AC response,"LP -3dB corner",Hz,306.784
-AC response,"Gain flatness 0.05-150 Hz",dB,0.929919
-AC rejection,"CMRR @ 0.05 Hz",dB,234.597
-AC rejection,"CMRR @ 60 Hz",dB,234.934
-AC rejection,"CMRR @ 150 Hz",dB,234.933
-AC rejection,"CMRR @ 1 kHz",dB,234.888
-AC rejection,"PSRR+ @ 0.05 Hz",dB,189.59
-AC rejection,"PSRR+ @ 60 Hz",dB,190.48
-AC rejection,"PSRR+ @ 150 Hz",dB,190.48
-AC rejection,"PSRR+ @ 1 kHz",dB,190.475
-AC rejection,"PSRR- @ 0.05 Hz",dB,233.213
-AC rejection,"PSRR- @ 60 Hz",dB,233.256
-AC rejection,"PSRR- @ 150 Hz",dB,231.348
-AC rejection,"PSRR- @ 1 kHz",dB,218.503
-Noise,"Input noise 0.05-150 Hz",uVrms,7.40667
-Noise,"Input noise 0.01-1 kHz",uVrms,15.1027
-Noise,"Input noise density @ 0.05 Hz",nV/rtHz,29131.6
-Noise,"Input noise density @ 1 Hz",nV/rtHz,1963.98
-Noise,"Input noise density @ 10 Hz",nV/rtHz,440.368
-Noise,"Input noise density @ 60 Hz",nV/rtHz,171.754
-Noise,"Input noise density @ 150 Hz",nV/rtHz,110.502
-Noise,"Input noise density @ 1 kHz",nV/rtHz,52.2101
-Noise,"Input-referred SNR, 0.5 mVpp",dB,27.556
-Transient response,"Gain @ 0.05 Hz",dB,47.957
-Transient response,"Gain @ 60 Hz",dB,70.7853
-Transient response,"Gain @ 150 Hz",dB,70.0088
-Transient response,"Gain error @ 0.05 Hz vs AC",dB,-22.1831
-Transient response,"Gain error @ 60 Hz vs AC",dB,-0.0888968
-Transient response,"Gain error @ 150 Hz vs AC",dB,-0.0942688
-Transient rejection,"CMRR tran @ 0.05 Hz",dB,78.3607
-Transient rejection,"CMRR tran @ 60 Hz",dB,112.908
-Transient rejection,"CMRR tran @ 150 Hz",dB,130.45
-Transient rejection,"CMRR tran @ 1 kHz",dB,120.574
-Transient rejection,"PSRR+ tran @ 0.05 Hz",dB,82.8748
-Transient rejection,"PSRR+ tran @ 60 Hz",dB,114.994
-Transient rejection,"PSRR+ tran @ 150 Hz",dB,121.996
-Transient rejection,"PSRR+ tran @ 1 kHz",dB,119.225
-Transient rejection,"PSRR- tran @ 0.05 Hz",dB,85.5496
-Transient rejection,"PSRR- tran @ 60 Hz",dB,113.194
-Transient rejection,"PSRR- tran @ 150 Hz",dB,123.633
-Transient rejection,"PSRR- tran @ 1 kHz",dB,118.891
-Offset tolerance,"VCM offset post-reset max CM error",mV,0.049488
-Offset tolerance,"VCM offset post-reset max |VOUT,diff|",V,1.17165
+AC response,"Midband gain",V/V,3418.03
+AC response,"Midband gain",dB,70.6755
+AC response,"Gain error",dB,-1.01111
+AC response,"Gain @ 0.05 Hz",dB,70.1681
+AC response,"Gain @ 60 Hz",dB,70.6022
+AC response,"Gain @ 150 Hz",dB,70.1875
+AC response,"Gain @ 1 kHz",dB,62.6211
+AC response,"Phase @ 0.05 Hz",deg,19.582
+AC response,"Phase @ 60 Hz",deg,-7.94369
+AC response,"Phase @ 150 Hz",deg,-19.2674
+AC response,"HP -1dB corner",Hz,0.0347656
+AC response,"HP -3dB corner",Hz,0.0177925
+AC response,"LP -1dB corner",Hz,220.151
+AC response,"LP -3dB corner",Hz,430.163
+AC response,"Gain flatness 0.05-150 Hz",dB,0.515164
+AC rejection,"CMRR @ 0.05 Hz",dB,105.494
+AC rejection,"CMRR @ 60 Hz",dB,153.451
+AC rejection,"CMRR @ 150 Hz",dB,154.093
+AC rejection,"CMRR @ 1 kHz",dB,154.101
+AC rejection,"PSRR+ @ 0.05 Hz",dB,110.308
+AC rejection,"PSRR+ @ 60 Hz",dB,110.522
+AC rejection,"PSRR+ @ 150 Hz",dB,110.112
+AC rejection,"PSRR+ @ 1 kHz",dB,102.589
+AC rejection,"PSRR- @ 0.05 Hz",dB,105.374
+AC rejection,"PSRR- @ 60 Hz",dB,110.518
+AC rejection,"PSRR- @ 150 Hz",dB,110.111
+AC rejection,"PSRR- @ 1 kHz",dB,102.588
+Noise,"Input noise 0.05-150 Hz",uVrms,3.24521
+Noise,"Input noise 0.01-1 kHz",uVrms,5.42556
+Noise,"Input noise density @ 0.05 Hz",nV/rtHz,9525.14
+Noise,"Input noise density @ 1 Hz",nV/rtHz,1030.79
+Noise,"Input noise density @ 10 Hz",nV/rtHz,291.522
+Noise,"Input noise density @ 60 Hz",nV/rtHz,118.043
+Noise,"Input noise density @ 150 Hz",nV/rtHz,76.471
+Noise,"Input noise density @ 1 kHz",nV/rtHz,36.6904
+Noise,"Input-referred SNR, 0.5 mVpp",dB,34.7236
+Offset tolerance,"VCM offset post-reset max CM error",mV,0.0486591
+Offset tolerance,"VCM offset post-reset max |VOUT,diff|",V,1.11395
 Offset tolerance,"VCM offset post-reset clipped",,0
-Offset tolerance,"VCM offset post-reset gain 0.5 mVpp",V/V,3450.65
-Offset tolerance,"VCM offset post-reset gain 5 mVpp",V/V,441.09
-Offset tolerance,"VDIFF offset post-reset max CM error",mV,0.0494873
-Offset tolerance,"VDIFF offset post-reset max |VOUT,diff|",V,1.17165
+Offset tolerance,"VCM offset post-reset gain 0.5 mVpp",V/V,3374.82
+Offset tolerance,"VCM offset post-reset gain 5 mVpp",V/V,445.632
+Offset tolerance,"VDIFF offset post-reset max CM error",mV,0.0486595
+Offset tolerance,"VDIFF offset post-reset max |VOUT,diff|",V,1.11395
 Offset tolerance,"VDIFF offset post-reset clipped",,0
-Offset tolerance,"VDIFF offset post-reset gain 0.5 mVpp",V/V,3450.65
-Offset tolerance,"VDIFF offset post-reset gain 5 mVpp",V/V,441.09
+Offset tolerance,"VDIFF offset post-reset gain 0.5 mVpp",V/V,3374.82
+Offset tolerance,"VDIFF offset post-reset gain 5 mVpp",V/V,445.632
 Startup reset,"VIN,diff pre-reset",mV,300
 Startup reset,"VIN,diff post-reset",mV,300
 Startup reset,"VIN,CM final",V,1.65
-Startup reset,"VOUT,diff pre-reset",V,3.19748
-Startup reset,"VOUT,diff post-reset",mV,-11.5362
-Startup reset,"Offset removal",%,99.6392
-Startup reset,"Reset attenuation",dB,-48.8549
-Startup reset,"No-reset final VOUT,diff",V,3.17674
-Startup reset,"Reset improvement vs no reset",dB,48.7984
-Startup reset,"Settling to +/-10 mV",ms,1.9781
-Startup reset,"Settling to 1% of pre-reset",ms,1.9781
-Startup reset,"Post-reset ripple p-p",mV,1.60838
-Startup reset,"Post-reset ripple RMS",mV,0.491204
+Startup reset,"VOUT,diff pre-reset",V,3.14041
+Startup reset,"VOUT,diff post-reset",mV,2.37551
+Startup reset,"Offset removal",%,99.9244
+Startup reset,"Reset attenuation",dB,-62.4246
+Startup reset,"No-reset final VOUT,diff",V,3.14041
+Startup reset,"No-reset final VOUT,CM",V,1.64945
+Startup reset,"Reset improvement vs no reset",dB,62.4246
+Startup reset,"VOUT,CM settling after reset",ms,0.880063
+Startup reset,"Settling to +/-10 mV",ms,0.880063
+Startup reset,"Settling to 1% of pre-reset",ms,0.880063
+Startup reset,"No-reset VOUT,CM settling",ms,0.880563
+Startup reset,"No-reset VOUT,diff settling",ms,0.880563
+Startup reset,"Maximum |VOUT,diff|",V,3.1406
+Startup reset,"No-reset maximum |VOUT,diff|",V,3.1406
+Startup reset,"Post-reset ripple p-p",mV,0.386829
+Startup reset,"Post-reset ripple RMS",mV,0.106936
 Startup reset,"VOUT,CM final",V,1.65005
-Startup reset,"VOUT,CM final error",mV,0.0488023
-Startup reset,"Max CM deviation during reset",mV,0.0488059
-Startup reset,"Max CM deviation after reset",mV,0.0488074
-Startup reset,"Final OUTP",V,1.64403
-Startup reset,"Final OUTN",V,1.65607
+Startup reset,"VOUT,CM final error",mV,0.0486468
+Startup reset,"Max CM deviation during reset",mV,0.550165
+Startup reset,"Max CM deviation after reset",mV,0.0486498
+Startup reset,"Final OUTP",V,1.65124
+Startup reset,"Final OUTN",V,1.64886
 Startup reset,"Output stuck near rail",,0
 Startup reset,"Pass",,1
-RLD,"Input CM improvement",dB,13.3417
-RLD,"Output diff improvement",dB,9.09956
-RLD,"RLD drive max on",V,1.47877
-THD,"Maximum THD",%,0.519744
+RLD,"Input CM improvement",dB,20.2537
+RLD,"Body 60 Hz improvement",dB,20.2537
+RLD,"Output diff improvement",dB,20.4714
+RLD,"RLD output 60 Hz amplitude",Vpk,0.0828638
+RLD,"RLD current peak",uA,0.0913192
+RLD,"RLD current RMS",uArms,0.0645724
+THD,"Maximum THD",%,0.100152
+Transient differential,"G2 1 kHz gain",V/V,177.487
+Transient differential,"G2 1 kHz gain error",%,-63.0235
+Transient differential,"G2 1 kHz gain relative to 60 Hz",dB,-7.99843
+Transient differential,"G2 1 kHz attenuation from 60 Hz",dB,7.99843
+Transient differential,"G2 1 kHz phase",deg,-67.0344
+Transient differential,"G2 1 kHz output CM",V,1.65005
+Transient differential,"G2 1 kHz output CM ripple",mVpp,5.86111e-06
+Transient differential,"G2 500 Hz gain",V/V,293.982
+Transient differential,"G2 500 Hz gain error",%,-38.7537
+Transient differential,"G2 500 Hz gain relative to 60 Hz",dB,-3.61536
+Transient differential,"G2 500 Hz attenuation from 60 Hz",dB,3.61536
+Transient differential,"G2 500 Hz phase",deg,-49.5049
+Transient differential,"G2 500 Hz output CM",V,1.65005
+Transient differential,"G2 500 Hz output CM ripple",mVpp,6.44962e-06
+Transient differential,"G2 250 Hz gain",V/V,389.84
+Transient differential,"G2 250 Hz gain error",%,-18.7834
+Transient differential,"G2 250 Hz gain relative to 60 Hz",dB,-1.16406
+Transient differential,"G2 250 Hz attenuation from 60 Hz",dB,1.16406
+Transient differential,"G2 250 Hz phase",deg,-30.3038
+Transient differential,"G2 250 Hz output CM",V,1.65005
+Transient differential,"G2 250 Hz output CM ripple",mVpp,6.20446e-06
+Transient differential,"G2 150 Hz gain",V/V,425.567
+Transient differential,"G2 150 Hz gain error",%,-11.3401
+Transient differential,"G2 150 Hz gain relative to 60 Hz",dB,-0.402408
+Transient differential,"G2 150 Hz attenuation from 60 Hz",dB,0.402408
+Transient differential,"G2 150 Hz phase",deg,-19.3024
+Transient differential,"G2 150 Hz output CM",V,1.65005
+Transient differential,"G2 150 Hz output CM ripple",mVpp,7.63832e-06
+Transient differential,"G2 60 Hz gain",V/V,445.747
+Transient differential,"G2 60 Hz gain error",%,-7.13597
+Transient differential,"G2 60 Hz gain relative to 60 Hz",dB,0
+Transient differential,"G2 60 Hz attenuation from 60 Hz",dB,-0
+Transient differential,"G2 60 Hz phase",deg,-7.91789
+Transient differential,"G2 60 Hz output CM",V,1.65005
+Transient differential,"G2 60 Hz output CM ripple",mVpp,7.5523e-06
+Transient differential,"G2 10 Hz gain",V/V,445.954
+Transient differential,"G2 10 Hz gain error",%,-7.09285
+Transient differential,"G2 10 Hz gain relative to 60 Hz",dB,0.00403261
+Transient differential,"G2 10 Hz attenuation from 60 Hz",dB,-0.00403261
+Transient differential,"G2 10 Hz phase",deg,-1.03057
+Transient differential,"G2 10 Hz output CM",V,1.65005
+Transient differential,"G2 10 Hz output CM ripple",mVpp,7.73567e-06
+Transient differential,"G2 1 Hz gain",V/V,418.363
+Transient differential,"G2 1 Hz gain error",%,-12.8411
+Transient differential,"G2 1 Hz gain relative to 60 Hz",dB,-0.550714
+Transient differential,"G2 1 Hz attenuation from 60 Hz",dB,0.550714
+Transient differential,"G2 1 Hz phase",deg,1.29209
+Transient differential,"G2 1 Hz output CM",V,1.65005
+Transient differential,"G2 1 Hz output CM ripple",mVpp,8.67009e-06
+Transient differential,"G2 0.5 Hz gain",V/V,444.37
+Transient differential,"G2 0.5 Hz gain error",%,-7.42283
+Transient differential,"G2 0.5 Hz gain relative to 60 Hz",dB,-0.0268719
+Transient differential,"G2 0.5 Hz attenuation from 60 Hz",dB,0.0268719
+Transient differential,"G2 0.5 Hz phase",deg,-6.41424
+Transient differential,"G2 0.5 Hz output CM",V,1.65005
+Transient differential,"G2 0.5 Hz output CM ripple",mVpp,9.5014e-06
+Transient differential,"G2 0.1 Hz gain",V/V,14.3757
+Transient differential,"G2 0.1 Hz gain error",%,-97.0051
+Transient differential,"G2 0.1 Hz gain relative to 60 Hz",dB,-29.8292
+Transient differential,"G2 0.1 Hz attenuation from 60 Hz",dB,29.8292
+Transient differential,"G2 0.1 Hz phase",deg,38.2254
+Transient differential,"G2 0.1 Hz output CM",V,1.65005
+Transient differential,"G2 0.1 Hz output CM ripple",mVpp,5.67009e-06
+Transient differential,"G2 0.05 Hz gain",V/V,1.547
+Transient differential,"G2 0.05 Hz gain error",%,-99.6777
+Transient differential,"G2 0.05 Hz gain relative to 60 Hz",dB,-49.192
+Transient differential,"G2 0.05 Hz attenuation from 60 Hz",dB,49.192
+Transient differential,"G2 0.05 Hz phase",deg,85.4196
+Transient differential,"G2 0.05 Hz output CM",V,1.65005
+Transient differential,"G2 0.05 Hz output CM ripple",mVpp,6.14465e-06
+Transient differential,"G16 1 kHz gain",V/V,1346.02
+Transient differential,"G16 1 kHz gain error",%,-64.9473
+Transient differential,"G16 1 kHz gain relative to 60 Hz",dB,-7.99828
+Transient differential,"G16 1 kHz attenuation from 60 Hz",dB,7.99828
+Transient differential,"G16 1 kHz phase",deg,-67.0928
+Transient differential,"G16 1 kHz output CM",V,1.65005
+Transient differential,"G16 1 kHz output CM ripple",mVpp,9.17987e-06
+Transient differential,"G16 500 Hz gain",V/V,2229.54
+Transient differential,"G16 500 Hz gain error",%,-41.9391
+Transient differential,"G16 500 Hz gain relative to 60 Hz",dB,-3.61504
+Transient differential,"G16 500 Hz attenuation from 60 Hz",dB,3.61504
+Transient differential,"G16 500 Hz phase",deg,-49.5327
+Transient differential,"G16 500 Hz output CM",V,1.65005
+Transient differential,"G16 500 Hz output CM ripple",mVpp,1.27407e-05
+Transient differential,"G16 250 Hz gain",V/V,2956.41
+Transient differential,"G16 250 Hz gain error",%,-23.0102
+Transient differential,"G16 250 Hz gain relative to 60 Hz",dB,-1.16405
+Transient differential,"G16 250 Hz attenuation from 60 Hz",dB,1.16405
+Transient differential,"G16 250 Hz phase",deg,-30.3196
+Transient differential,"G16 250 Hz output CM",V,1.65005
+Transient differential,"G16 250 Hz output CM ripple",mVpp,1.7609e-05
+Transient differential,"G16 150 Hz gain",V/V,3227.54
+Transient differential,"G16 150 Hz gain error",%,-15.9494
+Transient differential,"G16 150 Hz gain relative to 60 Hz",dB,-0.4019
+Transient differential,"G16 150 Hz attenuation from 60 Hz",dB,0.4019
+Transient differential,"G16 150 Hz phase",deg,-19.3076
+Transient differential,"G16 150 Hz output CM",V,1.65005
+Transient differential,"G16 150 Hz output CM ripple",mVpp,2.15934e-05
+Transient differential,"G16 60 Hz gain",V/V,3380.39
+Transient differential,"G16 60 Hz gain error",%,-11.969
+Transient differential,"G16 60 Hz gain relative to 60 Hz",dB,0
+Transient differential,"G16 60 Hz attenuation from 60 Hz",dB,-0
+Transient differential,"G16 60 Hz phase",deg,-7.92165
+Transient differential,"G16 60 Hz output CM",V,1.65005
+Transient differential,"G16 60 Hz output CM ripple",mVpp,2.45098e-05
+Transient differential,"G16 10 Hz gain",V/V,3380.96
+Transient differential,"G16 10 Hz gain error",%,-11.9541
+Transient differential,"G16 10 Hz gain relative to 60 Hz",dB,0.00146668
+Transient differential,"G16 10 Hz attenuation from 60 Hz",dB,-0.00146668
+Transient differential,"G16 10 Hz phase",deg,-1.02647
+Transient differential,"G16 10 Hz output CM",V,1.65005
+Transient differential,"G16 10 Hz output CM ripple",mVpp,2.89574e-05
+Transient differential,"G16 1 Hz gain",V/V,3172.72
+Transient differential,"G16 1 Hz gain error",%,-17.3772
+Transient differential,"G16 1 Hz gain relative to 60 Hz",dB,-0.550713
+Transient differential,"G16 1 Hz attenuation from 60 Hz",dB,0.550713
+Transient differential,"G16 1 Hz phase",deg,1.25066
+Transient differential,"G16 1 Hz output CM",V,1.65005
+Transient differential,"G16 1 Hz output CM ripple",mVpp,8.00772e-05
+Transient differential,"G16 0.5 Hz gain",V/V,3377.48
+Transient differential,"G16 0.5 Hz gain error",%,-12.0447
+Transient differential,"G16 0.5 Hz gain relative to 60 Hz",dB,-0.00747089
+Transient differential,"G16 0.5 Hz attenuation from 60 Hz",dB,0.00747089
+Transient differential,"G16 0.5 Hz phase",deg,-6.38448
+Transient differential,"G16 0.5 Hz output CM",V,1.65005
+Transient differential,"G16 0.5 Hz output CM ripple",mVpp,0.000107517
+Transient differential,"G16 0.1 Hz gain",V/V,107.858
+Transient differential,"G16 0.1 Hz gain error",%,-97.1912
+Transient differential,"G16 0.1 Hz gain relative to 60 Hz",dB,-29.9223
+Transient differential,"G16 0.1 Hz attenuation from 60 Hz",dB,29.9223
+Transient differential,"G16 0.1 Hz phase",deg,37.9716
+Transient differential,"G16 0.1 Hz output CM",V,1.65005
+Transient differential,"G16 0.1 Hz output CM ripple",mVpp,7.33044e-06
+Transient differential,"G16 0.05 Hz gain",V/V,11.5491
+Transient differential,"G16 0.05 Hz gain error",%,-99.6992
+Transient differential,"G16 0.05 Hz gain relative to 60 Hz",dB,-49.3284
+Transient differential,"G16 0.05 Hz attenuation from 60 Hz",dB,49.3284
+Transient differential,"G16 0.05 Hz phase",deg,85.8854
+Transient differential,"G16 0.05 Hz output CM",V,1.65005
+Transient differential,"G16 0.05 Hz output CM ripple",mVpp,7.78366e-06
+Transient rejection,"G2 1 kHz CMRR",dB,141.181
+Transient rejection,"G2 1 kHz output CM ripple",Vpk,3.64529e-10
+Transient rejection,"G2 500 Hz CMRR",dB,139.879
+Transient rejection,"G2 500 Hz output CM ripple",Vpk,1.9598e-11
+Transient rejection,"G2 250 Hz CMRR",dB,136.513
+Transient rejection,"G2 250 Hz output CM ripple",Vpk,1.60645e-11
+Transient rejection,"G2 150 Hz CMRR",dB,133.32
+Transient rejection,"G2 150 Hz output CM ripple",Vpk,2.62445e-11
+Transient rejection,"G2 60 Hz CMRR",dB,126.181
+Transient rejection,"G2 60 Hz output CM ripple",Vpk,1.31514e-10
+Transient rejection,"G16 1 kHz CMRR",dB,141.323
+Transient rejection,"G16 1 kHz output CM ripple",Vpk,2.05314e-10
+Transient rejection,"G16 500 Hz CMRR",dB,139.887
+Transient rejection,"G16 500 Hz output CM ripple",Vpk,1.25429e-10
+Transient rejection,"G16 250 Hz CMRR",dB,136.796
+Transient rejection,"G16 250 Hz output CM ripple",Vpk,1.09659e-10
+Transient rejection,"G16 150 Hz CMRR",dB,133.581
+Transient rejection,"G16 150 Hz output CM ripple",Vpk,7.27038e-11
+Transient rejection,"G16 60 Hz CMRR",dB,126.551
+Transient rejection,"G16 60 Hz output CM ripple",Vpk,5.2778e-11
+Transient rejection,"G2 1 kHz PSRR+",dB,163.521
+Transient rejection,"G2 1 kHz output CM ripple",Vpk,3.45512e-05
+Transient rejection,"G2 500 Hz PSRR+",dB,158.301
+Transient rejection,"G2 500 Hz output CM ripple",Vpk,1.72859e-05
+Transient rejection,"G2 250 Hz PSRR+",dB,149.812
+Transient rejection,"G2 250 Hz output CM ripple",Vpk,8.84984e-06
+Transient rejection,"G2 150 Hz PSRR+",dB,145.591
+Transient rejection,"G2 150 Hz output CM ripple",Vpk,5.6022e-06
+Transient rejection,"G2 60 Hz PSRR+",dB,137.426
+Transient rejection,"G2 60 Hz output CM ripple",Vpk,3.03737e-06
+Transient rejection,"G16 1 kHz PSRR+",dB,146.042
+Transient rejection,"G16 1 kHz output CM ripple",Vpk,3.45511e-05
+Transient rejection,"G16 500 Hz PSRR+",dB,153.059
+Transient rejection,"G16 500 Hz output CM ripple",Vpk,1.72859e-05
+Transient rejection,"G16 250 Hz PSRR+",dB,157.345
+Transient rejection,"G16 250 Hz output CM ripple",Vpk,8.84984e-06
+Transient rejection,"G16 150 Hz PSRR+",dB,163.161
+Transient rejection,"G16 150 Hz output CM ripple",Vpk,5.60222e-06
+Transient rejection,"G16 60 Hz PSRR+",dB,148.839
+Transient rejection,"G16 60 Hz output CM ripple",Vpk,3.03752e-06
+Transient rejection,"G2 1 kHz PSRR-",dB,142.2
+Transient rejection,"G2 1 kHz output CM ripple",Vpk,3.43657e-05
+Transient rejection,"G2 500 Hz PSRR-",dB,140.99
+Transient rejection,"G2 500 Hz output CM ripple",Vpk,1.72849e-05
+Transient rejection,"G2 250 Hz PSRR-",dB,139.551
+Transient rejection,"G2 250 Hz output CM ripple",Vpk,8.84987e-06
+Transient rejection,"G2 150 Hz PSRR-",dB,135.835
+Transient rejection,"G2 150 Hz output CM ripple",Vpk,5.60298e-06
+Transient rejection,"G2 60 Hz PSRR-",dB,129.172
+Transient rejection,"G2 60 Hz output CM ripple",Vpk,3.03759e-06
+Transient rejection,"G16 1 kHz PSRR-",dB,138.29
+Transient rejection,"G16 1 kHz output CM ripple",Vpk,3.43658e-05
+Transient rejection,"G16 500 Hz PSRR-",dB,138.177
+Transient rejection,"G16 500 Hz output CM ripple",Vpk,1.72849e-05
+Transient rejection,"G16 250 Hz PSRR-",dB,136.894
+Transient rejection,"G16 250 Hz output CM ripple",Vpk,8.84986e-06
+Transient rejection,"G16 150 Hz PSRR-",dB,133.43
+Transient rejection,"G16 150 Hz output CM ripple",Vpk,5.60298e-06
+Transient rejection,"G16 60 Hz PSRR-",dB,126.865
+Transient rejection,"G16 60 Hz output CM ripple",Vpk,3.03772e-06
+VCM offset,"G16 0.5 mVpp offset +500 mV ECG gain",V/V,3374.81
+VCM offset,"G16 0.5 mVpp offset +500 mV gain error",%,-12.1143
+VCM offset,"G16 0.5 mVpp offset +500 mV output CM error",mV,0.0426869
+VCM offset,"G16 0.5 mVpp offset +500 mV residual output DC",mV,2.24269
+VCM offset,"G16 0.5 mVpp offset +500 mV usable",,0
+VCM offset,"G16 0.5 mVpp offset +300 mV ECG gain",V/V,3374.79
+VCM offset,"G16 0.5 mVpp offset +300 mV gain error",%,-12.1148
+VCM offset,"G16 0.5 mVpp offset +300 mV output CM error",mV,0.0426869
+VCM offset,"G16 0.5 mVpp offset +300 mV residual output DC",mV,2.32516
+VCM offset,"G16 0.5 mVpp offset +300 mV usable",,0
+VCM offset,"G16 0.5 mVpp offset +0 mV ECG gain",V/V,3374.82
+VCM offset,"G16 0.5 mVpp offset +0 mV gain error",%,-12.1142
+VCM offset,"G16 0.5 mVpp offset +0 mV output CM error",mV,0.0426869
+VCM offset,"G16 0.5 mVpp offset +0 mV residual output DC",mV,2.24706
+VCM offset,"G16 0.5 mVpp offset +0 mV usable",,0
+VCM offset,"G16 0.5 mVpp offset -300 mV ECG gain",V/V,3374.81
+VCM offset,"G16 0.5 mVpp offset -300 mV gain error",%,-12.1143
+VCM offset,"G16 0.5 mVpp offset -300 mV output CM error",mV,0.0426869
+VCM offset,"G16 0.5 mVpp offset -300 mV residual output DC",mV,2.30821
+VCM offset,"G16 0.5 mVpp offset -300 mV usable",,0
+VCM offset,"G16 0.5 mVpp offset -500 mV ECG gain",V/V,3374.83
+VCM offset,"G16 0.5 mVpp offset -500 mV gain error",%,-12.1138
+VCM offset,"G16 0.5 mVpp offset -500 mV output CM error",mV,0.0426868
+VCM offset,"G16 0.5 mVpp offset -500 mV residual output DC",mV,2.14229
+VCM offset,"G16 0.5 mVpp offset -500 mV usable",,0
+VCM offset,"G2 5 mVpp offset +500 mV ECG gain",V/V,445.632
+VCM offset,"G2 5 mVpp offset +500 mV gain error",%,-7.15998
+VCM offset,"G2 5 mVpp offset +500 mV output CM error",mV,0.0394006
+VCM offset,"G2 5 mVpp offset +500 mV residual output DC",mV,-0.412854
+VCM offset,"G2 5 mVpp offset +500 mV usable",,1
+VCM offset,"G2 5 mVpp offset +300 mV ECG gain",V/V,445.632
+VCM offset,"G2 5 mVpp offset +300 mV gain error",%,-7.15997
+VCM offset,"G2 5 mVpp offset +300 mV output CM error",mV,0.0394006
+VCM offset,"G2 5 mVpp offset +300 mV residual output DC",mV,-0.4164
+VCM offset,"G2 5 mVpp offset +300 mV usable",,1
+VCM offset,"G2 5 mVpp offset +0 mV ECG gain",V/V,445.632
+VCM offset,"G2 5 mVpp offset +0 mV gain error",%,-7.15997
+VCM offset,"G2 5 mVpp offset +0 mV output CM error",mV,0.0394006
+VCM offset,"G2 5 mVpp offset +0 mV residual output DC",mV,-0.419654
+VCM offset,"G2 5 mVpp offset +0 mV usable",,1
+VCM offset,"G2 5 mVpp offset -300 mV ECG gain",V/V,445.632
+VCM offset,"G2 5 mVpp offset -300 mV gain error",%,-7.15998
+VCM offset,"G2 5 mVpp offset -300 mV output CM error",mV,0.0394006
+VCM offset,"G2 5 mVpp offset -300 mV residual output DC",mV,-0.429293
+VCM offset,"G2 5 mVpp offset -300 mV usable",,1
+VCM offset,"G2 5 mVpp offset -500 mV ECG gain",V/V,445.632
+VCM offset,"G2 5 mVpp offset -500 mV gain error",%,-7.15999
+VCM offset,"G2 5 mVpp offset -500 mV output CM error",mV,0.0394006
+VCM offset,"G2 5 mVpp offset -500 mV residual output DC",mV,-0.415429
+VCM offset,"G2 5 mVpp offset -500 mV usable",,1
+VDIFF offset,"G16 0.5 mVpp offset +500 mV ECG gain",V/V,3374.81
+VDIFF offset,"G16 0.5 mVpp offset +500 mV gain error",%,-12.1143
+VDIFF offset,"G16 0.5 mVpp offset +500 mV output CM error",mV,0.0426869
+VDIFF offset,"G16 0.5 mVpp offset +500 mV residual output DC",mV,2.24321
+VDIFF offset,"G16 0.5 mVpp offset +500 mV usable",,0
+VDIFF offset,"G16 0.5 mVpp offset +300 mV ECG gain",V/V,3374.82
+VDIFF offset,"G16 0.5 mVpp offset +300 mV gain error",%,-12.114
+VDIFF offset,"G16 0.5 mVpp offset +300 mV output CM error",mV,0.0426868
+VDIFF offset,"G16 0.5 mVpp offset +300 mV residual output DC",mV,2.20533
+VDIFF offset,"G16 0.5 mVpp offset +300 mV usable",,0
+VDIFF offset,"G16 0.5 mVpp offset +0 mV ECG gain",V/V,3374.82
+VDIFF offset,"G16 0.5 mVpp offset +0 mV gain error",%,-12.1142
+VDIFF offset,"G16 0.5 mVpp offset +0 mV output CM error",mV,0.0426869
+VDIFF offset,"G16 0.5 mVpp offset +0 mV residual output DC",mV,2.24706
+VDIFF offset,"G16 0.5 mVpp offset +0 mV usable",,0
+VDIFF offset,"G16 0.5 mVpp offset -300 mV ECG gain",V/V,3374.82
+VDIFF offset,"G16 0.5 mVpp offset -300 mV gain error",%,-12.1141
+VDIFF offset,"G16 0.5 mVpp offset -300 mV output CM error",mV,0.0426869
+VDIFF offset,"G16 0.5 mVpp offset -300 mV residual output DC",mV,2.1291
+VDIFF offset,"G16 0.5 mVpp offset -300 mV usable",,0
+VDIFF offset,"G16 0.5 mVpp offset -500 mV ECG gain",V/V,3374.81
+VDIFF offset,"G16 0.5 mVpp offset -500 mV gain error",%,-12.1142
+VDIFF offset,"G16 0.5 mVpp offset -500 mV output CM error",mV,0.0426869
+VDIFF offset,"G16 0.5 mVpp offset -500 mV residual output DC",mV,2.2063
+VDIFF offset,"G16 0.5 mVpp offset -500 mV usable",,0
+VDIFF offset,"G2 5 mVpp offset +500 mV ECG gain",V/V,445.632
+VDIFF offset,"G2 5 mVpp offset +500 mV gain error",%,-7.15994
+VDIFF offset,"G2 5 mVpp offset +500 mV output CM error",mV,0.0394006
+VDIFF offset,"G2 5 mVpp offset +500 mV residual output DC",mV,-0.43094
+VDIFF offset,"G2 5 mVpp offset +500 mV usable",,1
+VDIFF offset,"G2 5 mVpp offset +300 mV ECG gain",V/V,445.632
+VDIFF offset,"G2 5 mVpp offset +300 mV gain error",%,-7.15995
+VDIFF offset,"G2 5 mVpp offset +300 mV output CM error",mV,0.0394006
+VDIFF offset,"G2 5 mVpp offset +300 mV residual output DC",mV,-0.42495
+VDIFF offset,"G2 5 mVpp offset +300 mV usable",,1
+VDIFF offset,"G2 5 mVpp offset +0 mV ECG gain",V/V,445.632
+VDIFF offset,"G2 5 mVpp offset +0 mV gain error",%,-7.15997
+VDIFF offset,"G2 5 mVpp offset +0 mV output CM error",mV,0.0394006
+VDIFF offset,"G2 5 mVpp offset +0 mV residual output DC",mV,-0.419654
+VDIFF offset,"G2 5 mVpp offset +0 mV usable",,1
+VDIFF offset,"G2 5 mVpp offset -300 mV ECG gain",V/V,445.632
+VDIFF offset,"G2 5 mVpp offset -300 mV gain error",%,-7.15993
+VDIFF offset,"G2 5 mVpp offset -300 mV output CM error",mV,0.0394006
+VDIFF offset,"G2 5 mVpp offset -300 mV residual output DC",mV,-0.434604
+VDIFF offset,"G2 5 mVpp offset -300 mV usable",,1
+VDIFF offset,"G2 5 mVpp offset -500 mV ECG gain",V/V,445.632
+VDIFF offset,"G2 5 mVpp offset -500 mV gain error",%,-7.15994
+VDIFF offset,"G2 5 mVpp offset -500 mV output CM error",mV,0.0394006
+VDIFF offset,"G2 5 mVpp offset -500 mV residual output DC",mV,-0.441307
+VDIFF offset,"G2 5 mVpp offset -500 mV usable",,1
+THD,"G16 0.5 mVpp 60 Hz THD",%,0.0954532
+THD,"G16 0.5 mVpp 60 Hz THD",dB,-60.4042
+THD,"G2 5 mVpp 60 Hz THD",%,0.0857215
+THD,"G2 5 mVpp 60 Hz THD",dB,-61.3382
+THD,"G16 0.5 mVpp 150 Hz THD",%,0.100152
+THD,"G16 0.5 mVpp 150 Hz THD",dB,-59.9868
+THD,"G2 5 mVpp 150 Hz THD",%,0.082425
+THD,"G2 5 mVpp 150 Hz THD",dB,-61.6788
