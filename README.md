@@ -8,15 +8,7 @@ Detailed architecture, test conditions, formulas, complete results, limitations,
 
 ## System Summary
 
-```text
-BIAS: BPINT/VREFINT ----+
-                        +--> SEL --> BP/VREF
-External: BPEXT/VREFEXT +
-
-VINP/VINN --> INA --> filter/selection --> PGA --> buffer --> OUTP/OUTN
-     |                                                       |
-     +-------------------- RLD feedback ----------------------+
-```
+![ECG acquisition IC system block diagram](<Design_Files/System Design/System_Block.png>)
 
 The integrated PATH supports two nominal gain modes:
 
@@ -50,23 +42,6 @@ Headline schematic results:
 | Last documented PATH RLD suppression at 60 Hz | 20.25 dB |
 
 The NOM BIAS device-vector export and 14-column DC2D export still require refresh. The generated PATH CSVs and plots are currently absent from the worktree and must be regenerated before formal use. See the project report for the exact impact of these limitations.
-
-## Repository Layout
-
-```text
-Design_Files/
-├── System Design/                 # System specification and block diagram
-├── IC Design/
-│   ├── Schematic/                 # BIAS, SEL, OTAs, INA, PGA, RLD, and PATH blocks
-│   ├── Testbench/                 # Block and integrated Xschem/ngspice tests
-│   └── Layout/
-└── PCB Design/
-
-Measurement_Results/
-├── IC_Simulation/                 # MATLAB analyzers, CSV reports, and plots
-├── PCB_Simulation/
-└── Test_Measurement/
-```
 
 ## Main Entry Points
 

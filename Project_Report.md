@@ -47,27 +47,17 @@ These are testbench conditions or nominal design values, not post-layout or meas
 
 ## 3. IC Architecture and Implementation
 
+![ECG acquisition IC system block diagram](<Design_Files/System Design/System_Block.png>)
+
 ### 3.1 Bias Reference and Selection
 
 The BIAS block generates the internal `BPINT` and `VREFINT` references. The separate SEL block selects between those internal references and the external `BPEXT`/`VREFEXT` inputs to produce the distributed `BP` and `VREF` outputs:
-
-```text
-BIAS: BPINT/VREFINT ----+
-                        +--> SEL --> BP/VREF
-External: BPEXT/VREFEXT +
-```
 
 The BIAS characterization testbench also includes the 40 uA output mirror load and startup device. The reported `IDD` and power values are the exported BIAS+SEL supply quantities defined by the testbench, not complete-chip consumption.
 
 ### 3.2 Integrated Signal Path
 
-The integrated testbenches instantiate the following analog hierarchy:
-
-```text
-VINP/VINN -> INA -> selection/filter path -> PGA -> output buffer -> OUTP/OUTN
-     |                                                               |
-     +-------------------------- RLD feedback ------------------------+
-```
+The integrated testbenches instantiate the INA, filter/selection path, PGA, output buffer, and RLD feedback shown in the system block diagram.
 
 The analyzer defines the expected path gain as:
 
