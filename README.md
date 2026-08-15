@@ -80,4 +80,8 @@ The analysis flow has been verified with MATLAB R2025b.
 
 ## Upstream Chipathon Files
 
-The workshop material under `2026-sscs-chipathon/` comes from [sscs-ose/sscs-chipathon-2026](https://github.com/sscs-ose/sscs-chipathon-2026) and provides the examples, resources, and IIC-OSIC-TOOLS environment used by this project.
+`2026-sscs-chipathon/` is a vendored snapshot of the official [SSCS Chipathon 2026 repository](https://github.com/sscs-ose/sscs-chipathon-2026). It is retained as reference material, not as part of the ECG design source.
+
+It provides participant documentation, schedules, GF180 examples, analog sizing and integration resources, and IIC-OSIC-TOOLS startup scripts. The ECG schematics, testbenches, MATLAB analyzers, and generated results outside this directory are project-specific work.
+
+The bundled upstream files retain their original Apache-2.0 license and attribution. See the bundled [README](2026-sscs-chipathon/README.md), [LICENSE](2026-sscs-chipathon/LICENSE), and [NOTICE](2026-sscs-chipathon/NOTICE).
