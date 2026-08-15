@@ -1,0 +1,5 @@
+Parameter,Unit,Value,Process,Condition,Temp_C,VDD_V
+Maximum |BP INT SEL error|,nV,12.493,SF,VH,27.000,3.600
+Maximum |BP EXT SEL error|,nV,25.466,SS,TH,125.000,3.300
+Maximum |VREF INT SEL error|,nV,18.750,SS,VL,27.000,3.000
+Maximum |VREF EXT SEL error|,nV,10.951,SS,VL,27.000,3.000

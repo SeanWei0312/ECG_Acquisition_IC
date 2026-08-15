@@ -23,7 +23,7 @@ HP -1dB corner,Hz,0.0347664
 HP -3dB corner,Hz,0.0177929
 LP -1dB corner,Hz,220.151
 LP -3dB corner,Hz,430.163
-Input-referred noise 0.05-150 Hz,uVrms,3.24527
+Input-referred noise 0.05-150 Hz,uVrms,2.65603
 G16,,
 Total current,uA,8856.84
 Total power,mW,29.2276
@@ -48,4 +48,4 @@ HP -1dB corner,Hz,0.0347656
 HP -3dB corner,Hz,0.0177925
 LP -1dB corner,Hz,220.151
 LP -3dB corner,Hz,430.163
-Input-referred noise 0.05-150 Hz,uVrms,3.24521
+Input-referred noise 0.05-150 Hz,uVrms,2.65596

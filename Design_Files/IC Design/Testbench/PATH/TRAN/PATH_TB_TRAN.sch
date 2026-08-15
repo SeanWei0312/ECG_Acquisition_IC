@@ -12,8 +12,6 @@ N 1160 -1240 1160 -1220 {lab=AGND}
 N 1160 -1320 1160 -1300 {lab=OUTP}
 N 1240 -1240 1240 -1220 {lab=AGND}
 N 1240 -1320 1240 -1300 {lab=OUTN}
-N 480 -2340 480 -2300 {lab=B}
-N 480 -2100 480 -2060 {lab=AGND}
 N 1000 -1320 1000 -1300 {lab=REF}
 N 1000 -1240 1000 -1220 {lab=AGND}
 N 2180 -1900 2220 -1900 {lab=#net1}
@@ -22,8 +20,6 @@ N 1480 -1780 1520 -1780 {lab=#net3}
 N 1480 -1900 1520 -1900 {lab=#net4}
 N 2880 -1780 2920 -1780 {lab=#net5}
 N 2880 -1900 2920 -1900 {lab=#net6}
-N 900 -1720 900 -1680 {lab=AGND}
-N 860 -1720 860 -1640 {lab=AVDD}
 N 3220 -1900 3220 -1520 {lab=BUFFER_OUTP}
 N 3340 -1780 3340 -1520 {lab=ADC_INN}
 N 3300 -1820 3300 -1520 {lab=ADC_INP}
@@ -60,38 +56,26 @@ N 1200 -1820 1280 -1820 {lab=LPF_INP}
 N 1160 -1860 1280 -1860 {lab=INA_OUTN}
 N 1160 -1860 1160 -1520 {lab=INA_OUTN}
 N 1080 -1900 1280 -1900 {lab=INA_OUTP}
-N 860 -2000 860 -1960 {lab=BSE1}
-N 900 -2000 900 -1960 {lab=BSE2}
-N 940 -2000 940 -1960 {lab=REF}
-N 980 -2000 980 -1960 {lab=BFDC1}
-N 1020 -2000 1020 -1960 {lab=BCMFB1}
+N 860 -2160 860 -1960 {lab=BSE1}
+N 900 -2160 900 -1960 {lab=BSE2}
+N 940 -2000 940 -1960 {lab=#net7}
+N 980 -2160 980 -1960 {lab=BFDC1}
+N 1020 -2160 1020 -1960 {lab=BCMFB1}
 N 3040 -2000 3040 -1960 {lab=REF}
 N 3080 -2000 3080 -1960 {lab=BFDC4}
 N 3120 -2000 3120 -1960 {lab=BCMFB4}
-N 1640 -2000 1640 -1960 {lab=REF}
+N 1640 -2000 1640 -1960 {lab=#net7}
 N 1680 -2000 1680 -1960 {lab=BFDC2}
 N 1720 -2000 1720 -1960 {lab=BCMFB2}
 N 2380 -2000 2380 -1960 {lab=BFDC3}
 N 2420 -2000 2420 -1960 {lab=BCMFB3}
 N 2340 -2000 2340 -1960 {lab=REF}
-N 3440 -1720 3440 -1640 {lab=AVDD}
-N 3480 -1720 3480 -1680 {lab=AGND}
-N 1560 -1720 1560 -1640 {lab=AVDD}
-N 1340 -1720 1340 -1640 {lab=AVDD}
-N 1380 -1720 1380 -1680 {lab=AGND}
-N 1600 -1720 1600 -1680 {lab=AGND}
+N 1600 -1720 1600 -1640 {lab=AGND}
+N 1560 -1720 1560 -1680 {lab=AVDD}
 N 1420 -1720 1420 -1520 {lab=INA_SEL}
-N 2040 -1720 2040 -1640 {lab=AVDD}
-N 2080 -1720 2080 -1680 {lab=AGND}
 N 2120 -1720 2120 -1520 {lab=LPF_SEL}
-N 2740 -1720 2740 -1640 {lab=AVDD}
-N 2780 -1720 2780 -1680 {lab=AGND}
 N 2820 -1720 2820 -1520 {lab=PGA_SEL}
 N 3520 -1720 3520 -1520 {lab=BUFFER_SEL}
-N 2960 -1720 2960 -1640 {lab=AVDD}
-N 3000 -1720 3000 -1680 {lab=AGND}
-N 2260 -1720 2260 -1640 {lab=AVDD}
-N 2300 -1720 2300 -1680 {lab=AGND}
 N 2380 -1720 2380 -1520 {lab=S1}
 N 2420 -1720 2420 -1520 {lab=S0}
 N 280 -1320 280 -1300 {lab=INA_SEL}
@@ -102,8 +86,8 @@ N 520 -1320 520 -1300 {lab=PGA_SEL}
 N 640 -1320 640 -1300 {lab=BUFFER_SEL}
 N 3580 -1780 3700 -1780 {lab=OUTN}
 N 3580 -1900 3700 -1900 {lab=OUTP}
-N 600 -1680 3620 -1680 {lab=AGND}
-N 560 -1640 3660 -1640 {lab=AVDD}
+N 480 -1640 3480 -1640 {lab=AGND}
+N 440 -1680 3440 -1680 {lab=AVDD}
 N 880 -1240 880 -1220 {lab=AGND}
 N 760 -1240 760 -1220 {lab=AGND}
 N 640 -1240 640 -1220 {lab=AGND}
@@ -132,15 +116,14 @@ N 160 -1240 160 -1220 {lab=AGND}
 N 160 -1320 160 -1300 {lab=DCB_SEL}
 N 1560 -980 1560 -960 {lab=RST}
 N 1560 -900 1560 -880 {lab=AGND}
-N 220 -2400 240 -2400 {lab=AVDD}
-N 220 -2360 240 -2360 {lab=AGND}
+N 220 -2520 240 -2520 {lab=AVDD}
+N 220 -2480 240 -2480 {lab=AGND}
 N 220 -1600 240 -1600 {lab=SEOP}
 N 220 -1560 240 -1560 {lab=SEON}
 N 220 -1520 240 -1520 {lab=RLD}
-N 480 -1840 520 -1840 {lab=RLD}
+N 400 -1840 520 -1840 {lab=RLD}
 N 1560 -1120 1560 -1100 {lab=CLK}
 N 1560 -1040 1560 -1020 {lab=AGND}
-N 480 -2240 480 -2160 {lab=BIAS_SENSE}
 N 640 -1120 640 -1100 {lab=CM_SRC}
 N 640 -1040 640 -1020 {lab=VCM_DC_NODE}
 N 640 -980 640 -960 {lab=VCM_DC_NODE}
@@ -171,91 +154,116 @@ N 2080 -1320 2080 -1300 {lab=RLD}
 N 2240 -1320 2240 -1300 {lab=RLD}
 N 2080 -1240 2080 -1220 {lab=BODY}
 N 2240 -1240 2240 -1220 {lab=AGND}
-N 460 -2420 480 -2420 {lab=AVDD}
-N 460 -2460 460 -2420 {lab=AVDD}
-N 460 -2460 480 -2460 {lab=AVDD}
-N 480 -2500 480 -2450 {lab=AVDD}
-N 480 -2390 480 -2340 {lab=B}
-N 520 -2420 540 -2420 {lab=B}
-N 540 -2420 540 -2360 {lab=B}
-N 480 -2360 540 -2360 {lab=B}
-N 800 -2420 820 -2420 {lab=AVDD}
-N 820 -2460 820 -2420 {lab=AVDD}
-N 800 -2460 820 -2460 {lab=AVDD}
-N 800 -2500 800 -2450 {lab=AVDD}
-N 800 -2390 800 -2340 {lab=BSE1}
-N 720 -2420 760 -2420 {lab=B}
-N 960 -2420 980 -2420 {lab=AVDD}
-N 980 -2460 980 -2420 {lab=AVDD}
-N 960 -2460 980 -2460 {lab=AVDD}
-N 960 -2500 960 -2450 {lab=AVDD}
-N 960 -2390 960 -2340 {lab=BSE2}
-N 880 -2420 920 -2420 {lab=B}
-N 1120 -2420 1140 -2420 {lab=AVDD}
-N 1140 -2460 1140 -2420 {lab=AVDD}
-N 1120 -2460 1140 -2460 {lab=AVDD}
-N 1120 -2500 1120 -2450 {lab=AVDD}
-N 1120 -2390 1120 -2340 {lab=BFDC1}
-N 1040 -2420 1080 -2420 {lab=B}
-N 1280 -2420 1300 -2420 {lab=AVDD}
-N 1300 -2460 1300 -2420 {lab=AVDD}
-N 1280 -2460 1300 -2460 {lab=AVDD}
-N 1280 -2500 1280 -2450 {lab=AVDD}
-N 1280 -2390 1280 -2340 {lab=BFDC2}
-N 1200 -2420 1240 -2420 {lab=B}
-N 1440 -2420 1460 -2420 {lab=AVDD}
-N 1460 -2460 1460 -2420 {lab=AVDD}
-N 1440 -2460 1460 -2460 {lab=AVDD}
-N 1440 -2500 1440 -2450 {lab=AVDD}
-N 1440 -2390 1440 -2340 {lab=BFDC3}
-N 1360 -2420 1400 -2420 {lab=B}
-N 1600 -2420 1620 -2420 {lab=AVDD}
-N 1620 -2460 1620 -2420 {lab=AVDD}
-N 1600 -2460 1620 -2460 {lab=AVDD}
-N 1600 -2500 1600 -2450 {lab=AVDD}
-N 1600 -2390 1600 -2340 {lab=BFDC4}
-N 1520 -2420 1560 -2420 {lab=B}
-N 1760 -2420 1780 -2420 {lab=AVDD}
-N 1780 -2460 1780 -2420 {lab=AVDD}
-N 1760 -2460 1780 -2460 {lab=AVDD}
-N 1760 -2500 1760 -2450 {lab=AVDD}
-N 1760 -2390 1760 -2340 {lab=BCMFB1}
-N 1680 -2420 1720 -2420 {lab=B}
-N 1920 -2420 1940 -2420 {lab=AVDD}
-N 1940 -2460 1940 -2420 {lab=AVDD}
-N 1920 -2460 1940 -2460 {lab=AVDD}
-N 1920 -2500 1920 -2450 {lab=AVDD}
-N 1920 -2390 1920 -2340 {lab=BCMFB2}
-N 1840 -2420 1880 -2420 {lab=B}
-N 2080 -2420 2100 -2420 {lab=AVDD}
-N 2100 -2460 2100 -2420 {lab=AVDD}
-N 2080 -2460 2100 -2460 {lab=AVDD}
-N 2080 -2500 2080 -2450 {lab=AVDD}
-N 2080 -2390 2080 -2340 {lab=BCMFB3}
-N 2000 -2420 2040 -2420 {lab=B}
-N 2240 -2420 2260 -2420 {lab=AVDD}
-N 2260 -2460 2260 -2420 {lab=AVDD}
-N 2240 -2460 2260 -2460 {lab=AVDD}
-N 2240 -2500 2240 -2450 {lab=AVDD}
-N 2240 -2390 2240 -2340 {lab=BCMFB4}
-N 2160 -2420 2200 -2420 {lab=B}
-N 640 -2420 660 -2420 {lab=AVDD}
-N 660 -2460 660 -2420 {lab=AVDD}
-N 640 -2460 660 -2460 {lab=AVDD}
-N 640 -2500 640 -2450 {lab=AVDD}
-N 640 -2390 640 -2340 {lab=BSE0}
-N 560 -2420 600 -2420 {lab=B}
+N 810 -2620 830 -2620 {lab=#net8}
+N 830 -2660 830 -2620 {lab=#net8}
+N 810 -2660 830 -2660 {lab=#net8}
+N 810 -2700 810 -2650 {lab=#net8}
+N 810 -2590 810 -2540 {lab=BSE1}
+N 730 -2620 770 -2620 {lab=B}
+N 970 -2620 990 -2620 {lab=#net8}
+N 990 -2660 990 -2620 {lab=#net8}
+N 970 -2660 990 -2660 {lab=#net8}
+N 970 -2700 970 -2650 {lab=#net8}
+N 970 -2590 970 -2540 {lab=BSE2}
+N 890 -2620 930 -2620 {lab=B}
+N 1130 -2620 1150 -2620 {lab=#net8}
+N 1150 -2660 1150 -2620 {lab=#net8}
+N 1130 -2660 1150 -2660 {lab=#net8}
+N 1130 -2700 1130 -2650 {lab=#net8}
+N 1130 -2590 1130 -2540 {lab=BFDC1}
+N 1050 -2620 1090 -2620 {lab=B}
+N 1290 -2620 1310 -2620 {lab=#net8}
+N 1310 -2660 1310 -2620 {lab=#net8}
+N 1290 -2660 1310 -2660 {lab=#net8}
+N 1290 -2700 1290 -2650 {lab=#net8}
+N 1290 -2590 1290 -2540 {lab=BFDC2}
+N 1210 -2620 1250 -2620 {lab=B}
+N 1450 -2620 1470 -2620 {lab=#net8}
+N 1470 -2660 1470 -2620 {lab=#net8}
+N 1450 -2660 1470 -2660 {lab=#net8}
+N 1450 -2700 1450 -2650 {lab=#net8}
+N 1450 -2590 1450 -2540 {lab=BFDC3}
+N 1370 -2620 1410 -2620 {lab=B}
+N 1610 -2620 1630 -2620 {lab=#net8}
+N 1630 -2660 1630 -2620 {lab=#net8}
+N 1610 -2660 1630 -2660 {lab=#net8}
+N 1610 -2700 1610 -2650 {lab=#net8}
+N 1610 -2590 1610 -2540 {lab=BFDC4}
+N 1530 -2620 1570 -2620 {lab=B}
+N 1770 -2620 1790 -2620 {lab=#net8}
+N 1790 -2660 1790 -2620 {lab=#net8}
+N 1770 -2660 1790 -2660 {lab=#net8}
+N 1770 -2700 1770 -2650 {lab=#net8}
+N 1770 -2590 1770 -2540 {lab=BCMFB1}
+N 1690 -2620 1730 -2620 {lab=B}
+N 1930 -2620 1950 -2620 {lab=#net8}
+N 1950 -2660 1950 -2620 {lab=#net8}
+N 1930 -2660 1950 -2660 {lab=#net8}
+N 1930 -2700 1930 -2650 {lab=#net8}
+N 1930 -2590 1930 -2540 {lab=BCMFB2}
+N 1850 -2620 1890 -2620 {lab=B}
+N 2090 -2620 2110 -2620 {lab=#net8}
+N 2110 -2660 2110 -2620 {lab=#net8}
+N 2090 -2660 2110 -2660 {lab=#net8}
+N 2090 -2700 2090 -2650 {lab=#net8}
+N 2090 -2590 2090 -2540 {lab=BCMFB3}
+N 2010 -2620 2050 -2620 {lab=B}
+N 2250 -2620 2270 -2620 {lab=#net8}
+N 2270 -2660 2270 -2620 {lab=#net8}
+N 2250 -2660 2270 -2660 {lab=#net8}
+N 2250 -2700 2250 -2650 {lab=#net8}
+N 2250 -2590 2250 -2540 {lab=BCMFB4}
+N 2170 -2620 2210 -2620 {lab=B}
+N 650 -2620 670 -2620 {lab=#net8}
+N 670 -2660 670 -2620 {lab=#net8}
+N 650 -2660 670 -2660 {lab=#net8}
+N 650 -2700 650 -2650 {lab=#net8}
+N 650 -2590 650 -2540 {lab=BSE0}
+N 570 -2620 610 -2620 {lab=B}
 N 680 -1820 800 -1820 {lab=SEON}
 N 680 -1860 800 -1860 {lab=SEOP}
 N 760 -1820 760 -1520 {lab=SEON}
 N 720 -1860 720 -1520 {lab=SEOP}
-N 480 -1920 800 -1920 {lab=INP}
-N 480 -1760 800 -1760 {lab=INN}
-N 600 -1780 600 -1680 {lab=AGND}
-N 560 -1780 560 -1640 {lab=AVDD}
-N 560 -2000 560 -1900 {lab=BSE0}
-N 600 -2000 600 -1900 {lab=REF}
-N 480 -2500 2240 -2500 {lab=AVDD}
+N 400 -1920 800 -1920 {lab=INP}
+N 400 -1760 800 -1760 {lab=INN}
+N 560 -2040 560 -1900 {lab=BSE0}
+N 600 -2000 600 -1900 {lab=#net7}
+N 490 -2700 2250 -2700 {lab=#net8}
+N 400 -2240 520 -2240 {lab=BIAS_SEL}
+N 220 -2400 240 -2400 {lab=VREFEXT}
+N 220 -2360 240 -2360 {lab=BIAS_SEL}
+N 220 -2440 240 -2440 {lab=BPEXT}
+N 3440 -1720 3440 -1680 {lab=AVDD}
+N 3480 -1720 3480 -1640 {lab=AGND}
+N 2960 -1720 2960 -1680 {lab=AVDD}
+N 3000 -1720 3000 -1640 {lab=AGND}
+N 2740 -1720 2740 -1680 {lab=AVDD}
+N 2780 -1720 2780 -1640 {lab=AGND}
+N 2260 -1720 2260 -1680 {lab=AVDD}
+N 2300 -1720 2300 -1640 {lab=AGND}
+N 2040 -1720 2040 -1680 {lab=AVDD}
+N 2080 -1720 2080 -1640 {lab=AGND}
+N 860 -1720 860 -1680 {lab=AVDD}
+N 900 -1720 900 -1640 {lab=AGND}
+N 1380 -1720 1380 -1640 {lab=AGND}
+N 1340 -1720 1340 -1680 {lab=AVDD}
+N 560 -1780 560 -1680 {lab=AVDD}
+N 600 -1780 600 -1640 {lab=AGND}
+N 480 -2080 480 -1640 {lab=AGND}
+N 640 -2200 680 -2200 {lab=#net7}
+N 600 -2000 1640 -2000 {lab=#net7}
+N 440 -2120 440 -1680 {lab=AVDD}
+N 560 -2040 820 -2040 {lab=BSE0}
+N 560 -2320 560 -2280 {lab=BPEXT}
+N 600 -2320 600 -2280 {lab=VREFEXT}
+N 600 -2160 600 -2080 {lab=AGND}
+N 680 -2200 680 -2000 {lab=#net7}
+N 560 -2160 560 -2120 {lab=AVDD}
+N 400 -2080 600 -2080 {lab=AGND}
+N 640 -2240 720 -2240 {lab=#net9}
+N 780 -2160 780 -2120 {lab=AVDD}
+N 820 -2160 820 -2040 {lab=BSE0}
+N 400 -2120 780 -2120 {lab=AVDD}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {vsource.sym} 160 -1070 0 0 {name=VAVDD
 value="SIN(\{VDD_SET\} \{VDD_RIPPLE_SET\} \{TEST_FREQ\} \{SIG_DELAY_SET\})"
@@ -1212,24 +1220,16 @@ footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 1240 -1220 2 0 {name=CLN2 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 1240 -1320 0 0 {name=p31 sig_type=std_logic lab=OUTN}
-C {vsource.sym} 480 -2270 0 0 {name=VIBIAS
-value="dc 0"
-savecurrent=true}
-C {lab_wire.sym} 480 -1920 0 0 {name=p4 sig_type=std_logic lab=INP}
-C {lab_wire.sym} 480 -1760 0 0 {name=p6 sig_type=std_logic lab=INN}
-C {lab_wire.sym} 3620 -1680 2 0 {name=p9 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 400 -1920 0 0 {name=p4 sig_type=std_logic lab=INP}
+C {lab_wire.sym} 400 -1760 0 0 {name=p6 sig_type=std_logic lab=INN}
+C {lab_wire.sym} 400 -2080 0 0 {name=p9 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 3700 -1900 0 1 {name=p5 sig_type=std_logic lab=OUTP}
 C {lab_wire.sym} 3700 -1780 0 1 {name=p10 sig_type=std_logic lab=OUTN}
-C {lab_wire.sym} 940 -2000 0 1 {name=p11 sig_type=std_logic lab=REF}
-C {lab_wire.sym} 3660 -1640 2 0 {name=p3 sig_type=std_logic lab=AVDD}
-C {isource.sym} 480 -2130 0 0 {name=IBIAS
-value="dc \{IBIAS_SET\}"}
-C {lab_wire.sym} 480 -2200 0 0 {name=p30 sig_type=std_logic lab=BIAS_SENSE}
-C {lab_wire.sym} 480 -2060 2 0 {name=p32 sig_type=std_logic lab=AGND}
-C {lab_wire.sym} 860 -2000 0 0 {name=p39 sig_type=std_logic lab=BSE1}
-C {lab_wire.sym} 900 -2000 0 0 {name=p40 sig_type=std_logic lab=BSE2}
-C {lab_wire.sym} 980 -2000 0 1 {name=p41 sig_type=std_logic lab=BFDC1}
-C {lab_wire.sym} 1020 -2000 0 1 {name=p42 sig_type=std_logic lab=BCMFB1}
+C {lab_wire.sym} 400 -2120 0 0 {name=p3 sig_type=std_logic lab=AVDD}
+C {lab_wire.sym} 860 -2120 0 0 {name=p39 sig_type=std_logic lab=BSE1}
+C {lab_wire.sym} 900 -2120 0 0 {name=p40 sig_type=std_logic lab=BSE2}
+C {lab_wire.sym} 980 -2120 0 1 {name=p41 sig_type=std_logic lab=BFDC1}
+C {lab_wire.sym} 1020 -2120 0 1 {name=p42 sig_type=std_logic lab=BCMFB1}
 C {vsource.sym} 1000 -1270 0 0 {name=VREF
 value="dc \{VCM_SET\} ac 0"}
 C {lab_wire.sym} 1000 -1220 2 0 {name=p33 sig_type=std_logic lab=AGND}
@@ -1239,7 +1239,6 @@ C {lab_wire.sym} 1680 -2000 0 1 {name=p60 sig_type=std_logic lab=BFDC2}
 C {lab_wire.sym} 1720 -2000 0 1 {name=p61 sig_type=std_logic lab=BCMFB2}
 C {lab_wire.sym} 2380 -2000 0 1 {name=p73 sig_type=std_logic lab=BFDC3}
 C {lab_wire.sym} 2420 -2000 0 1 {name=p79 sig_type=std_logic lab=BCMFB3}
-C {lab_wire.sym} 1640 -2000 0 1 {name=p81 sig_type=std_logic lab=REF}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/LPF/LPF.sym} 1440 -1680 0 0 {name=xLFP1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/PGA/PGA.sym} 2140 -1680 0 0 {name=xPGA1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/SEL/SEL.sym} 1220 -1680 0 0 {name=xSEL1}
@@ -1337,17 +1336,17 @@ C {lab_wire.sym} 160 -1320 0 0 {name=p156 sig_type=std_logic lab=DCB_SEL}
 C {vsource.sym} 1560 -930 0 0 {name=VRST
 value="PWL(0 \{RST_ENABLE_SET*VDD_SET\} \{TRESET\} \{RST_ENABLE_SET*VDD_SET\} \{TRESET_END\} 0 \{RST_PULSE_ON_SET\} 0 \{RST_PULSE_ON_END_SET\} \{RST_PULSE_ENABLE_SET*VDD_SET\} \{RST_PULSE_OFF_SET\} \{RST_PULSE_ENABLE_SET*VDD_SET\} \{RST_PULSE_OFF_END_SET\} 0)"}
 C {lab_wire.sym} 1560 -980 0 0 {name=p146 sig_type=std_logic lab=RST}
-C {iopin.sym} 220 -2400 0 1 {name=p158 lab=AVDD}
-C {iopin.sym} 220 -2360 0 1 {name=p159 lab=AGND}
-C {lab_wire.sym} 240 -2400 0 1 {name=p160 sig_type=std_logic lab=AVDD}
-C {lab_wire.sym} 240 -2360 0 1 {name=p161 sig_type=std_logic lab=AGND}
+C {iopin.sym} 220 -2520 0 1 {name=p158 lab=AVDD}
+C {iopin.sym} 220 -2480 0 1 {name=p159 lab=AGND}
+C {lab_wire.sym} 240 -2520 0 1 {name=p160 sig_type=std_logic lab=AVDD}
+C {lab_wire.sym} 240 -2480 0 1 {name=p161 sig_type=std_logic lab=AGND}
 C {iopin.sym} 220 -1600 0 1 {name=p162 lab=SEOP}
 C {iopin.sym} 220 -1560 0 1 {name=p163 lab=SEON}
 C {lab_wire.sym} 240 -1600 0 1 {name=p164 sig_type=std_logic lab=SEOP}
 C {lab_wire.sym} 240 -1560 0 1 {name=p165 sig_type=std_logic lab=SEON}
 C {iopin.sym} 220 -1520 0 1 {name=p166 lab=RLD}
 C {lab_wire.sym} 240 -1520 0 1 {name=p167 sig_type=std_logic lab=RLD}
-C {lab_wire.sym} 480 -1840 0 0 {name=p168 sig_type=std_logic lab=RLD}
+C {lab_wire.sym} 400 -1840 0 0 {name=p168 sig_type=std_logic lab=RLD}
 C {vsource.sym} 1560 -1070 0 0 {name=VCLK
 value="PULSE(0 \{VDD_SET\} \{CLK_DELAY_SET\} \{CLK_TR\} \{CLK_TF\} \{CLK_PW\} \{1/CLK_FREQ\})"
 savecurrent=true}
@@ -1431,10 +1430,7 @@ C {lab_wire.sym} 2240 -1320 0 0 {name=p16 sig_type=std_logic lab=RLD}
 C {lab_wire.sym} 2080 -1220 2 0 {name=CLN1 sig_type=std_logic lab=BODY}
 C {lab_wire.sym} 2240 -1220 2 0 {name=CLN3 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 1560 -880 2 0 {name=VCLK3 sig_type=std_logic lab=AGND}
-C {lab_wire.sym} 480 -2340 0 0 {name=p27 sig_type=std_logic lab=B
-
-}
-C {symbols/pfet_03v3.sym} 500 -2420 0 1 {name=MB
+C {symbols/pfet_03v3.sym} 790 -2620 0 0 {name=MBSE3
 L=2u
 W=1u
 nf=1
@@ -1448,7 +1444,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {symbols/pfet_03v3.sym} 780 -2420 0 0 {name=MBSE3
+C {lab_wire.sym} 730 -2620 0 0 {name=p37 sig_type=std_logic lab=B}
+C {lab_wire.sym} 810 -2540 2 0 {name=p36 sig_type=std_logic lab=BSE1}
+C {symbols/pfet_03v3.sym} 950 -2620 0 0 {name=MBSE4
 L=2u
 W=1u
 nf=1
@@ -1462,9 +1460,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 720 -2420 0 0 {name=p37 sig_type=std_logic lab=B}
-C {lab_wire.sym} 800 -2340 2 0 {name=p36 sig_type=std_logic lab=BSE1}
-C {symbols/pfet_03v3.sym} 940 -2420 0 0 {name=MBSE4
+C {lab_wire.sym} 890 -2620 0 0 {name=p65 sig_type=std_logic lab=B}
+C {lab_wire.sym} 970 -2540 2 0 {name=p66 sig_type=std_logic lab=BSE2}
+C {symbols/pfet_03v3.sym} 1110 -2620 0 0 {name=MFDC1
 L=2u
 W=1u
 nf=1
@@ -1478,9 +1476,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 880 -2420 0 0 {name=p65 sig_type=std_logic lab=B}
-C {lab_wire.sym} 960 -2340 2 0 {name=p66 sig_type=std_logic lab=BSE2}
-C {symbols/pfet_03v3.sym} 1100 -2420 0 0 {name=MFDC1
+C {lab_wire.sym} 1050 -2620 0 0 {name=p68 sig_type=std_logic lab=B}
+C {lab_wire.sym} 1130 -2540 2 0 {name=p69 sig_type=std_logic lab=BFDC1}
+C {symbols/pfet_03v3.sym} 1270 -2620 0 0 {name=MFDC2
 L=2u
 W=1u
 nf=1
@@ -1494,9 +1492,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 1040 -2420 0 0 {name=p68 sig_type=std_logic lab=B}
-C {lab_wire.sym} 1120 -2340 2 0 {name=p69 sig_type=std_logic lab=BFDC1}
-C {symbols/pfet_03v3.sym} 1260 -2420 0 0 {name=MFDC2
+C {lab_wire.sym} 1210 -2620 0 0 {name=p71 sig_type=std_logic lab=B}
+C {lab_wire.sym} 1290 -2540 2 0 {name=p72 sig_type=std_logic lab=BFDC2}
+C {symbols/pfet_03v3.sym} 1430 -2620 0 0 {name=MFDC3
 L=2u
 W=1u
 nf=1
@@ -1510,9 +1508,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 1200 -2420 0 0 {name=p71 sig_type=std_logic lab=B}
-C {lab_wire.sym} 1280 -2340 2 0 {name=p72 sig_type=std_logic lab=BFDC2}
-C {symbols/pfet_03v3.sym} 1420 -2420 0 0 {name=MFDC3
+C {lab_wire.sym} 1370 -2620 0 0 {name=p74 sig_type=std_logic lab=B}
+C {lab_wire.sym} 1450 -2540 2 0 {name=p75 sig_type=std_logic lab=BFDC3}
+C {symbols/pfet_03v3.sym} 1590 -2620 0 0 {name=MFDC4
 L=2u
 W=1u
 nf=1
@@ -1526,9 +1524,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 1360 -2420 0 0 {name=p74 sig_type=std_logic lab=B}
-C {lab_wire.sym} 1440 -2340 2 0 {name=p75 sig_type=std_logic lab=BFDC3}
-C {symbols/pfet_03v3.sym} 1580 -2420 0 0 {name=MFDC4
+C {lab_wire.sym} 1530 -2620 0 0 {name=p77 sig_type=std_logic lab=B}
+C {lab_wire.sym} 1770 -2540 2 0 {name=p78 sig_type=std_logic lab=BCMFB1}
+C {symbols/pfet_03v3.sym} 1750 -2620 0 0 {name=MCMFB1
 L=2u
 W=1u
 nf=1
@@ -1542,10 +1540,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 480 -2500 0 0 {name=p76 sig_type=std_logic lab=AVDD}
-C {lab_wire.sym} 1520 -2420 0 0 {name=p77 sig_type=std_logic lab=B}
-C {lab_wire.sym} 1760 -2340 2 0 {name=p78 sig_type=std_logic lab=BCMFB1}
-C {symbols/pfet_03v3.sym} 1740 -2420 0 0 {name=MCMFB1
+C {lab_wire.sym} 1690 -2620 0 0 {name=p88 sig_type=std_logic lab=B}
+C {lab_wire.sym} 1930 -2540 2 0 {name=p89 sig_type=std_logic lab=BCMFB2}
+C {symbols/pfet_03v3.sym} 1910 -2620 0 0 {name=MCMFB2
 L=2u
 W=1u
 nf=1
@@ -1559,9 +1556,9 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 1680 -2420 0 0 {name=p88 sig_type=std_logic lab=B}
-C {lab_wire.sym} 1920 -2340 2 0 {name=p89 sig_type=std_logic lab=BCMFB2}
-C {symbols/pfet_03v3.sym} 1900 -2420 0 0 {name=MCMFB2
+C {lab_wire.sym} 1850 -2620 0 0 {name=p90 sig_type=std_logic lab=B}
+C {lab_wire.sym} 2090 -2540 2 0 {name=p91 sig_type=std_logic lab=BCMFB3}
+C {symbols/pfet_03v3.sym} 2070 -2620 0 0 {name=MCMFB3
 L=2u
 W=1u
 nf=1
@@ -1575,9 +1572,8 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 1840 -2420 0 0 {name=p90 sig_type=std_logic lab=B}
-C {lab_wire.sym} 2080 -2340 2 0 {name=p91 sig_type=std_logic lab=BCMFB3}
-C {symbols/pfet_03v3.sym} 2060 -2420 0 0 {name=MCMFB3
+C {lab_wire.sym} 2010 -2620 0 0 {name=p96 sig_type=std_logic lab=B}
+C {symbols/pfet_03v3.sym} 2230 -2620 0 0 {name=MCMFB4
 L=2u
 W=1u
 nf=1
@@ -1591,8 +1587,10 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 2000 -2420 0 0 {name=p96 sig_type=std_logic lab=B}
-C {symbols/pfet_03v3.sym} 2220 -2420 0 0 {name=MCMFB4
+C {lab_wire.sym} 2170 -2620 0 0 {name=p98 sig_type=std_logic lab=B}
+C {lab_wire.sym} 2250 -2540 2 0 {name=p97 sig_type=std_logic lab=BCMFB4}
+C {lab_wire.sym} 1610 -2540 2 0 {name=p99 sig_type=std_logic lab=BFDC4}
+C {symbols/pfet_03v3.sym} 630 -2620 0 0 {name=MBSE0
 L=2u
 W=1u
 nf=1
@@ -1606,25 +1604,17 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {lab_wire.sym} 2160 -2420 0 0 {name=p98 sig_type=std_logic lab=B}
-C {lab_wire.sym} 2240 -2340 2 0 {name=p97 sig_type=std_logic lab=BCMFB4}
-C {lab_wire.sym} 1600 -2340 2 0 {name=p99 sig_type=std_logic lab=BFDC4}
-C {symbols/pfet_03v3.sym} 620 -2420 0 0 {name=MBSE0
-L=2u
-W=1u
-nf=1
-m=40
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=pfet_03v3
-spiceprefix=X
-}
-C {lab_wire.sym} 560 -2420 0 0 {name=p173 sig_type=std_logic lab=B}
-C {lab_wire.sym} 640 -2340 2 0 {name=p179 sig_type=std_logic lab=BSE0}
+C {lab_wire.sym} 570 -2620 0 0 {name=p173 sig_type=std_logic lab=B}
+C {lab_wire.sym} 650 -2540 2 0 {name=p179 sig_type=std_logic lab=BSE0}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/RLD/RLD.sym} 760 -1700 0 1 {name=xRLD1}
-C {lab_wire.sym} 600 -2000 0 1 {name=p26 sig_type=std_logic lab=REF}
-C {lab_wire.sym} 560 -2000 0 0 {name=p44 sig_type=std_logic lab=BSE0}
+C {lab_wire.sym} 820 -2120 0 0 {name=p44 sig_type=std_logic lab=BSE0}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/BIAS/BIAS.sym} 480 -2120 0 0 {name=xBIAS1}
+C {iopin.sym} 220 -2400 0 1 {name=p26 lab=VREFEXT}
+C {iopin.sym} 220 -2360 0 1 {name=p27 lab=BIAS_SEL}
+C {lab_wire.sym} 240 -2400 0 1 {name=p30 sig_type=std_logic lab=VREFEXT}
+C {lab_wire.sym} 240 -2360 0 1 {name=p32 sig_type=std_logic lab=BIAS_SEL}
+C {iopin.sym} 220 -2440 0 1 {name=p45 lab=BPEXT}
+C {lab_wire.sym} 240 -2440 0 1 {name=p52 sig_type=std_logic lab=BPEXT}
+C {lab_wire.sym} 400 -2240 0 0 {name=p53 sig_type=std_logic lab=BIAS_SEL}
+C {lab_wire.sym} 560 -2320 0 0 {name=p54 sig_type=std_logic lab=BPEXT}
+C {lab_wire.sym} 600 -2320 0 1 {name=p55 sig_type=std_logic lab=VREFEXT}

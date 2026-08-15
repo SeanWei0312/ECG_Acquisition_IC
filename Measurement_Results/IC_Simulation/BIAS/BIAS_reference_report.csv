@@ -1,0 +1,5 @@
+Parameter,Unit,NOM,FF,SS,FS,SF
+Temperature coefficient,ppm/C,1184.627,1223.228,1150.065,1177.302,1193.652
+Temperature variation,%,19.546,20.183,18.976,19.425,19.695
+Line regulation,%/V,4.290,3.889,5.185,4.598,4.361
+Supply variation,%,2.574,2.333,3.111,2.759,2.616
