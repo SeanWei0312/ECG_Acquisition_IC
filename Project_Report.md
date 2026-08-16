@@ -145,17 +145,17 @@ The available FD OTA, FDC, and CMFB results are nominal-only. Their analyzers ca
 | Startup failures | 0 of 35 | All tested runs |
 | Maximum selector error | 25.466 nV | SS, TH |
 
-![NOM BIAS startup current](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png)
+<img src="Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png" alt="NOM BIAS startup current" width="100%">
 
-![NOM BIAS startup voltages](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP_VOLTAGE.png)
+<img src="Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP_VOLTAGE.png" alt="NOM BIAS startup voltages" width="100%">
 
-![NOM BIAS internal and external selection](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_SEL.png)
+<img src="Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_SEL.png" alt="NOM BIAS internal and external selection" width="100%">
 
-![NOM BIAS current versus temperature](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_TEMP.png)
+<img src="Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_TEMP.png" alt="NOM BIAS current versus temperature" width="100%">
 
-![NOM BIAS current versus supply](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_VDD.png)
+<img src="Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_VDD.png" alt="NOM BIAS current versus supply" width="100%">
 
-![NOM BIAS temperature and supply surface](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png)
+<img src="Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png" alt="NOM BIAS temperature and supply surface" width="100%">
 
 ### 5.2 SE OTA Nominal Results
 
@@ -203,11 +203,11 @@ The available FD OTA, FDC, and CMFB results are nominal-only. Their analyzers ca
 | Minimum fall slew rate | 6.021 V/us | SSVLTL |
 | Maximum settling time | 194.900 ns | SSVLTL |
 
-![SE OTA nominal open-loop gain and phase](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png)
+<img src="Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png" alt="SE OTA nominal open-loop gain and phase" width="100%">
 
-![SE OTA nominal closed-loop DC input range](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_dc_input_range.png)
+<img src="Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_dc_input_range.png" alt="SE OTA nominal closed-loop DC input range" width="100%">
 
-![SE OTA nominal closed-loop step response](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_step_response.png)
+<img src="Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_step_response.png" alt="SE OTA nominal closed-loop step response" width="100%">
 
 ### 5.4 Fully Differential OTA
 
