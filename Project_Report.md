@@ -145,6 +145,18 @@ The available FD OTA, FDC, and CMFB results are nominal-only. Their analyzers ca
 | Startup failures | 0 of 35 | All tested runs |
 | Maximum selector error | 25.466 nV | SS, TH |
 
+![NOM BIAS startup current](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png)
+
+![NOM BIAS startup voltages](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP_VOLTAGE.png)
+
+![NOM BIAS internal and external selection](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_SEL.png)
+
+![NOM BIAS current versus temperature](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_TEMP.png)
+
+![NOM BIAS current versus supply](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_VDD.png)
+
+![NOM BIAS temperature and supply surface](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png)
+
 ### 5.2 SE OTA Nominal Results
 
 | Metric | NOM result |
