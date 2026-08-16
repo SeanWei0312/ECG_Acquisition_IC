@@ -1,71 +1,80 @@
 # ECG Acquisition IC
 
-This repository contains the GF180 design and schematic verification work for an ECG acquisition integrated circuit developed in the SSCS Chipathon 2026 flow. The current verified scope includes the bias/reference and selector (`BIAS`/`SEL`), analog building blocks, and fully differential ECG signal path (`PATH`).
+This repository contains a pre-layout GF180 ECG acquisition IC design developed for the SSCS Chipathon 2026 flow. It includes schematic building blocks, Xschem/ngspice testbenches, MATLAB post-processing, generated circuit reports, and transistor gm/Id characterization data.
 
-> Current stage: pre-layout schematic verification. BIAS/SEL has process, temperature, supply, startup, and selector coverage. The single-ended OTA has complete 45-point process/voltage/temperature characterization. The integrated PATH has nominal verification. Layout, extraction, mismatch/Monte Carlo, ADC integration, PCB implementation, and laboratory measurements remain pending.
+The strongest current verification coverage is:
 
-Detailed architecture, test conditions, formulas, complete results, limitations, and next steps are maintained in [Project_Report.md](Project_Report.md).
+- BIAS/SEL process, supply, temperature, startup, selector, and two-dimensional DC characterization.
+- Single-ended OTA open-loop and closed-loop characterization over 45 process/voltage/temperature points.
+- Nominal fully differential OTA, differential core, and common-mode feedback characterization.
 
-## System Summary
+The integrated AFE schematic and nominal testbenches are present, but their generated CSV reports and plots are not currently in the repository. Layout, extraction, mismatch/Monte Carlo, ADC integration, PCB implementation, and laboratory measurement remain future work.
+
+For methodology, results, limitations, and reproducibility details, see [Project_Report.md](Project_Report.md).
+
+## Architecture
 
 ![ECG acquisition IC system block diagram](<Design_Files/System Design/System_Block.png>)
 
-The integrated PATH supports two nominal gain modes:
+Project-owned schematic blocks include:
 
-| Mode | Expected gain |
-| --- | ---: |
-| G2 | 480 V/V (53.625 dB) |
-| G16 | 3840 V/V (71.687 dB) |
-
-## Verification Summary
-
-| Area | Current coverage |
+| Area | Blocks |
 | --- | --- |
-| BIAS and SEL | NOM/FF/SS/FS/SF, 35 environmental transients, five temperature/VDD surfaces, startup and selector analysis |
-| Integrated PATH | Nominal operating point, AC, noise, transient gain, CMRR, PSRR, offset, reset startup, RLD, THD, and SNR |
-| SE OTA | 45 PVT points covering five processes and nine voltage/temperature cases; OL, CL, noise, CMRR, PSRR, offset, slew, and settling |
-| FD OTA and CMFB | Nominal AC, noise, offset, plant, and loop verification |
-| Layout and extracted simulation | Not started |
-| SAR ADC, PCB, and laboratory testing | Planned |
+| References and selection | BIAS, MIRROR, SEL |
+| Amplification and filtering | INA, SE OTA, FD OTA, LPF, PGA, BUFFER |
+| Control and support | CMFB, RLD, transmission gates, inverter |
+| Integration | AFE top-level schematic |
 
-Headline schematic results:
+The 10-bit SAR ADC shown in the system specification is not yet implemented in the verified design.
 
-| Metric | Current result |
+## Verification Status
+
+| Area | Current evidence |
+| --- | --- |
+| BIAS/SEL | Generated process/environment tables, 35 startup runs, selector extrema, five process DC surfaces, and six nominal plots |
+| SE OTA | Complete 45-point PVT dataset: five processes, nine environmental cases, 450 raw TXT files, compact comparison CSV, full-PVT worst-case CSV, and eight nominal plots |
+| FD OTA | Nominal open-loop, closed-loop, CMRR, PSRR, noise, input range, output swing, slew, and settling summary and plots |
+| FDC | Nominal differential AC, plant, CMFB sweep, noise, and offset summary and plots |
+| CMFB | Nominal open-loop and closed-loop summary and plots |
+| AFE | Schematic, AC/noise/transient testbenches, and analyzer source present; generated reports and plots absent |
+| gm/Id | NMOS and PMOS sizing scripts plus generated characterization plots |
+| Physical verification | Layout, DRC, LVS, extraction, mismatch, and Monte Carlo not completed |
+
+## Headline Results
+
+All values below are deterministic pre-layout schematic simulation results.
+
+| Metric | Result |
 | --- | ---: |
 | NOM BIAS current | 39.997 uA |
-| BIAS current across the 2-D process grids | 31.054-49.441 uA |
-| Worst absolute BIAS-current error | 23.603% |
-| Worst BIAS startup / failures | 1180.295 us / 0 of 35 |
-| Largest selector error | 25.466 nV |
+| BIAS full-grid current range | 31.054-49.441 uA |
+| Worst BIAS startup / failures | 1180.281 us / 0 of 35 |
+| Maximum selector error | 25.466 nV |
 | SE OTA NOM gain / UGF / phase margin | 93.850 dB / 12.103 MHz / 70.811 deg |
-| SE OTA full-PVT minimum gain / phase margin | 89.687 dB at FSVLTH / 64.399 deg at SSVLTH |
-| SE OTA full-PVT maximum noise, 0.05-150 Hz | 2.188 uVrms at SSVLTH |
-| SE OTA full-PVT input/output range | 0.546-2.787 V / 0.544-2.785 V |
-| Last documented PATH current / power | 8.857 mA / 29.23 mW |
-| Last documented PATH input noise, 0.05-150 Hz | 3.245 uVrms |
-| Last documented PATH RLD suppression at 60 Hz | 20.25 dB |
-
-The NOM BIAS device-vector export and 14-column DC2D export still require refresh. The generated PATH CSVs and plots are currently absent from the worktree and must be regenerated before formal use. See the project report for the exact impact of these limitations.
+| SE OTA full-PVT minimum gain | 89.687 dB at FSVLTH |
+| SE OTA full-PVT minimum phase margin | 64.399 deg at SSVLTH |
+| SE OTA full-PVT maximum input noise, 0.05-150 Hz | 2.188 uVrms at SSVLTH |
+| FD OTA NOM gain / UGF / phase margin | 87.191 dB / 12.188 MHz / 72.989 deg |
+| FDC NOM gain / UGF / phase margin | 88.362 dB / 12.236 MHz / 72.894 deg |
+| CMFB NOM gain / UGF / phase margin | 43.912 dB / 800.932 MHz / 86.428 deg |
 
 ## Main Entry Points
 
 | Path | Purpose |
 | --- | --- |
-| `Design_Files/System Design/ECG Acquisition IC with 10-bit SAR ADC SPEC.xlsx` | System specification |
-| `Design_Files/IC Design/Schematic/BIAS/BIAS.sch` | Bias-reference generator |
-| `Design_Files/IC Design/Schematic/SEL/SEL.sch` | Internal/external reference selector |
-| `Design_Files/IC Design/Testbench/BIAS/` | Five-process BIAS characterization testbenches |
-| `Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m` | BIAS report and plot generator |
-| `Design_Files/IC Design/Testbench/SE_OTA/` | SE OTA common OL/CL PVT testbenches |
-| `Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m` | SE OTA 45-point PVT report and NOM plot generator |
-| `Design_Files/IC Design/Testbench/PATH/` | Integrated PATH AC, noise, and transient testbenches |
-| `Measurement_Results/IC_Simulation/PATH/PATH_Analyze.m` | PATH report and plot generator |
-| `Project_Report.md` | Detailed methodology and results |
-| `Docker_Instructions.md` | IIC-OSIC-TOOLS setup |
+| `Design_Files/System Design/ECG Acquisition IC with 10-bit SAR ADC SPEC.xlsx` | System-level specification |
+| `Design_Files/System Design/System_Block.png` | Architecture diagram |
+| `Design_Files/IC Design/Schematic/` | Project schematic blocks |
+| `Design_Files/IC Design/Testbench/` | Xschem/ngspice verification testbenches |
+| `Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m` | BIAS/SEL characterization and reports |
+| `Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m` | SE OTA 45-point analysis, reports, and nominal plots |
+| `Measurement_Results/IC_Simulation/FD_OTA/` | CMFB, FDC, and FD OTA analyzers and results |
+| `Measurement_Results/IC_Simulation/AFE/AFE_Analyze.m` | Integrated AFE analyzer source |
+| `Measurement_Results/IC_Simulation/Gm_Id/` | NMOS/PMOS gm/Id sizing data and plots |
 
-## Run the MATLAB Analyzers
+## Running MATLAB Analysis
 
-Run the corresponding Xschem/ngspice testbenches first. From the repository root:
+Run the corresponding Xschem/ngspice testbenches before MATLAB. From the repository root:
 
 ```bash
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
@@ -76,22 +85,28 @@ matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA','
 ```
 
 ```bash
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','PATH','PATH_Analyze.m'))"
+matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','CMFB','CMFB_Analyze.m'))"
+matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDC','FDC_Analyze.m'))"
+matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDOTA','FDOTA_Analyze.m'))"
 ```
 
-The current SE OTA analysis flow has been verified with MATLAB R2026a; the existing BIAS and PATH flows were previously verified with MATLAB R2025b.
+The current SE OTA analysis has been verified with MATLAB R2026a.
 
-## Generated Data and Git
+## Generated Data
 
-- Raw simulator `*.txt` exports remain local and are ignored by Git.
-- MATLAB analyzers, compact CSV reports, and selected PNG figures are retained as reproducible artifacts when available.
-- `.DS_Store` is ignored.
-- Regenerate simulator outputs before MATLAB whenever a schematic, condition, clock, or stimulus changes.
+- Raw ngspice TXT exports are local simulation inputs and may be ignored by Git.
+- Generated CSV reports and selected PNG figures provide the reviewable result set.
+- Regenerate simulator outputs and MATLAB artifacts together after changing a schematic, model, stimulus, or condition.
+- Record schematic revision and report timestamps for formal reviews.
 
-## Upstream Chipathon Files
+## Current Limitations
 
-`2026-sscs-chipathon/` is a vendored snapshot of the official [SSCS Chipathon 2026 repository](https://github.com/sscs-ose/sscs-chipathon-2026). It is retained as reference material, not as part of the ECG design source.
+- Results are schematic-level and deterministic.
+- No mismatch, Monte Carlo, extracted-parasitic, package, or pad verification is included.
+- The AFE analyzer has no current generated report set in the repository.
+- The SAR ADC is specified but not integrated.
+- Layout, PCB, and laboratory validation are not available.
 
-It provides participant documentation, schedules, GF180 examples, analog sizing and integration resources, and IIC-OSIC-TOOLS startup scripts. The ECG schematics, testbenches, MATLAB analyzers, and generated results outside this directory are project-specific work.
+## Upstream Chipathon Material
 
-The bundled upstream files retain their original Apache-2.0 license and attribution. See the bundled [README](2026-sscs-chipathon/README.md), [LICENSE](2026-sscs-chipathon/LICENSE), and [NOTICE](2026-sscs-chipathon/NOTICE).
+`2026-sscs-chipathon/` is a vendored reference snapshot of the SSCS Chipathon repository. Project-specific schematics, analyzers, and results are outside that directory. Upstream files retain their original license and attribution; see the bundled `LICENSE` and `NOTICE`.
