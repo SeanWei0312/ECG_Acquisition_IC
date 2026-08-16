@@ -13,7 +13,7 @@ The `DESIGNS` folder is shared into Docker as:
 ### Windows PowerShell
 
 ```powershell
-cd "D:\Documents\GitHub\SSCS_Chipathon_2026\2026-sscs-chipathon\resources\IIC-OSIC-TOOLS"
+cd "D:\Documents\GitHub\ECG_Acquisition_IC\2026-sscs-chipathon\resources\IIC-OSIC-TOOLS"
 $env:DESIGNS="D:\Documents\GitHub"
 .\start_chipathon_vnc.bat
 ```
