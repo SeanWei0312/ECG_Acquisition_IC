@@ -2,7 +2,7 @@
 
 This repository contains the GF180 design and schematic verification work for an ECG acquisition integrated circuit developed in the SSCS Chipathon 2026 flow. The current verified scope includes the bias/reference and selector (`BIAS`/`SEL`), analog building blocks, and fully differential ECG signal path (`PATH`).
 
-> Current stage: pre-layout schematic verification. BIAS/SEL has process, temperature, supply, startup, and selector coverage. The integrated PATH has nominal verification. Layout, extraction, mismatch/Monte Carlo, ADC integration, PCB implementation, and laboratory measurements remain pending.
+> Current stage: pre-layout schematic verification. BIAS/SEL has process, temperature, supply, startup, and selector coverage. The single-ended OTA has complete 45-point process/voltage/temperature characterization. The integrated PATH has nominal verification. Layout, extraction, mismatch/Monte Carlo, ADC integration, PCB implementation, and laboratory measurements remain pending.
 
 Detailed architecture, test conditions, formulas, complete results, limitations, and next steps are maintained in [Project_Report.md](Project_Report.md).
 
@@ -23,7 +23,7 @@ The integrated PATH supports two nominal gain modes:
 | --- | --- |
 | BIAS and SEL | NOM/FF/SS/FS/SF, 35 environmental transients, five temperature/VDD surfaces, startup and selector analysis |
 | Integrated PATH | Nominal operating point, AC, noise, transient gain, CMRR, PSRR, offset, reset startup, RLD, THD, and SNR |
-| SE OTA | Nominal open-loop, closed-loop, noise, CMRR, and PSRR |
+| SE OTA | 45 PVT points covering five processes and nine voltage/temperature cases; OL, CL, noise, CMRR, PSRR, offset, slew, and settling |
 | FD OTA and CMFB | Nominal AC, noise, offset, plant, and loop verification |
 | Layout and extracted simulation | Not started |
 | SAR ADC, PCB, and laboratory testing | Planned |
@@ -37,6 +37,10 @@ Headline schematic results:
 | Worst absolute BIAS-current error | 23.603% |
 | Worst BIAS startup / failures | 1180.295 us / 0 of 35 |
 | Largest selector error | 25.466 nV |
+| SE OTA NOM gain / UGF / phase margin | 93.850 dB / 12.103 MHz / 70.811 deg |
+| SE OTA full-PVT minimum gain / phase margin | 89.687 dB at FSVLTH / 64.399 deg at SSVLTH |
+| SE OTA full-PVT maximum noise, 0.05-150 Hz | 2.188 uVrms at SSVLTH |
+| SE OTA full-PVT input/output range | 0.546-2.787 V / 0.544-2.785 V |
 | Last documented PATH current / power | 8.857 mA / 29.23 mW |
 | Last documented PATH input noise, 0.05-150 Hz | 3.245 uVrms |
 | Last documented PATH RLD suppression at 60 Hz | 20.25 dB |
@@ -52,6 +56,8 @@ The NOM BIAS device-vector export and 14-column DC2D export still require refres
 | `Design_Files/IC Design/Schematic/SEL/SEL.sch` | Internal/external reference selector |
 | `Design_Files/IC Design/Testbench/BIAS/` | Five-process BIAS characterization testbenches |
 | `Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m` | BIAS report and plot generator |
+| `Design_Files/IC Design/Testbench/SE_OTA/` | SE OTA common OL/CL PVT testbenches |
+| `Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m` | SE OTA 45-point PVT report and NOM plot generator |
 | `Design_Files/IC Design/Testbench/PATH/` | Integrated PATH AC, noise, and transient testbenches |
 | `Measurement_Results/IC_Simulation/PATH/PATH_Analyze.m` | PATH report and plot generator |
 | `Project_Report.md` | Detailed methodology and results |
@@ -66,10 +72,14 @@ matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS'
 ```
 
 ```bash
+matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA','SEOTA_Analyze.m'))"
+```
+
+```bash
 matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','PATH','PATH_Analyze.m'))"
 ```
 
-The analysis flow has been verified with MATLAB R2025b.
+The current SE OTA analysis flow has been verified with MATLAB R2026a; the existing BIAS and PATH flows were previously verified with MATLAB R2025b.
 
 ## Generated Data and Git
 

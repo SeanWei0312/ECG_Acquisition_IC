@@ -1,8 +1,8 @@
 # ECG Acquisition IC Project Report
 
-Last updated: 2026-08-15
+Last updated: 2026-08-16
 
-Project stage: pre-layout schematic verification; nominal integrated PATH and PVT-characterized BIAS/SEL
+Project stage: pre-layout schematic verification; nominal integrated PATH, PVT-characterized BIAS/SEL, and 45-point PVT-characterized SE OTA
 
 ## 1. Executive Summary
 
@@ -13,9 +13,9 @@ The integrated path has two gain settings:
 - G2: nominal overall differential gain of 480 V/V (53.625 dB).
 - G16: nominal overall differential gain of 3840 V/V (71.687 dB).
 
-Nominal PATH simulations cover operating point, differential AC response, differential transient response, CMRR, PSRR+/PSRR-, input-referred noise, common-mode and differential input offset, startup with and without reset, RLD, THD, and SNR. Dedicated BIAS/SEL simulations cover five process corners, seven transient environmental cases per process, and complete -40 C to 125 C / 3.0 V to 3.6 V DC surfaces. MATLAB post-processing generates compact CSV reports and current figures for both flows.
+Nominal PATH simulations cover operating point, differential AC response, differential transient response, CMRR, PSRR+/PSRR-, input-referred noise, common-mode and differential input offset, startup with and without reset, RLD, THD, and SNR. Dedicated BIAS/SEL simulations cover five process corners, seven transient environmental cases per process, and complete -40 C to 125 C / 3.0 V to 3.6 V DC surfaces. The SE OTA flow covers five processes and nine supply/temperature cases per process, for 45 PVT points and 450 raw OL/CL exports. MATLAB post-processing generates comparison tables, full-PVT extrema with corner locations, and nominal figures.
 
-The last documented PATH results show approximately 8.857 mA total current, 29.23 mW total power, 3.245 uVrms input-referred noise over 0.05-150 Hz, about 20.25 dB RLD common-mode suppression at 60 Hz, and less than 0.101% THD in the tested 60 Hz and 150 Hz cases. The BIAS flow reports 39.997 uA nominal current, a 31.054-49.441 uA full-grid range, a worst startup time of 1180.295 us, and zero failures in 35 startup runs. The most important unresolved PATH issue is the very low transient gain at 0.05 Hz and 0.1 Hz compared with ordinary AC analysis. The BIAS NOM device-vector and DC2D exports also require regeneration before their device-level sweep extrema are complete.
+The last documented PATH results show approximately 8.857 mA total current, 29.23 mW total power, 3.245 uVrms input-referred noise over 0.05-150 Hz, about 20.25 dB RLD common-mode suppression at 60 Hz, and less than 0.101% THD in the tested 60 Hz and 150 Hz cases. The BIAS flow reports 39.997 uA nominal current, a 31.054-49.441 uA full-grid range, a worst startup time of 1180.295 us, and zero failures in 35 startup runs. The SE OTA has 93.850 dB nominal DC gain, 12.103 MHz nominal UGF, 70.811 deg nominal phase margin, and 1.876 uVrms nominal input noise; across all 45 PVT points its minimum gain is 89.687 dB, minimum phase margin is 64.399 deg, and maximum input noise is 2.188 uVrms. The most important unresolved PATH issue is the very low transient gain at 0.05 Hz and 0.1 Hz compared with ordinary AC analysis. The BIAS NOM device-vector and DC2D exports also require regeneration before their device-level sweep extrema are complete.
 
 ## 2. Design Scope and Conditions
 
@@ -73,7 +73,7 @@ The RLD block senses common-mode behavior and drives the body/electrode model in
 | --- | --- | --- |
 | BIAS and SEL | `Schematic/BIAS/`, `Schematic/SEL/`, and `Testbench/BIAS/` | Five-process environmental transient and 2-D temperature/supply characterization implemented |
 | INA, LPF, PGA, selectors, buffer, RLD | `Design_Files/IC Design/Schematic/` | Instantiated in the integrated PATH tests |
-| Single-ended OTA | `Schematic/SE_OTA/` and `Testbench/SE_OTA/` | Nominal open-loop, closed-loop, noise, CMRR, and PSRR results present |
+| Single-ended OTA | `Schematic/SE_OTA/` and `Testbench/SE_OTA/` | Complete 45-point OL/CL PVT dataset, comparison report, worst-case report, and NOM plots present |
 | Fully differential core | `Schematic/FD_OTA/FDC/` | Nominal AC, noise, offset, and plant results present |
 | Common-mode feedback | `Schematic/FD_OTA/CMFB/` | Nominal open-loop and closed-loop results present |
 | Fully differential OTA | `Schematic/FD_OTA/FDOTA/` | Nominal open-loop and closed-loop results present |
@@ -245,9 +245,17 @@ $$
 
 These two values are range-normalized summaries, not signed local slopes or fitted derivatives.
 
+### 4.6 SE OTA PVT Flow
+
+The common SE OTA open-loop and closed-loop testbenches generate ten raw TXT files for each PVT point: seven OL exports (`op`, differential AC, common-mode AC, PSRR+, PSRR-, VTC, and noise) and three CL exports (`op`, DC sweep, and transient). The complete run covers five processes (`NOM`, `FF`, `SS`, `FS`, and `SF`) and nine environmental cases per process (`nom`, `vl`, `vh`, `tl`, `th`, `vltl`, `vlth`, `vhtl`, and `vhth`), producing 450 files.
+
+`SEOTA_Analyze.m` calculates all metrics from raw vectors. `IDD_TOTAL` already contains the BIAS block, bias mirror, and SE OTA, so total current is `abs(IDD_TOTAL)` without adding the exported bias current. Input noise uses ngspice's input-referred noise-density vector directly and is integrated from 0.05 Hz to 150 Hz. The CL input range is the continuous region around `VDD/2` for which `abs(VOUT-VIN) <= 2 mV`; output swing is measured over the same region. Slew rate is the average 10-90% slope, and settling is the time after an input transition at which the output enters and remains inside the 2 mV tracking band.
+
+The compact comparison table follows the BIAS convention: `NOM/FF/SS/FS/SF` are nominal-environment process results, while `VL/VH/TL/TH` are NOM-process environmental results. A separate worst-case table searches all 45 PVT points. Full corner names encode process, supply, and temperature; for example, `FFVHTL` means FF process, high supply, low temperature, and `SFNOMTL` means SF process, nominal supply, low temperature.
+
 ## 5. Simulation Results
 
-Sections 5.1-5.7 retain values from the last generated `PATH_summary.csv` and `PATH_table_report.csv` result set. The corresponding PATH CSVs and PNGs are currently absent from the worktree; these nominal schematic results must be regenerated before formal use. Section 5.8 uses the current generated BIAS CSVs.
+Sections 5.1-5.7 retain values from the last generated `PATH_summary.csv` and `PATH_table_report.csv` result set. The corresponding PATH CSVs and PNGs are currently absent from the worktree; these nominal schematic results must be regenerated before formal use. Section 5.8 uses the current generated BIAS CSVs. Section 5.9 uses the current SE OTA 45-point CSVs and NOM plots.
 
 ### 5.1 Operating Point
 
@@ -407,6 +415,54 @@ The maximum selector errors over all 35 transient runs are 12.493 nV for BP inte
 
 ![NOM BIAS internal/external selection](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_SEL.png)
 
+### 5.9 SE OTA Characterization
+
+Nominal SE OTA results are:
+
+| Metric | NOM result |
+| --- | ---: |
+| Bias current | 40.090 uA |
+| Total current / power | 912.690 uA / 3.012 mW |
+| DC gain | 93.850 dB |
+| UGF | 12.103 MHz |
+| Phase margin | 70.811 deg |
+| Input offset | 14.555 uV |
+| CMRR at 60 Hz / 150 Hz | 110.814 dB / 110.814 dB |
+| PSRR+ at 60 Hz / 150 Hz | 103.772 dB / 99.332 dB |
+| PSRR- at 60 Hz / 150 Hz | 103.772 dB / 99.332 dB |
+| Input noise, 0.05-150 Hz | 1.876 uVrms |
+| Input CM range | 0.319-3.222 V |
+| Output swing | 0.317-3.220 V |
+| Slew rate, rise / fall | 10.052 V/us / 7.827 V/us |
+| Settling time | 163.400 ns |
+
+The full 45-point worst-case search reports:
+
+| Metric | Worst result | Corner |
+| --- | ---: | --- |
+| Bias current | 49.581 uA | FFVHTH |
+| Total current / power | 1211.955 uA / 4.363 mW | FFVHTH |
+| Minimum DC gain | 89.687 dB | FSVLTH |
+| Minimum UGF | 8.921 MHz | SSVLTH |
+| Minimum phase margin | 64.399 deg | SSVLTH |
+| Maximum absolute input offset | 21.441 uV | FSVLTH |
+| Minimum CMRR at 60 Hz / 150 Hz | 108.153 dB / 108.153 dB | SSVLTH |
+| Minimum PSRR+ at 60 Hz | 101.605 dB | SFVLTH |
+| Minimum PSRR+ at 150 Hz | 97.250 dB | SSNOMTH |
+| Maximum input noise, 0.05-150 Hz | 2.188 uVrms | SSVLTH |
+| Maximum absolute CL gain error | 0.001733% | FSVLTH |
+| Maximum absolute Vout DC error | 21.439 uV | FSVLTH |
+| Worst input CM range | 0.546-2.787 V | SSVHTL / FSVLTH |
+| Worst output swing | 0.544-2.785 V | SSVHTL / FSVLTH |
+| Minimum rise / fall slew rate | 7.695 V/us / 6.021 V/us | SSVLTL |
+| Maximum settling time | 194.900 ns | SSVLTL |
+
+![SE OTA nominal open-loop gain and phase](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png)
+
+![SE OTA nominal closed-loop DC input range](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_dc_input_range.png)
+
+![SE OTA nominal closed-loop step response](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_step_response.png)
+
 ## 6. Interpretation and Limitations
 
 ### 6.1 Low-Frequency AC/Transient Mismatch
@@ -441,7 +497,7 @@ No mirror drain-voltage compliance sweep is included. The reported mirror error 
 
 ### 6.5 Verification Coverage
 
-The integrated PATH flow remains nominal-only. The dedicated BIAS flow includes process, voltage, and temperature characterization, but this is not complete-chip PVT sign-off. The project still does not establish:
+The integrated PATH flow remains nominal-only. The dedicated BIAS and SE OTA flows include process, voltage, and temperature characterization, but this is not complete-chip PVT sign-off. The SE OTA results are deterministic pre-layout schematic corners; they do not include mismatch, Monte Carlo, extracted parasitics, pads, or package effects. The project still does not establish:
 
 - Integrated PATH and complete-chip process, voltage, and temperature margins.
 - Device mismatch or Monte Carlo yield.
@@ -478,6 +534,12 @@ Run the function-based BIAS analyzer with:
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
 ```
 
+Run the SE OTA analyzer with:
+
+```bash
+matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA','SEOTA_Analyze.m'))"
+```
+
 Calculation sources and generated artifacts are:
 
 - `PATH_Analyze.m`: calculation and plotting rules.
@@ -492,6 +554,12 @@ Calculation sources and generated artifacts are:
 - `BIAS_dc2d_report.csv` and `BIAS_global_worst_case.csv`: per-process surfaces and global extrema with locations.
 - `BIAS_reference_report.csv`: temperature and supply variation summaries.
 - The six NOM figures directly generated by the current `BIAS_Analyze.m` in `BIAS/Plots/`.
+- `SEOTA_Analyze.m`: one-pass analysis of all 45 process/environment points, nine-column comparison reporting, full-PVT extrema, and NOM plotting rules.
+- Five `SE_OTA/*.Result_txt/` directories: 450 raw exports covering five processes, nine environmental cases, seven OL files, and three CL files per PVT point.
+- `SEOTA_table_report.csv`: NOM/FF/SS/FS/SF plus NOM-process VL/VH/TL/TH comparison table.
+- `SEOTA_worst_case_report.csv`: worst values and full process/supply/temperature corner names across all 45 PVT points.
+- `NOM.SEOTA_summary.csv`: compatibility copy of the compact comparison table.
+- The eight NOM SE OTA figures in `SE_OTA/Plots/`: open-loop gain/phase, CMRR, PSRR, input-noise density, OL VTC, CL DC range, CL VTC, and CL step response.
 
 Raw ngspice `*.txt` exports remain local and are ignored by Git. Re-running MATLAB without regenerating the raw data only re-analyzes the local simulation state; therefore, the schematics, testbench revision, CSV timestamp, and plot timestamp should be recorded together for formal design reviews.
 
