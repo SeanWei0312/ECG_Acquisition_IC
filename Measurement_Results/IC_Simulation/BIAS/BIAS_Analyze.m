@@ -1048,7 +1048,7 @@ saveNomFigure(fig,plotDir,'NOM_BIAS_2D.png');
 end
 
 function fig = wideFigure()
-fig = figure('Units','pixels','Position',[100 100 1600 500]);
+fig = figure;
 end
 
 function saveNomFigure(fig,plotDir,fileName)
@@ -1060,7 +1060,10 @@ for axesIndex = 1:numel(axesHandles)
         toolbar.Visible = 'off';
     end
 end
-saveas(fig,fullfile(plotDir,fileName));
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 10 4];
+fig.PaperSize = [10 4];
+print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
 end
 
 function printComparisonTable(parameters,units,columns,formattedValues)

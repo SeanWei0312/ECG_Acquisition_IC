@@ -787,11 +787,16 @@ function stylePlot(xLabelText,titleText)
 end
 
 function fig = wideFigure()
-    fig = figure('Units','pixels','Position',[100 100 1600 500]);
+fig = figure;
 end
 
 function saveFig(plotDir,fileName)
-    saveas(gcf,fullfile(plotDir,fileName));
+    fig = gcf;
+    drawnow;
+    fig.PaperUnits = 'inches';
+    fig.PaperPosition = [0 0 10 4];
+    fig.PaperSize = [10 4];
+    print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
 end
 
 function [value,unit] = voltageReport(value_V,suffix)
