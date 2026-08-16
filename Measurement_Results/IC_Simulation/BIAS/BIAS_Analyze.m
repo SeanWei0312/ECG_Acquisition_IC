@@ -858,7 +858,7 @@ time_ms = data(:,1)*1e3;
 startupEnd_s = min(4e-3,analysis.firstSelTime_s);
 startupRows = data(:,1) >= 0 & data(:,1) <= startupEnd_s;
 
-fig = figure;
+fig = wideFigure();
 if analysis.imstWaveformUsable
     yyaxis left;
 end
@@ -893,7 +893,7 @@ box on;
 legend('Location','best');
 saveNomFigure(fig,plotDir,'NOM_BIAS_STARTUP.png');
 
-fig = figure;
+fig = wideFigure();
 plot(time_ms(startupRows),data(startupRows,2), ...
     'LineWidth',1.5,'DisplayName','AVDD');
 hold on;
@@ -911,7 +911,7 @@ legend('Location','best');
 saveNomFigure(fig,plotDir,'NOM_BIAS_STARTUP_VOLTAGE.png');
 
 selectionRows = data(:,1) >= 0 & data(:,1) <= cfg.expectedTranEnd_s;
-fig = figure;
+fig = wideFigure();
 bpAxes = subplot(2,1,1);
 plot(time_ms(selectionRows),data(selectionRows,3), ...
     'LineWidth',1.5,'DisplayName','SEL');
@@ -971,7 +971,7 @@ temperature_C = data(:,1);
 vdd_V = data(:,2);
 ibias_uA = data(:,7)*1e6;
 
-fig = figure;
+fig = wideFigure();
 hold on;
 for targetVdd_V = [3.0 3.3 3.6]
     rows = abs(vdd_V-targetVdd_V) <= 5e-4;
@@ -989,7 +989,7 @@ box on;
 legend('Location','best');
 saveNomFigure(fig,plotDir,'NOM_BIAS_TEMP.png');
 
-fig = figure;
+fig = wideFigure();
 hold on;
 for targetTemp_C = [-40 27 125]
     rows = abs(temperature_C-targetTemp_C) <= 1e-8;
@@ -1014,7 +1014,7 @@ ibiasError_pct = 100*(data(:,7)-cfg.ibiasTarget_A)/cfg.ibiasTarget_A;
 errorGrid_pct = accumarray([temperatureIndex vddIndex],ibiasError_pct, ...
     [numel(temperatureAxis_C) numel(vddAxis_V)],@mean,NaN);
 
-fig = figure;
+fig = wideFigure();
 imagesc(vddAxis_V,temperatureAxis_C,errorGrid_pct);
 axis xy tight;
 colorLimit_pct = max(abs(errorGrid_pct),[],'all');
@@ -1045,6 +1045,10 @@ ylabel('Temperature (C)');
 title('BIAS Current Error vs Temperature and Supply - NOM');
 box on;
 saveNomFigure(fig,plotDir,'NOM_BIAS_2D.png');
+end
+
+function fig = wideFigure()
+fig = figure('Units','pixels','Position',[100 100 1600 500]);
 end
 
 function saveNomFigure(fig,plotDir,fileName)

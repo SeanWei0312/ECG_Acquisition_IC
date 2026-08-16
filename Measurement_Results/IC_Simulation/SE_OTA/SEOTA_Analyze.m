@@ -31,7 +31,7 @@ voutTarget_V = 0.5*vdd_V;
 [gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f_Hz,Ad);
 dcGain_dB = gain_dB(1);
 
-figure;
+wideFigure();
 yyaxis left;
 semilogx(f_Hz,gain_dB,'LineWidth',1.5); hold on;
 yline(0,'--','HandleVisibility','off');
@@ -58,14 +58,14 @@ cmrrAt_dB = interpAtFreq(fCm_Hz,cmrr_dB,MARK_FREQ_HZ);
 psrrPAt_dB = interpAtFreq(fP_Hz,psrrP_dB,MARK_FREQ_HZ);
 psrrNAt_dB = interpAtFreq(fN_Hz,psrrN_dB,MARK_FREQ_HZ);
 
-figure;
+wideFigure();
 semilogx(fCm_Hz,cmrr_dB,'LineWidth',1.5); hold on;
 labelFreqSet(fCm_Hz,cmrr_dB,MARK_FREQ_HZ);
 ylabel('CMRR (dB)');
 stylePlot('Frequency (Hz)','SEOTA CMRR versus Frequency');
 saveFig(plotDir,'NOM.cmrr.png');
 
-figure;
+wideFigure();
 tiledlayout(2,1);
 sgtitle('SEOTA PSRR+ and PSRR- versus Frequency');
 nexttile;
@@ -87,7 +87,7 @@ fNoise_Hz = noise(:,1);
 inNoise_VrtHz = abs(noise(:,3));
 inputNoise_Vrms = integrateNoise(fNoise_Hz,inNoise_VrtHz,NOISE_BAND_HZ);
 
-figure;
+wideFigure();
 validNoise = fNoise_Hz >= NOISE_BAND_HZ(1) & ...
     fNoise_Hz <= NOISE_BAND_HZ(2) & isfinite(inNoise_VrtHz) & inNoise_VrtHz > 0;
 loglog(fNoise_Hz(validNoise),inNoise_VrtHz(validNoise)*1e9,'LineWidth',1.5);
@@ -102,7 +102,7 @@ vtcVinDiff_V = vtc(:,1);
 vtcVout_V = vtc(:,5);
 offset_V = zeroNoJump(vtcVinDiff_V,vtcVout_V - voutTarget_V,0.25*vdd_V);
 
-figure;
+wideFigure();
 plot(vtcVinDiff_V*1e3,vtcVout_V,'LineWidth',1.5); hold on;
 yline(voutTarget_V,'--','VDD/2','HandleVisibility','off');
 addCursor(offset_V*1e3,voutTarget_V,sprintf('Vos: %.4g mV',offset_V*1e3));
@@ -142,7 +142,7 @@ else
     swingHigh_V = NaN;
 end
 
-figure;
+wideFigure();
 tiledlayout(2,1);
 sgtitle('SEOTA Closed-Loop DC Input Range and Output Swing');
 
@@ -181,7 +181,7 @@ legend('Measured','Ideal Vout = Vin','Location','best');
 stylePlot('Vin (V)','Vout versus Vin');
 saveFig(plotDir,'NOM.closed_loop_dc_input_range.png');
 
-figure;
+wideFigure();
 plot(clVin_V,clVout_V,'LineWidth',1.5); hold on;
 plot(clVin_V,clVin_V,'--','LineWidth',1.2);
 if isfinite(inputLow_V)
@@ -237,7 +237,7 @@ nomMetrics.settle_s = settle_s;
 [swingLowReportValue,swingLowReportUnit] = voltageReport(swingLow_V,"");
 [swingHighReportValue,swingHighReportUnit] = voltageReport(swingHigh_V,"");
 
-figure;
+wideFigure();
 plot(t_s*1e6,trVin_V,'--','LineWidth',1.2); hold on;
 plot(t_s*1e6,trVin_V+SETTLE_LIMIT,':','LineWidth',1.0, ...
     'HandleVisibility','off');
@@ -784,6 +784,10 @@ function stylePlot(xLabelText,titleText)
     grid on;
     if strlength(string(xLabelText)) > 0, xlabel(xLabelText); end
     if strlength(string(titleText)) > 0, title(titleText); end
+end
+
+function fig = wideFigure()
+    fig = figure('Units','pixels','Position',[100 100 1600 500]);
 end
 
 function saveFig(plotDir,fileName)
