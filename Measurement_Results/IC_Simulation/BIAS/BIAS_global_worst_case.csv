@@ -4,7 +4,7 @@ Ibias maximum,uA,49.441,FF,125.000,3.600
 Worst |Ibias error|,%,23.603,FF,125.000,3.600
 BP minimum,V,1.138,FS,125.000,3.000
 BP maximum,V,2.146,SF,-40.000,3.600
-Maximum |VREF error|,uV,6.155,SS,-40.000,3.600
+Maximum |VREF error|,uV,6.154,SS,-40.000,3.600
 Maximum |mirror error|,%,1.490e-01,FS,125.000,3.000
 Minimum MST margin,V,7.415e-01,FF,125.000,3.600
 Maximum IDD,uA,103.971,FF,125.000,3.600
