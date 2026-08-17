@@ -70,13 +70,13 @@ only_toplevel=true
 format="tcleval( @value )"
 value="
 .include $::180MCU_MODELS/design.ngspice
-.lib $::180MCU_MODELS/sm141064.ngspice typical
-.lib $::180MCU_MODELS/sm141064.ngspice res_typical
-.lib $::180MCU_MODELS/sm141064.ngspice mimcap_typical
+.lib $::180MCU_MODELS/sm141064.ngspice ss
+.lib $::180MCU_MODELS/sm141064.ngspice res_ss
+.lib $::180MCU_MODELS/sm141064.ngspice mimcap_ss
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
-.lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
+.lib $::180MCU_MODELS/sm141064.ngspice bjt_ss
 
-.csparam PROC_ID=0
+.csparam PROC_ID=2
 
 .param VDD_SET=3.3
 .param TEMP_SET=27

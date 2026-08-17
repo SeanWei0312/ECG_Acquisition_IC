@@ -141,6 +141,7 @@ else
     swingLow_V = NaN;
     swingHigh_V = NaN;
 end
+inputHighHeadroom_V = vdd_V - inputHigh_V;
 
 wideFigure();
 tiledlayout(2,1);
@@ -224,6 +225,7 @@ nomMetrics.gainError_pct = gainError_pct;
 nomMetrics.voutDc_V = voutClosedLoopDc_V;
 nomMetrics.inputLow_V = inputLow_V;
 nomMetrics.inputHigh_V = inputHigh_V;
+nomMetrics.inputHighHeadroom_V = inputHighHeadroom_V;
 nomMetrics.swingLow_V = swingLow_V;
 nomMetrics.swingHigh_V = swingHigh_V;
 nomMetrics.srRise_Vus = srRise_Vus;
@@ -282,6 +284,7 @@ rows = [
     "Vout,DC",               voutDcReportUnit, fmt(voutDcReportValue)
     "Input CM low",          inputLowReportUnit, fmt(inputLowReportValue)
     "Input CM high",         inputHighReportUnit, fmt(inputHighReportValue)
+    "Input CM high headroom","mV",    fmt(inputHighHeadroom_V*1e3)
     "Output swing low",      swingLowReportUnit, fmt(swingLowReportValue)
     "Output swing high",     swingHighReportUnit, fmt(swingHighReportValue)
     "SR rise",               "V/us",  fmt(srRise_Vus)
@@ -405,6 +408,7 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
 
     m.clGain_dB = NaN; m.gainError_pct = NaN; m.voutDc_V = NaN;
     m.inputLow_V = NaN; m.inputHigh_V = NaN;
+    m.inputHighHeadroom_V = NaN;
     m.swingLow_V = NaN; m.swingHigh_V = NaN;
     m.srRise_Vus = NaN; m.srFall_Vus = NaN; m.settle_s = NaN;
     clFiles = clPrefix + ["op.txt" "dc.txt" "tran.txt"];
@@ -425,6 +429,7 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
         if isfinite(iLow)
             m.inputLow_V = clVin_V(iLow);
             m.inputHigh_V = clVin_V(iHigh);
+            m.inputHighHeadroom_V = m.vdd_V - m.inputHigh_V;
             m.swingLow_V = min(clVout_V(iLow:iHigh));
             m.swingHigh_V = max(clVout_V(iLow:iHigh));
         end
@@ -469,6 +474,7 @@ function values = metricsToReport(m,rows,cLoad_pF)
             case "Vout,DC", raw = voltageInUnit(m.voutDc_V,unit);
             case "Input CM low", raw = voltageInUnit(m.inputLow_V,unit);
             case "Input CM high", raw = voltageInUnit(m.inputHigh_V,unit);
+            case "Input CM high headroom", raw = m.inputHighHeadroom_V*1e3;
             case "Output swing low", raw = voltageInUnit(m.swingLow_V,unit);
             case "Output swing high", raw = voltageInUnit(m.swingHigh_V,unit);
             case "SR rise", raw = m.srRise_Vus;
@@ -510,11 +516,23 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
         if ~any(valid), continue; end
         validIndices = find(valid);
 
+        if parameter == "Input CM high headroom"
+            failed = cellfun(@(m)~isfinite(m.inputHighHeadroom_V),metrics);
+            if any(failed)
+                selectedColumn = find(failed,1);
+                worstCorners(resultIndex) = columns(selectedColumn);
+                continue;
+            end
+        end
         if ismember(parameter,["DC gain" "UGF" "Phase margin" ...
                 "CMRR @ 60 Hz" "CMRR @ 150 Hz" "PSRR+ @ 60 Hz" ...
                 "PSRR+ @ 150 Hz" "PSRR- @ 60 Hz" "PSRR- @ 150 Hz" ...
                 "Input CM high" "Output swing high" "SR rise" "SR fall"])
             [selectedValue,localIndex] = min(candidates(valid));
+        elseif parameter == "Input CM high headroom"
+            headroom = cellfun(@(m) m.inputHighHeadroom_V,metrics);
+            [~,selectedColumn] = min(headroom);
+            selectedValue = candidates(selectedColumn);
         elseif parameter == "Bias current"
             rawCandidates = cellfun(@(m) m.ibias_A,metrics)*1e6;
             [~,selectedColumn] = max(abs(rawCandidates-40));
@@ -536,7 +554,8 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
         else
             [selectedValue,localIndex] = max(candidates(valid));
         end
-        if parameter ~= "Bias current" && parameter ~= "Vout,DC"
+        if parameter ~= "Bias current" && parameter ~= "Vout,DC" && ...
+                parameter ~= "Input CM high headroom"
             selectedColumn = validIndices(localIndex);
         end
         worstValues(resultIndex) = selectedValue;

@@ -1,0 +1,35 @@
+Parameter,Unit,Value,Corner
+"FDC bias current",uA,49.581,FFVHTH
+"CMFB bias current",uA,49.581,FFVHTH
+"Total current",uA,2319.904,FFVHTH
+"Total power",mW,8.352,FFVHTH
+"Differential DC gain",dB,83.697,FSVLTH
+"Differential UGF",MHz,8.712,SSVLTH
+"Differential phase margin",deg,68.689,SSVLTH
+"Input differential offset",uV,0.001,SSVHTH
+"CMRR @ 60 Hz",dB,310.987,FFNOMTH
+"CMRR @ 150 Hz",dB,311.937,FFNOMTH
+"PSRR+ @ 60 Hz",dB,296.198,NOMNOMTH
+"PSRR+ @ 150 Hz",dB,296.252,NOMNOMTH
+"PSRR- @ 60 Hz",dB,279.681,FFNOMTH
+"PSRR- @ 150 Hz",dB,279.785,FFNOMTH
+"Input-referred noise 0.05-150 Hz",uVrms,3.545,SSVHTH
+"Closed-loop differential gain",dB,-4.828e-04,FSVLTH
+"Gain error",%,-5.559e-03,FSVLTH
+"Output common mode, DC",V,1.833,SSVHTH
+"Output CM error at nominal",mV,32.999,SSNOMTH
+"Output differential, DC",uV,-0.001,SFVLTH
+"Input CM low",V,1.006,SSVHTL
+"Input CM high",V,2.689,FSVLTH
+"Input CM high headroom",mV,311.000,FSVLTH
+"Differential command low",V,-2.733,FSVLTH
+"Differential command high",V,2.733,FSVLTH
+"Differential output swing low",V,-2.731,FSVLTH
+"Differential output swing high",V,2.731,FSVLTH
+"Differential SR rise",V/us,5.650,SSVLTL
+"Differential SR fall",V/us,5.603,SSVLTL
+"Differential settling time",ns,201.600,SSVLTH
+"Differential-step CM disturbance",mV,60.863,SSVLTH
+"CMFB SR rise",V/us,2.354,SSVLTL
+"CMFB SR fall",V/us,2.392,SSVLTH
+"CMFB settling time",ns,446.100,SSVLTH

@@ -18,6 +18,7 @@ Parameter,Unit,Value,Corner
 "Vout,DC error",uV,-21.439,FSVLTH
 "Input CM low",mV,546.000,SSVHTL
 "Input CM high",V,2.787,FSVLTH
+"Input CM high headroom",mV,32.000,SFVHTL
 "Output swing low",mV,544.024,SSVHTL
 "Output swing high",V,2.785,FSVLTH
 "SR rise",V/us,7.695,SSVLTL
