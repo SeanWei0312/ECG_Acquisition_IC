@@ -1,26 +1,27 @@
 Parameter,Unit,Value,Corner
 "Bias current",uA,49.581,FFVHTH
-"Total current",uA,1211.955,FFVHTH
+"Total current",mA,1.212,FFVHTH
 "Total power",mW,4.363,FFVHTH
-"DC gain",dB,89.687,FSVLTH
-"UGF",MHz,8.921,SSVLTH
-"Phase margin",deg,64.399,SSVLTH
-"Input offset",uV,21.441,FSVLTH
-"CMRR @ 60 Hz",dB,108.153,SSVLTH
-"CMRR @ 150 Hz",dB,108.153,SSVLTH
-"PSRR+ @ 60 Hz",dB,101.605,SFVLTH
-"PSRR+ @ 150 Hz",dB,97.250,SSNOMTH
-"PSRR- @ 60 Hz",dB,101.605,SFVLTH
-"PSRR- @ 150 Hz",dB,97.250,SSNOMTH
+"DC gain",dB,89.697,FSVLTH
+"UGF",MHz,8.417,SSVLTH
+"Phase margin",deg,59.932,FFVLTH
+"Input offset",uV,21.419,FSVLTH
+"CMRR @ 60 Hz",dB,108.150,SSVLTH
+"CMRR @ 150 Hz",dB,108.150,SSVLTH
+"PSRR+ @ 60 Hz",dB,101.557,SSNOMTH
+"PSRR+ @ 150 Hz",dB,96.525,SSNOMTH
+"PSRR- @ 60 Hz",dB,101.557,SSNOMTH
+"PSRR- @ 150 Hz",dB,96.525,SSNOMTH
 "Input-referred noise 0.05-150 Hz",uVrms,2.188,SSVLTH
-"Closed-loop gain",dB,-1.506e-04,FSVLTH
-"Gain error",%,-1.733e-03,FSVLTH
-"Vout,DC error",uV,-21.439,FSVLTH
-"Input CM low",mV,546.000,SSVHTL
-"Input CM high",V,2.787,FSVLTH
-"Input CM high headroom",mV,32.000,SFVHTL
-"Output swing low",mV,544.024,SSVHTL
-"Output swing high",V,2.785,FSVLTH
-"SR rise",V/us,7.695,SSVLTL
-"SR fall",V/us,6.021,SSVLTL
-"Settling time",ns,194.900,SSVLTL
+"Closed-loop gain",dB,-1.560e-04,FSVLTH
+"Gain error",%,-0.002,FSVLTH
+"Vout,DC error",uV,-21.419,FSVLTH
+"Input low",mV,545.000,SSVHTL
+"Input high",V,2.787,FSVLTH
+"Input high headroom",mV,213.000,FSVLTH
+"Output low",mV,543.016,SSVHTL
+"Output high",V,2.785,FSVLTH
+"Output high headroom",mV,214.989,FSVLTH
+"SR rise",V/us,7.034,SSVLTL
+"SR fall",V/us,5.522,SSVLTL
+"Settling time",ns,214.400,SSVLTL

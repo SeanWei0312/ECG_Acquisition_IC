@@ -55,6 +55,41 @@ value="
 
 .temp \{TEMP_SET\}
 "}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/SE_OTA/SE_OTA.sym} 380 -1060 0 0 {name=xSEOTA1}
+C {vsource.sym} 120 -970 0 0 {name=VAVDD value="dc \{VDD_SET\} ac 0" savecurrent=true}
+C {gnd.sym} 120 -940 0 0 {name=l10 lab=0}
+C {vsource.sym} 300 -970 0 0 {name=VIN value="dc \{VCM_SET\} ac 0" savecurrent=false}
+C {lab_wire.sym} 300 -1020 0 0 {name=p6 sig_type=std_logic lab=INP}
+C {vsource.sym} 120 -830 0 0 {name=VAVSS value="dc 0 ac 0" savecurrent=false}
+C {gnd.sym} 120 -800 0 0 {name=l11 lab=0}
+C {lab_wire.sym} 120 -880 0 0 {name=p9 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 300 -920 2 0 {name=p11 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 540 -1100 2 0 {name=p1 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 700 -1120 2 0 {name=p3 sig_type=std_logic lab=AGND}
+C {lab_wire.sym} 120 -1020 0 0 {name=p8 sig_type=std_logic lab=AVDD}
+C {lab_wire.sym} 540 -1300 0 0 {name=p10 sig_type=std_logic lab=AVDD}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/BIAS/BIAS.sym} 40 -1100 0 0 {name=xBIAS1}
+C {lab_wire.sym} 120 -1100 2 1 {name=p5 sig_type=std_logic lab=AVDD}
+C {lab_wire.sym} 160 -1100 2 1 {name=p12 sig_type=std_logic lab=AGND}
+C {symbols/pfet_03v3.sym} 300 -1220 0 0 {name=MBIAS
+L=4u
+W=16u
+nf=1
+m=1
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=pfet_03v3
+spiceprefix=X
+}
+C {lab_wire.sym} 320 -1300 0 0 {name=p22 sig_type=std_logic lab=AVDD}
+C {noconn.sym} 240 -1180 0 1 {name=l3}
+C {lab_wire.sym} 320 -1140 2 1 {name=p23 sig_type=std_logic lab=B}
+C {lab_wire.sym} 240 -1180 0 1 {name=p24 sig_type=std_logic lab=VREF}
+C {lab_wire.sym} 240 -1220 0 1 {name=p27 sig_type=std_logic lab=BP}
 C {devices/code_shown.sym} 680 -670 0 0 {name=NGSPICE
 only_toplevel=true
 value="
@@ -207,7 +242,6 @@ quit
 
 .endc
 "}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/SE_OTA/SE_OTA.sym} 380 -1060 0 0 {name=xSEOTA1}
 C {devices/code_shown.sym} 80 -340 0 0 {name=SETUP
 only_toplevel=true
 value="
@@ -218,37 +252,3 @@ value="
 .options rshunt=1e12
 .options method=gear
 "}
-C {vsource.sym} 120 -970 0 0 {name=VAVDD value="dc \{VDD_SET\} ac 0" savecurrent=true}
-C {gnd.sym} 120 -940 0 0 {name=l10 lab=0}
-C {vsource.sym} 300 -970 0 0 {name=VIN value="dc \{VCM_SET\} ac 0" savecurrent=false}
-C {lab_wire.sym} 300 -1020 0 0 {name=p6 sig_type=std_logic lab=INP}
-C {vsource.sym} 120 -830 0 0 {name=VAVSS value="dc 0 ac 0" savecurrent=false}
-C {gnd.sym} 120 -800 0 0 {name=l11 lab=0}
-C {lab_wire.sym} 120 -880 0 0 {name=p9 sig_type=std_logic lab=AGND}
-C {lab_wire.sym} 300 -920 2 0 {name=p11 sig_type=std_logic lab=AGND}
-C {lab_wire.sym} 540 -1100 2 0 {name=p1 sig_type=std_logic lab=AGND}
-C {lab_wire.sym} 700 -1120 2 0 {name=p3 sig_type=std_logic lab=AGND}
-C {lab_wire.sym} 120 -1020 0 0 {name=p8 sig_type=std_logic lab=AVDD}
-C {lab_wire.sym} 540 -1300 0 0 {name=p10 sig_type=std_logic lab=AVDD}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/BIAS/BIAS.sym} 40 -1100 0 0 {name=xBIAS1}
-C {lab_wire.sym} 120 -1100 2 1 {name=p5 sig_type=std_logic lab=AVDD}
-C {lab_wire.sym} 160 -1100 2 1 {name=p12 sig_type=std_logic lab=AGND}
-C {symbols/pfet_03v3.sym} 300 -1220 0 0 {name=MBIAS
-L=4u
-W=16u
-nf=1
-m=1
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=pfet_03v3
-spiceprefix=X
-}
-C {lab_wire.sym} 320 -1300 0 0 {name=p22 sig_type=std_logic lab=AVDD}
-C {noconn.sym} 240 -1180 0 1 {name=l3}
-C {lab_wire.sym} 320 -1140 2 1 {name=p23 sig_type=std_logic lab=B}
-C {lab_wire.sym} 240 -1180 0 1 {name=p24 sig_type=std_logic lab=VREF}
-C {lab_wire.sym} 240 -1220 0 1 {name=p27 sig_type=std_logic lab=BP}

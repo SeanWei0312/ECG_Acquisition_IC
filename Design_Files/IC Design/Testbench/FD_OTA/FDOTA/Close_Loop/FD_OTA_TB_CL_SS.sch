@@ -207,17 +207,24 @@ setscale cl_cmd
 
 wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_diff_dc.txt cl_vin_diff cl_voutp cl_voutn cl_voutcm cl_voutdiff cl_err cl_vocm cl_vref cl_idd cl_ibias_fdc cl_ibias_cmfb
 
-* ICMR
+* ICMR -10m
 
 reset
 
 option klu
+option itl1=1000
+option itl2=5000
+option rshunt=1e10
 
 save all
 save @m.xmbfdc.m0[id]
 save @m.xmbcmfb.m0[id]
 
-dc VCM 0 $vddval 1m VDIFFCMD -10m 10m 20m
+alter VDIFFCMD -10m
+
+op
+
+dc VCM $vddval 0 -1m
 
 let icmr_cmd = v(DIFFCMD)-v(AGND)
 let icmr_vin_cm = 0.5*(v(INP)+v(INN))-v(AGND)
@@ -234,7 +241,49 @@ let icmr_ibias_cmfb = abs(@m.xmbcmfb.m0[id])
 
 setscale icmr_vin_cm
 
+unset appendwrite
+
 wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_icmr.txt icmr_cmd icmr_vin_diff icmr_voutp icmr_voutn icmr_voutcm icmr_voutdiff icmr_vocm icmr_vref icmr_idd icmr_ibias_fdc icmr_ibias_cmfb
+
+* ICMR +10m
+
+reset
+
+option klu
+option itl1=1000
+option itl2=5000
+option rshunt=1e10
+
+save all
+save @m.xmbfdc.m0[id]
+save @m.xmbcmfb.m0[id]
+
+alter VDIFFCMD 10m
+
+op
+
+dc VCM $vddval 0 -1m
+
+let icmr_cmd = v(DIFFCMD)-v(AGND)
+let icmr_vin_cm = 0.5*(v(INP)+v(INN))-v(AGND)
+let icmr_vin_diff = v(INP)-v(INN)
+let icmr_voutp = v(OUTP)-v(AGND)
+let icmr_voutn = v(OUTN)-v(AGND)
+let icmr_voutcm = 0.5*(icmr_voutp+icmr_voutn)
+let icmr_voutdiff = icmr_voutp-icmr_voutn
+let icmr_vocm = v(VOCM)-v(AGND)
+let icmr_vref = v(REF)-v(AGND)
+let icmr_idd = abs(vavdd#branch)
+let icmr_ibias_fdc = abs(@m.xmbfdc.m0[id])
+let icmr_ibias_cmfb = abs(@m.xmbcmfb.m0[id])
+
+setscale icmr_vin_cm
+
+set appendwrite
+
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_icmr.txt icmr_cmd icmr_vin_diff icmr_voutp icmr_voutn icmr_voutcm icmr_voutdiff icmr_vocm icmr_vref icmr_idd icmr_ibias_fdc icmr_ibias_cmfb
+
+unset appendwrite
 
 * DIFF TRAN
 

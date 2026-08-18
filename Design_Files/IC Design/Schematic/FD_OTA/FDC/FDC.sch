@@ -88,6 +88,8 @@ N 140 -400 160 -400 {lab=FDC_OUTN}
 N 300 -120 1340 -120 {lab=FDC_SS}
 N 940 -520 940 -500 {lab=FDC_CMFB}
 N 140 -320 160 -320 {lab=FDC_CMFB}
+N 670 -420 670 -120 {lab=FDC_SS}
+N 1210 -420 1210 -120 {lab=FDC_SS}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {symbols/pfet_03v3.sym} 840 -520 0 1 {name=M3
 L=2u
@@ -117,11 +119,6 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
-C {res.sym} 1210 -440 3 1 {name=Rz
-value=3.5k
-footprint=1206
-device=resistor
-m=1}
 C {symbols/nfet_03v3.sym} 920 -200 0 0 {name=M5
 L=2u
 W=1u
@@ -163,11 +160,6 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
-C {capa.sym} 1310 -440 3 1 {name=Cc
-m=1
-value=2.5p
-footprint=1206
-device="ceramic capacitor"}
 C {lab_wire.sym} 940 -600 2 1 {name=p2 sig_type=std_logic lab=FDC_DD}
 C {lab_wire.sym} 1360 -360 2 0 {name=p3 sig_type=std_logic lab=FDC_OUTP}
 C {lab_wire.sym} 1280 -200 2 1 {name=p4 sig_type=std_logic lab=FDC_B
@@ -204,11 +196,6 @@ nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X}
-C {res.sym} 670 -440 1 0 {name=Rz1
-value=3.5k
-footprint=1206
-device=resistor
-m=1}
 C {symbols/pfet_03v3.sym} 560 -520 0 1 {name=M7
 L=0.5u
 W=1u
@@ -223,11 +210,6 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {capa.sym} 570 -440 1 0 {name=Cc1
-m=1
-value=2.5p
-footprint=1206
-device="ceramic capacitor"}
 C {lab_wire.sym} 520 -360 2 1 {name=p20 sig_type=std_logic lab=FDC_OUTN
 }
 C {lab_wire.sym} 600 -200 2 0 {name=p21 sig_type=std_logic lab=FDC_B
@@ -283,3 +265,27 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
+C {symbols/ppolyf_u_2k.sym} 670 -440 3 0 {name=Rz1
+W=4e-6
+L=7e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {symbols/ppolyf_u_2k.sym} 1210 -440 3 0 {name=Rz2
+W=4e-6
+L=7e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {symbols/cap_mim_2f0fF.sym} 570 -440 3 1 {name=Cc1
+W=35.36e-6
+L=35.36e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=1}
+C {symbols/cap_mim_2f0fF.sym} 1310 -440 1 0 {name=Cc2
+W=35.36e-6
+L=35.36e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=1}

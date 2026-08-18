@@ -13,6 +13,7 @@ CLOAD_SET_PF = 10;
 TRACK_LIMIT = 2e-3;
 SETTLE_LIMIT = 2e-3;
 NOISE_BAND_HZ = [0.05 150];
+NOISE_MARK_HZ = [NOISE_BAND_HZ(1) 60 NOISE_BAND_HZ(2)];
 
 %% Operating point
 op = cols(numdata(fullfile(baseDir,TAG + ".ol_nom_op.txt")),8);
@@ -90,7 +91,11 @@ inputNoise_Vrms = integrateNoise(fNoise_Hz,inNoise_VrtHz,NOISE_BAND_HZ);
 wideFigure();
 validNoise = fNoise_Hz >= NOISE_BAND_HZ(1) & ...
     fNoise_Hz <= NOISE_BAND_HZ(2) & isfinite(inNoise_VrtHz) & inNoise_VrtHz > 0;
-loglog(fNoise_Hz(validNoise),inNoise_VrtHz(validNoise)*1e9,'LineWidth',1.5);
+loglog(fNoise_Hz(validNoise),inNoise_VrtHz(validNoise)*1e9,'LineWidth',1.5); hold on;
+for f0 = NOISE_MARK_HZ
+    y0 = interpAtFreq(fNoise_Hz,inNoise_VrtHz,f0)*1e9;
+    addCursor(f0,y0,sprintf('%s: %.4g nV/rtHz',freqText(f0),y0));
+end
 ylabel('Input noise (nV/sqrtHz)');
 xlim(NOISE_BAND_HZ);
 stylePlot('Frequency (Hz)','SEOTA Input-Referred Noise Density versus Frequency');
@@ -110,7 +115,7 @@ ylabel('Vout (V)');
 stylePlot('Vin,diff (mV)','SEOTA Open-Loop VTC');
 saveFig(plotDir,'NOM.open_loop_vtc.png');
 
-%% Closed-loop: VTC and output swing
+%% Closed-loop: usable follower range
 clOp = cols(numdata(fullfile(baseDir,TAG + ".cl_nom_op.txt")),8);
 clOp = clOp(end,:);
 clVinDc_V = clOp(3);
@@ -128,34 +133,41 @@ clGain = localSlope(clVin_V,clVout_V,clVinDc_V);
 gainError_pct = 100*(clGain - 1);
 voutClosedLoopDc_V = clVout_V(i0);
 
-validSwing = abs(clErr_V) <= TRACK_LIMIT;
-[iLow,iHigh] = continuousIndices(validSwing,i0);
-if isfinite(iLow)
-    inputLow_V = clVin_V(iLow);
-    inputHigh_V = clVin_V(iHigh);
-    swingLow_V = min(clVout_V(iLow:iHigh));
-    swingHigh_V = max(clVout_V(iLow:iHigh));
+validTrack = abs(clErr_V) <= TRACK_LIMIT;
+[iLowTrack,iHighTrack] = continuousIndices(validTrack,i0);
+
+if isfinite(iLowTrack)
+    usableInputLow_V = clVin_V(iLowTrack);
+    usableInputHigh_V = clVin_V(iHighTrack);
+
+    usableOutputLow_V = min(clVout_V(iLowTrack:iHighTrack));
+    usableOutputHigh_V = max(clVout_V(iLowTrack:iHighTrack));
 else
-    inputLow_V = NaN;
-    inputHigh_V = NaN;
-    swingLow_V = NaN;
-    swingHigh_V = NaN;
+    usableInputLow_V = NaN;
+    usableInputHigh_V = NaN;
+
+    usableOutputLow_V = NaN;
+    usableOutputHigh_V = NaN;
 end
-inputHighHeadroom_V = vdd_V - inputHigh_V;
+
+inputHighHeadroom_V = vdd_V - usableInputHigh_V;
+outputHighHeadroom_V = vdd_V - usableOutputHigh_V;
 
 wideFigure();
 tiledlayout(2,1);
-sgtitle('SEOTA Closed-Loop DC Input Range and Output Swing');
+sgtitle('SEOTA Closed-Loop Usable Input/Output Range');
 
 nexttile;
 plot(clVin_V,clErr_V*1e3,'LineWidth',1.5); hold on;
 yline(TRACK_LIMIT*1e3,'--','+2 mV','HandleVisibility','off');
 yline(-TRACK_LIMIT*1e3,'--','-2 mV','HandleVisibility','off');
-if isfinite(inputLow_V)
-    addCursorLine(inputLow_V,clErr_V(iLow)*1e3, ...
-        sprintf('Input CM low: %.4g V',inputLow_V));
-    addCursorLine(inputHigh_V,clErr_V(iHigh)*1e3, ...
-        sprintf('Input CM high: %.4g V',inputHigh_V));
+if isfinite(usableInputLow_V)
+    xline(usableInputLow_V,':', ...
+        sprintf('Input low: %.4g V',usableInputLow_V), ...
+        'HandleVisibility','off');
+    xline(usableInputHigh_V,':', ...
+        sprintf('Input high: %.4g V',usableInputHigh_V), ...
+        'HandleVisibility','off');
 end
 ylabel('Vout - Vin (mV)');
 stylePlot('Vin (V)','Tracking Error');
@@ -163,40 +175,24 @@ stylePlot('Vin (V)','Tracking Error');
 nexttile;
 plot(clVin_V,clVout_V,'LineWidth',1.5); hold on;
 plot(clVin_V,clVin_V,'--','LineWidth',1.2);
-if isfinite(inputLow_V)
-    xline(inputLow_V,':',sprintf('Input CM low: %.4g V',inputLow_V), ...
-        'HandleVisibility','off','LabelVerticalAlignment','middle', ...
-        'LabelHorizontalAlignment','left');
-    xline(inputHigh_V,':',sprintf('Input CM high: %.4g V',inputHigh_V), ...
-        'HandleVisibility','off','LabelVerticalAlignment','middle', ...
-        'LabelHorizontalAlignment','right');
-    yline(swingLow_V,':',sprintf('Output swing low: %.4g V',swingLow_V), ...
-        'HandleVisibility','off','LabelVerticalAlignment','bottom', ...
-        'LabelHorizontalAlignment','right');
-    yline(swingHigh_V,':',sprintf('Output swing high: %.4g V',swingHigh_V), ...
-        'HandleVisibility','off','LabelVerticalAlignment','top', ...
-        'LabelHorizontalAlignment','left');
+if isfinite(usableInputLow_V)
+    xline(usableInputLow_V,':', ...
+        sprintf('Input low: %.4g V',usableInputLow_V), ...
+        'HandleVisibility','off');
+    xline(usableInputHigh_V,':', ...
+        sprintf('Input high: %.4g V',usableInputHigh_V), ...
+        'HandleVisibility','off');
+    yline(usableOutputLow_V,':', ...
+        sprintf('Output low: %.4g V',usableOutputLow_V), ...
+        'HandleVisibility','off');
+    yline(usableOutputHigh_V,':', ...
+        sprintf('Output high: %.4g V',usableOutputHigh_V), ...
+        'HandleVisibility','off');
 end
 ylabel('Vout (V)');
 legend('Measured','Ideal Vout = Vin','Location','best');
 stylePlot('Vin (V)','Vout versus Vin');
-saveFig(plotDir,'NOM.closed_loop_dc_input_range.png');
-
-wideFigure();
-plot(clVin_V,clVout_V,'LineWidth',1.5); hold on;
-plot(clVin_V,clVin_V,'--','LineWidth',1.2);
-if isfinite(inputLow_V)
-    xline(inputLow_V,':',sprintf('Input CM low: %.4g V',inputLow_V), ...
-        'HandleVisibility','off','LabelVerticalAlignment','middle', ...
-        'LabelHorizontalAlignment','left');
-    xline(inputHigh_V,':',sprintf('Input CM high: %.4g V',inputHigh_V), ...
-        'HandleVisibility','off','LabelVerticalAlignment','middle', ...
-        'LabelHorizontalAlignment','right');
-end
-ylabel('Vout (V)');
-legend('Measured','Ideal Vout = Vin','Location','best');
-stylePlot('Vin (V)','SEOTA Closed-Loop VTC');
-saveFig(plotDir,'NOM.closed_loop_vtc.png');
+saveFig(plotDir,'NOM.closed_loop_usable_range.png');
 
 %% Closed-loop: transient
 tr = cols(numdata(fullfile(baseDir,TAG + ".cl_nom_tran.txt")),7);
@@ -223,21 +219,15 @@ nomMetrics.inputNoise_Vrms = inputNoise_Vrms;
 nomMetrics.clGain_dB = 20*log10(abs(clGain));
 nomMetrics.gainError_pct = gainError_pct;
 nomMetrics.voutDc_V = voutClosedLoopDc_V;
-nomMetrics.inputLow_V = inputLow_V;
-nomMetrics.inputHigh_V = inputHigh_V;
+nomMetrics.usableInputLow_V = usableInputLow_V;
+nomMetrics.usableInputHigh_V = usableInputHigh_V;
 nomMetrics.inputHighHeadroom_V = inputHighHeadroom_V;
-nomMetrics.swingLow_V = swingLow_V;
-nomMetrics.swingHigh_V = swingHigh_V;
+nomMetrics.usableOutputLow_V = usableOutputLow_V;
+nomMetrics.usableOutputHigh_V = usableOutputHigh_V;
+nomMetrics.outputHighHeadroom_V = outputHighHeadroom_V;
 nomMetrics.srRise_Vus = srRise_Vus;
 nomMetrics.srFall_Vus = srFall_Vus;
 nomMetrics.settle_s = settle_s;
-[offsetReportValue,offsetReportUnit] = voltageReport(offset_V,"");
-[noiseReportValue,noiseReportUnit] = voltageReport(inputNoise_Vrms,"rms");
-[voutDcReportValue,voutDcReportUnit] = voltageReport(voutClosedLoopDc_V,"");
-[inputLowReportValue,inputLowReportUnit] = voltageReport(inputLow_V,"");
-[inputHighReportValue,inputHighReportUnit] = voltageReport(inputHigh_V,"");
-[swingLowReportValue,swingLowReportUnit] = voltageReport(swingLow_V,"");
-[swingHighReportValue,swingHighReportUnit] = voltageReport(swingHigh_V,"");
 
 wideFigure();
 plot(t_s*1e6,trVin_V,'--','LineWidth',1.2); hold on;
@@ -254,42 +244,43 @@ legend('Input','Output','Location','best');
 stylePlot('Time (us)','SEOTA Closed-Loop Step Response');
 saveFig(plotDir,'NOM.closed_loop_step_response.png');
 
-%% Summary table
+%% Summary table: 2-column definition (parameter, unit only — no NOM values)
 rows = [
-    "Set conditions",          "",      ""
-    "AVDD",                    "V",     fmt(vdd_V)
-    "CLoad",                   "pF",    fmt(CLOAD_SET_PF)
-    "Vin,cm",                  "V",     fmt(vinCm_V)
-    "Closed-loop target gain", "V/V",   fmt(1)
-    "",                        "",      ""
-    "Open-loop simulation",    "",      ""
-    "Bias current",           "uA",    fmt(ibias_A*1e6)
-    "Total current",          "uA",    fmt(totalCurrent_A*1e6)
-    "Total power",            "mW",    fmt(totalPower_W*1e3)
-    "DC gain",               "dB",    fmtDbPercent(dcGain_dB)
-    "UGF",                   "MHz",   fmt(ugf_Hz/1e6)
-    "Phase margin",          "deg",   fmt(pm_deg)
-    "Input offset",          offsetReportUnit, fmt(offsetReportValue)
-    "CMRR @ 60 Hz",          "dB",    fmtDbPercent(cmrrAt_dB(2))
-    "CMRR @ 150 Hz",         "dB",    fmtDbPercent(cmrrAt_dB(3))
-    "PSRR+ @ 60 Hz",         "dB",    fmtDbPercent(psrrPAt_dB(2))
-    "PSRR+ @ 150 Hz",        "dB",    fmtDbPercent(psrrPAt_dB(3))
-    "PSRR- @ 60 Hz",         "dB",    fmtDbPercent(psrrNAt_dB(2))
-    "PSRR- @ 150 Hz",        "dB",    fmtDbPercent(psrrNAt_dB(3))
-    "Input-referred noise 0.05-150 Hz", noiseReportUnit, fmt(noiseReportValue)
-    "",                      "",      ""
-    "Closed-loop simulation","",      ""
-    "Closed-loop gain",      "dB",    fmtDbPercent(20*log10(abs(clGain)))
-    "Gain error",            "%",     fmtDbPercent(gainError_pct)
-    "Vout,DC",               voutDcReportUnit, fmt(voutDcReportValue)
-    "Input CM low",          inputLowReportUnit, fmt(inputLowReportValue)
-    "Input CM high",         inputHighReportUnit, fmt(inputHighReportValue)
-    "Input CM high headroom","mV",    fmt(inputHighHeadroom_V*1e3)
-    "Output swing low",      swingLowReportUnit, fmt(swingLowReportValue)
-    "Output swing high",     swingHighReportUnit, fmt(swingHighReportValue)
-    "SR rise",               "V/us",  fmt(srRise_Vus)
-    "SR fall",               "V/us",  fmt(srFall_Vus)
-    "Settling time",         "ns",    fmt(settle_s*1e9)
+    "Set conditions",              ""
+    "AVDD",                        "V"
+    "CLoad",                       "pF"
+    "Vin,cm",                      "V"
+    "Closed-loop target gain",     "V/V"
+    "",                            ""
+    "Open-loop simulation",        ""
+    "Bias current",                "A"
+    "Total current",               "A"
+    "Total power",                 "W"
+    "DC gain",                     "dB"
+    "UGF",                         "Hz"
+    "Phase margin",                "deg"
+    "Input offset",                "V"
+    "CMRR @ 60 Hz",                "dB"
+    "CMRR @ 150 Hz",               "dB"
+    "PSRR+ @ 60 Hz",               "dB"
+    "PSRR+ @ 150 Hz",              "dB"
+    "PSRR- @ 60 Hz",               "dB"
+    "PSRR- @ 150 Hz",              "dB"
+    "Input-referred noise 0.05-150 Hz", "Vrms"
+    "",                            ""
+    "Closed-loop simulation",      ""
+    "Closed-loop gain",            "dB"
+    "Gain error",                  "%"
+    "Vout,DC",                     "V"
+    "Input low",                   "V"
+    "Input high",                  "V"
+    "Input high headroom",         "V"
+    "Output low",                  "V"
+    "Output high",                 "V"
+    "Output high headroom",        "V"
+    "SR rise",                     "V/us"
+    "SR fall",                     "V/us"
+    "Settling time",               "s"
 ];
 
 allProcesses = ["NOM" "FF" "SS" "FS" "SF"];
@@ -297,7 +288,7 @@ allCases = ["nom" "vl" "vh" "tl" "th" "vltl" "vlth" "vhtl" "vhth"];
 caseCornerText = ["NOMNOM" "VLNOM" "VHNOM" "NOMTL" "NOMTH" ...
     "VLTL" "VLTH" "VHTL" "VHTH"];
 pvtCorners = strings(0,1);
-pvtValues = strings(size(rows,1),0);
+pvtRawValues = nan(size(rows,1),0);
 pvtMetrics = {};
 missingPvt = strings(0,1);
 for process = allProcesses
@@ -320,14 +311,17 @@ for process = allProcesses
         end
         pvtMetrics{end+1} = metrics; %#ok<SAGROW>
         pvtCorners(end+1) = cornerName; %#ok<SAGROW>
-        pvtValues(:,end+1) = metricsToReport( ...
-            metrics,rows(:,1:2),CLOAD_SET_PF); %#ok<SAGROW>
+        pvtRawValues(:,end+1) = metricsToRaw( ...
+            metrics,rows,CLOAD_SET_PF); %#ok<SAGROW>
     end
 end
 if ~isempty(missingPvt)
     warning('SEOTA_Analyze:MissingPvtRuns', ...
         'PVT runs missing required OL files: %s.',strjoin(missingPvt,', '));
 end
+
+[rows,pvtScaledValues] = adaptReportUnits(rows,pvtRawValues);
+pvtValues = formatReportValues(rows,pvtScaledValues);
 
 reportColumns = ["NOM" "FF" "SS" "FS" "SF" "VL" "VH" "TL" "TH"];
 reportCornerKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
@@ -338,18 +332,19 @@ if ~all(foundReportCorners)
         'Required summary corners are missing: %s.', ...
         strjoin(reportCornerKeys(~foundReportCorners),', '));
 end
+reportScaledValues = pvtScaledValues(:,reportIndices);
 reportValues = pvtValues(:,reportIndices);
 
 Result = table(rows(:,1),rows(:,2),'VariableNames',{'Parameter','Unit'});
 Result = [Result array2table(reportValues, ...
     'VariableNames',cellstr(reportColumns))];
 fprintf('\nSEOTA COMPARISON SUMMARY\n\n');
-printSummaryTable(rows(:,1:2),reportColumns,reportValues);
+printSummaryTable(rows,reportColumns,reportValues);
 writetable(Result,fullfile(scriptDir,'SEOTA_table_report.csv'));
 writetable(Result,fullfile(scriptDir,'NOM.SEOTA_summary.csv'));
 
 WorstCase = buildWorstCaseTable( ...
-    rows(:,1:2),pvtCorners,pvtValues,pvtMetrics);
+    rows,pvtCorners,pvtScaledValues,pvtMetrics);
 fprintf('\nSEOTA FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(WorstCase);
 writetable(WorstCase,fullfile(scriptDir,'SEOTA_worst_case_report.csv'));
@@ -407,9 +402,10 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
     m.inputNoise_Vrms = integrateNoise(noise(:,1),abs(noise(:,3)),noiseBand);
 
     m.clGain_dB = NaN; m.gainError_pct = NaN; m.voutDc_V = NaN;
-    m.inputLow_V = NaN; m.inputHigh_V = NaN;
+    m.usableInputLow_V = NaN; m.usableInputHigh_V = NaN;
     m.inputHighHeadroom_V = NaN;
-    m.swingLow_V = NaN; m.swingHigh_V = NaN;
+    m.usableOutputLow_V = NaN; m.usableOutputHigh_V = NaN;
+    m.outputHighHeadroom_V = NaN;
     m.srRise_Vus = NaN; m.srFall_Vus = NaN; m.settle_s = NaN;
     clFiles = clPrefix + ["op.txt" "dc.txt" "tran.txt"];
     if all(isfile(clFiles))
@@ -427,11 +423,12 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
         m.voutDc_V = clVout_V(i0);
         [iLow,iHigh] = continuousIndices(abs(clErr_V)<=trackLimit,i0);
         if isfinite(iLow)
-            m.inputLow_V = clVin_V(iLow);
-            m.inputHigh_V = clVin_V(iHigh);
-            m.inputHighHeadroom_V = m.vdd_V - m.inputHigh_V;
-            m.swingLow_V = min(clVout_V(iLow:iHigh));
-            m.swingHigh_V = max(clVout_V(iLow:iHigh));
+            m.usableInputLow_V = clVin_V(iLow);
+            m.usableInputHigh_V = clVin_V(iHigh);
+            m.inputHighHeadroom_V = m.vdd_V - m.usableInputHigh_V;
+            m.usableOutputLow_V = min(clVout_V(iLow:iHigh));
+            m.usableOutputHigh_V = max(clVout_V(iLow:iHigh));
+            m.outputHighHeadroom_V = m.vdd_V - m.usableOutputHigh_V;
         end
         tr = cols(numdata(clFiles(3)),7);
         [m.srRise_Vus,m.srFall_Vus,tRise_s,tFall_s] = ...
@@ -440,67 +437,53 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
     end
 end
 
-function values = metricsToReport(m,rows,cLoad_pF)
-    values = repmat("NaN",size(rows,1),1);
+function values = metricsToRaw(m,rows,cLoad_pF)
+    % Returns raw numeric values in the initial table units (no rounding).
+    values = nan(size(rows,1),1);
     for rowIndex = 1:size(rows,1)
         parameter = rows(rowIndex,1);
         unit = rows(rowIndex,2);
         if unit == ""
-            values(rowIndex) = "";
             continue;
         end
         switch parameter
-            case "AVDD", raw = m.vdd_V;
-            case "CLoad", raw = cLoad_pF;
-            case "Vin,cm", raw = m.vinCm_V;
-            case "Closed-loop target gain", raw = 1;
-            case "Bias current", raw = m.ibias_A*1e6;
-            case "Total current", raw = m.totalCurrent_A*1e6;
-            case "Total power", raw = m.totalPower_W*1e3;
-            case "DC gain", raw = m.dcGain_dB;
-            case "UGF", raw = m.ugf_Hz/1e6;
-            case "Phase margin", raw = m.pm_deg;
-            case "Input offset", raw = voltageInUnit(m.offset_V,unit);
-            case "CMRR @ 60 Hz", raw = m.cmrr_dB(1);
-            case "CMRR @ 150 Hz", raw = m.cmrr_dB(2);
-            case "PSRR+ @ 60 Hz", raw = m.psrrP_dB(1);
-            case "PSRR+ @ 150 Hz", raw = m.psrrP_dB(2);
-            case "PSRR- @ 60 Hz", raw = m.psrrN_dB(1);
-            case "PSRR- @ 150 Hz", raw = m.psrrN_dB(2);
+            case "AVDD",                     values(rowIndex) = m.vdd_V;
+            case "CLoad",                    values(rowIndex) = cLoad_pF;
+            case "Vin,cm",                   values(rowIndex) = m.vinCm_V;
+            case "Closed-loop target gain",  values(rowIndex) = 1;
+            case "Bias current",             values(rowIndex) = m.ibias_A;
+            case "Total current",            values(rowIndex) = m.totalCurrent_A;
+            case "Total power",              values(rowIndex) = m.totalPower_W;
+            case "DC gain",                  values(rowIndex) = m.dcGain_dB;
+            case "UGF",                      values(rowIndex) = m.ugf_Hz;
+            case "Phase margin",             values(rowIndex) = m.pm_deg;
+            case "Input offset",             values(rowIndex) = m.offset_V;
+            case "CMRR @ 60 Hz",             values(rowIndex) = m.cmrr_dB(1);
+            case "CMRR @ 150 Hz",            values(rowIndex) = m.cmrr_dB(2);
+            case "PSRR+ @ 60 Hz",            values(rowIndex) = m.psrrP_dB(1);
+            case "PSRR+ @ 150 Hz",           values(rowIndex) = m.psrrP_dB(2);
+            case "PSRR- @ 60 Hz",            values(rowIndex) = m.psrrN_dB(1);
+            case "PSRR- @ 150 Hz",           values(rowIndex) = m.psrrN_dB(2);
             case "Input-referred noise 0.05-150 Hz"
-                raw = voltageInUnit(m.inputNoise_Vrms,erase(unit,"rms"));
-            case "Closed-loop gain", raw = m.clGain_dB;
-            case "Gain error", raw = m.gainError_pct;
-            case "Vout,DC", raw = voltageInUnit(m.voutDc_V,unit);
-            case "Input CM low", raw = voltageInUnit(m.inputLow_V,unit);
-            case "Input CM high", raw = voltageInUnit(m.inputHigh_V,unit);
-            case "Input CM high headroom", raw = m.inputHighHeadroom_V*1e3;
-            case "Output swing low", raw = voltageInUnit(m.swingLow_V,unit);
-            case "Output swing high", raw = voltageInUnit(m.swingHigh_V,unit);
-            case "SR rise", raw = m.srRise_Vus;
-            case "SR fall", raw = m.srFall_Vus;
-            case "Settling time", raw = m.settle_s*1e9;
-            otherwise, raw = NaN;
+                values(rowIndex) = m.inputNoise_Vrms;
+            case "Closed-loop gain",         values(rowIndex) = m.clGain_dB;
+            case "Gain error",               values(rowIndex) = m.gainError_pct;
+            case "Vout,DC",                  values(rowIndex) = m.voutDc_V;
+            case "Input low",                values(rowIndex) = m.usableInputLow_V;
+            case "Input high",               values(rowIndex) = m.usableInputHigh_V;
+            case "Input high headroom",      values(rowIndex) = m.inputHighHeadroom_V;
+            case "Output low",               values(rowIndex) = m.usableOutputLow_V;
+            case "Output high",              values(rowIndex) = m.usableOutputHigh_V;
+            case "Output high headroom",     values(rowIndex) = m.outputHighHeadroom_V;
+            case "SR rise",                  values(rowIndex) = m.srRise_Vus;
+            case "SR fall",                  values(rowIndex) = m.srFall_Vus;
+            case "Settling time",            values(rowIndex) = m.settle_s;
         end
-        if unit == "dB" || unit == "%"
-            values(rowIndex) = fmtDbPercent(raw);
-        else
-            values(rowIndex) = fmt(raw);
-        end
-    end
-end
-
-function value = voltageInUnit(value_V,unit)
-    switch string(unit)
-        case "V", value = value_V;
-        case "mV", value = value_V*1e3;
-        case "uV", value = value_V*1e6;
-        case "nV", value = value_V*1e9;
-        otherwise, error('Unsupported voltage report unit %s.',unit);
     end
 end
 
 function results = buildWorstCaseTable(rows,columns,values,metrics)
+    % values is numeric double (pvtScaledValues), already unit-adapted.
     keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
         ["AVDD" "CLoad" "Vin,cm" "Closed-loop target gain"]);
     parameters = rows(keep,1);
@@ -508,31 +491,35 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
     sourceRows = find(keep);
     worstValues = nan(numel(sourceRows),1);
     worstCorners = strings(numel(sourceRows),1);
+
+    inputHighHeadrooms = cellfun(@(m) m.inputHighHeadroom_V,metrics);
+    inputHighHeadrooms(~isfinite(inputHighHeadrooms)) = -Inf;
+    [~,worstInputHighCol] = max(inputHighHeadrooms);
+
+    outputHighHeadrooms = cellfun(@(m) m.outputHighHeadroom_V,metrics);
+    outputHighHeadrooms(~isfinite(outputHighHeadrooms)) = -Inf;
+    [~,worstOutputHighCol] = max(outputHighHeadrooms);
+
     for resultIndex = 1:numel(sourceRows)
         rowIndex = sourceRows(resultIndex);
         parameter = rows(rowIndex,1);
-        candidates = str2double(values(rowIndex,:));
+        candidates = values(rowIndex,:);   % already numeric double
         valid = isfinite(candidates);
         if ~any(valid), continue; end
         validIndices = find(valid);
 
-        if parameter == "Input CM high headroom"
-            failed = cellfun(@(m)~isfinite(m.inputHighHeadroom_V),metrics);
-            if any(failed)
-                selectedColumn = find(failed,1);
-                worstCorners(resultIndex) = columns(selectedColumn);
-                continue;
-            end
-        end
-        if ismember(parameter,["DC gain" "UGF" "Phase margin" ...
+        if ismember(parameter,["Input high" "Input high headroom"])
+            selectedColumn = worstInputHighCol;
+            selectedValue = candidates(selectedColumn);
+        elseif ismember(parameter,["Output high" "Output high headroom"])
+            selectedColumn = worstOutputHighCol;
+            selectedValue = candidates(selectedColumn);
+        elseif ismember(parameter,["DC gain" "UGF" "Phase margin" ...
                 "CMRR @ 60 Hz" "CMRR @ 150 Hz" "PSRR+ @ 60 Hz" ...
                 "PSRR+ @ 150 Hz" "PSRR- @ 60 Hz" "PSRR- @ 150 Hz" ...
-                "Input CM high" "Output swing high" "SR rise" "SR fall"])
+                "SR rise" "SR fall"])
             [selectedValue,localIndex] = min(candidates(valid));
-        elseif parameter == "Input CM high headroom"
-            headroom = cellfun(@(m) m.inputHighHeadroom_V,metrics);
-            [~,selectedColumn] = min(headroom);
-            selectedValue = candidates(selectedColumn);
+            selectedColumn = validIndices(localIndex);
         elseif parameter == "Bias current"
             rawCandidates = cellfun(@(m) m.ibias_A,metrics)*1e6;
             [~,selectedColumn] = max(abs(rawCandidates-40));
@@ -544,18 +531,16 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
             selectionError = abs(rawError_V);
             selectionError(~isfinite(selectionError)) = -Inf;
             [~,selectedColumn] = max(selectionError);
-            [selectedValue,selectedUnit] = ...
-                voltageReport(rawError_V(selectedColumn),"");
+            [selectedValue,newUnit] = scaleSingleMetric( ...
+                rawError_V(selectedColumn),"V");
             parameters(resultIndex) = "Vout,DC error";
-            units(resultIndex) = selectedUnit;
+            units(resultIndex) = newUnit;
         elseif ismember(parameter,["Input offset" "Closed-loop gain" "Gain error"])
             [~,localIndex] = max(abs(candidates(valid)));
-            selectedValue = candidates(validIndices(localIndex));
+            selectedColumn = validIndices(localIndex);
+            selectedValue = candidates(selectedColumn);
         else
             [selectedValue,localIndex] = max(candidates(valid));
-        end
-        if parameter ~= "Bias current" && parameter ~= "Vout,DC" && ...
-                parameter ~= "Input CM high headroom"
             selectedColumn = validIndices(localIndex);
         end
         worstValues(resultIndex) = selectedValue;
@@ -567,7 +552,7 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
         if units(resultIndex) == "dB" || units(resultIndex) == "%"
             formatted(resultIndex) = fmtDbPercent(worstValues(resultIndex));
         else
-            formatted(resultIndex) = fmt(worstValues(resultIndex));
+            formatted(resultIndex) = fmtMetric(worstValues(resultIndex),units(resultIndex));
         end
     end
     results = table(parameters,units,formatted,worstCorners, ...
@@ -818,23 +803,6 @@ function saveFig(plotDir,fileName)
     print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
 end
 
-function [value,unit] = voltageReport(value_V,suffix)
-    magnitude_V = abs(value_V);
-    if isfinite(value_V) && magnitude_V < 1e-6
-        value = value_V*1e9;
-        unit = "nV" + suffix;
-    elseif isfinite(value_V) && magnitude_V < 1e-3
-        value = value_V*1e6;
-        unit = "uV" + suffix;
-    elseif isfinite(value_V) && magnitude_V < 1
-        value = value_V*1e3;
-        unit = "mV" + suffix;
-    else
-        value = value_V;
-        unit = "V" + suffix;
-    end
-end
-
 function printSummaryTable(rows,columns,values)
     parameterWidth = max(36,max(strlength(rows(:,1)))+2);
     fprintf('%-*s %-8s',parameterWidth,'Parameter','Unit');
@@ -874,7 +842,7 @@ function s = fmtDbPercent(x)
         s = "NaN";
     elseif isinf(x)
         s = string(sprintf('%+g',x));
-    elseif x ~= 0 && abs(x) < 1
+    elseif x ~= 0 && (abs(x) < 1e-3 || abs(x) > 999)
         s = string(sprintf('%.3e',x));
     else
         s = string(sprintf('%.3f',x));
@@ -890,3 +858,145 @@ function s = freqText(f)
         s = sprintf('%.4g Hz',f);
     end
 end
+
+function [rows,scaledValues] = adaptReportUnits(rows,rawValues)
+    % rawValues and scaledValues remain numeric doubles.
+    % Unit changes use exact powers of 1000 only.
+    scaledValues = rawValues;
+
+    for i = 1:size(rows,1)
+        unit = string(rows(i,2));
+
+        if unit == "" || unit == "dB" || unit == "%"
+            continue;
+        end
+
+        x = rawValues(i,:);
+        finiteMask = isfinite(x);
+        nonzeroMask = finiteMask & x ~= 0;
+
+        if ~any(finiteMask)
+            continue;
+        end
+
+        if ~any(nonzeroMask)
+            continue;
+        end
+
+        magnitude = max(abs(x(nonzeroMask)));
+
+        [newUnit,scalePower] = scaleUnit(magnitude,unit);
+
+        scaledValues(i,:) = x * 1e3^scalePower;
+        rows(i,2) = newUnit;
+    end
+end
+
+function formatted = formatReportValues(rows,scaledValues)
+    % First and only place numbers become strings.
+    formatted = strings(size(scaledValues));
+    for i = 1:size(scaledValues,1)
+        unit = string(rows(i,2));
+        if unit == ""
+            continue;
+        end
+        for j = 1:size(scaledValues,2)
+            if unit == "dB" || unit == "%"
+                formatted(i,j) = fmtDbPercent(scaledValues(i,j));
+            else
+                formatted(i,j) = fmtMetric(scaledValues(i,j),unit);
+            end
+        end
+    end
+end
+
+function [newUnit,scalePower] = scaleUnit(magnitude,currentUnit)
+    prefixOrder = ["f" "p" "n" "u" "m" "" "k" "M" "G" "T"];
+
+    [prefix,core] = splitUnitPrefix(currentUnit);
+    index = find(prefixOrder == prefix,1);
+
+    if isempty(index)
+        newUnit = currentUnit;
+        scalePower = 0;
+        return;
+    end
+
+    scaled = abs(magnitude);
+    scalePower = 0;
+
+    if scaled == 0
+        newUnit = currentUnit;
+        return;
+    end
+
+    while scaled < 1 && index > 1
+        scaled = scaled * 1e3;
+        index = index - 1;
+        scalePower = scalePower + 1;
+    end
+
+    while scaled >= 1000 && index < numel(prefixOrder)
+        scaled = scaled / 1e3;
+        index = index + 1;
+        scalePower = scalePower - 1;
+    end
+
+    newUnit = prefixOrder(index) + core;
+end
+
+function [prefix,core] = splitUnitPrefix(unit)
+    unit = string(unit);
+
+    knownPrefixes = ["T" "G" "M" "k" "m" "u" "n" "p" "f"];
+
+    if strlength(unit) == 0
+        prefix = "";
+        core = "";
+        return;
+    end
+
+    firstCharacter = extractBetween(unit,1,1);
+
+    if ismember(firstCharacter,knownPrefixes)
+        prefix = firstCharacter;
+        core = extractAfter(unit,1);
+    else
+        prefix = "";
+        core = unit;
+    end
+end
+
+function s = fmtMetric(x,unit)
+    if isnan(x)
+        s = "NaN";
+        return;
+    end
+
+    if isinf(x)
+        s = string(sprintf('%+g',x));
+        return;
+    end
+
+    [prefix,~] = splitUnitPrefix(unit);
+
+    if prefix == "f" && x ~= 0 && abs(x) < 1e-3
+        s = string(sprintf('%.3e',x));
+    elseif prefix == "T" && abs(x) > 999
+        s = string(sprintf('%.3e',x));
+    else
+        s = string(sprintf('%.3f',x));
+    end
+end
+
+function [scaledValue,newUnit] = scaleSingleMetric(value,currentUnit)
+    if ~isfinite(value) || value == 0
+        scaledValue = value;
+        newUnit = currentUnit;
+        return;
+    end
+
+    [newUnit,scalePower] = scaleUnit(abs(value),currentUnit);
+    scaledValue = value * 1e3^scalePower;
+end
+

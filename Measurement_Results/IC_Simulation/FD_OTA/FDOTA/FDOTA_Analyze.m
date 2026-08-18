@@ -309,42 +309,42 @@ rows = [
     "Closed-loop target gain",               "V/V"
     "",                                      ""
     "Open-loop simulation",                  ""
-    "FDC bias current",                      "uA"
-    "CMFB bias current",                     "uA"
-    "Total current",                         "uA"
-    "Total power",                           "mW"
+    "FDC bias current",                      "A"
+    "CMFB bias current",                     "A"
+    "Total current",                         "A"
+    "Total power",                           "W"
     "Differential DC gain",                  "dB"
-    "Differential UGF",                      "MHz"
+    "Differential UGF",                      "Hz"
     "Differential phase margin",             "deg"
-    "Input differential offset",             "uV"
+    "Input differential offset",             "V"
     "CMRR @ 60 Hz",                          "dB"
     "CMRR @ 150 Hz",                         "dB"
     "PSRR+ @ 60 Hz",                         "dB"
     "PSRR+ @ 150 Hz",                        "dB"
     "PSRR- @ 60 Hz",                         "dB"
     "PSRR- @ 150 Hz",                        "dB"
-    "Input-referred noise 0.05-150 Hz",       "uVrms"
+    "Input-referred noise 0.05-150 Hz",       "Vrms"
     "",                                      ""
     "Closed-loop simulation",                ""
     "Closed-loop differential gain",         "dB"
     "Gain error",                            "%"
     "Output common mode, DC",                "V"
-    "Output CM error at nominal",            "mV"
-    "Output differential, DC",               "uV"
+    "Output CM error at nominal",            "V"
+    "Output differential, DC",               "V"
     "Input CM low",                          "V"
     "Input CM high",                         "V"
-    "Input CM high headroom",                "mV"
+    "Input CM high headroom",                "V"
     "Differential command low",              "V"
     "Differential command high",             "V"
     "Differential output swing low",         "V"
     "Differential output swing high",        "V"
     "Differential SR rise",                  "V/us"
     "Differential SR fall",                  "V/us"
-    "Differential settling time",            "ns"
-    "Differential-step CM disturbance",      "mV"
+    "Differential settling time",            "s"
+    "Differential-step CM disturbance",      "V"
     "CMFB SR rise",                          "V/us"
     "CMFB SR fall",                          "V/us"
-    "CMFB settling time",                    "ns"
+    "CMFB settling time",                    "s"
 ];
 
 processes = ["NOM" "FF" "SS" "FS" "SF"];
@@ -353,7 +353,7 @@ cases = ["nom" "vl" "vh" "tl" "th" "vltl" "vlth" "vhtl" "vhth"];
 caseLabels = ["NOMNOM" "VLNOM" "VHNOM" "NOMTL" "NOMTH" ...
     "VLTL" "VLTH" "VHTL" "VHTH"];
 corners = strings(1,numel(processes)*numel(cases));
-values = strings(size(rows,1),numel(corners));
+rawValues = nan(size(rows,1),numel(corners));
 metrics = cell(1,numel(corners));
 cornerIndex = 0;
 for processIndex = 1:numel(processes)
@@ -365,16 +365,20 @@ for processIndex = 1:numel(processes)
         metrics{cornerIndex} = analyzeRun(scriptDir,process,caseName, ...
             TRACK_LIMIT,SETTLE_LIMIT,NOISE_BAND_HZ, ...
             ICMR_GAIN_ERROR_TOL,VOUT_CM_TOL,ICMR_CURRENT_TOL,CM_SETTLE_TOL);
-        values(:,cornerIndex) = metricsToReport(metrics{cornerIndex},rows);
+        rawValues(:,cornerIndex) = metricsToRaw(metrics{cornerIndex},rows);
     end
 end
+
+[rows,scaledValues] = adaptReportUnits(rows,rawValues);
+formattedValues = formatReportValues(rows,scaledValues);
 
 reportColumns = ["NOM" "FF" "SS" "FS" "SF" "VL" "VH" "TL" "TH"];
 reportKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
     "SFNOMNOM" "NOMVLNOM" "NOMVHNOM" "NOMNOMTL" "NOMNOMTH"];
 [found,reportIndices] = ismember(reportKeys,corners);
 if ~all(found), error('Required report corners are missing.'); end
-reportValues = values(:,reportIndices);
+reportScaledValues = scaledValues(:,reportIndices);
+reportValues = formattedValues(:,reportIndices);
 Result = table(rows(:,1),rows(:,2),'VariableNames',{'Parameter','Unit'});
 Result = [Result array2table(reportValues,'VariableNames',cellstr(reportColumns))];
 fprintf('\nFDOTA COMPARISON SUMMARY\n\n');
@@ -382,7 +386,7 @@ printSummaryTable(rows,reportColumns,reportValues);
 writetable(Result,fullfile(scriptDir,'FDOTA_table_report.csv'));
 writetable(Result,fullfile(scriptDir,'NOM.FDOTA_summary.csv'));
 
-WorstCase = buildWorstCaseTable(rows,corners,values,metrics);
+WorstCase = buildWorstCaseTable(rows,corners,scaledValues,metrics);
 fprintf('\nFDOTA FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(WorstCase);
 writetable(WorstCase,fullfile(scriptDir,'FDOTA_worst_case_report.csv'));
@@ -486,54 +490,52 @@ function m = analyzeRun(scriptDir,process,caseName,trackTol,settleTol, ...
     m.cmSettle_s = maxFinite([cmRise cmFall]);
 end
 
-function values = metricsToReport(m,rows)
-    values = repmat("",size(rows,1),1);
+function values = metricsToRaw(m,rows)
+    % Returns raw numeric doubles in the initial table units. No rounding.
+    values = nan(size(rows,1),1);
     for i = 1:size(rows,1)
         parameter = rows(i,1); unit = rows(i,2);
         if unit == "", continue; end
         switch parameter
-            case "AVDD", raw = m.vdd_V;
-            case "Vin,cm", raw = m.vinCm_V;
-            case "VREF", raw = m.vref_V;
-            case "Closed-loop target gain", raw = 1;
-            case "FDC bias current", raw = m.fdcBias_A*1e6;
-            case "CMFB bias current", raw = m.cmfbBias_A*1e6;
-            case "Total current", raw = m.totalCurrent_A*1e6;
-            case "Total power", raw = m.totalPower_W*1e3;
-            case "Differential DC gain", raw = m.dcGain_dB;
-            case "Differential UGF", raw = m.ugf_Hz/1e6;
-            case "Differential phase margin", raw = m.pm_deg;
-            case "Input differential offset", raw = m.offset_V*1e6;
-            case "CMRR @ 60 Hz", raw = m.cmrr_dB(1);
-            case "CMRR @ 150 Hz", raw = m.cmrr_dB(2);
-            case "PSRR+ @ 60 Hz", raw = m.psrrP_dB(1);
-            case "PSRR+ @ 150 Hz", raw = m.psrrP_dB(2);
-            case "PSRR- @ 60 Hz", raw = m.psrrN_dB(1);
-            case "PSRR- @ 150 Hz", raw = m.psrrN_dB(2);
-            case "Input-referred noise 0.05-150 Hz", raw = m.inputNoise_Vrms*1e6;
-            case "Closed-loop differential gain", raw = m.clGain_dB;
-            case "Gain error", raw = m.gainError_pct;
-            case "Output common mode, DC", raw = m.voutCmDc_V;
-            case "Output CM error at nominal", raw = m.voutCmError_V*1e3;
-            case "Output differential, DC", raw = m.voutDiffDc_V*1e6;
-            case "Input CM low", raw = m.icmrLow_V;
-            case "Input CM high", raw = m.icmrHigh_V;
-            case "Input CM high headroom", raw = m.icmrHighHeadroom_V*1e3;
-            case "Differential command low", raw = m.diffCmdLow_V;
-            case "Differential command high", raw = m.diffCmdHigh_V;
-            case "Differential output swing low", raw = m.diffSwingLow_V;
-            case "Differential output swing high", raw = m.diffSwingHigh_V;
-            case "Differential SR rise", raw = m.diffSrRise_Vus;
-            case "Differential SR fall", raw = m.diffSrFall_Vus;
-            case "Differential settling time", raw = m.diffSettle_s*1e9;
-            case "Differential-step CM disturbance", raw = m.diffCmDisturbance_V*1e3;
-            case "CMFB SR rise", raw = m.cmSrRise_Vus;
-            case "CMFB SR fall", raw = m.cmSrFall_Vus;
-            case "CMFB settling time", raw = m.cmSettle_s*1e9;
-            otherwise, raw = NaN;
+            case "AVDD",                             values(i) = m.vdd_V;
+            case "Vin,cm",                           values(i) = m.vinCm_V;
+            case "VREF",                             values(i) = m.vref_V;
+            case "Closed-loop target gain",          values(i) = 1;
+            case "FDC bias current",                 values(i) = m.fdcBias_A;
+            case "CMFB bias current",                values(i) = m.cmfbBias_A;
+            case "Total current",                    values(i) = m.totalCurrent_A;
+            case "Total power",                      values(i) = m.totalPower_W;
+            case "Differential DC gain",             values(i) = m.dcGain_dB;
+            case "Differential UGF",                 values(i) = m.ugf_Hz;
+            case "Differential phase margin",        values(i) = m.pm_deg;
+            case "Input differential offset",        values(i) = m.offset_V;
+            case "CMRR @ 60 Hz",                     values(i) = m.cmrr_dB(1);
+            case "CMRR @ 150 Hz",                    values(i) = m.cmrr_dB(2);
+            case "PSRR+ @ 60 Hz",                    values(i) = m.psrrP_dB(1);
+            case "PSRR+ @ 150 Hz",                   values(i) = m.psrrP_dB(2);
+            case "PSRR- @ 60 Hz",                    values(i) = m.psrrN_dB(1);
+            case "PSRR- @ 150 Hz",                   values(i) = m.psrrN_dB(2);
+            case "Input-referred noise 0.05-150 Hz", values(i) = m.inputNoise_Vrms;
+            case "Closed-loop differential gain",    values(i) = m.clGain_dB;
+            case "Gain error",                       values(i) = m.gainError_pct;
+            case "Output common mode, DC",           values(i) = m.voutCmDc_V;
+            case "Output CM error at nominal",       values(i) = m.voutCmError_V;
+            case "Output differential, DC",          values(i) = m.voutDiffDc_V;
+            case "Input CM low",                     values(i) = m.icmrLow_V;
+            case "Input CM high",                    values(i) = m.icmrHigh_V;
+            case "Input CM high headroom",           values(i) = m.icmrHighHeadroom_V;
+            case "Differential command low",         values(i) = m.diffCmdLow_V;
+            case "Differential command high",        values(i) = m.diffCmdHigh_V;
+            case "Differential output swing low",    values(i) = m.diffSwingLow_V;
+            case "Differential output swing high",   values(i) = m.diffSwingHigh_V;
+            case "Differential SR rise",             values(i) = m.diffSrRise_Vus;
+            case "Differential SR fall",             values(i) = m.diffSrFall_Vus;
+            case "Differential settling time",       values(i) = m.diffSettle_s;
+            case "Differential-step CM disturbance", values(i) = m.diffCmDisturbance_V;
+            case "CMFB SR rise",                     values(i) = m.cmSrRise_Vus;
+            case "CMFB SR fall",                     values(i) = m.cmSrFall_Vus;
+            case "CMFB settling time",               values(i) = m.cmSettle_s;
         end
-        if unit == "dB" || unit == "%", values(i) = fmtDbPercent(raw);
-        else, values(i) = fmt(raw); end
     end
 end
 
@@ -554,7 +556,7 @@ function result = buildWorstCaseTable(rows,corners,values,metrics)
         "Gain error" "Output CM error at nominal" "Output differential, DC"];
     for i = 1:numel(source)
         parameter = parameters(i);
-        candidates = str2double(values(source(i),:));
+        candidates = values(source(i),:);   % already numeric double
         if parameter == "Input CM low"
             failed = cellfun(@(x)~isfinite(x.icmrLow_V),metrics);
             if any(failed)
@@ -606,7 +608,7 @@ function result = buildWorstCaseTable(rows,corners,values,metrics)
         if units(i) == "dB" || units(i) == "%"
             formatted(i) = fmtDbPercent(selected(i));
         else
-            formatted(i) = fmt(selected(i));
+            formatted(i) = fmtMetric(selected(i),units(i));
         end
     end
     result = table(parameters,units,formatted,selectedCorner, ...
@@ -734,13 +736,29 @@ end
 
 function [lo,hi,icmr] = analyzeICMRSweep(vcm,command,voutcm,voutdiff, ...
         vref,idd,vinCmNom,gainErrorTol,cmTol,currentTol)
-    vcmKey = round(vcm*1e9)/1e9;
-    vcmList = unique(vcmKey);
-    n = numel(vcmList);
+    [vcmSorted,order] = sort(vcm);
+    command  = command(order);
+    voutcm   = voutcm(order);
+    voutdiff = voutdiff(order);
+    vref     = vref(order);
+    idd      = idd(order);
+
+    tol = max(1e-12, 100*eps(max(1, max(abs(vcmSorted)))));
+    group = ones(size(vcmSorted));
+    for k = 2:numel(vcmSorted)
+        if abs(vcmSorted(k)-vcmSorted(k-1)) > tol
+            group(k) = group(k-1)+1;
+        else
+            group(k) = group(k-1);
+        end
+    end
+    n = max(group);
+    vcmList = nan(n,1);
     gain = NaN(n,1); cmErrorNeg_V = NaN(n,1);
     cmErrorPos_V = NaN(n,1); idd_A = NaN(n,1);
     for i = 1:n
-        rows = vcmKey == vcmList(i);
+        rows = group == i;
+        vcmList(i) = mean(vcmSorted(rows));
         cmd = command(rows); vod = voutdiff(rows);
         vcmOut = voutcm(rows); reference = vref(rows); current = abs(idd(rows));
         neg = cmd < 0; pos = cmd > 0;
@@ -986,7 +1004,7 @@ function s = fmtDbPercent(x)
         s = "NaN";
     elseif isinf(x)
         s = string(sprintf('%+g',x));
-    elseif x ~= 0 && abs(x) < 1
+    elseif x ~= 0 && (abs(x) < 1e-3 || abs(x) > 999)
         s = string(sprintf('%.3e',x));
     else
         s = string(sprintf('%.3f',x));
@@ -1004,3 +1022,134 @@ function s = freqText(f)
         s = sprintf('%.4gHz',f);
     end
 end
+
+function [rows,scaledValues] = adaptReportUnits(rows,rawValues)
+    % rawValues and scaledValues remain numeric doubles.
+    % Unit changes use exact powers of 1000 only.
+    scaledValues = rawValues;
+
+    for i = 1:size(rows,1)
+        unit = string(rows(i,2));
+
+        if unit == "" || unit == "dB" || unit == "%"
+            continue;
+        end
+
+        x = rawValues(i,:);
+        finiteMask = isfinite(x);
+        nonzeroMask = finiteMask & x ~= 0;
+
+        if ~any(finiteMask)
+            continue;
+        end
+
+        if ~any(nonzeroMask)
+            continue;
+        end
+
+        magnitude = max(abs(x(nonzeroMask)));
+
+        [newUnit,scalePower] = scaleUnit(magnitude,unit);
+
+        scaledValues(i,:) = x * 1e3^scalePower;
+        rows(i,2) = newUnit;
+    end
+end
+
+function formatted = formatReportValues(rows,scaledValues)
+    % First and only place numbers become strings.
+    formatted = strings(size(scaledValues));
+    for i = 1:size(scaledValues,1)
+        unit = string(rows(i,2));
+        if unit == ""
+            continue;
+        end
+        for j = 1:size(scaledValues,2)
+            if unit == "dB" || unit == "%"
+                formatted(i,j) = fmtDbPercent(scaledValues(i,j));
+            else
+                formatted(i,j) = fmtMetric(scaledValues(i,j),unit);
+            end
+        end
+    end
+end
+
+function [newUnit,scalePower] = scaleUnit(magnitude,currentUnit)
+    prefixOrder = ["f" "p" "n" "u" "m" "" "k" "M" "G" "T"];
+
+    [prefix,core] = splitUnitPrefix(currentUnit);
+    index = find(prefixOrder == prefix,1);
+
+    if isempty(index)
+        newUnit = currentUnit;
+        scalePower = 0;
+        return;
+    end
+
+    scaled = abs(magnitude);
+    scalePower = 0;
+
+    if scaled == 0
+        newUnit = currentUnit;
+        return;
+    end
+
+    while scaled < 1 && index > 1
+        scaled = scaled * 1e3;
+        index = index - 1;
+        scalePower = scalePower + 1;
+    end
+
+    while scaled >= 1000 && index < numel(prefixOrder)
+        scaled = scaled / 1e3;
+        index = index + 1;
+        scalePower = scalePower - 1;
+    end
+
+    newUnit = prefixOrder(index) + core;
+end
+
+function [prefix,core] = splitUnitPrefix(unit)
+    unit = string(unit);
+
+    knownPrefixes = ["T" "G" "M" "k" "m" "u" "n" "p" "f"];
+
+    if strlength(unit) == 0
+        prefix = "";
+        core = "";
+        return;
+    end
+
+    firstCharacter = extractBetween(unit,1,1);
+
+    if ismember(firstCharacter,knownPrefixes)
+        prefix = firstCharacter;
+        core = extractAfter(unit,1);
+    else
+        prefix = "";
+        core = unit;
+    end
+end
+
+function s = fmtMetric(x,unit)
+    if isnan(x)
+        s = "NaN";
+        return;
+    end
+
+    if isinf(x)
+        s = string(sprintf('%+g',x));
+        return;
+    end
+
+    [prefix,~] = splitUnitPrefix(unit);
+
+    if prefix == "f" && x ~= 0 && abs(x) < 1e-3
+        s = string(sprintf('%.3e',x));
+    elseif prefix == "T" && abs(x) > 999
+        s = string(sprintf('%.3e',x));
+    else
+        s = string(sprintf('%.3f',x));
+    end
+end
+

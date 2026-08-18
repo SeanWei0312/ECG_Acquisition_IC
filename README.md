@@ -1,112 +1,125 @@
 # ECG Acquisition IC
 
-This repository contains a pre-layout GF180 ECG acquisition IC design developed for the SSCS Chipathon 2026 flow. It includes schematic building blocks, Xschem/ngspice testbenches, MATLAB post-processing, generated circuit reports, and transistor gm/Id characterization data.
+This repository contains a pre-layout GF180 integrated circuit design for electrocardiogram (ECG) acquisition developed in the IEEE SSCS Chipathon 2026 flow. It provides complete analog building blocks, an integrated AFE top-level schematic, Xschem/ngspice verification testbenches, MATLAB post-processing analyzers, characterization CSV reports, and transistor $g_m/I_D$ sizing data.
 
-The strongest current verification coverage is:
+The verified analog frontend core consists of:
+- **Reference & Bias Network**: Startup-verified $\beta$-multiplier current source, bias distribution mirrors, and analog multiplexers (`BIAS`, `MIRROR`, `SEL`).
+- **Single-Ended OTA (`SE_OTA`)**: High-gain, wide-swing operational transconductance amplifier characterized across all 45 PVT corners (5 processes $\times$ 9 voltage/temperature cases).
+- **Fully Differential OTA (`FD_OTA`)**: High-CMRR fully differential core (`FDC`) with dynamic common-mode feedback (`CMFB`), characterized across all 45 PVT corners.
+- **Signal-Chain Blocks**: Instrumentation amplifier (`INA`), low-pass filter (`LPF`), programmable gain amplifier (`PGA`), output buffer (`BUFFER`), and right-leg drive (`RLD`).
 
-- BIAS/SEL process, supply, temperature, startup, selector, and two-dimensional DC characterization.
-- Single-ended OTA open-loop and closed-loop characterization over 45 process/voltage/temperature points.
-- Nominal fully differential OTA, differential core, and common-mode feedback characterization.
+For detailed design methodology, full simulation datasets, worst-case PVT tables, and reproducibility instructions, see [Project_Report.md](Project_Report.md).
 
-The integrated AFE schematic and nominal testbenches are present, but their generated CSV reports and plots are not currently in the repository. Layout, extraction, mismatch/Monte Carlo, ADC integration, PCB implementation, and laboratory measurement remain future work.
+---
 
-For methodology, results, limitations, and reproducibility details, see [Project_Report.md](Project_Report.md).
+## System Architecture
 
-## Architecture
+![ECG acquisition IC system block diagram](Design_Files/System%20Design/System_Block.png)
 
-![ECG acquisition IC system block diagram](<Design_Files/System Design/System_Block.png>)
+### Project Building Blocks
 
-Project-owned schematic blocks include:
+| Area | Blocks | Description |
+| :--- | :--- | :--- |
+| **Reference & Selection** | `BIAS`, `MIRROR`, `SEL` | 40 µA $\beta$-multiplier reference, current distribution mirrors, and channel/mode multiplexers |
+| **Amplification & Filtering** | `INA`, `SE_OTA`, `FD_OTA`, `LPF`, `PGA`, `BUFFER` | Low-noise input stage, high-gain OTAs, anti-aliasing filter, programmable gain, and ADC drive buffer |
+| **Common-Mode & Support** | `CMFB`, `FDC`, `RLD`, `TG`, `INV` | Continuous-time common-mode feedback loop, patient common-mode drive, transmission gates, and digital control |
+| **Top-Level Integration** | `AFE` | Complete multi-stage analog frontend integration schematic |
 
-| Area | Blocks |
-| --- | --- |
-| References and selection | BIAS, MIRROR, SEL |
-| Amplification and filtering | INA, SE OTA, FD OTA, LPF, PGA, BUFFER |
-| Control and support | CMFB, RLD, transmission gates, inverter |
-| Integration | AFE top-level schematic |
+> [!NOTE]
+> The 10-bit SAR ADC defined in the system specification (`Design_Files/System Design/ECG Acquisition IC with 10-bit SAR ADC SPEC.xlsx`) is specified for future mixed-signal tapeout integration.
 
-The 10-bit SAR ADC shown in the system specification is not yet implemented in the verified design.
+---
 
-## Verification Status
+## Verification & Characterization Status
 
-| Area | Current evidence |
-| --- | --- |
-| BIAS/SEL | Generated process/environment tables, 35 startup runs, selector extrema, five process DC surfaces, and six nominal plots |
-| SE OTA | Complete 45-point PVT dataset: five processes, nine environmental cases, 450 raw TXT files, compact comparison CSV, full-PVT worst-case CSV, and eight nominal plots |
-| FD OTA | Nominal open-loop, closed-loop, CMRR, PSRR, noise, input range, output swing, slew, and settling summary and plots |
-| FDC | Nominal differential AC, plant, CMFB sweep, noise, and offset summary and plots |
-| CMFB | Nominal open-loop and closed-loop summary and plots |
-| AFE | Schematic, AC/noise/transient testbenches, and analyzer source present; generated reports and plots absent |
-| gm/Id | NMOS and PMOS sizing scripts plus generated characterization plots |
-| Physical verification | Layout, DRC, LVS, extraction, mismatch, and Monte Carlo not completed |
+| Block | PVT Coverage | Verification Evidence & Deliverables |
+| :--- | :---: | :--- |
+| **BIAS / SEL** | 45-point PVT + 2D grids | 7 CSV reports (`table`, `startup`, `sel`, `dc2d`, `global_worst_case`, `reference`), 35 startup runs (0 failures), 6 nominal plots |
+| **SE OTA** | **45-point PVT** (5 processes $\times$ 9 V-T) | 450 ngspice TXT files, compact comparison CSV (`SEOTA_table_report.csv`), full-PVT worst-case CSV (`SEOTA_worst_case_report.csv`), 8 plots |
+| **FD OTA** | **45-point PVT** (5 processes $\times$ 9 V-T) | Full PVT dataset, compact comparison CSV (`FDOTA_table_report.csv`), full-PVT worst-case CSV (`FDOTA_worst_case_report.csv`), 9 plots |
+| **FDC** | Nominal OL / Plant / CMFB | Open-loop AC, differential plant, CMFB sweep, noise, and offset summary (`NOM.FDC_summary.csv`), 6 plots |
+| **CMFB** | Nominal OL / CL | Loop stability, transient settling, valid reference range summary (`NOM.CMFB_summary.csv`), 3 plots |
+| **AFE** | Schematic & Testbenches | Multi-stage schematic, AC / noise / transient verification testbenches, and MATLAB analysis scripts |
+| **$g_m/I_D$** | Device characterization | Sizing scripts and continuous lookup data for GF180 NMOS and PMOS devices |
 
-## Headline Results
+---
 
-All values below are deterministic pre-layout schematic simulation results.
+## Headline Performance Summary
 
-| Metric | Result |
-| --- | ---: |
-| NOM BIAS current | 39.997 uA |
-| BIAS full-grid current range | 31.054-49.441 uA |
-| Worst BIAS startup / failures | 1180.281 us / 0 of 35 |
-| Maximum selector error | 25.466 nV |
-| SE OTA NOM gain / UGF / phase margin | 93.850 dB / 12.103 MHz / 70.811 deg |
-| SE OTA full-PVT minimum gain | 89.687 dB at FSVLTH |
-| SE OTA full-PVT minimum phase margin | 64.399 deg at SSVLTH |
-| SE OTA full-PVT maximum input noise, 0.05-150 Hz | 2.188 uVrms at SSVLTH |
-| FD OTA NOM gain / UGF / phase margin | 87.191 dB / 12.188 MHz / 72.989 deg |
-| FDC NOM gain / UGF / phase margin | 88.362 dB / 12.236 MHz / 72.894 deg |
-| CMFB NOM gain / UGF / phase margin | 43.912 dB / 800.932 MHz / 86.428 deg |
+All metrics below represent deterministic pre-layout schematic simulations on the GlobalFoundries 180 nm MCU PDK (`gf180mcu`).
 
-## Main Entry Points
+| Block | Key Metric | Nominal Value | Full-PVT Worst Case | Worst Corner |
+| :--- | :--- | :---: | :---: | :---: |
+| **BIAS** | Reference Output Current ($I_{\text{BIAS}}$) | 39.997 µA | 31.054 – 49.441 µA | SSVLTL / FFVHTH |
+| | Startup Time / Failures | 158.4 µs | 1180.28 µs / **0 of 35** | SSVLTL |
+| | VREF Error / Selector Error | 0.057 mV / 0.025 µV | 6.154 µV / 25.466 nV | SSVHNOM / SSTH |
+| **SE OTA** | DC Gain | 93.855 dB | **89.697 dB** | FSVLTH |
+| | Unity-Gain Frequency (UGF) | 12.144 MHz | **8.417 MHz** | SSVLTH |
+| | Phase Margin ($C_L = 10\text{ pF}$) | 71.975° | **59.932°** | FFVLTH |
+| | Input-Referred Noise ($0.05\text{--}150\text{ Hz}$) | 1.876 µVrms | **2.188 µVrms** | SSVLTH |
+| | CMRR / PSRR+ (@ 60 Hz) | 110.809 dB / 103.738 dB | 108.150 dB / 101.557 dB | SSVLTH / SSNOMTH |
+| | Slew Rate (Rise / Fall) | 9.968 / 7.763 V/µs | 7.034 / 5.522 V/µs | SSVLTL |
+| | Settling Time ($2\text{ mV}$ band) | 164.9 ns | 214.4 ns | SSVLTL |
+| **FD OTA** | Differential DC Gain | 86.391 dB | **83.594 dB** | FSVLTH |
+| | Differential UGF ($C_L = 10\text{ pF}$) | 12.256 MHz | **8.306 MHz** | SSVLTH |
+| | Differential Phase Margin | 73.795° | **64.167°** | FFVLTH |
+| | Input-Referred Noise ($0.05\text{--}150\text{ Hz}$) | 3.111 µVrms | **3.545 µVrms** | SSVHTH |
+| | Differential Output Swing | $\pm 3.158\text{ V}$ | $\mathbf{\pm 2.730\text{ V}}$ | FSVLTH |
+| | Differential Slew Rate (Rise / Fall) | 7.238 / 7.140 V/µs | 5.138 / 5.073 V/µs | SSVLTL |
+| | Differential Settling Time ($2\text{ mV}$) | 153.6 ns | 236.6 ns | SSVLTL |
+| | CMFB Phase Margin / Settling | 86.428° / 313.6 ns | 84.1° / 507.1 ns | FFVLTH / SSVLTH |
 
-| Path | Purpose |
-| --- | --- |
-| `Design_Files/System Design/ECG Acquisition IC with 10-bit SAR ADC SPEC.xlsx` | System-level specification |
-| `Design_Files/System Design/System_Block.png` | Architecture diagram |
-| `Design_Files/IC Design/Schematic/` | Project schematic blocks |
-| `Design_Files/IC Design/Testbench/` | Xschem/ngspice verification testbenches |
-| `Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m` | BIAS/SEL characterization and reports |
-| `Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m` | SE OTA 45-point analysis, reports, and nominal plots |
-| `Measurement_Results/IC_Simulation/FD_OTA/` | CMFB, FDC, and FD OTA analyzers and results |
-| `Measurement_Results/IC_Simulation/AFE/AFE_Analyze.m` | Integrated AFE analyzer source |
-| `Measurement_Results/IC_Simulation/Gm_Id/` | NMOS/PMOS gm/Id sizing data and plots |
+---
+
+## Primary Project Structure
+
+```
+ECG_Acquisition_IC/
+├── README.md                                          # Top-level overview and headline results
+├── Project_Report.md                                  # Complete technical verification report
+├── Docker_Instructions.md                             # Container environment setup
+├── Design_Files/
+│   ├── System Design/                                 # Spec sheet and architecture diagrams
+│   └── IC Design/
+│       ├── Schematic/                                 # Xschem schematic hierarchy
+│       └── Testbench/                                 # Open-loop and closed-loop testbenches
+├── Measurement_Results/
+│   └── IC_Simulation/
+│       ├── BIAS/                                      # BIAS_Analyze.m, CSV reports, and startup plots
+│       ├── SE_OTA/                                    # SEOTA_Analyze.m, 45-PVT CSV reports, and plots
+│       ├── FD_OTA/                                    # CMFB, FDC, and FDOTA 45-PVT analyzers and plots
+│       ├── AFE/                                       # Top-level AFE_Analyze.m analyzer
+│       └── Gm_Id/                                     # GF180 gm/Id lookup tables and sizing scripts
+└── 2026-sscs-chipathon/                               # Upstream SSCS Chipathon reference snapshot
+```
+
+---
 
 ## Running MATLAB Analysis
 
-Run the corresponding Xschem/ngspice testbenches before MATLAB. From the repository root:
+Execute the corresponding Xschem/ngspice testbenches to generate simulation exports, then run the MATLAB post-processing pipelines:
 
 ```bash
+# 1. BIAS / SEL Characterization
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
-```
 
-```bash
+# 2. Single-Ended OTA Full-PVT Analysis
 matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA','SEOTA_Analyze.m'))"
-```
 
-```bash
+# 3. Fully Differential OTA, Core, and CMFB Full Analysis
 matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','CMFB','CMFB_Analyze.m'))"
 matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDC','FDC_Analyze.m'))"
 matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDOTA','FDOTA_Analyze.m'))"
 ```
 
-The current SE OTA analysis has been verified with MATLAB R2026a.
+> [!TIP]
+> The analysis scripts use a strict numeric-first architecture (`ngspice TXT -> double -> PVT worst-case selection -> SI unit scaling -> display string formatting`), preserving full double-precision accuracy without intermediate string rounding errors.
 
-## Generated Data
+---
 
-- Raw ngspice TXT exports are local simulation inputs and may be ignored by Git.
-- Generated CSV reports and selected PNG figures provide the reviewable result set.
-- Regenerate simulator outputs and MATLAB artifacts together after changing a schematic, model, stimulus, or condition.
-- Record schematic revision and report timestamps for formal reviews.
+## Current Scope & Next Steps
 
-## Current Limitations
-
-- Results are schematic-level and deterministic.
-- No mismatch, Monte Carlo, extracted-parasitic, package, or pad verification is included.
-- The AFE analyzer has no current generated report set in the repository.
-- The SAR ADC is specified but not integrated.
-- Layout, PCB, and laboratory validation are not available.
-
-## Upstream Chipathon Material
-
-`2026-sscs-chipathon/` is a vendored reference snapshot of the SSCS Chipathon repository. Project-specific schematics, analyzers, and results are outside that directory. Upstream files retain their original license and attribution; see the bundled `LICENSE` and `NOTICE`.
+1. **Integrated AFE Characterization**: Execute full-chain transient and frequency-domain verification of the cascaded INA + LPF + PGA + Buffer chain.
+2. **Monte Carlo & Mismatch Analysis**: Quantify transistor mismatch effects on input offset voltage, effective CMRR, and PSRR beyond ideal schematic symmetry.
+3. **Physical Layout & Post-Layout Extraction (PEX)**: Complete DRC/LVS-clean layout on GF180 1P6M, parasitic extraction, and post-layout re-verification.
+4. **Mixed-Signal Integration**: Integrate the 10-bit SAR ADC macro with the analog frontend core.

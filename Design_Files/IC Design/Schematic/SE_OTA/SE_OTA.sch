@@ -70,6 +70,7 @@ N 360 -200 380 -200 {lab=SEOTA_B}
 N 320 -120 1040 -120 {lab=SEOTA_SS}
 N 640 -520 640 -440 {lab=#net4}
 N 520 -440 640 -440 {lab=#net4}
+N 910 -420 910 -120 {lab=SEOTA_SS}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {iopin.sym} 140 -600 0 1 {name=p8 lab=SEOTA_DD}
 C {iopin.sym} 140 -560 0 1 {name=p9 lab=SEOTA_SS}
@@ -111,11 +112,6 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
-C {res.sym} 910 -440 3 1 {name=Rz
-value=3.8k
-footprint=1206
-device=resistor
-m=1}
 C {symbols/nfet_03v3.sym} 620 -200 0 0 {name=M5
 L=2u
 W=1u
@@ -157,11 +153,6 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
-C {capa.sym} 1010 -440 3 1 {name=Cc
-m=1
-value=2p
-footprint=1206
-device="ceramic capacitor"}
 C {lab_wire.sym} 640 -600 2 1 {name=p2 sig_type=std_logic lab=SEOTA_DD}
 C {lab_wire.sym} 1060 -360 2 0 {name=p3 sig_type=std_logic lab=SEOTA_OUT}
 C {lab_wire.sym} 980 -200 2 1 {name=p4 sig_type=std_logic lab=SEOTA_B
@@ -217,3 +208,15 @@ spiceprefix=X
 }
 C {lab_wire.sym} 460 -360 2 1 {name=p7 sig_type=std_logic lab=SEOTA_INN
 }
+C {symbols/ppolyf_u_2k.sym} 910 -440 3 0 {name=Rz
+W=4e-6
+L=7.6e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {symbols/cap_mim_2f0fF.sym} 1010 -440 1 0 {name=Cc
+W=31.623e-6
+L=31.623e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=1}
