@@ -16,6 +16,10 @@ For detailed design methodology, full simulation datasets, worst-case PVT tables
 
 ![ECG acquisition IC system block diagram](Design_Files/System%20Design/System_Block.png)
 
+### Analog Frontend (AFE) Top-Level Schematic
+
+![ECG Analog Frontend (AFE) Top-Level Schematic](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
+
 ### Project Building Blocks
 
 | Area | Blocks | Description |

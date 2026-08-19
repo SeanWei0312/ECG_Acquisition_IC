@@ -30,9 +30,17 @@ This report documents the design, architecture, and verification of a multi-stag
                       [ RLD Amplifier ] <── (Common-Mode Sense)
 ```
 
+### 2.1 System Architecture Diagram
+
 ![ECG acquisition IC system block diagram](Design_Files/System%20Design/System_Block.png)
 
-### 2.1 Block Inventory & Design Scope
+### 2.2 Analog Frontend (AFE) Top-Level Schematic
+
+The integrated top-level AFE schematic combines the biopotential instrumentation amplifier, low-pass filter, programmable gain amplifier, ADC output driver, right-leg drive feedback, and master biasing network:
+
+![ECG Analog Frontend (AFE) Top-Level Schematic](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
+
+### 2.3 Block Inventory & Design Scope
 
 | Block | Function | Circuit Architecture |
 | :--- | :--- | :--- |
