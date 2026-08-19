@@ -6,23 +6,6 @@ This repository contains a pre-layout GF180 integrated circuit design for electr
 
 ## Analog Frontend (AFE) Architecture
 
-```
-                      ┌──────────────────────────────────────────────────────────────────────────────────┐
-                      │                            Integrated AFE Signal Chain                           │
-                      │                                                                                  │
-[ ECG Electrodes ] ───┼──> [ INA (60x) ] ──> [ LPF (4x, fc=150Hz) ] ──> [ PGA (1-16x) ] ──> [ BUFFER ] ──┼──> [ ADC Drive ]
-  (Vin,diff <= 1mV)   │          │                                                                       │    (Vout,diff <= 3V)
-                      │  [ RLD Amplifier ] <── (Common-Mode Sense: 4 Meg)                                │
-                      └──────────────────────────────────────────────────────────────────────────────────┘
-                                                 ▲
-                                                 │ (40 uA Cascode Bias Distribution)
-                                    ┌─────────────────────────┐
-                                    │  BIAS / MIRROR / SEL    │
-                                    └─────────────────────────┘
-```
-
-### Top-Level AFE Schematic
-
 ![ECG Analog Frontend (AFE) Top-Level Schematic](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
 
 ### Circuit Subsystems & Sizing Specifications
@@ -79,6 +62,8 @@ All results represent deterministic pre-layout schematic simulations on the Glob
 | | Differential Settling Time ($2\text{ mV}$) | 153.6 ns | 236.6 ns | SSVLTL |
 | | CMFB Phase Margin / Settling | 86.428° / 313.6 ns | 84.1° / 507.1 ns | FFVLTH / SSVLTH |
 
+For detailed characterization result plots and full methodology, see [Project_Report.md](Project_Report.md).
+
 ---
 
 ## Repository Hierarchy
@@ -86,7 +71,7 @@ All results represent deterministic pre-layout schematic simulations on the Glob
 ```
 ECG_Acquisition_IC/
 ├── README.md                                          # Top-level summary and headline results
-├── Project_Report.md                                  # Complete technical verification report
+├── Project_Report.md                                  # Complete technical verification report with embedded plots
 ├── Docker_Instructions.md                             # Container setup instructions
 ├── Design_Files/
 │   └── IC Design/

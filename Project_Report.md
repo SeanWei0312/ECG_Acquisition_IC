@@ -25,21 +25,6 @@ This report documents the design, transistor-level sizing, simulation methodolog
 
 ## 2. System Architecture & Building Blocks
 
-```
-                      ┌──────────────────────────────────────────────────────────────────────────────────┐
-                      │                            Integrated AFE Signal Chain                           │
-                      │                                                                                  │
-[ ECG Electrodes ] ───┼──> [ INA (60x) ] ──> [ LPF (4x, fc=150Hz) ] ──> [ PGA (1-16x) ] ──> [ BUFFER ] ──┼──> [ ADC Drive ]
-  (Vin,diff <= 1mV)   │          │                                                                       │    (Vout,diff <= 3V)
-                      │  [ RLD Amplifier ] <── (Common-Mode Sense: 4 Meg)                                │
-                      └──────────────────────────────────────────────────────────────────────────────────┘
-                                                 ▲
-                                                 │ (40 uA Cascode Bias Distribution)
-                                    ┌─────────────────────────┐
-                                    │  BIAS / MIRROR / SEL    │
-                                    └─────────────────────────┘
-```
-
 ### 2.1 Integrated AFE Top-Level Schematic
 
 The integrated top-level AFE schematic combines the biopotential instrumentation amplifier, active low-pass filter, programmable gain amplifier, ADC output driver, right-leg drive feedback, and master biasing network:
@@ -84,11 +69,17 @@ Implemented in [`FDC_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/D
 * **Differential Second Stage ($M_6\text{--}M_9$)**: PMOS common-source amplifiers with NMOS active current sources ($L = 1.0\text{ }\mu\text{m}$, $g_m/I_D = 4.0\text{ V}^{-1}$) providing large output swing.
 * **Continuous-Time CMFB Amplifier**: Active common-mode sense resistors with an NMOS differential error amplifier ($L = 0.5\text{ }\mu\text{m}$, $g_m/I_D = 4.0\text{ V}^{-1}$) yielding an ultra-fast loop unity-gain bandwidth ($> 800\text{ MHz}$) and phase margin $> 86^\circ$.
 
+### 3.3 Technology Characterization Curves
+
+![NMOS Intrinsic Gain vs gm/Id](Measurement_Results/IC_Simulation/Gm_Id/NMOS_Gm_Id/Plots/nmos_intrinsic_gain_db_vs_gmid.png)
+*Figure 3.1: GF180 3.3 V NMOS Intrinsic Self-Gain ($g_m/g_{ds}$) versus $g_m/I_D$ across channel lengths.*
+
+![PMOS Intrinsic Gain vs gm/Id](Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Plots/pmos_intrinsic_gain_db_vs_gmid.png)
+*Figure 3.2: GF180 3.3 V PMOS Intrinsic Self-Gain ($g_m/g_{ds}$) versus $g_m/I_D$ across channel lengths.*
+
 ---
 
 ## 4. Nominal Operating Conditions
-
-Unless otherwise noted, nominal characterization conditions are defined as:
 
 | Parameter | Nominal Setting | Notes / Test Setup |
 | :--- | :---: | :--- |
@@ -120,139 +111,96 @@ The complete PVT verification matrix comprises **5 process corners** $\times$ **
 
 Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fast, $3.6\text{ V}, +125^\circ\text{C}$; `SSVLTH` = Slow-Slow, $3.0\text{ V}, +125^\circ\text{C}$).
 
-### 5.2 Single-Ended OTA Characterization Flow
-
-1. **Open-Loop Transfer Function**: AC differential sweep yields $A_{v,0}$, Unity-Gain Frequency (UGF), and Phase Margin (PM) at $0\text{ dB}$ crossover.
-2. **Rejection Ratios**: High-resolution AC transfer functions evaluate CMRR, PSRR+, and PSRR$-$ at key powerline frequencies ($60\text{ Hz}$ and $150\text{ Hz}$).
-3. **Input-Referred Noise**: Numeric integration of input noise density:
-   $$V_{n,\text{rms}} = \sqrt{\int_{0.05\text{ Hz}}^{150\text{ Hz}} e_n^2(f)\,df}$$
-4. **Closed-Loop Usable Follower Range & Headroom**: A DC input sweep measures unity-follower tracking error $\Delta V = |V_{\text{OUT}} - V_{\text{IN}}|$. The usable range is the continuous region around $V_{DD}/2$ satisfying $|\Delta V| \le 2\text{ mV}$. High-side headroom is evaluated as $V_{\text{DD}} - V_{\text{usable,max}}$.
-5. **Transient Dynamics**: Closed-loop step excitation measures worst-case $10\%\text{--}90\%$ rise/fall slew rates and settling time into the $2\text{ mV}$ error band.
-
-### 5.3 Fully Differential OTA & CMFB Flow
-
-1. **Differential Small-Signal Stability**: AC sweeps evaluate differential open-loop gain, UGF, and phase margin with symmetric differential excitation.
-2. **Dynamic CMFB Loop**: Open-loop and closed-loop CMFB characterization evaluates common-mode loop gain, UGF, phase margin, and transient settling of $V_{\text{OUT,cm}}$ to step perturbations on $V_{\text{REF}}$.
-3. **Closed-Loop Output Swing**: Differential DC command sweep measures tracking linearity and maximum symmetrical differential swing within $|\Delta V_{\text{diff}}| \le 2\text{ mV}$.
-4. **Input Common-Mode Range (ICMR)**: Two-point command sweeps ($V_{\text{CMD}} = \pm 10\text{ mV}$) across common-mode levels evaluate local differential gain deviation $A_{CL}(V_{CM})$, common-mode shift, and supply current stability.
-
 ---
 
-## 6. Detailed Simulation Results
+## 6. Simulation Results & Characterization Plots
 
-### 6.1 Bias & Reference Subsystem (`BIAS` / `SEL`)
+### 6.1 Master Bias & Reference Subsystem (`BIAS` / `SEL`)
 
 | Performance Parameter | Nominal Result | PVT Extrema / Range | Worst-Case Corner |
 | :--- | :---: | :---: | :---: |
 | **Reference Bias Current ($I_{\text{BIAS}}$)** | $39.997\text{ }\mu\text{A}$ | $31.054\text{ to }49.441\text{ }\mu\text{A}$ | `SSVLTL` / `FFVHTH` |
 | **Bias Current Relative Error** | $+0.007\%$ | $-22.36\%\text{ to }+23.60\%$ | `FFVHTH` |
-| **Bias PMOS Gate Voltage ($V_{\text{BP}}$)** | $1.761\text{ V}$ | $1.138\text{ to }2.146\text{ V}$ | `FSVLTH` / `SFVHTL` |
 | **Reference Error ($V_{\text{REF}} - V_{DD}/2$)** | $0.057\text{ mV}$ | $-6.154\text{ }\mu\text{V to }+6.154\text{ }\mu\text{V}$ | `SSVHNOM` |
 | **Current Mirror Tracking Error** | $0.001\%$ | $\le 0.149\%$ | `FSVLNOM` |
 | **Startup Settling Time** | $158.4\text{ }\mu\text{s}$ | $\le 1180.28\text{ }\mu\text{s}$ | `SSVLTL` |
 | **Startup Failure Count** | **0 of 35** | **0 of 35** across all runs | All PVT Points |
 | **Analog Selector Transmission Error** | $0.025\text{ }\mu\text{V}$ | $\le 25.466\text{ nV}$ | `SSTH` |
 
----
+![BIAS Startup Transient Current](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png)
+*Figure 6.1: Nominal startup transient showing reliable settling of reference current to $40\text{ }\mu\text{A}$ within $160\text{ }\mu\text{s}$.*
 
-### 6.2 Single-Ended OTA (`SE_OTA`) Nominal & 9-Corner Summary
-
-Extracted from [`SEOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_table_report.csv):
-
-| Parameter | Unit | `NOM` | `FF` | `SS` | `FS` | `SF` | `VL` ($3.0\text{V}$) | `VH` ($3.6\text{V}$) | `TL` ($-40^\circ\text{C}$) | `TH` ($+125^\circ\text{C}$) |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Total Current** | $\text{mA}$ | 0.913 | 1.053 | 0.796 | 0.932 | 0.892 | 0.899 | 0.923 | 0.767 | 1.033 |
-| **Total Power** | $\text{mW}$ | 3.012 | 3.474 | 2.628 | 3.076 | 2.944 | 2.697 | 3.323 | 2.531 | 3.409 |
-| **DC Gain** | $\text{dB}$ | 93.855 | 92.836 | 94.464 | 93.447 | 93.754 | 93.208 | 94.348 | 94.757 | 92.176 |
-| **UGF** | $\text{MHz}$ | 12.144 | 14.150 | 10.518 | 12.302 | 11.968 | 11.898 | 12.332 | 13.687 | 9.977 |
-| **Phase Margin** | $\text{deg}$ | 71.975 | 66.273 | 76.626 | 71.189 | 72.825 | 71.859 | 72.079 | 75.313 | 67.756 |
-| **Input Offset** | $\mu\text{V}$ | 14.532 | -20.612 | 8.875 | -21.419 | 10.362 | 14.532 | 14.532 | 14.532 | 14.532 |
-| **CMRR @ 60 Hz** | $\text{dB}$ | 110.809 | 110.809 | 110.809 | 110.809 | 110.809 | 110.809 | 110.809 | 110.809 | 110.809 |
-| **PSRR+ @ 60 Hz** | $\text{dB}$ | 103.738 | 103.541 | 103.882 | 103.705 | 103.694 | 103.738 | 103.738 | 103.738 | 103.738 |
-| **Input Noise ($0.05\text{--}150\text{ Hz}$)** | $\mu\text{Vrms}$ | 1.876 | 1.785 | 1.969 | 1.844 | 1.909 | 1.872 | 1.879 | 1.797 | 2.030 |
-| **Input Low** | $\text{mV}$ | 318.0 | 214.0 | 422.0 | 239.0 | 398.0 | 314.0 | 328.0 | 437.0 | 153.0 |
-| **Input High** | $\text{V}$ | 3.222 | 3.220 | 3.223 | 3.164 | 3.249 | 2.913 | 3.528 | 3.247 | 3.188 |
-| **Input High Headroom** | $\text{mV}$ | 78.0 | 80.0 | 77.0 | 136.0 | 51.0 | 87.0 | 72.0 | 53.0 | 112.0 |
-| **Output Low** | $\text{mV}$ | 316.0 | 212.0 | 420.0 | 237.0 | 396.0 | 312.0 | 326.0 | 435.0 | 151.0 |
-| **Output High** | $\text{V}$ | 3.220 | 3.218 | 3.221 | 3.162 | 3.247 | 2.911 | 3.526 | 3.245 | 3.186 |
-| **Output High Headroom** | $\text{mV}$ | 79.8 | 81.8 | 78.9 | 137.8 | 52.8 | 88.7 | 73.9 | 54.6 | 113.9 |
-| **Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 9.97 / 7.76 | 11.51 / 8.80 | 8.73 / 6.93 | 10.14 / 7.88 | 9.79 / 7.64 | 9.80 / 7.60 | 10.09 / 7.88 | 8.89 / 6.86 | 10.53 / 8.38 |
-| **Settling Time ($2\text{ mV}$)** | $\text{ns}$ | 164.9 | 146.9 | 183.4 | 162.4 | 167.4 | 167.4 | 162.9 | 172.4 | 166.9 |
+![BIAS 2D Temperature and Supply Surface](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png)
+*Figure 6.2: Two-dimensional DC surface of master bias current across supply voltage ($3.0\text{--}3.6\text{ V}$) and temperature ($-40^\circ\text{C}\text{ to }+125^\circ\text{C}$).*
 
 ---
 
-### 6.3 SE OTA Full-PVT Worst-Case Performance
+### 6.2 Single-Ended OTA (`SE_OTA`) Performance
 
-Extracted from [`SEOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_worst_case_report.csv):
+| Parameter | Unit | Nominal Value | Full-PVT Worst Value | Worst Corner |
+| :--- | :--- | :---: | :---: | :---: |
+| **Total Current / Power** | $\text{mA} / \text{mW}$ | 0.913 / 3.012 | 1.212 / 4.363 | `FFVHTH` |
+| **DC Open-Loop Gain** | $\text{dB}$ | 93.855 | **89.697** | `FSVLTH` |
+| **Unity-Gain Frequency ($C_L = 10\text{ pF}$)** | $\text{MHz}$ | 12.144 | **8.417** | `SSVLTH` |
+| **Phase Margin** | $\text{deg}$ | 71.975 | **59.932** | `FFVLTH` |
+| **Input Offset Voltage** | $\mu\text{V}$ | 14.532 | 21.419 | `FSVLTH` |
+| **CMRR @ 60 Hz** | $\text{dB}$ | 110.809 | **108.150** | `SSVLTH` |
+| **PSRR+ @ 60 Hz** | $\text{dB}$ | 103.738 | **101.557** | `SSNOMTH` |
+| **Input Noise ($0.05\text{--}150\text{ Hz}$)** | $\mu\text{Vrms}$ | 1.876 | **2.188** | `SSVLTH` |
+| **Input Low / High Headroom** | $\text{mV}$ | 318.0 / 78.0 | 545.0 / 213.0 | `SSVHTL` / `FSVLTH` |
+| **Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 9.968 / 7.763 | 7.034 / 5.522 | `SSVLTL` |
+| **Settling Time ($2\text{ mV}$ band)** | $\text{ns}$ | 164.9 | 214.4 | `SSVLTL` |
 
-| Parameter | Unit | Full-PVT Worst Value | Worst-Case Corner | Design Margin / Evaluation |
-| :--- | :--- | :---: | :---: | :--- |
-| **Master Bias Current** | $\mu\text{A}$ | 49.581 | `FFVHTH` | Nominal $40\text{ }\mu\text{A}$, bounded within $\pm 24\%$ |
-| **Total Supply Current** | $\text{mA}$ | 1.212 | `FFVHTH` | Low power consumption ($< 1.25\text{ mA}$) |
-| **Total Power Dissipation** | $\text{mW}$ | 4.363 | `FFVHTH` | Power bounded across full extreme grid |
-| **Minimum DC Gain** | $\text{dB}$ | **89.697** | `FSVLTH` | $> 89.6\text{ dB}$ open-loop gain across all 45 corners |
-| **Minimum UGF** | $\text{MHz}$ | **8.417** | `SSVLTH` | $> 8.4\text{ MHz}$ bandwidth ($C_L = 10\text{ pF}$) |
-| **Minimum Phase Margin** | $\text{deg}$ | **59.932** | `FFVLTH` | Stable second-order response ($\text{PM} \ge 60^\circ$) |
-| **Maximum Input Offset** | $\mu\text{V}$ | 21.419 | `FSVLTH` | Low systematic input offset |
-| **Minimum CMRR @ 60 Hz** | $\text{dB}$ | **108.150** | `SSVLTH` | Excellent common-mode rejection |
-| **Minimum PSRR+ @ 60 Hz** | $\text{dB}$ | **101.557** | `SSNOMTH` | High power-supply isolation |
-| **Maximum Input Noise** | $\mu\text{Vrms}$ | **2.188** | `SSVLTH` | $< 2.2\text{ }\mu\text{Vrms}$ integrated in $0.05\text{--}150\text{ Hz}$ |
-| **Highest Input Low Limit** | $\text{mV}$ | 545.0 | `SSVHTL` | Rail-to-rail swing near ground |
-| **Worst Input High Headroom** | $\text{mV}$ | 213.0 | `FSVLTH` | Operates to within $213\text{ mV}$ of $V_{DD}$ |
-| **Worst Output High Headroom** | $\text{mV}$ | 215.0 | `FSVLTH` | Low-dropout output stage headroom |
-| **Minimum Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 7.034 / 5.522 | `SSVLTL` | Fast transient response ($> 5.5\text{ V}/\mu\text{s}$) |
-| **Maximum Settling Time** | $\text{ns}$ | 214.4 | `SSVLTL` | Settles in $< 215\text{ ns}$ to $2\text{ mV}$ tracking |
+![SE OTA Open-Loop Gain and Phase](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png)
+*Figure 6.3: SE OTA nominal open-loop gain and phase ($A_{v,0} = 93.86\text{ dB}$, $\text{UGF} = 12.14\text{ MHz}$, $\text{PM} = 71.98^\circ$).*
 
----
+![SE OTA Input-Referred Noise Density](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.input_referred_noise_density.png)
+*Figure 6.4: SE OTA input-referred noise spectral density ($1.876\text{ }\mu\text{Vrms}$ integrated from $0.05\text{ Hz}$ to $150\text{ Hz}$).*
 
-### 6.4 Fully Differential OTA (`FD_OTA`) Nominal & 9-Corner Summary
+![SE OTA Closed-Loop Usable Tracking Range](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_usable_range.png)
+*Figure 6.5: SE OTA closed-loop unity-follower tracking error showing rail-to-rail usable input range ($0.318\text{ V to }3.222\text{ V}$).*
 
-Extracted from [`FDOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_table_report.csv):
-
-| Parameter | Unit | `NOM` | `FF` | `SS` | `FS` | `SF` | `VL` ($3.0\text{V}$) | `VH` ($3.6\text{V}$) | `TL` ($-40^\circ\text{C}$) | `TH` ($+125^\circ\text{C}$) |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Total Current** | $\text{mA}$ | 1.753 | 2.015 | 1.541 | 1.797 | 1.707 | 1.724 | 1.773 | 1.466 | 1.987 |
-| **Total Power** | $\text{mW}$ | 5.784 | 6.650 | 5.085 | 5.931 | 5.633 | 5.173 | 6.383 | 4.839 | 6.557 |
-| **Differential DC Gain** | $\text{dB}$ | 86.391 | 85.783 | 86.746 | 85.699 | 86.943 | 85.929 | 86.750 | 87.264 | 84.914 |
-| **Differential UGF** | $\text{MHz}$ | 12.256 | 14.307 | 10.596 | 12.414 | 12.080 | 11.999 | 12.452 | 13.798 | 10.088 |
-| **Differential Phase Margin** | $\text{deg}$ | 73.795 | 68.037 | 78.553 | 72.976 | 74.617 | 73.571 | 73.979 | 77.119 | 69.734 |
-| **Input Offset** | $\text{pV}$ | -31.226 | 32.195 | -0.060 | 45.626 | -25.710 | 6.065 | 0.118 | 28.678 | -9.734 |
-| **Input Noise ($0.05\text{--}150\text{ Hz}$)** | $\mu\text{Vrms}$ | 3.111 | 2.960 | 3.264 | 3.057 | 3.166 | 3.104 | 3.117 | 2.981 | 3.368 |
-| **Output CM Error @ Nom** | $\text{mV}$ | -0.057 | -3.702 | 4.037 | 0.755 | -0.842 | -0.027 | -0.079 | -18.721 | 29.726 |
-| **Input CM Low** | $\text{V}$ | 0.897 | 0.796 | 0.999 | 0.814 | 0.979 | 0.892 | 0.899 | 0.899 | 0.886 |
-| **Input CM High** | $\text{V}$ | 3.300 | 3.300 | 3.300 | 3.147 | 3.300 | 3.000 | 3.600 | 3.300 | 3.284 |
-| **Diff Output Swing High** | $\text{V}$ | +3.158 | +3.159 | +3.155 | +3.145 | +3.170 | +2.859 | +3.456 | +3.229 | +3.047 |
-| **Diff Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 7.24 / 7.14 | 9.04 / 8.94 | 5.91 / 5.81 | 7.36 / 7.27 | 7.11 / 7.01 | 7.10 / 7.01 | 7.34 / 7.24 | 6.45 / 6.38 | 7.71 / 7.58 |
-| **Diff Settling Time ($2\text{ mV}$)** | $\text{ns}$ | 153.6 | 141.1 | 204.6 | 149.6 | 158.1 | 156.1 | 152.1 | 180.1 | 173.6 |
-| **CMFB Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 3.51 / 3.49 | 4.46 / 4.54 | 2.71 / 2.71 | 3.62 / 3.55 | 3.35 / 3.41 | 3.28 / 3.42 | 3.62 / 3.53 | 3.16 / 3.89 | 3.69 / 2.80 |
-| **CMFB Settling Time** | $\text{ns}$ | 313.6 | 266.1 | 412.1 | 303.1 | 324.6 | 318.1 | 310.6 | 321.1 | 384.1 |
+![SE OTA Closed-Loop Step Response](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_step_response.png)
+*Figure 6.6: SE OTA closed-loop large-signal step transient ($V_{\text{step}} = 1.0\text{ V}$, settling time $164.9\text{ ns}$).*
 
 ---
 
-### 6.5 FD OTA Full-PVT Worst-Case Performance
+### 6.3 Fully Differential OTA (`FD_OTA`) Performance
 
-Extracted from [`FDOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_worst_case_report.csv):
+| Parameter | Unit | Nominal Value | Full-PVT Worst Value | Worst Corner |
+| :--- | :--- | :---: | :---: | :---: |
+| **Total Current / Power** | $\text{mA} / \text{mW}$ | 1.753 / 5.784 | 2.320 / 8.352 | `FFVHTH` |
+| **Differential DC Gain** | $\text{dB}$ | 86.391 | **83.594** | `FSVLTH` |
+| **Differential UGF ($C_L = 10\text{ pF}$)** | $\text{MHz}$ | 12.256 | **8.306** | `SSVLTH` |
+| **Differential Phase Margin** | $\text{deg}$ | 73.795 | **64.167** | `FFVLTH` |
+| **Input-Referred Noise ($0.05\text{--}150\text{ Hz}$)** | $\mu\text{Vrms}$ | 3.111 | **3.545** | `SSVHTH` |
+| **Output CM Voltage Error** | $\text{mV}$ | -0.057 | 32.999 | `SSNOMTH` |
+| **Symmetrical Output Swing** | $\text{V}$ | $\pm 3.158$ | $\mathbf{\pm 2.730}$ | `FSVLTH` |
+| **Differential Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 7.238 / 7.140 | 5.138 / 5.073 | `SSVLTL` |
+| **Differential Settling Time ($2\text{ mV}$)** | $\text{ns}$ | 153.6 | 236.6 | `SSVLTL` |
+| **CMFB Phase Margin / Settling** | $\text{deg} / \text{ns}$ | 86.428 / 313.6 | 84.1 / 507.1 | `FFVLTH` / `SSVLTH` |
 
-| Parameter | Unit | Full-PVT Worst Value | Worst-Case Corner | Evaluation / Compliance |
-| :--- | :--- | :---: | :---: | :--- |
-| **Differential DC Gain** | $\text{dB}$ | **83.594** | `FSVLTH` | $> 83.5\text{ dB}$ across full 45-PVT grid |
-| **Differential UGF** | $\text{MHz}$ | **8.306** | `SSVLTH` | High-speed differential core ($C_L = 10\text{ pF}$) |
-| **Differential Phase Margin** | $\text{deg}$ | **64.167** | `FFVLTH` | Robust small-signal differential stability |
-| **Input-Referred Noise** | $\mu\text{Vrms}$ | **3.545** | `SSVHTH` | Low-noise differential channel |
-| **Output CM Voltage Error** | $\text{mV}$ | 32.999 | `SSNOMTH` | Precise continuous-time CMFB regulation |
-| **Input CM Low Bound** | $\text{V}$ | 1.006 | `SSVHTL` | Broad input common-mode range |
-| **Input CM High Headroom** | $\text{mV}$ | 311.0 | `FSVLTH` | Tracks to within $311\text{ mV}$ of $V_{DD}$ |
-| **Differential Output Swing** | $\text{V}$ | **$\pm 2.730$** | `FSVLTH` | Large dynamic output swing range |
-| **Differential Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 5.138 / 5.073 | `SSVLTL` | Fast symmetric differential slewing |
-| **Differential Settling Time** | $\text{ns}$ | 236.6 | `SSVLTL` | Fast transient response ($< 240\text{ ns}$) |
-| **CMFB Slew Rate (Rise / Fall)** | $\text{V}/\mu\text{s}$ | 2.241 / 2.133 | `SSVLNOM` / `SSVLTH` | Rapid common-mode recovery |
-| **CMFB Settling Time** | $\text{ns}$ | 507.1 | `SSVLTH` | Stable CMFB loop transient stabilization |
+![FD OTA Open-Loop Gain and Phase](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.open_loop_gain_phase.png)
+*Figure 6.7: FD OTA differential open-loop gain and phase ($A_{v,0} = 86.39\text{ dB}$, $\text{UGF} = 12.26\text{ MHz}$, $\text{PM} = 73.80^\circ$).*
+
+![FD OTA Input-Referred Noise Density](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.input_referred_noise_density.png)
+*Figure 6.8: FD OTA input-referred noise spectral density ($3.111\text{ }\mu\text{Vrms}$ integrated in $0.05\text{--}150\text{ Hz}$).*
+
+![FD OTA Symmetrical Output Swing & VTC](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
+*Figure 6.9: FD OTA closed-loop differential transfer curve and dynamic output swing limits ($\pm 3.158\text{ V}$).*
+
+![FD OTA Input Common-Mode Range](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.input_common_mode_range.png)
+*Figure 6.10: FD OTA input common-mode range (ICMR) verification across common-mode input sweeps.*
+
+![FD OTA Closed-Loop Step Response](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.closed_loop_step_response.png)
+*Figure 6.11: FD OTA closed-loop differential step transient and settling performance.*
+
+![FD OTA Output CM Transient Settling](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.output_cm_transient.png)
+*Figure 6.12: CMFB transient regulation settling output common-mode voltage back to $V_{\text{REF}} = 1.65\text{ V}$.*
 
 ---
 
-### 6.6 Standalone Differential Core (`FDC`) & CMFB Summaries
-
-Extracted from [`NOM.FDC_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.FDC_summary.csv) and [`NOM.CMFB_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.CMFB_summary.csv):
+### 6.4 Standalone Core (`FDC`) & CMFB Subsystems
 
 | Sub-Block | Characterization Metric | Nominal Result | Design Specification |
 | :--- | :--- | :---: | :---: |
@@ -266,6 +214,12 @@ Extracted from [`NOM.FDC_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisiti
 | | Common-Mode Phase Margin | 86.428° | High loop damping |
 | | Valid Reference Voltage Range | $1.120\text{ to }2.760\text{ V}$ | Symmetric tracking around $1.65\text{ V}$ |
 | | Transient Settling Time ($V_{\text{REF}}$ step) | 5.2 ns | Instantaneous CM recovery |
+
+![FDC Core Open-Loop AC](Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.diff_ac.png)
+*Figure 6.13: FDC differential core open-loop AC frequency response.*
+
+![CMFB Loop Stability AC](Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.ol_ac.png)
+*Figure 6.14: CMFB loop open-loop frequency response ($A_{\text{cm}} = 43.91\text{ dB}$, $\text{UGF} = 800.9\text{ MHz}$, $\text{PM} = 86.43^\circ$).*
 
 ---
 
@@ -290,12 +244,6 @@ Extracted from [`NOM.FDC_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisiti
   - [`NOM.FDOTA_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/NOM.FDOTA_summary.csv): Compatibility summary export
   - [`NOM.FDC_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.FDC_summary.csv): Differential core standalone summary
   - [`NOM.CMFB_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.CMFB_summary.csv): CMFB standalone summary
-
-### 7.2 Generated Characterization Figures
-
-- **BIAS Plots**: `NOM_BIAS_STARTUP.png`, `NOM_BIAS_STARTUP_VOLTAGE.png`, `NOM_BIAS_SEL.png`, `NOM_BIAS_TEMP.png`, `NOM_BIAS_VDD.png`, `NOM_BIAS_2D.png`.
-- **SE OTA Plots**: `NOM.open_loop_gain_phase.png`, `NOM.cmrr.png`, `NOM.psrr.png`, `NOM.input_referred_noise_density.png`, `NOM.open_loop_vtc.png`, `NOM.closed_loop_usable_range.png`, `NOM.closed_loop_step_response.png`.
-- **FD OTA Plots**: `NOM.open_loop_gain_phase.png`, `NOM.cmrr.png`, `NOM.psrr.png`, `NOM.input_referred_noise_density.png`, `NOM.open_loop_vtc.png`, `NOM.output_swing_and_closed_loop_vtc.png`, `NOM.input_common_mode_range.png`, `NOM.closed_loop_step_response.png`, `NOM.output_cm_transient.png`.
 
 ---
 
