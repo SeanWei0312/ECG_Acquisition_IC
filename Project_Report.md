@@ -2,62 +2,89 @@
 
 **Project Stage**: Pre-layout schematic design, full-PVT block verification, and frontend integration  
 **Process Technology**: GlobalFoundries 180 nm MCU (`gf180mcu`, 3.3 V 1P6M)  
-**Target Application**: Low-power, high-CMRR biomedical electrophysiology acquisition  
+**Target Application**: Low-power, high-CMRR biomedical electrophysiology acquisition (ECG / Biopotential Recording)  
 
 ---
 
 ## 1. Executive Summary
 
-This report documents the design, architecture, and verification of a multi-stage analog frontend (AFE) integrated circuit for electrocardiogram (ECG) acquisition. Developed for the IEEE SSCS Chipathon 2026 flow, the design provides an end-to-end signal conditioning chain tailored to sub-millivolt biopotential recording in the presence of strong common-mode interference and electrode offset.
+This report documents the design, transistor-level sizing, simulation methodology, and multi-corner verification of a low-noise, high-common-mode-rejection analog frontend (AFE) integrated circuit for electrocardiogram (ECG) acquisition. Developed for the IEEE SSCS Chipathon 2026 flow, the design provides an end-to-end signal conditioning chain tailored to sub-millivolt biopotential recording in the presence of large differential electrode offset voltages ($\pm 300\text{ mV}$) and strong powerline common-mode interference ($50/60\text{ Hz}$).
 
-### Primary Verification Highlights
+### Key Verification Deliverables
 
-1. **Self-Biasing Reference (`BIAS` / `SEL`)**: Characterized across 5 process corners, continuous supply voltage sweeps ($3.0\text{--}3.6\text{ V}$), temperature sweeps ($-40^\circ\text{C}\text{ to }+125^\circ\text{C}$), 35 startup transient runs (**0 failures**), and analog multiplexer transmission accuracy ($< 26\text{ nV}$ error).
+1. **Master Bias & Reference (`BIAS` / `SEL`)**: Characterized across 5 process corners, continuous supply voltage sweeps ($3.0\text{--}3.6\text{ V}$), temperature sweeps ($-40^\circ\text{C}\text{ to }+125^\circ\text{C}$), 35 startup transient runs (**0 failures**), and analog multiplexer transmission accuracy ($< 26\text{ nV}$ error).
 2. **Single-Ended OTA (`SE_OTA`)**: Full 45-point PVT characterization ($5\text{ processes} \times 9\text{ V-T corners}$) covering open-loop stability, rejection, noise integration ($0.05\text{--}150\text{ Hz}$), closed-loop tracking, high-side headroom, and transient step settling.
 3. **Fully Differential OTA (`FD_OTA`)**: Full 45-point PVT characterization of the core amplifier with dynamic continuous-time common-mode feedback (`CMFB`), closed-loop differential tracking, input common-mode range, and step response.
-4. **Data Integrity Pipeline**: All post-processing analyzers implement a strict numeric-first double-precision pipeline (`ngspice TXT -> double -> PVT worst-case selection -> SI scaling -> string format`), eliminating intermediate truncation and prefix errors.
+4. **$g_m/I_D$ Sizing Automation**: Semi-empirical transistor sizing based on continuous lookups of transconductance efficiency ($g_m/I_D$), current density ($I_D/W$), transit frequency ($f_T$), and self-gain ($g_m/g_{ds}$).
+5. **Data Integrity Pipeline**: All post-processing analyzers implement a strict numeric-first double-precision pipeline (`ngspice TXT -> double -> PVT worst-case selection -> SI scaling -> string format`), eliminating intermediate truncation and prefix errors.
 
 > [!NOTE]
-> All reported performance metrics are pre-layout schematic simulations. Monte Carlo mismatch analysis, physical layout parasitics (PEX), mixed-signal SAR ADC integration, and laboratory silicon validation are outlined in [Section 8](#8-limitations-and-next-steps).
+> All reported performance metrics are pre-layout schematic simulations. Monte Carlo mismatch analysis, physical layout parasitics (PEX), mixed-signal SAR ADC integration, and laboratory silicon validation are detailed in [Section 9](#9-limitations-and-future-work).
 
 ---
 
-## 2. System Architecture & Scope
+## 2. System Architecture & Building Blocks
 
 ```
-[ ECG Electrodes ] ───> [ INA (FD_OTA Core) ] ───> [ LPF (Anti-Aliasing) ] ───> [ PGA (Gain Stage) ] ───> [ BUFFER ] ───> [ 10-bit SAR ADC ]
-                              │
-                      [ RLD Amplifier ] <── (Common-Mode Sense)
+                      ┌──────────────────────────────────────────────────────────┐
+                      │                   Integrated AFE Chain                   │
+                      │                                                          │
+[ ECG Electrodes ] ───┼──> [ INA (FD_OTA Core) ] ──> [ LPF (0.05-150Hz) ] ──> [ PGA (1-16x) ] ──> [ BUFFER ] ──> [ ADC In ]
+                      │             │
+                      │     [ RLD Amplifier ] <── (Common-Mode Sense)            │
+                      └──────────────────────────────────────────────────────────┘
+                                    ▲
+                                    │ (40 uA Bias Distribution)
+                      ┌─────────────────────────┐
+                      │  BIAS / MIRROR / SEL    │
+                      └─────────────────────────┘
 ```
 
-### 2.1 System Architecture Diagram
+### 2.1 Integrated AFE Top-Level Schematic
 
-![ECG acquisition IC system block diagram](Design_Files/System%20Design/System_Block.png)
-
-### 2.2 Analog Frontend (AFE) Top-Level Schematic
-
-The integrated top-level AFE schematic combines the biopotential instrumentation amplifier, low-pass filter, programmable gain amplifier, ADC output driver, right-leg drive feedback, and master biasing network:
+The integrated top-level AFE schematic combines the biopotential instrumentation amplifier, active low-pass filter, programmable gain amplifier, ADC output driver, right-leg drive feedback, and master biasing network:
 
 ![ECG Analog Frontend (AFE) Top-Level Schematic](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
 
-### 2.3 Block Inventory & Design Scope
+### 2.2 Circuit Building Blocks & Topology Inventory
 
-| Block | Function | Circuit Architecture |
+| Subsystem | Circuit Blocks | Topology & Architectural Description |
 | :--- | :--- | :--- |
-| **`BIAS`** | Master Reference Current | $\beta$-Multiplier core with threshold-referenced startup and low-sensitivity bias mirrors |
-| **`SEL`** | Channel / Mode Multiplexer | Low-resistance CMOS transmission gates with complementary inverter drives |
-| **`MIRROR`** | Current Distribution | Cascode current mirrors distributing $40\text{ }\mu\text{A}$ bias currents to all frontend blocks |
-| **`SE_OTA`** | Single-Ended Amplifier | Folded-cascode architecture with PMOS input pair for wide input common-mode range |
-| **`FD_OTA`** | Fully Differential Core | Fully differential folded-cascode core (`FDC`) coupled to high-bandwidth common-mode feedback (`CMFB`) |
-| **`INA`** | Low-Noise Instrumentation Amp | Active differential instrumentation architecture for high input impedance |
-| **`LPF`** | Anti-Aliasing Filter | Active low-pass filter stage suppressing out-of-band noise |
-| **`PGA`** | Programmable Gain Amp | Switchable gain stage scaling biopotentials to full ADC input dynamic range |
-| **`BUFFER`** | ADC Driver Buffer | Low output impedance closed-loop follower driving ADC sampling capacitance |
-| **`RLD`** | Right-Leg Drive Amp | Inverting amplifier driving patient common-mode back to cancel $50/60\text{ Hz}$ interference |
+| **Reference & Biasing** | `BIAS`, `MIRROR`, `SEL` | $40\text{ }\mu\text{A}$ $\beta$-multiplier master current reference, cascode distribution mirrors, and low-resistance CMOS analog multiplexers |
+| **Preamplification** | `INA`, `FD_OTA` | High-input-impedance instrumentation amplifier built on a 2-stage fully differential folded-cascode core (`FDC`) |
+| **Common-Mode Control** | `CMFB`, `RLD` | High-speed continuous-time common-mode feedback loop ($800\text{ MHz}$ loop UGF) and active patient right-leg drive cancellation |
+| **Filtering & Gain Scaling**| `LPF`, `PGA`, `SE_OTA` | Active low-pass anti-aliasing filter ($0.05\text{--}150\text{ Hz}$ passband) and programmable gain amplifier driven by single-ended folded-cascode OTAs |
+| **Output Stage & Support** | `BUFFER`, `TG`, `INV` | Low-impedance closed-loop output driver for sampling capacitance, CMOS transmission gates, and digital inverter drives |
 
 ---
 
-## 3. Nominal Operating Conditions
+## 3. Transistor-Level Sizing & $g_m/I_D$ Methodology
+
+All operational transconductance amplifiers and reference circuits are sized using the $g_m/I_D$ methodology on the GlobalFoundries 180 nm MCU process.
+
+### 3.1 Single-Ended OTA (`SE_OTA`) Sizing
+
+Implemented in [`SE_OTA_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Design_Files/IC%20Design/Schematic/SE_OTA/SE_OTA_Sizing.m):
+
+* **Topology**: 2-stage Miller-compensated folded-cascode single-ended OTA.
+* **Input Pair ($M_1, M_2$)**: PMOS differential pair operated in moderate/weak inversion ($g_m/I_D = 16.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$) for high transconductance efficiency and minimal thermal/flicker noise.
+* **First-Stage Loads ($M_3, M_4$)**: NMOS current-source loads operated in strong inversion ($g_m/I_D = 16.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$) to minimize input-referred noise contribution.
+* **Tail Current Source ($M_5$)**: PMOS current source ($g_m/I_D = 6.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$) for high output impedance and high CMRR.
+* **Second-Stage Driver ($M_6$)**: NMOS common-source amplifier ($g_m/I_D = 6.0\text{ V}^{-1}$, $L = 0.5\text{ }\mu\text{m}$) with PMOS active load ($M_7$).
+* **Compensation Network**: Miller compensation capacitor $C_c = 2.0\text{ pF}$ driving a nominal load $C_L = 10.0\text{ pF}$, establishing a pole-splitting ratio $k_{p2} = 3.5$ for phase margin $> 70^\circ$.
+
+### 3.2 Fully Differential Core (`FDC`) & CMFB Sizing
+
+Implemented in [`FDC_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Design_Files/IC%20Design/Schematic/FD_OTA/FDC/FDC_Sizing.m) and [`CMFB_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Design_Files/IC%20Design/Schematic/FD_OTA/CMFB/CMFB_Sizing.m):
+
+* **Differential Core Input Pair ($M_1, M_2$)**: NMOS differential pair sized with $g_m/I_D = 20.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$ for high transconductance at low bias currents.
+* **CMFB Controlled Loads ($M_3, M_4$)**: PMOS current sources ($g_m/I_D = 20.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$) dynamically modulated by the $V_{\text{CMFB}}$ error voltage.
+* **Differential Second Stage ($M_6\text{--}M_9$)**: PMOS common-source amplifiers with NMOS active current sources ($L = 1.0\text{ }\mu\text{m}$, $g_m/I_D = 4.0\text{ V}^{-1}$) providing large output swing.
+* **Continuous-Time CMFB Amplifier**: Active common-mode sense resistors with an NMOS differential error amplifier ($L = 0.5\text{ }\mu\text{m}$, $g_m/I_D = 4.0\text{ V}^{-1}$) yielding an ultra-fast loop unity-gain bandwidth ($> 800\text{ MHz}$) and phase margin $> 86^\circ$.
+
+---
+
+## 4. Nominal Operating Conditions
 
 Unless otherwise noted, nominal characterization conditions are defined as:
 
@@ -75,9 +102,9 @@ Unless otherwise noted, nominal characterization conditions are defined as:
 
 ---
 
-## 4. Verification Methodology
+## 5. Verification Methodology
 
-### 4.1 45-Point PVT Verification Matrix
+### 5.1 45-Point PVT Verification Matrix
 
 The complete PVT verification matrix comprises **5 process corners** $\times$ **9 environmental conditions** = **45 corners**:
 
@@ -91,7 +118,7 @@ The complete PVT verification matrix comprises **5 process corners** $\times$ **
 
 Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fast, $3.6\text{ V}, +125^\circ\text{C}$; `SSVLTH` = Slow-Slow, $3.0\text{ V}, +125^\circ\text{C}$).
 
-### 4.2 Single-Ended OTA Characterization Flow
+### 5.2 Single-Ended OTA Characterization Flow
 
 1. **Open-Loop Transfer Function**: AC differential sweep yields $A_{v,0}$, Unity-Gain Frequency (UGF), and Phase Margin (PM) at $0\text{ dB}$ crossover.
 2. **Rejection Ratios**: High-resolution AC transfer functions evaluate CMRR, PSRR+, and PSRR$-$ at key powerline frequencies ($60\text{ Hz}$ and $150\text{ Hz}$).
@@ -100,7 +127,7 @@ Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fas
 4. **Closed-Loop Usable Follower Range & Headroom**: A DC input sweep measures unity-follower tracking error $\Delta V = |V_{\text{OUT}} - V_{\text{IN}}|$. The usable range is the continuous region around $V_{DD}/2$ satisfying $|\Delta V| \le 2\text{ mV}$. High-side headroom is evaluated as $V_{\text{DD}} - V_{\text{usable,max}}$.
 5. **Transient Dynamics**: Closed-loop step excitation measures worst-case $10\%\text{--}90\%$ rise/fall slew rates and settling time into the $2\text{ mV}$ error band.
 
-### 4.3 Fully Differential OTA & CMFB Flow
+### 5.3 Fully Differential OTA & CMFB Flow
 
 1. **Differential Small-Signal Stability**: AC sweeps evaluate differential open-loop gain, UGF, and phase margin with symmetric differential excitation.
 2. **Dynamic CMFB Loop**: Open-loop and closed-loop CMFB characterization evaluates common-mode loop gain, UGF, phase margin, and transient settling of $V_{\text{OUT,cm}}$ to step perturbations on $V_{\text{REF}}$.
@@ -109,9 +136,9 @@ Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fas
 
 ---
 
-## 5. Detailed Simulation Results
+## 6. Detailed Simulation Results
 
-### 5.1 Bias & Reference Subsystem (`BIAS` / `SEL`)
+### 6.1 Bias & Reference Subsystem (`BIAS` / `SEL`)
 
 | Performance Parameter | Nominal Result | PVT Extrema / Range | Worst-Case Corner |
 | :--- | :---: | :---: | :---: |
@@ -126,7 +153,7 @@ Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fas
 
 ---
 
-### 5.2 Single-Ended OTA (`SE_OTA`) Nominal & 9-Corner Summary
+### 6.2 Single-Ended OTA (`SE_OTA`) Nominal & 9-Corner Summary
 
 Extracted from [`SEOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_table_report.csv):
 
@@ -152,7 +179,7 @@ Extracted from [`SEOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquis
 
 ---
 
-### 5.3 SE OTA Full-PVT Worst-Case Performance
+### 6.3 SE OTA Full-PVT Worst-Case Performance
 
 Extracted from [`SEOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_worst_case_report.csv):
 
@@ -176,7 +203,7 @@ Extracted from [`SEOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_A
 
 ---
 
-### 5.4 Fully Differential OTA (`FD_OTA`) Nominal & 9-Corner Summary
+### 6.4 Fully Differential OTA (`FD_OTA`) Nominal & 9-Corner Summary
 
 Extracted from [`FDOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_table_report.csv):
 
@@ -200,7 +227,7 @@ Extracted from [`FDOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquis
 
 ---
 
-### 5.5 FD OTA Full-PVT Worst-Case Performance
+### 6.5 FD OTA Full-PVT Worst-Case Performance
 
 Extracted from [`FDOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_worst_case_report.csv):
 
@@ -221,29 +248,48 @@ Extracted from [`FDOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_A
 
 ---
 
-## 6. Generated Reports & Reviewable Artifacts
+### 6.6 Standalone Differential Core (`FDC`) & CMFB Summaries
 
-### 6.1 Generated CSV Reports
+Extracted from [`NOM.FDC_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.FDC_summary.csv) and [`NOM.CMFB_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.CMFB_summary.csv):
 
-- **BIAS / SEL**:
-  - `BIAS_table_report.csv`: 9-corner comparison summary
-  - `BIAS_global_worst_case.csv`: Full PVT extrema search
-  - `BIAS_startup_report.csv` & `BIAS_startup_summary.csv`: 35 startup transient runs
-  - `BIAS_sel_report.csv`: Multiplexer error across code configurations
-  - `BIAS_dc2d_report.csv`: 2D DC temperature/supply grid matrix
-  - `BIAS_reference_report.csv`: Reference voltage tracking report
+| Sub-Block | Characterization Metric | Nominal Result | Design Specification |
+| :--- | :--- | :---: | :---: |
+| **`FDC` (Core)** | Differential DC Gain | 88.362 dB | $> 80\text{ dB}$ |
+| | Unity-Gain Frequency ($C_L = 10\text{ pF}$) | 12.236 MHz | $> 10\text{ MHz}$ |
+| | Phase Margin | 72.894° | $> 60^\circ$ |
+| | Plant Differential Gain | 18,831 V/V | High-gain core |
+| | Input Noise ($1\text{--}150\text{ Hz}$) | 2.461 µVrms | $< 3.0\text{ }\mu\text{Vrms}$ |
+| **`CMFB`** | Open-Loop Common-Mode Gain | 43.912 dB | $> 40\text{ dB}$ |
+| | Common-Mode Loop UGF ($C_L = 2\text{ pF}$) | 800.932 MHz | Fast CM stabilization |
+| | Common-Mode Phase Margin | 86.428° | High loop damping |
+| | Valid Reference Voltage Range | $1.120\text{ to }2.760\text{ V}$ | Symmetric tracking around $1.65\text{ V}$ |
+| | Transient Settling Time ($V_{\text{REF}}$ step) | 5.2 ns | Instantaneous CM recovery |
+
+---
+
+## 7. Generated Reports & Reviewable Artifacts
+
+### 7.1 CSV Summary Datasets
+
+- **BIAS Subsystem**:
+  - [`BIAS_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_table_report.csv): 9-corner comparison summary
+  - [`BIAS_global_worst_case.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_global_worst_case.csv): Global PVT extrema search
+  - [`BIAS_startup_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_startup_report.csv): 35 startup transient runs
+  - [`BIAS_sel_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_sel_report.csv): Transmission gate code error
+  - [`BIAS_dc2d_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_dc2d_report.csv): 2D DC voltage/temperature surface grid
+  - [`BIAS_reference_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_reference_report.csv): Reference voltage stability report
 - **Single-Ended OTA (`SE_OTA`)**:
-  - `SEOTA_table_report.csv`: 9-column comparison summary
-  - `SEOTA_worst_case_report.csv`: 45-point full-PVT worst-case dataset
-  - `NOM.SEOTA_summary.csv`: Compatibility summary export
+  - [`SEOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_table_report.csv): 9-column comparison summary
+  - [`SEOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_worst_case_report.csv): 45-point full-PVT worst-case dataset
+  - [`NOM.SEOTA_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.SEOTA_summary.csv): Compatibility summary export
 - **Fully Differential OTA (`FD_OTA`)**:
-  - `FDOTA_table_report.csv`: 9-column comparison summary
-  - `FDOTA_worst_case_report.csv`: 45-point full-PVT worst-case dataset
-  - `NOM.FDOTA_summary.csv`: Compatibility summary export
-  - `NOM.FDC_summary.csv`: Differential core standalone summary
-  - `NOM.CMFB_summary.csv`: CMFB standalone summary
+  - [`FDOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_table_report.csv): 9-column comparison summary
+  - [`FDOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_worst_case_report.csv): 45-point full-PVT worst-case dataset
+  - [`NOM.FDOTA_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/NOM.FDOTA_summary.csv): Compatibility summary export
+  - [`NOM.FDC_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.FDC_summary.csv): Differential core standalone summary
+  - [`NOM.CMFB_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.CMFB_summary.csv): CMFB standalone summary
 
-### 6.2 Generated Characterization Figures
+### 7.2 Generated Characterization Figures
 
 - **BIAS Plots**: `NOM_BIAS_STARTUP.png`, `NOM_BIAS_STARTUP_VOLTAGE.png`, `NOM_BIAS_SEL.png`, `NOM_BIAS_TEMP.png`, `NOM_BIAS_VDD.png`, `NOM_BIAS_2D.png`.
 - **SE OTA Plots**: `NOM.open_loop_gain_phase.png`, `NOM.cmrr.png`, `NOM.psrr.png`, `NOM.input_referred_noise_density.png`, `NOM.open_loop_vtc.png`, `NOM.closed_loop_usable_range.png`, `NOM.closed_loop_step_response.png`.
@@ -251,7 +297,7 @@ Extracted from [`FDOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_A
 
 ---
 
-## 7. Verification Reproducibility
+## 8. Verification Reproducibility
 
 Execute all simulations and post-processing analyzers from the repository root:
 
@@ -272,12 +318,12 @@ All analysis routines have been validated in MATLAB R2026a under Windows and Lin
 
 ---
 
-## 8. Limitations and Next Steps
+## 9. Limitations and Future Work
 
 | Phase | Milestone | Objective / Completion Criteria |
 | :---: | :--- | :--- |
 | **Phase 1** | **Top-Level AFE Verification** | Execute full-chain transient and frequency-domain verification across the cascaded `INA -> LPF -> PGA -> BUFFER` path. |
 | **Phase 2** | **Mismatch & Monte Carlo** | Run statistical mismatch simulations to establish true yield, realistic CMRR/PSRR floors, and statistical input offset bounds. |
-| **Phase 3** | **Physical Layout & Extraction** | Complete DRC/LVS-clean layout on GF180 1P6M, extract寄生 $RC$ networks, and perform post-layout extracted re-simulation. |
+| **Phase 3** | **Physical Layout & Extraction** | Complete DRC/LVS-clean layout on GF180 1P6M, extract parasitic $RC$ networks, and perform post-layout extracted re-simulation. |
 | **Phase 4** | **Mixed-Signal ADC Integration** | Integrate the 10-bit SAR ADC converter macro with the analog frontend core. |
 | **Phase 5** | **Silicon Tapeout & Laboratory Test** | Prepare pad ring, chip assembly, evaluation PCB testbench, and bio-signal measurement validation. |
