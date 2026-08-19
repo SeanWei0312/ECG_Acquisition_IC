@@ -26,18 +26,18 @@ This report documents the design, transistor-level sizing, simulation methodolog
 ## 2. System Architecture & Building Blocks
 
 ```
-                      ┌──────────────────────────────────────────────────────────┐
-                      │                   Integrated AFE Chain                   │
-                      │                                                          │
-[ ECG Electrodes ] ───┼──> [ INA (FD_OTA Core) ] ──> [ LPF (0.05-150Hz) ] ──> [ PGA (1-16x) ] ──> [ BUFFER ] ──> [ ADC In ]
-                      │             │
-                      │     [ RLD Amplifier ] <── (Common-Mode Sense)            │
-                      └──────────────────────────────────────────────────────────┘
-                                    ▲
-                                    │ (40 uA Bias Distribution)
-                      ┌─────────────────────────┐
-                      │  BIAS / MIRROR / SEL    │
-                      └─────────────────────────┘
+                      ┌──────────────────────────────────────────────────────────────────────────────────┐
+                      │                            Integrated AFE Signal Chain                           │
+                      │                                                                                  │
+[ ECG Electrodes ] ───┼──> [ INA (60x) ] ──> [ LPF (4x, fc=150Hz) ] ──> [ PGA (1-16x) ] ──> [ BUFFER ] ──┼──> [ ADC Drive ]
+  (Vin,diff <= 1mV)   │          │                                                                       │    (Vout,diff <= 3V)
+                      │  [ RLD Amplifier ] <── (Common-Mode Sense: 4 Meg)                                │
+                      └──────────────────────────────────────────────────────────────────────────────────┘
+                                                 ▲
+                                                 │ (40 uA Cascode Bias Distribution)
+                                    ┌─────────────────────────┐
+                                    │  BIAS / MIRROR / SEL    │
+                                    └─────────────────────────┘
 ```
 
 ### 2.1 Integrated AFE Top-Level Schematic
@@ -46,15 +46,17 @@ The integrated top-level AFE schematic combines the biopotential instrumentation
 
 ![ECG Analog Frontend (AFE) Top-Level Schematic](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
 
-### 2.2 Circuit Building Blocks & Topology Inventory
+### 2.2 Circuit Subsystems & Sizing Specifications
 
-| Subsystem | Circuit Blocks | Topology & Architectural Description |
-| :--- | :--- | :--- |
-| **Reference & Biasing** | `BIAS`, `MIRROR`, `SEL` | $40\text{ }\mu\text{A}$ $\beta$-multiplier master current reference, cascode distribution mirrors, and low-resistance CMOS analog multiplexers |
-| **Preamplification** | `INA`, `FD_OTA` | High-input-impedance instrumentation amplifier built on a 2-stage fully differential folded-cascode core (`FDC`) |
-| **Common-Mode Control** | `CMFB`, `RLD` | High-speed continuous-time common-mode feedback loop ($800\text{ MHz}$ loop UGF) and active patient right-leg drive cancellation |
-| **Filtering & Gain Scaling**| `LPF`, `PGA`, `SE_OTA` | Active low-pass anti-aliasing filter ($0.05\text{--}150\text{ Hz}$ passband) and programmable gain amplifier driven by single-ended folded-cascode OTAs |
-| **Output Stage & Support** | `BUFFER`, `TG`, `INV` | Low-impedance closed-loop output driver for sampling capacitance, CMOS transmission gates, and digital inverter drives |
+| Stage | Subsystem | Circuit Topology & Key Components | Stage Gain & Bandwidth |
+| :--- | :--- | :--- | :---: |
+| **Stage 1** | **Instrumentation Amp (`INA`)** | 3-opamp topology ($2\times$ `SE_OTA` input buffers, $1\times$ `FD_OTA` difference stage, $R_1 = 118\text{ k}\Omega$, $R_{\text{gain}} = 4\text{ k}\Omega$, $R_{2\text{--}5} = 10\text{--}40\text{ k}\Omega$) | $60\text{ V/V}$ ($35.6\text{ dB}$)<br>$\text{BW} > 10\text{ kHz}$ |
+| **Stage 2** | **Active Low-Pass Filter (`LPF`)** | Fully differential active 2nd-order RC filter ($1\times$ `FD_OTA`, $R = 3.7\text{ M}\Omega$, $C = 100\text{ pF}$ MIM) | $4\text{ V/V}$ ($12.0\text{ dB}$)<br>$f_c \approx 150\text{ Hz}$ |
+| **Stage 3** | **Programmable Gain Amp (`PGA`)** | Fully differential switched-resistor ladder ($1\times$ `FD_OTA`, $6\times$ `TG`, $R = 20\text{--}120\text{ k}\Omega$) | $1\times, 2\times, 4\times, 8\times, 16\times$<br>($0\text{ to }24.1\text{ dB}$) |
+| **Stage 4** | **Output Driver (`BUFFER`)** | Closed-loop differential unity follower ($1\times$ `FD_OTA`, $4\times 20\text{ k}\Omega$) driving sampling cap | $1\text{ V/V}$ ($0\text{ dB}$)<br>$C_L = 10\text{ pF}$ |
+| **Support** | **Right-Leg Drive (`RLD`)** | Active integrator sensing input CM ($1\times$ `SE_OTA`, $R_{\text{in}} = 4\text{ M}\Omega$, $R_f = 20\text{ M}\Omega$, $C_f = 80\text{ pF}$) | High active CM suppression ($> 100\text{ dB}$) |
+| **Reference** | **Master Bias (`BIAS`/`MIRROR`)** | $\beta$-Multiplier reference ($40\text{ }\mu\text{A}$ target) with startup device and 11-channel cascode mirror tree | $\Delta I_{\text{bias}} < 0.15\%$ mirror tracking |
+| **Total Chain** | **Full AFE Performance** | Cascaded multi-stage biopotential recording path with analog channel selection (`SEL`) | **$240\text{ to }3840\text{ V/V}$**<br>($47.6\text{ to }71.7\text{ dB}$)<br>**$0.05\text{--}150\text{ Hz}$** |
 
 ---
 
