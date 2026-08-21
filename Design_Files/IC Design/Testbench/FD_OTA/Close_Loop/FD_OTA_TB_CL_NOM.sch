@@ -113,8 +113,8 @@ end
 end
 end
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_*.txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_*.txt
 
 foreach vddval 3.3 3.0 3.6
 foreach tval 27 -40 125
@@ -181,7 +181,7 @@ let idd_total = abs(vavdd#branch)
 let ibias_fdc = abs(@m.xmbfdc.m0[id])
 let ibias_cmfb = abs(@m.xmbcmfb.m0[id])
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_op.txt vdd vinp vinn vin_diff voutp voutn voutcm voutdiff vref vocm idd_total ibias_fdc ibias_cmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_op.txt vdd vinp vinn vin_diff voutp voutn voutcm voutdiff vref vocm idd_total ibias_fdc ibias_cmfb
 
 * DIFF DC
 
@@ -205,7 +205,7 @@ let cl_ibias_cmfb = abs(@m.xmbcmfb.m0[id])
 
 setscale cl_cmd
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_diff_dc.txt cl_vin_diff cl_voutp cl_voutn cl_voutcm cl_voutdiff cl_err cl_vocm cl_vref cl_idd cl_ibias_fdc cl_ibias_cmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_diff_dc.txt cl_vin_diff cl_voutp cl_voutn cl_voutcm cl_voutdiff cl_err cl_vocm cl_vref cl_idd cl_ibias_fdc cl_ibias_cmfb
 
 * ICMR -10m
 
@@ -243,7 +243,7 @@ setscale icmr_vin_cm
 
 unset appendwrite
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_icmr.txt icmr_cmd icmr_vin_diff icmr_voutp icmr_voutn icmr_voutcm icmr_voutdiff icmr_vocm icmr_vref icmr_idd icmr_ibias_fdc icmr_ibias_cmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_icmr.txt icmr_cmd icmr_vin_diff icmr_voutp icmr_voutn icmr_voutcm icmr_voutdiff icmr_vocm icmr_vref icmr_idd icmr_ibias_fdc icmr_ibias_cmfb
 
 * ICMR +10m
 
@@ -281,7 +281,7 @@ setscale icmr_vin_cm
 
 set appendwrite
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_icmr.txt icmr_cmd icmr_vin_diff icmr_voutp icmr_voutn icmr_voutcm icmr_voutdiff icmr_vocm icmr_vref icmr_idd icmr_ibias_fdc icmr_ibias_cmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_icmr.txt icmr_cmd icmr_vin_diff icmr_voutp icmr_voutn icmr_voutcm icmr_voutdiff icmr_vocm icmr_vref icmr_idd icmr_ibias_fdc icmr_ibias_cmfb
 
 unset appendwrite
 
@@ -314,7 +314,7 @@ let tr_ibias_cmfb = abs(@m.xmbcmfb.m0[id])
 
 setscale time
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_diff_tran.txt tr_cmd tr_vin_diff tr_voutp tr_voutn tr_voutcm tr_voutdiff tr_err tr_vocm tr_vref tr_idd tr_ibias_fdc tr_ibias_cmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_diff_tran.txt tr_cmd tr_vin_diff tr_voutp tr_voutn tr_voutcm tr_voutdiff tr_err tr_vocm tr_vref tr_idd tr_ibias_fdc tr_ibias_cmfb
 
 * CM TRAN
 
@@ -344,7 +344,7 @@ let cm_ibias_cmfb = abs(@m.xmbcmfb.m0[id])
 
 setscale time
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_cm_tran.txt cm_vref cm_vrefbias cm_voutp cm_voutn cm_voutcm cm_voutdiff cm_vocm cm_err cm_idd cm_ibias_fdc cm_ibias_cmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_\{$case\}_cm_tran.txt cm_vref cm_vrefbias cm_voutp cm_voutn cm_voutcm cm_voutdiff cm_vocm cm_err cm_idd cm_ibias_fdc cm_ibias_cmfb
 
 end
 end
