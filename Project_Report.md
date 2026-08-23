@@ -116,6 +116,8 @@ Implemented in [`FDC_Sizing.m`](Design_Files/IC%20Design/Schematic/FD_OTA/FDC/FD
 
 ### 3.3 Technology Characterization Curves
 
+[`NMOS_Gm_Id.m`](Measurement_Results/IC_Simulation/Gm_Id/NMOS_Gm_Id/NMOS_Gm_Id.m) and [`PMOS_Gm_Id.m`](Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/PMOS_Gm_Id.m) read their local `Results_txt` sweeps, generate target-$g_m/I_D$ terminal tables, and export six standardized 2500×1000 characterization plots per device.
+
 ![NMOS Intrinsic Gain vs gm/Id](Measurement_Results/IC_Simulation/Gm_Id/NMOS_Gm_Id/Plots/nmos_intrinsic_gain_db_vs_gmid.png)
 *Figure 3.1: GF180 3.3 V NMOS Intrinsic Self-Gain ($g_m/g_{ds}$) versus $g_m/I_D$ across channel lengths.*
 
@@ -343,6 +345,11 @@ The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF,
   - [`INA_RLD_worst_case_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_worst_case_report.csv): Full-PVT BAL worst-case summary
   - [`NOM.INA_RLD_summary.csv`](Measurement_Results/IC_Simulation/INA_RLD/NOM.INA_RLD_summary.csv): Compatibility summary export
   - [`nom.sel_tran_nom.txt`](Measurement_Results/IC_Simulation/INA_RLD/nom.Result_txt/nom.sel_tran_nom.txt): Nominal SEL switching transient source for Figure 6.19
+- **$g_m/I_D$ Characterization**:
+  - [`NMOS_Gm_Id.m`](Measurement_Results/IC_Simulation/Gm_Id/NMOS_Gm_Id/NMOS_Gm_Id.m): NMOS target-$g_m/I_D$ table and six standardized plots
+  - [`PMOS_Gm_Id.m`](Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/PMOS_Gm_Id.m): PMOS target-$g_m/I_D$ table and six standardized plots
+  - [`nmos_gmid_terminal_table.txt`](Measurement_Results/IC_Simulation/Gm_Id/NMOS_Gm_Id/nmos_gmid_terminal_table.txt): NMOS target-point table
+  - [`pmos_gmid_terminal_table.txt`](Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_gmid_terminal_table.txt): PMOS target-point table
 
 ---
 
@@ -362,6 +369,12 @@ matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OT
 
 # 4. INA + RLD Full 45-PVT Analysis
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
+
+# 5. NMOS gm/Id Characterization
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','NMOS_Gm_Id')); NMOS_Gm_Id"
+
+# 6. PMOS gm/Id Characterization
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','PMOS_Gm_Id')); PMOS_Gm_Id"
 ```
 
 All analysis routines have been validated in MATLAB R2026a under Windows and Linux environments.

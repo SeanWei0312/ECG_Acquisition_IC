@@ -31,7 +31,7 @@ This repository contains a pre-layout GF180 integrated circuit design for electr
 | **FD OTA** | **45-point PVT** (5 processes $\times$ 9 V-T) | 9-column comparison CSV (`FDOTA_table_report.csv`), 45-point worst-case CSV (`FDOTA_worst_case_report.csv`), 9 nominal plots |
 | **INA + RLD** | **45-point PVT** (BAL report) + 45-corner MIS stress audit | 9-column BAL comparison CSV, full-PVT BAL CSV, worst-case CSV, 7 nominal plots including switching SEL transient |
 | **Integrated AFE** | Multi-Stage Chain | Complete top-level schematic, AC/noise/transient testbenches, and multi-stage analyzer source (`AFE_Analyze.m`) |
-| **$g_m/I_D$ Sizing** | Device Characterization | Continuous $g_m/I_D$, $f_T$, $I_D/W$, and $g_m/g_{ds}$ lookup curves for 3.3 V NMOS and PMOS in GF180 |
+| **$g_m/I_D$ Sizing** | Device Characterization | Portable NMOS/PMOS MATLAB generators, target-$g_m/I_D$ terminal tables, and six 2500×1000 plots per device |
 
 ---
 
@@ -98,7 +98,7 @@ ECG_Acquisition_IC/
 │       ├── FD_OTA/                                    # FDOTA_Analyze.m, 45-PVT CSV reports, and plots
 │       ├── INA_RLD/                                   # INA_RLD_Analyze.m, BAL/MIS reports, and seven plots
 │       ├── AFE/                                       # Top-level AFE_Analyze.m analyzer source
-│       └── Gm_Id/                                     # GF180 NMOS/PMOS gm/Id sizing scripts and data
+│       └── Gm_Id/                                     # Portable NMOS/PMOS gm/Id generators, data, tables, and plots
 └── 2026-sscs-chipathon/                               # Upstream SSCS Chipathon reference snapshot
 ```
 
@@ -120,6 +120,12 @@ matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OT
 
 # 4. INA + RLD 45-PVT Analysis
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
+
+# 5. NMOS gm/Id Characterization
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','NMOS_Gm_Id')); NMOS_Gm_Id"
+
+# 6. PMOS gm/Id Characterization
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','PMOS_Gm_Id')); PMOS_Gm_Id"
 ```
 
 > [!TIP]

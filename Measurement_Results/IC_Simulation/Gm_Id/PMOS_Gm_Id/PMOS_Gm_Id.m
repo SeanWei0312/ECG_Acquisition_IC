@@ -1,3 +1,6 @@
+function PMOS_Gm_Id
+%PMOS_GM_ID Generate PMOS gm/Id characterization tables and plots.
+
 clc; close all;
 
 %% User settings and output paths
@@ -142,7 +145,7 @@ for k = 1:numel(files)
     T.intrinsic_gain_dB = gain_dB;
     T.main_branch = mainBranch(:);
 
-    allData = [allData; T];
+    allData = [allData; T]; %#ok<AGROW>
 
 end
 
@@ -178,7 +181,7 @@ for i = 1:numel(Ls)
 
     if ~isempty(D)
         semilogy(D.gm_Id_1_per_V, D.Id_per_W_uA_per_um, "LineWidth", 1.5);
-        leg(end+1) = "L = " + string(Ls(i)) + " \mum";
+        leg(end+1) = "L = " + string(Ls(i)) + " \mum"; %#ok<AGROW>
     end
 end
 xlabel("gm/Id  (1/V)");
@@ -204,7 +207,7 @@ if any(strcmp(allData.Properties.VariableNames, "fT_Hz"))
 
         if ~isempty(D)
             plot(D.gm_Id_1_per_V, D.gm_Id_1_per_V .* D.fT_Hz / 1e9, "LineWidth", 1.5);
-            leg(end+1) = "L = " + string(Ls(i)) + " \mum";
+            leg(end+1) = "L = " + string(Ls(i)) + " \mum"; %#ok<AGROW>
         end
     end
 else
@@ -236,7 +239,7 @@ for i = 1:numel(Ls)
 
     if ~isempty(D)
         plot(D.gm_Id_1_per_V, abs(D.gm_gds), "LineWidth", 1.5);
-        leg(end+1) = "L = " + string(Ls(i)) + " \mum";
+        leg(end+1) = "L = " + string(Ls(i)) + " \mum"; %#ok<AGROW>
     end
 end
 xlabel("gm/Id  (1/V)");
@@ -259,7 +262,7 @@ for i = 1:numel(Ls)
 
     if ~isempty(D)
         plot(D.gm_Id_1_per_V, D.intrinsic_gain_dB, "LineWidth", 1.5);
-        leg(end+1) = "L = " + string(Ls(i)) + " \mum";
+        leg(end+1) = "L = " + string(Ls(i)) + " \mum"; %#ok<AGROW>
     end
 end
 xlabel("gm/Id  (1/V)");
@@ -282,7 +285,7 @@ for i = 1:numel(Ls)
 
     if ~isempty(D)
         semilogy(D.VSG_V, D.Id_per_W_uA_per_um, "LineWidth", 1.5);
-        leg(end+1) = "L = " + string(Ls(i)) + " \mum";
+        leg(end+1) = "L = " + string(Ls(i)) + " \mum"; %#ok<AGROW>
     end
 end
 xlabel("VSG (V)");
@@ -304,7 +307,7 @@ for i = 1:numel(Ls)
 
     if ~isempty(D)
         plot(D.VSG_V, D.gm_Id_1_per_V, "LineWidth", 1.5);
-        leg(end+1) = "L = " + string(Ls(i)) + " \mum";
+        leg(end+1) = "L = " + string(Ls(i)) + " \mum"; %#ok<AGROW>
     end
 end
 xlabel("VSG (V)");
@@ -314,6 +317,7 @@ ylim([gmIdMin Inf]);
 legend(leg, "Location", "best");
 saveCurrentFigure(plotDir, "pmos_gmid_vs_vsg");
 
+end
 
 %% Helper functions
 function gmIdTable = buildPmosGmIdTable(slice, Ls, useVSD, targetGmId)
@@ -369,7 +373,7 @@ function gmIdTable = buildPmosGmIdTable(slice, Ls, useVSD, targetGmId)
         row.Vt_mag_V = gateAtTarget - Vov_V;
         row.VSG_V = gateAtTarget;
 
-        gmIdTable = [gmIdTable; row];
+        gmIdTable = [gmIdTable; row]; %#ok<AGROW>
 
     end
 end
@@ -487,7 +491,7 @@ function [raw, columnNames] = readNgspiceWrdata(filePath)
             continue;
         end
 
-        raw = [raw; nums];
+        raw = [raw; nums]; %#ok<AGROW>
 
     end
 end
