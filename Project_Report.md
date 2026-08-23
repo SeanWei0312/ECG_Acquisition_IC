@@ -220,24 +220,38 @@ Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fas
 
 ### 6.5 Instrumentation Amplifier + Right-Leg Drive (`INA_RLD`)
 
-The combined INA+RLD testbench is analyzed at all 45 process/environment corners for balanced electrodes (`BAL`). Mismatched electrodes (`MIS`) are retained for a separate 45-corner stress audit. The nominal report uses the final differential output and the RLD return ratio; selector switching is verified separately with a nominal transient.
+The combined INA+RLD testbench is analyzed at all 45 process/environment corners for balanced electrodes (`BAL`). Mismatched electrodes (`MIS`) are retained for a separate 45-corner stress audit. The compact comparison report is organized as **SET CONDITIONS**, **OPERATING POINT**, **INA**, **RLD**, and **NOISE**. It decomposes the new `VIN_DIFF`, `SE_DIFF`, and `INA_OUT_DIFF` exports into stage-1, stage-2, and total INA gains; selector switching is verified separately with a nominal transient.
 
 | Parameter | Unit | Nominal BAL | Worst BAL | Worst Corner |
 | :--- | :---: | :---: | :---: | :---: |
 | Total current | mA | 4.441 | 5.937 | `FFVHTH` |
 | Total power | mW | 14.655 | 21.373 | `FFVHTH` |
-| Differential gain @ 10 Hz | V/V | 231.355 | 3.815% gain error | `FFVLTL` |
-| RLD UGF / phase margin | kHz / deg | 0.946 / 100.673 | 0.717 / 100.083 | `FFVLTH` |
-| Input CM suppression @ 60 / 150 Hz | dB | 55.072 / 53.260 | 54.646 / 51.686 | `SSVLTL` |
+| Stage-1 midband gain | V/V | 58.330 | — | — |
+| Stage-1 gain error | % | -2.783 | — | — |
+| Stage-1 −3 dB bandwidth | kHz | 263.040 | — | — |
+| Stage-2 midband gain | V/V | 3.966 | — | — |
+| Stage-2 gain error | % | -0.842 | — | — |
+| Stage-2 −3 dB bandwidth | kHz | 2581.724 | — | — |
+| Total INA midband gain | V/V | 231.355 | — | — |
+| Total INA midband gain | dB | 47.286 | — | — |
+| Total INA gain error | % | -3.602 | 3.815 | `FFVLTL` |
+| Total INA −3 dB bandwidth | kHz | 260.399 | 178.714 | `SSVLTH` |
+| RLD loop UGF | kHz | 0.946 | 0.717 | `SSVLTL` |
+| RLD phase margin | deg | 100.673 | 100.083 | `FFVLTH` |
+| Input CM suppression @ 60 Hz | dB | 55.072 | 54.646 | `SSVLTL` |
+| Input CM suppression @ 150 Hz | dB | 53.260 | 51.686 | `SSVLTL` |
 | Input-referred noise 0.05–150 Hz | µVrms | 2.671 | 3.116 | `SSVLTH` |
-| Output CM error vs VREF | mV | -0.057 | 33.025 | `SSNOMTH` |
-| RLD output excursion / peak current | mV / nA | 2.743 / 3.069 | 2.731 / 3.095 | `FFVLTH` |
+| Output common-mode error vs VREF | mV | -0.057 | 33.025 | `SSNOMTH` |
+| RLD output peak-to-peak excursion during CM interference | mV | 2.743 | 2.743 | `FFVHNOM` |
+| Peak \|I<sub>RLD</sub>\| during CM interference | nA | 3.069 | 3.095 | `FFVLTH` |
+| Differential gain before / during CM interference | V/V | 231.355 / 231.356 | — | — |
+| Gain change during CM interference | % | 9.938e-05 | 6.490e-04 | `NOMVHTL` |
 | RLD rail headroom | V | — | 1.497 | `FFVLTH` |
 
-The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF, and 100.67° phase margin. The selector switching transient uses `nom.sel_tran_nom.txt`: `SEL` changes from 0 V to 3.3 V at 200 ms, and the output changes from the approximately 10 Hz internal waveform to the approximately 25 Hz external waveform.
+The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF, and 100.67° phase margin. The INA differential path has separate nominal −3 dB bandwidths of 263.040 kHz (stage 1), 2581.724 kHz (stage 2), and 260.399 kHz (total). The selector switching transient uses `nom.sel_tran_nom.txt`: `SEL` changes from 0 V to 3.3 V at 200 ms, and the output changes from the approximately 10 Hz internal waveform to the approximately 25 Hz external waveform.
 
 ![INA + RLD Differential Frequency Response](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_differential_ac.png)
-*Figure 6.13: Nominal INA+RLD differential response and gain markers.*
+*Figure 6.13: Nominal INA+RLD stage-1, stage-2, and total differential gain responses with −3 dB markers.*
 
 ![INA + RLD RLD Loop Gain and Phase](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_loop_gain.png)
 *Figure 6.14: Nominal RLD loop gain and phase with −3 dB, UGF, and PM markers.*

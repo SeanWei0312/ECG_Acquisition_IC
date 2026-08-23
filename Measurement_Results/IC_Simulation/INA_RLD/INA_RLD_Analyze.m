@@ -41,8 +41,8 @@ cornerCase = strings(1,nCorners);
 cornerVdd_V = nan(1,nCorners);
 cornerTemp_C = nan(1,nCorners);
 rawValues = nan(size(rows,1),nCorners);
-rldTransientError_V = nan(1,nCorners);
 rldRailHeadroom_V = nan(1,nCorners);
+rldPeakCurrent_A = nan(1,nCorners);
 metrics = cell(nCorners,nElectrodes);
 
 cornerIndex = 0;
@@ -68,10 +68,9 @@ for processIndex = 1:numel(processes)
             if electrodeIndex == balIndex
                 rawValues(:,cornerIndex) = metricsToRaw( ...
                     m,rows,caseTemp_C(caseIndex),cfg.diffGainTarget_VV);
-                rldTransientError_V(cornerIndex) = ...
-                    m.tran.maxRldError_V;
                 rldRailHeadroom_V(cornerIndex) = ...
                     m.tran.rldRailHeadroom_V;
+                rldPeakCurrent_A(cornerIndex) = m.tran.peakRldCurrent_A;
             end
         end
     end
@@ -110,7 +109,8 @@ fullPvtTable = buildFullPvtTable(rows,scaledValues,corners, ...
 writetable(fullPvtTable,fullfile(scriptDir,'INA_RLD_full_pvt_report.csv'));
 
 worstCase = buildWorstCaseTable( ...
-    rows,scaledValues,corners,rldTransientError_V,rldRailHeadroom_V);
+    rows,scaledValues,corners,rldRailHeadroom_V, ...
+    rldPeakCurrent_A);
 fprintf('\nINA + RLD FULL-PVT WORST CASE\nBALANCED ELECTRODES\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(scriptDir,'INA_RLD_worst_case_report.csv'));
@@ -205,40 +205,44 @@ rows = [
     "Set conditions",                              ""
     "AVDD",                                        "V"
     "Temperature",                                 "C"
-    "INA target gain",                             "V/V"
+    "Stage-1 target gain",                         "V/V"
+    "Stage-2 target gain",                         "V/V"
+    "Total INA target gain",                       "V/V"
     "",                                            ""
     "Operating point",                             ""
     "Total current",                               "A"
     "Total power",                                 "W"
-    "Output CM error vs VREF",                     "V"
+    "Output common-mode error vs VREF",             "V"
     "RLD DC error vs VREF",                        "V"
     "",                                            ""
-    "INA differential path",                       ""
-    "Gain @ 10 Hz (V/V)",                         "V/V"
-    "Gain @ 10 Hz (dB)",                          "dB"
-    "Gain error",                                 "%"
-    "Gain @ 0.05 Hz",                             "dB"
-    "Gain @ 150 Hz",                              "dB"
-    "Gain flatness 0.05-150 Hz",                  "dB"
-    "-3 dB bandwidth",                             "Hz"
+    "INA",                                         ""
+    "Stage-1 midband gain",                        "V/V"
+    "Stage-1 gain error",                          "%"
+    "Stage-1 -3 dB bandwidth",                    "kHz"
+    "Stage-2 midband gain",                        "V/V"
+    "Stage-2 gain error",                          "%"
+    "Stage-2 -3 dB bandwidth",                    "kHz"
+    "Total INA midband gain",                      "V/V"
+    "Total INA midband gain",                      "dB"
+    "Total INA gain error",                        "%"
+    "Gain @ 0.05 Hz",                              "dB"
+    "Gain @ 150 Hz",                               "dB"
+    "Gain flatness 0.05-150 Hz",                   "dB"
+    "Total INA -3 dB bandwidth",                   "kHz"
     "",                                            ""
-    "RLD loop stability",                          ""
+    "RLD",                                         ""
     "RLD loop UGF",                                "Hz"
     "RLD phase margin",                            "deg"
-    "",                                            ""
-    "RLD common-mode suppression",                 ""
     "Input CM suppression @ 60 Hz",                "dB"
     "Input CM suppression @ 150 Hz",               "dB"
-    "",                                            ""
-    "System noise",                                ""
-    "Input-referred noise 0.05-150 Hz",            "Vrms"
-    "",                                            ""
-    "CM interference transient",                   ""
-    "RLD output excursion",                        "V"
-    "Peak |RLD current|",                          "A"
-    "Differential gain before interference",       "V/V"
-    "Differential gain during interference",       "V/V"
-    "Gain change during CM interference",          "%"
+    "RLD output peak-to-peak excursion during CM interference", "V"
+    "Peak |I_RLD| during CM interference",          "A"
+    "Differential gain before CM interference",     "V/V"
+    "Differential gain during CM interference",     "V/V"
+    "Gain change during CM interference",           "%"
+    "",                                             ""
+    "NOISE",                                        ""
+    "Input-referred noise 0.05-150 Hz",             "Vrms"
 ];
 end
 
@@ -246,19 +250,19 @@ function m = analyzeRun(resultDir,process,caseName,electrode, ...
         expectedVdd_V,cfg)
 files = runFiles(resultDir,process,caseName,electrode);
 opData = readNumericFile(files.op,28);
-[m,vref_V] = analyzeOperatingPoint(opData);
+m = analyzeOperatingPoint(opData);
 if abs(m.vdd_V-expectedVdd_V) > cfg.vddTolerance_V
     error('INA_RLD_Analyze:SupplyMismatch', ...
         '%s reports AVDD = %.6g V; expected %.3f V.', ...
         files.op,m.vdd_V,expectedVdd_V);
 end
-m.diff = analyzeDifferential(readNumericFile(files.diff,9),cfg);
+m.diff = analyzeDifferential(readNumericFile(files.diff,11),cfg);
 m.cm = analyzeCommonMode(readNumericFile(files.cmOff,13), ...
     readNumericFile(files.cmOn,13),cfg);
 m.loop = analyzeRldLoop(readNumericFile(files.loop,11));
 m.noise = analyzeNoise(readNumericFile(files.noise,3),cfg);
 m.tran = analyzeTransient( ...
-    readNumericFile(files.tran,20),cfg,m.vdd_V,vref_V);
+    readNumericFile(files.tran,20),cfg,m.vdd_V);
 end
 
 function files = runFiles(resultDir,process,caseName,electrode)
@@ -277,7 +281,7 @@ filePath = fullfile(resultDir,sprintf('%s.sel_tran_%s.txt', ...
     process,caseName));
 end
 
-function [m,vref_V] = analyzeOperatingPoint(data)
+function m = analyzeOperatingPoint(data)
 m.vdd_V = median(data(:,2),'omitnan');
 vref_V = median(data(:,3),'omitnan');
 m.outCmError_V = median(data(:,17),'omitnan')-vref_V;
@@ -290,21 +294,36 @@ function result = analyzeDifferential(data,cfg)
 validateFrequency(data(:,1),'differential AC');
 f = data(:,1);
 vin = complex(data(:,2),data(:,3));
-finalOut = complex(data(:,6),data(:,7));
-A = safeDivide(finalOut,vin);
-gain_dB = magnitudeDb(A);
-result.gain005_dB = interpLogFrequency(f,gain_dB,0.05);
-result.gain10_dB = interpLogFrequency(f,gain_dB,10);
-result.gain150_dB = interpLogFrequency(f,gain_dB,150);
-result.gain10_VV = 10^(result.gain10_dB/20);
+seDiff = complex(data(:,4),data(:,5));
+inaOutDiff = complex(data(:,6),data(:,7));
+stage1 = safeDivide(seDiff,vin);
+stage2 = safeDivide(inaOutDiff,seDiff);
+total = safeDivide(inaOutDiff,vin);
+stage1Gain_dB = magnitudeDb(stage1);
+stage2Gain_dB = magnitudeDb(stage2);
+totalGain_dB = magnitudeDb(total);
+stage1Gain10_VV = interpLogFrequency(f,abs(stage1),10);
+stage2Gain10_VV = interpLogFrequency(f,abs(stage2),10);
+result.stage1Gain10_VV = stage1Gain10_VV;
+result.stage1GainError_pct = 100*(stage1Gain10_VV/60-1);
+result.stage2Gain10_VV = stage2Gain10_VV;
+result.stage2GainError_pct = 100*(stage2Gain10_VV/4-1);
+result.stage1Bandwidth3dB_Hz = upperCrossing(f,stage1Gain_dB, ...
+    20*log10(stage1Gain10_VV)-3,10);
+result.stage2Bandwidth3dB_Hz = upperCrossing(f,stage2Gain_dB, ...
+    20*log10(stage2Gain10_VV)-3,10);
+result.gain005_dB = interpLogFrequency(f,totalGain_dB,0.05);
+result.gain10_dB = interpLogFrequency(f,totalGain_dB,10);
+result.gain150_dB = interpLogFrequency(f,totalGain_dB,150);
+result.gain10_VV = interpLogFrequency(f,abs(total),10);
 result.gainError_pct = 100*(result.gain10_VV/cfg.diffGainTarget_VV-1);
 bandFrequency_Hz = [cfg.noiseBand_Hz(1); ...
     f(f > cfg.noiseBand_Hz(1) & f < cfg.noiseBand_Hz(2)); ...
     cfg.noiseBand_Hz(2)];
-bandGain_dB = interpLogFrequency(f,gain_dB,bandFrequency_Hz);
+bandGain_dB = interpLogFrequency(f,totalGain_dB,bandFrequency_Hz);
 result.flatness_dB = max(bandGain_dB,[],'omitnan')- ...
     min(bandGain_dB,[],'omitnan');
-result.bandwidth3dB_Hz = upperCrossing(f,gain_dB, ...
+result.bandwidth3dB_Hz = upperCrossing(f,totalGain_dB, ...
     result.gain10_dB-3,10);
 end
 
@@ -363,7 +382,7 @@ f = data(:,1);
 result.inputRms_V = integrateDensity(f,abs(data(:,3)),cfg.noiseBand_Hz);
 end
 
-function result = analyzeTransient(data,cfg,vdd_V,vref_V)
+function result = analyzeTransient(data,cfg,vdd_V)
 t = data(:,1);
 if any(~isfinite(t)) || any(diff(t) <= 0)
     error('INA_RLD_Analyze:TransientTime', ...
@@ -378,9 +397,8 @@ edges = detectCmStep(t,cmSource);
 result.rldOutMin_V = min(rldOut,[],'omitnan');
 result.rldOutMax_V = max(rldOut,[],'omitnan');
 result.rldOutExcursion_V = result.rldOutMax_V-result.rldOutMin_V;
-result.maxRldError_V = max(abs(rldOut-vref_V),[],'omitnan');
 result.rldRailHeadroom_V = min([rldOut; vdd_V-rldOut],[],'omitnan');
-result.peakRldCurrent_A = max(rldCurrent,[],'omitnan');
+result.peakRldCurrent_A = max(abs(rldCurrent),[],'omitnan');
 beforeRows = t >= edges.riseTime_s-cfg.transientPreStartGuard_s & ...
     t <= edges.riseTime_s-cfg.transientPreEndGuard_s;
 result.gainBeforeInterference_VV = sineAmplitudeGain( ...
@@ -424,28 +442,42 @@ for rowIndex = 1:size(rows,1)
     switch rows(rowIndex,1)
         case "AVDD", values(rowIndex) = m.vdd_V;
         case "Temperature", values(rowIndex) = temperature_C;
-        case "INA target gain", values(rowIndex) = diffGainTarget_VV;
+        case "Stage-1 target gain", values(rowIndex) = 60;
+        case "Stage-2 target gain", values(rowIndex) = 4;
+        case "Total INA target gain", values(rowIndex) = diffGainTarget_VV;
         case "Total current", values(rowIndex) = m.totalCurrent_A;
         case "Total power", values(rowIndex) = m.totalPower_W;
-        case "Output CM error vs VREF", values(rowIndex) = m.outCmError_V;
+        case "Output common-mode error vs VREF", values(rowIndex) = m.outCmError_V;
         case "RLD DC error vs VREF", values(rowIndex) = m.rldDcError_V;
-        case "Gain @ 10 Hz (V/V)", values(rowIndex) = m.diff.gain10_VV;
-        case "Gain @ 10 Hz (dB)", values(rowIndex) = m.diff.gain10_dB;
-        case "Gain error", values(rowIndex) = m.diff.gainError_pct;
+        case "Stage-1 midband gain", values(rowIndex) = m.diff.stage1Gain10_VV;
+        case "Stage-1 gain error", values(rowIndex) = m.diff.stage1GainError_pct;
+        case "Stage-1 -3 dB bandwidth", values(rowIndex) = m.diff.stage1Bandwidth3dB_Hz/1e3;
+        case "Stage-2 midband gain", values(rowIndex) = m.diff.stage2Gain10_VV;
+        case "Stage-2 gain error", values(rowIndex) = m.diff.stage2GainError_pct;
+        case "Stage-2 -3 dB bandwidth", values(rowIndex) = m.diff.stage2Bandwidth3dB_Hz/1e3;
+        case "Total INA midband gain"
+            if rows(rowIndex,2) == "V/V"
+                values(rowIndex) = m.diff.gain10_VV;
+            else
+                values(rowIndex) = m.diff.gain10_dB;
+            end
+        case "Total INA gain error", values(rowIndex) = m.diff.gainError_pct;
         case "Gain @ 0.05 Hz", values(rowIndex) = m.diff.gain005_dB;
         case "Gain @ 150 Hz", values(rowIndex) = m.diff.gain150_dB;
         case "Gain flatness 0.05-150 Hz", values(rowIndex) = m.diff.flatness_dB;
-        case "-3 dB bandwidth", values(rowIndex) = m.diff.bandwidth3dB_Hz;
+        case "Total INA -3 dB bandwidth", values(rowIndex) = m.diff.bandwidth3dB_Hz/1e3;
         case "RLD loop UGF", values(rowIndex) = m.loop.crossover_Hz;
         case "RLD phase margin", values(rowIndex) = m.loop.phaseMargin_deg;
         case "Input CM suppression @ 60 Hz", values(rowIndex) = m.cm.inputSuppression_dB(1);
         case "Input CM suppression @ 150 Hz", values(rowIndex) = m.cm.inputSuppression_dB(2);
         case "Input-referred noise 0.05-150 Hz", values(rowIndex) = m.noise.inputRms_V;
-        case "RLD output excursion", values(rowIndex) = m.tran.rldOutExcursion_V;
-        case "Peak |RLD current|", values(rowIndex) = m.tran.peakRldCurrent_A;
-        case "Differential gain before interference"
+        case "RLD output peak-to-peak excursion during CM interference"
+            values(rowIndex) = m.tran.rldOutExcursion_V;
+        case "Peak |I_RLD| during CM interference"
+            values(rowIndex) = m.tran.peakRldCurrent_A;
+        case "Differential gain before CM interference"
             values(rowIndex) = m.tran.gainBeforeInterference_VV;
-        case "Differential gain during interference"
+        case "Differential gain during CM interference"
             values(rowIndex) = m.tran.gainDuringInterference_VV;
         case "Gain change during CM interference"
             values(rowIndex) = m.tran.gainChangeDuringInterference_pct;
@@ -616,23 +648,24 @@ result = table(cornerColumn,processColumn,caseColumn,vddColumn, ...
 end
 
 function result = buildWorstCaseTable( ...
-    rows,values,corners,rldTransientError_V,rldRailHeadroom_V)
+    rows,values,corners,rldRailHeadroom_V, ...
+    rldPeakCurrent_A)
 definitions = [
     "Total current",                            "Total current",                         "max"
     "Total power",                              "Total power",                           "max"
-    "Gain error",                               "Gain error",                            "maxabs"
-    "Gain flatness 0.05-150 Hz",                "Gain flatness 0.05-150 Hz",             "max"
-    "-3 dB bandwidth",                          "-3 dB bandwidth",                       "min"
+    "Total INA gain error",                     "Total INA gain error",                  "maxabs"
+    "Gain flatness 0.05-150 Hz",                "Gain flatness 0.05-150 Hz",              "max"
+    "Total INA -3 dB bandwidth",                "Total INA -3 dB bandwidth",              "min"
     "RLD phase margin",                         "RLD phase margin",                      "min"
     "Input CM suppression @ 60 Hz",             "Input CM suppression @ 60 Hz",          "min"
     "Input CM suppression @ 150 Hz",            "Input CM suppression @ 150 Hz",         "min"
     "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
-    "Output CM error vs VREF",                  "Output CM error vs VREF",               "maxabs"
+    "Output common-mode error vs VREF",         "Output common-mode error vs VREF",      "maxabs"
     "RLD DC error vs VREF",                     "RLD DC error vs VREF",                  "maxabs"
-    "RLD output excursion",                     "__RLD_TRANSIENT_ERROR__",               "max"
+    "RLD output peak-to-peak excursion during CM interference", "RLD output peak-to-peak excursion during CM interference", "max"
     "RLD rail headroom",                        "__RLD_RAIL_HEADROOM__",                 "min"
-    "Peak |RLD current|",                       "Peak |RLD current|",                    "max"
-    "Gain change during CM interference",       "Gain change during CM interference",     "maxabs"
+    "Peak |I_RLD| during CM interference",      "__RLD_PEAK_CURRENT__",                  "max"
+    "Gain change during CM interference",        "Gain change during CM interference",    "maxabs"
 ];
 
 n = size(definitions,1);
@@ -643,12 +676,12 @@ selectedCorner = strings(n,1);
 
 for definitionIndex = 1:n
     sourceName = definitions(definitionIndex,2);
-    if sourceName == "__RLD_TRANSIENT_ERROR__"
-        [unit(definitionIndex),candidates] = ...
-            adaptValuesUnit("V",rldTransientError_V);
-    elseif sourceName == "__RLD_RAIL_HEADROOM__"
+    if sourceName == "__RLD_RAIL_HEADROOM__"
         [unit(definitionIndex),candidates] = ...
             adaptValuesUnit("V",rldRailHeadroom_V);
+    elseif sourceName == "__RLD_PEAK_CURRENT__"
+        [unit(definitionIndex),candidates] = ...
+            adaptValuesUnit("A",rldPeakCurrent_A);
     else
         rowIndex = find(rows(:,1) == sourceName,1);
         if isempty(rowIndex)
@@ -751,31 +784,52 @@ plotSelFunctionalCheck(selTransient,plotDir);
 end
 
 function plotDifferentialAc(balFile,metric,plotDir)
-bal = readNumericFile(balFile,9);
-[fBal,aBal] = differentialTransfer(bal);
-gainBal_dB = magnitudeDb(aBal);
+bal = readNumericFile(balFile,11);
+fBal = bal(:,1);
+vin = complex(bal(:,2),bal(:,3));
+seDiff = complex(bal(:,4),bal(:,5));
+inaOutDiff = complex(bal(:,6),bal(:,7));
+stage1_dB = magnitudeDb(safeDivide(seDiff,vin));
+stage2_dB = magnitudeDb(safeDivide(inaOutDiff,seDiff));
+total_dB = magnitudeDb(safeDivide(inaOutDiff,vin));
 fig = figure;
-semilogx(fBal,gainBal_dB,'LineWidth',1.5);
+semilogx(fBal,stage1_dB,'LineWidth',1.5, ...
+    'DisplayName','Stage 1: IN to SEO');
 hold on;
-cursorFrequencies_Hz = [0.05 10 150];
+semilogx(fBal,stage2_dB,'LineWidth',1.5, ...
+    'DisplayName','Stage 2: SEO to OUT');
+semilogx(fBal,total_dB,'LineWidth',1.5, ...
+    'DisplayName','Total INA: IN to OUT');
+yline(20*log10(60),'--','HandleVisibility','off');
+yline(20*log10(4),'--','HandleVisibility','off');
+yline(20*log10(240),'--','HandleVisibility','off');
+addCursor(metric.diff.stage1Bandwidth3dB_Hz, ...
+    20*log10(metric.diff.stage1Gain10_VV)-3, ...
+    sprintf('-3 dB: %s', ...
+    char(frequencyText(metric.diff.stage1Bandwidth3dB_Hz))));
+addCursor(metric.diff.stage2Bandwidth3dB_Hz, ...
+    20*log10(metric.diff.stage2Gain10_VV)-3, ...
+    sprintf('-3 dB: %s', ...
+    char(frequencyText(metric.diff.stage2Bandwidth3dB_Hz))));
+cursorFrequencies_Hz = [0.05 60 150];
 for frequency_Hz = cursorFrequencies_Hz
-    gain_dB = interpLogFrequency(fBal,gainBal_dB,frequency_Hz);
-    addCursor(frequency_Hz,gain_dB,sprintf('%s: %.2f dB', ...
-        char(frequencyText(frequency_Hz)),gain_dB));
+    stage1Gain_dB = interpLogFrequency(fBal,stage1_dB,frequency_Hz);
+    stage2Gain_dB = interpLogFrequency(fBal,stage2_dB,frequency_Hz);
+    gain_dB = interpLogFrequency(fBal,total_dB,frequency_Hz);
+    addCursorLine(frequency_Hz,gain_dB,char(frequencyText(frequency_Hz)));
+    addPointAnnotation(frequency_Hz,stage1Gain_dB, ...
+        sprintf('%.2f dB',stage1Gain_dB));
+    addPointAnnotation(frequency_Hz,stage2Gain_dB, ...
+        sprintf('%.2f dB',stage2Gain_dB));
+    addPointAnnotation(frequency_Hz,gain_dB, ...
+        sprintf('%.2f dB',gain_dB));
 end
-bandwidth_Hz = metric.diff.bandwidth3dB_Hz;
-bandwidthGain_dB = metric.diff.gain10_dB-3;
-addCursor(bandwidth_Hz,bandwidthGain_dB,sprintf('-3 dB: %s', ...
-    char(frequencyText(bandwidth_Hz))));
-ylabel('Differential gain (dB)');
+addCursor(metric.diff.bandwidth3dB_Hz,metric.diff.gain10_dB-3, ...
+    sprintf('-3 dB: %s',char(frequencyText(metric.diff.bandwidth3dB_Hz))));
+ylabel('Gain (dB)');
+legend('Location','best');
 stylePlot('Frequency (Hz)','INA Differential Frequency Response - NOM');
 savePlot(fig,plotDir,'NOM.INA_RLD_differential_ac.png');
-end
-
-function [f,A] = differentialTransfer(data)
-f = data(:,1);
-A = safeDivide(complex(data(:,6),data(:,7)), ...
-    complex(data(:,2),data(:,3)));
 end
 
 function plotSelFunctionalCheck(filePath,plotDir)
@@ -1027,6 +1081,18 @@ text(xValue,yValue," "+string(labelText), ...
     'Clipping','on','HandleVisibility','off');
 end
 
+function addPointAnnotation(xValue,yValue,labelText)
+if ~isfinite(xValue) || ~isfinite(yValue)
+    return;
+end
+plot(xValue,yValue,'o','MarkerFaceColor','r', ...
+    'MarkerEdgeColor','r','MarkerSize',6,'HandleVisibility','off');
+text(xValue,yValue," "+string(labelText), ...
+    'BackgroundColor','w','Color','k','Margin',2, ...
+    'VerticalAlignment','bottom','HorizontalAlignment','left', ...
+    'Clipping','on','HandleVisibility','off');
+end
+
 function addCursorLine(xValue,yValue,labelText)
 if ~isfinite(xValue) || ~isfinite(yValue)
     return;
@@ -1097,7 +1163,7 @@ end
 
 function [unit,scaledValues] = adaptValuesUnit(unit,values)
 scaledValues = values;
-if unit == "" || unit == "dB" || unit == "%" || unit == "V/V"
+if unit == "" || unit == "dB" || unit == "%" || unit == "V/V" || unit == "kHz"
     return;
 end
 nonzero = isfinite(values) & values ~= 0;

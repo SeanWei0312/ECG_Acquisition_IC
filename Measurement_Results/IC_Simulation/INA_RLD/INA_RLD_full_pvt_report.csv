@@ -1,1081 +1,1441 @@
 Corner,Process,Environment,AVDD_V,Temperature_C,Electrode,Parameter,Unit,Value
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Temperature,C,27.000
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,INA target gain,V/V,240.000
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-1 target gain,V/V,60.000
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-2 target gain,V/V,4.000
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Total INA target gain,V/V,240.000
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Total current,mA,4.441
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Total power,mW,14.655
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Output CM error vs VREF,mV,-0.057
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Output common-mode error vs VREF,mV,-0.057
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD DC error vs VREF,uV,17.428
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.355
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (dB),dB,47.286
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain error,%,-3.602
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-1 midband gain,V/V,58.330
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-1 gain error,%,-2.783
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-1 -3 dB bandwidth,kHz,263.040
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-2 midband gain,V/V,3.966
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-2 gain error,%,-0.842
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Stage-2 -3 dB bandwidth,kHz,2581.724
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Total INA midband gain,V/V,231.355
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Total INA midband gain,dB,47.286
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Total INA gain error,%,-3.602
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain @ 0.05 Hz,dB,47.286
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain @ 150 Hz,dB,47.286
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.419e-06
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,-3 dB bandwidth,kHz,260.315
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Total INA -3 dB bandwidth,kHz,260.399
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.946
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.673
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.072
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,53.260
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.671
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD output excursion,mV,2.743
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Peak |RLD current|,nA,3.069
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Differential gain before interference,V/V,231.355
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Differential gain during interference,V/V,231.356
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.069
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.355
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.356
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,9.938e-05
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.671
 NOMVLNOM,NOM,VLNOM,3,27,BAL,AVDD,V,3.000
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Temperature,C,27.000
-NOMVLNOM,NOM,VLNOM,3,27,BAL,INA target gain,V/V,240.000
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-1 target gain,V/V,60.000
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-2 target gain,V/V,4.000
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Total INA target gain,V/V,240.000
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Total current,mA,4.339
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Total power,mW,13.017
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Output CM error vs VREF,mV,-0.027
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Output common-mode error vs VREF,mV,-0.027
 NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD DC error vs VREF,uV,15.587
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.316
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain @ 10 Hz (dB),dB,47.284
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain error,%,-3.618
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-1 midband gain,V/V,58.321
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-1 gain error,%,-2.798
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-1 -3 dB bandwidth,kHz,258.369
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-2 midband gain,V/V,3.966
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-2 gain error,%,-0.844
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Stage-2 -3 dB bandwidth,kHz,2532.932
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Total INA midband gain,V/V,231.316
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Total INA midband gain,dB,47.284
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Total INA gain error,%,-3.618
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain @ 0.05 Hz,dB,47.284
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain @ 150 Hz,dB,47.284
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.471e-06
-NOMVLNOM,NOM,VLNOM,3,27,BAL,-3 dB bandwidth,kHz,255.651
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.470e-06
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Total INA -3 dB bandwidth,kHz,255.787
 NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.946
 NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD phase margin,deg,100.645
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.068
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,53.240
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.671
-NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD output excursion,mV,2.743
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Peak |RLD current|,nA,3.072
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Differential gain before interference,V/V,231.316
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Differential gain during interference,V/V,231.317
+NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.072
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.316
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.317
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain change during CM interference,%,2.670e-04
+NOMVLNOM,NOM,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.671
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,AVDD,V,3.600
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Temperature,C,27.000
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,INA target gain,V/V,240.000
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-1 target gain,V/V,60.000
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-2 target gain,V/V,4.000
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Total INA target gain,V/V,240.000
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Total current,mA,4.522
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Total power,mW,16.279
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Output CM error vs VREF,mV,-0.079
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Output common-mode error vs VREF,mV,-0.079
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD DC error vs VREF,uV,19.262
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain @ 10 Hz (V/V),V/V,231.386
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain @ 10 Hz (dB),dB,47.287
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain error,%,-3.589
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-1 midband gain,V/V,58.337
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-1 gain error,%,-2.772
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-1 -3 dB bandwidth,kHz,266.536
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-2 midband gain,V/V,3.966
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-2 gain error,%,-0.840
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Stage-2 -3 dB bandwidth,kHz,2616.444
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Total INA midband gain,V/V,231.386
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Total INA midband gain,dB,47.287
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Total INA gain error,%,-3.589
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain @ 0.05 Hz,dB,47.287
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain @ 150 Hz,dB,47.287
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain flatness 0.05-150 Hz,dB,1.382e-06
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,-3 dB bandwidth,kHz,263.792
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Total INA -3 dB bandwidth,kHz,263.850
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.946
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.699
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.075
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,53.277
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.672
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD output excursion,mV,2.743
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Peak |RLD current|,nA,3.066
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Differential gain before interference,V/V,231.386
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Differential gain during interference,V/V,231.386
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.066
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.386
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.386
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain change during CM interference,%,1.682e-04
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.672
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,INA target gain,V/V,240.000
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-1 target gain,V/V,60.000
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-2 target gain,V/V,4.000
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Total INA target gain,V/V,240.000
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Total current,mA,3.734
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Total power,mW,12.322
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Output CM error vs VREF,mV,-18.731
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Output common-mode error vs VREF,mV,-18.731
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD DC error vs VREF,uV,19.000
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.237
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (dB),dB,47.281
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain error,%,-3.651
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-1 midband gain,V/V,58.309
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-1 gain error,%,-2.818
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,274.155
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-2 midband gain,V/V,3.966
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-2 gain error,%,-0.858
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2663.441
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Total INA midband gain,V/V,231.237
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Total INA midband gain,dB,47.281
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Total INA gain error,%,-3.651
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain @ 0.05 Hz,dB,47.281
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain @ 150 Hz,dB,47.281
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.312e-06
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,-3 dB bandwidth,kHz,271.257
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Total INA -3 dB bandwidth,kHz,271.319
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.839
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.779
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.973
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.855
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.538
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD output excursion,mV,2.743
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Peak |RLD current|,nA,3.065
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Differential gain before interference,V/V,231.237
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Differential gain during interference,V/V,231.237
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.065
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.237
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.237
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,1.720e-04
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.538
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,AVDD,V,3.300
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Temperature,C,125.000
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,INA target gain,V/V,240.000
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-1 target gain,V/V,60.000
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-2 target gain,V/V,4.000
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Total INA target gain,V/V,240.000
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Total current,mA,5.019
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Total power,mW,16.562
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Output CM error vs VREF,mV,29.747
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Output common-mode error vs VREF,mV,29.747
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD DC error vs VREF,uV,16.030
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.428
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain @ 10 Hz (dB),dB,47.288
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain error,%,-3.572
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-1 midband gain,V/V,58.339
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-1 gain error,%,-2.768
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-1 -3 dB bandwidth,kHz,229.896
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-2 midband gain,V/V,3.967
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-2 gain error,%,-0.826
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2283.659
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Total INA midband gain,V/V,231.428
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Total INA midband gain,dB,47.288
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Total INA gain error,%,-3.572
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain @ 0.05 Hz,dB,47.288
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain @ 150 Hz,dB,47.288
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.857e-06
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,-3 dB bandwidth,kHz,227.573
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Total INA -3 dB bandwidth,kHz,227.661
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.082
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.544
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.161
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,53.655
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.943
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD output excursion,mV,2.743
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Peak |RLD current|,nA,3.074
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Differential gain before interference,V/V,231.428
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Differential gain during interference,V/V,231.428
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.074
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.428
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.428
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain change during CM interference,%,3.495e-04
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.943
 NOMVLTL,NOM,VLTL,3,-40,BAL,AVDD,V,3.000
 NOMVLTL,NOM,VLTL,3,-40,BAL,Temperature,C,-40.000
-NOMVLTL,NOM,VLTL,3,-40,BAL,INA target gain,V/V,240.000
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-1 target gain,V/V,60.000
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-2 target gain,V/V,4.000
+NOMVLTL,NOM,VLTL,3,-40,BAL,Total INA target gain,V/V,240.000
 NOMVLTL,NOM,VLTL,3,-40,BAL,Total current,mA,3.641
 NOMVLTL,NOM,VLTL,3,-40,BAL,Total power,mW,10.923
-NOMVLTL,NOM,VLTL,3,-40,BAL,Output CM error vs VREF,mV,-18.696
+NOMVLTL,NOM,VLTL,3,-40,BAL,Output common-mode error vs VREF,mV,-18.696
 NOMVLTL,NOM,VLTL,3,-40,BAL,RLD DC error vs VREF,uV,17.043
-NOMVLTL,NOM,VLTL,3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.204
-NOMVLTL,NOM,VLTL,3,-40,BAL,Gain @ 10 Hz (dB),dB,47.280
-NOMVLTL,NOM,VLTL,3,-40,BAL,Gain error,%,-3.665
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-1 midband gain,V/V,58.302
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-1 gain error,%,-2.830
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,269.420
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-2 midband gain,V/V,3.966
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-2 gain error,%,-0.859
+NOMVLTL,NOM,VLTL,3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2616.131
+NOMVLTL,NOM,VLTL,3,-40,BAL,Total INA midband gain,V/V,231.204
+NOMVLTL,NOM,VLTL,3,-40,BAL,Total INA midband gain,dB,47.280
+NOMVLTL,NOM,VLTL,3,-40,BAL,Total INA gain error,%,-3.665
 NOMVLTL,NOM,VLTL,3,-40,BAL,Gain @ 0.05 Hz,dB,47.280
 NOMVLTL,NOM,VLTL,3,-40,BAL,Gain @ 150 Hz,dB,47.280
 NOMVLTL,NOM,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.359e-06
-NOMVLTL,NOM,VLTL,3,-40,BAL,-3 dB bandwidth,kHz,266.538
+NOMVLTL,NOM,VLTL,3,-40,BAL,Total INA -3 dB bandwidth,kHz,266.648
 NOMVLTL,NOM,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.839
 NOMVLTL,NOM,VLTL,3,-40,BAL,RLD phase margin,deg,100.753
 NOMVLTL,NOM,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.970
 NOMVLTL,NOM,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.834
-NOMVLTL,NOM,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.534
-NOMVLTL,NOM,VLTL,3,-40,BAL,RLD output excursion,mV,2.743
-NOMVLTL,NOM,VLTL,3,-40,BAL,Peak |RLD current|,nA,3.068
-NOMVLTL,NOM,VLTL,3,-40,BAL,Differential gain before interference,V/V,231.203
-NOMVLTL,NOM,VLTL,3,-40,BAL,Differential gain during interference,V/V,231.204
+NOMVLTL,NOM,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMVLTL,NOM,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.068
+NOMVLTL,NOM,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.203
+NOMVLTL,NOM,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.204
 NOMVLTL,NOM,VLTL,3,-40,BAL,Gain change during CM interference,%,3.639e-04
+NOMVLTL,NOM,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.534
 NOMVLTH,NOM,VLTH,3,125,BAL,AVDD,V,3.000
 NOMVLTH,NOM,VLTH,3,125,BAL,Temperature,C,125.000
-NOMVLTH,NOM,VLTH,3,125,BAL,INA target gain,V/V,240.000
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-1 target gain,V/V,60.000
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-2 target gain,V/V,4.000
+NOMVLTH,NOM,VLTH,3,125,BAL,Total INA target gain,V/V,240.000
 NOMVLTH,NOM,VLTH,3,125,BAL,Total current,mA,4.917
 NOMVLTH,NOM,VLTH,3,125,BAL,Total power,mW,14.752
-NOMVLTH,NOM,VLTH,3,125,BAL,Output CM error vs VREF,mV,29.713
+NOMVLTH,NOM,VLTH,3,125,BAL,Output common-mode error vs VREF,mV,29.713
 NOMVLTH,NOM,VLTH,3,125,BAL,RLD DC error vs VREF,uV,14.308
-NOMVLTH,NOM,VLTH,3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.380
-NOMVLTH,NOM,VLTH,3,125,BAL,Gain @ 10 Hz (dB),dB,47.287
-NOMVLTH,NOM,VLTH,3,125,BAL,Gain error,%,-3.592
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-1 midband gain,V/V,58.328
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-1 gain error,%,-2.786
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-1 -3 dB bandwidth,kHz,225.918
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-2 midband gain,V/V,3.967
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-2 gain error,%,-0.829
+NOMVLTH,NOM,VLTH,3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2241.186
+NOMVLTH,NOM,VLTH,3,125,BAL,Total INA midband gain,V/V,231.380
+NOMVLTH,NOM,VLTH,3,125,BAL,Total INA midband gain,dB,47.287
+NOMVLTH,NOM,VLTH,3,125,BAL,Total INA gain error,%,-3.592
 NOMVLTH,NOM,VLTH,3,125,BAL,Gain @ 0.05 Hz,dB,47.287
 NOMVLTH,NOM,VLTH,3,125,BAL,Gain @ 150 Hz,dB,47.287
-NOMVLTH,NOM,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.924e-06
-NOMVLTH,NOM,VLTH,3,125,BAL,-3 dB bandwidth,kHz,223.600
+NOMVLTH,NOM,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.922e-06
+NOMVLTH,NOM,VLTH,3,125,BAL,Total INA -3 dB bandwidth,kHz,223.730
 NOMVLTH,NOM,VLTH,3,125,BAL,RLD loop UGF,kHz,1.082
 NOMVLTH,NOM,VLTH,3,125,BAL,RLD phase margin,deg,100.514
 NOMVLTH,NOM,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.158
 NOMVLTH,NOM,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,53.636
-NOMVLTH,NOM,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.946
-NOMVLTH,NOM,VLTH,3,125,BAL,RLD output excursion,mV,2.743
-NOMVLTH,NOM,VLTH,3,125,BAL,Peak |RLD current|,nA,3.077
-NOMVLTH,NOM,VLTH,3,125,BAL,Differential gain before interference,V/V,231.380
-NOMVLTH,NOM,VLTH,3,125,BAL,Differential gain during interference,V/V,231.380
+NOMVLTH,NOM,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMVLTH,NOM,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.077
+NOMVLTH,NOM,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.380
+NOMVLTH,NOM,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.380
 NOMVLTH,NOM,VLTH,3,125,BAL,Gain change during CM interference,%,1.550e-04
+NOMVLTH,NOM,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.946
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,AVDD,V,3.600
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Temperature,C,-40.000
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,INA target gain,V/V,240.000
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-1 target gain,V/V,60.000
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-2 target gain,V/V,4.000
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Total INA target gain,V/V,240.000
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Total current,mA,3.811
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Total power,mW,13.718
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Output CM error vs VREF,mV,-18.746
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Output common-mode error vs VREF,mV,-18.746
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD DC error vs VREF,uV,20.948
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.264
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain @ 10 Hz (dB),dB,47.282
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain error,%,-3.640
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-1 midband gain,V/V,58.315
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-1 gain error,%,-2.808
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-1 -3 dB bandwidth,kHz,277.804
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-2 midband gain,V/V,3.966
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-2 gain error,%,-0.856
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2697.315
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Total INA midband gain,V/V,231.264
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Total INA midband gain,dB,47.282
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Total INA gain error,%,-3.640
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain @ 0.05 Hz,dB,47.282
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain @ 150 Hz,dB,47.282
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.278e-06
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,-3 dB bandwidth,kHz,274.875
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Total INA -3 dB bandwidth,kHz,274.917
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.839
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.803
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.977
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,52.873
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.541
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD output excursion,mV,2.743
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Peak |RLD current|,nA,3.062
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Differential gain before interference,V/V,231.265
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Differential gain during interference,V/V,231.263
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.062
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.265
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.263
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain change during CM interference,%,-6.490e-04
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.541
 NOMVHTH,NOM,VHTH,3.6,125,BAL,AVDD,V,3.600
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Temperature,C,125.000
-NOMVHTH,NOM,VHTH,3.6,125,BAL,INA target gain,V/V,240.000
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-1 target gain,V/V,60.000
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-2 target gain,V/V,4.000
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Total INA target gain,V/V,240.000
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Total current,mA,5.098
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Total power,mW,18.353
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Output CM error vs VREF,mV,29.760
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Output common-mode error vs VREF,mV,29.760
 NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD DC error vs VREF,uV,17.751
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain @ 10 Hz (V/V),V/V,231.467
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain @ 10 Hz (dB),dB,47.290
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain error,%,-3.556
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-1 midband gain,V/V,58.348
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-1 gain error,%,-2.754
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-1 -3 dB bandwidth,kHz,232.887
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-2 midband gain,V/V,3.967
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-2 gain error,%,-0.824
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Stage-2 -3 dB bandwidth,kHz,2314.669
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Total INA midband gain,V/V,231.467
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Total INA midband gain,dB,47.290
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Total INA gain error,%,-3.556
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain @ 0.05 Hz,dB,47.290
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain @ 150 Hz,dB,47.290
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,1.810e-06
-NOMVHTH,NOM,VHTH,3.6,125,BAL,-3 dB bandwidth,kHz,230.553
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,1.809e-06
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Total INA -3 dB bandwidth,kHz,230.617
 NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.082
 NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD phase margin,deg,100.571
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.164
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,53.671
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.941
-NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD output excursion,mV,2.743
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Peak |RLD current|,nA,3.070
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Differential gain before interference,V/V,231.465
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Differential gain during interference,V/V,231.465
+NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.070
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.465
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.465
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain change during CM interference,%,1.489e-04
+NOMVHTH,NOM,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.941
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Temperature,C,27.000
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,INA target gain,V/V,240.000
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-1 target gain,V/V,60.000
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-2 target gain,V/V,4.000
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Total INA target gain,V/V,240.000
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Total current,mA,5.145
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Total power,mW,16.980
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Output CM error vs VREF,mV,-3.705
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Output common-mode error vs VREF,mV,-3.705
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD DC error vs VREF,uV,14.531
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.032
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (dB),dB,47.273
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain error,%,-3.737
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-1 midband gain,V/V,58.267
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-1 gain error,%,-2.889
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-1 -3 dB bandwidth,kHz,332.395
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-2 midband gain,V/V,3.965
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-2 gain error,%,-0.873
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Stage-2 -3 dB bandwidth,kHz,3321.529
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Total INA midband gain,V/V,231.032
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Total INA midband gain,dB,47.273
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Total INA gain error,%,-3.737
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain @ 0.05 Hz,dB,47.273
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain @ 150 Hz,dB,47.273
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,8.879e-07
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,-3 dB bandwidth,kHz,329.104
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,8.876e-07
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Total INA -3 dB bandwidth,kHz,329.193
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,1.313
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.300
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.253
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,54.094
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.530
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD output excursion,mV,2.743
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Peak |RLD current|,nA,3.085
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Differential gain before interference,V/V,231.032
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Differential gain during interference,V/V,231.032
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.085
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.032
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.032
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-9.466e-05
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.530
 FFVLNOM,FF,VLNOM,3,27,BAL,AVDD,V,3.000
 FFVLNOM,FF,VLNOM,3,27,BAL,Temperature,C,27.000
-FFVLNOM,FF,VLNOM,3,27,BAL,INA target gain,V/V,240.000
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-1 target gain,V/V,60.000
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-2 target gain,V/V,4.000
+FFVLNOM,FF,VLNOM,3,27,BAL,Total INA target gain,V/V,240.000
 FFVLNOM,FF,VLNOM,3,27,BAL,Total current,mA,5.038
 FFVLNOM,FF,VLNOM,3,27,BAL,Total power,mW,15.113
-FFVLNOM,FF,VLNOM,3,27,BAL,Output CM error vs VREF,mV,-3.702
+FFVLNOM,FF,VLNOM,3,27,BAL,Output common-mode error vs VREF,mV,-3.702
 FFVLNOM,FF,VLNOM,3,27,BAL,RLD DC error vs VREF,uV,12.867
-FFVLNOM,FF,VLNOM,3,27,BAL,Gain @ 10 Hz (V/V),V/V,230.992
-FFVLNOM,FF,VLNOM,3,27,BAL,Gain @ 10 Hz (dB),dB,47.272
-FFVLNOM,FF,VLNOM,3,27,BAL,Gain error,%,-3.753
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-1 midband gain,V/V,58.258
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-1 gain error,%,-2.903
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-1 -3 dB bandwidth,kHz,327.180
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-2 midband gain,V/V,3.965
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-2 gain error,%,-0.875
+FFVLNOM,FF,VLNOM,3,27,BAL,Stage-2 -3 dB bandwidth,kHz,3267.617
+FFVLNOM,FF,VLNOM,3,27,BAL,Total INA midband gain,V/V,230.992
+FFVLNOM,FF,VLNOM,3,27,BAL,Total INA midband gain,dB,47.272
+FFVLNOM,FF,VLNOM,3,27,BAL,Total INA gain error,%,-3.753
 FFVLNOM,FF,VLNOM,3,27,BAL,Gain @ 0.05 Hz,dB,47.272
 FFVLNOM,FF,VLNOM,3,27,BAL,Gain @ 150 Hz,dB,47.272
-FFVLNOM,FF,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,9.165e-07
-FFVLNOM,FF,VLNOM,3,27,BAL,-3 dB bandwidth,kHz,323.916
+FFVLNOM,FF,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,9.161e-07
+FFVLNOM,FF,VLNOM,3,27,BAL,Total INA -3 dB bandwidth,kHz,324.039
 FFVLNOM,FF,VLNOM,3,27,BAL,RLD loop UGF,kHz,1.313
 FFVLNOM,FF,VLNOM,3,27,BAL,RLD phase margin,deg,100.262
 FFVLNOM,FF,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.250
 FFVLNOM,FF,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,54.075
-FFVLNOM,FF,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.529
-FFVLNOM,FF,VLNOM,3,27,BAL,RLD output excursion,mV,2.743
-FFVLNOM,FF,VLNOM,3,27,BAL,Peak |RLD current|,nA,3.089
-FFVLNOM,FF,VLNOM,3,27,BAL,Differential gain before interference,V/V,230.992
-FFVLNOM,FF,VLNOM,3,27,BAL,Differential gain during interference,V/V,230.992
+FFVLNOM,FF,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFVLNOM,FF,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.089
+FFVLNOM,FF,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,230.992
+FFVLNOM,FF,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,230.992
 FFVLNOM,FF,VLNOM,3,27,BAL,Gain change during CM interference,%,2.479e-04
+FFVLNOM,FF,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.529
 FFVHNOM,FF,VHNOM,3.6,27,BAL,AVDD,V,3.600
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Temperature,C,27.000
-FFVHNOM,FF,VHNOM,3.6,27,BAL,INA target gain,V/V,240.000
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-1 target gain,V/V,60.000
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-2 target gain,V/V,4.000
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Total INA target gain,V/V,240.000
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Total current,mA,5.236
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Total power,mW,18.849
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Output CM error vs VREF,mV,-3.709
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Output common-mode error vs VREF,mV,-3.709
 FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD DC error vs VREF,uV,16.182
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain @ 10 Hz (V/V),V/V,231.063
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain @ 10 Hz (dB),dB,47.275
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain error,%,-3.724
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-1 midband gain,V/V,58.274
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-1 gain error,%,-2.877
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-1 -3 dB bandwidth,kHz,336.558
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-2 midband gain,V/V,3.965
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-2 gain error,%,-0.872
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Stage-2 -3 dB bandwidth,kHz,3362.888
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Total INA midband gain,V/V,231.063
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Total INA midband gain,dB,47.275
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Total INA gain error,%,-3.724
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain @ 0.05 Hz,dB,47.275
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain @ 150 Hz,dB,47.275
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain flatness 0.05-150 Hz,dB,8.660e-07
-FFVHNOM,FF,VHNOM,3.6,27,BAL,-3 dB bandwidth,kHz,333.237
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain flatness 0.05-150 Hz,dB,8.658e-07
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Total INA -3 dB bandwidth,kHz,333.305
 FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,1.313
 FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.334
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.256
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,54.110
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.531
-FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD output excursion,mV,2.743
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Peak |RLD current|,nA,3.081
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Differential gain before interference,V/V,231.064
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Differential gain during interference,V/V,231.063
+FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.081
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.064
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.063
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain change during CM interference,%,-4.801e-05
+FFVHNOM,FF,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.531
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,INA target gain,V/V,240.000
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-1 target gain,V/V,60.000
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-2 target gain,V/V,4.000
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Total INA target gain,V/V,240.000
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Total current,mA,4.323
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Total power,mW,14.266
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Output CM error vs VREF,mV,-22.813
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Output common-mode error vs VREF,mV,-22.813
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD DC error vs VREF,uV,15.847
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (V/V),V/V,230.878
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (dB),dB,47.268
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain error,%,-3.801
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-1 midband gain,V/V,58.240
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-1 gain error,%,-2.934
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,346.019
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-2 midband gain,V/V,3.964
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-2 gain error,%,-0.893
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,3422.399
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Total INA midband gain,V/V,230.878
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Total INA midband gain,dB,47.268
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Total INA gain error,%,-3.801
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain @ 0.05 Hz,dB,47.268
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain @ 150 Hz,dB,47.268
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,8.211e-07
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,-3 dB bandwidth,kHz,342.522
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,8.209e-07
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Total INA -3 dB bandwidth,kHz,342.585
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,1.166
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.443
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,55.199
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,53.828
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.406
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD output excursion,mV,2.743
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Peak |RLD current|,nA,3.080
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Differential gain before interference,V/V,230.878
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Differential gain during interference,V/V,230.878
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.080
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,230.878
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,230.878
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,5.811e-05
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.406
 FFNOMTH,FF,NOMTH,3.3,125,BAL,AVDD,V,3.300
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Temperature,C,125.000
-FFNOMTH,FF,NOMTH,3.3,125,BAL,INA target gain,V/V,240.000
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-1 target gain,V/V,60.000
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-2 target gain,V/V,4.000
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Total INA target gain,V/V,240.000
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Total current,mA,5.847
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Total power,mW,19.297
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Output CM error vs VREF,mV,27.124
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Output common-mode error vs VREF,mV,27.124
 FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD DC error vs VREF,uV,13.291
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.137
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain @ 10 Hz (dB),dB,47.277
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain error,%,-3.693
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-1 midband gain,V/V,58.281
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-1 gain error,%,-2.864
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-1 -3 dB bandwidth,kHz,292.010
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-2 midband gain,V/V,3.966
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-2 gain error,%,-0.853
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2949.081
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Total INA midband gain,V/V,231.137
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Total INA midband gain,dB,47.277
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Total INA gain error,%,-3.693
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain @ 0.05 Hz,dB,47.277
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain @ 150 Hz,dB,47.277
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.150e-06
-FFNOMTH,FF,NOMTH,3.3,125,BAL,-3 dB bandwidth,kHz,289.176
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Total INA -3 dB bandwidth,kHz,289.274
 FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.502
 FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.124
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.302
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,54.345
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.782
-FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD output excursion,mV,2.743
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Peak |RLD current|,nA,3.091
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Differential gain before interference,V/V,231.137
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Differential gain during interference,V/V,231.137
+FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.091
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.137
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.137
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain change during CM interference,%,2.128e-04
+FFNOMTH,FF,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.782
 FFVLTL,FF,VLTL,3,-40,BAL,AVDD,V,3.000
 FFVLTL,FF,VLTL,3,-40,BAL,Temperature,C,-40.000
-FFVLTL,FF,VLTL,3,-40,BAL,INA target gain,V/V,240.000
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-1 target gain,V/V,60.000
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-2 target gain,V/V,4.000
+FFVLTL,FF,VLTL,3,-40,BAL,Total INA target gain,V/V,240.000
 FFVLTL,FF,VLTL,3,-40,BAL,Total current,mA,4.224
 FFVLTL,FF,VLTL,3,-40,BAL,Total power,mW,12.672
-FFVLTL,FF,VLTL,3,-40,BAL,Output CM error vs VREF,mV,-22.809
+FFVLTL,FF,VLTL,3,-40,BAL,Output common-mode error vs VREF,mV,-22.809
 FFVLTL,FF,VLTL,3,-40,BAL,RLD DC error vs VREF,uV,14.098
-FFVLTL,FF,VLTL,3,-40,BAL,Gain @ 10 Hz (V/V),V/V,230.844
-FFVLTL,FF,VLTL,3,-40,BAL,Gain @ 10 Hz (dB),dB,47.266
-FFVLTL,FF,VLTL,3,-40,BAL,Gain error,%,-3.815
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-1 midband gain,V/V,58.232
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-1 gain error,%,-2.947
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,340.656
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-2 midband gain,V/V,3.964
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-2 gain error,%,-0.895
+FFVLTL,FF,VLTL,3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,3370.403
+FFVLTL,FF,VLTL,3,-40,BAL,Total INA midband gain,V/V,230.844
+FFVLTL,FF,VLTL,3,-40,BAL,Total INA midband gain,dB,47.266
+FFVLTL,FF,VLTL,3,-40,BAL,Total INA gain error,%,-3.815
 FFVLTL,FF,VLTL,3,-40,BAL,Gain @ 0.05 Hz,dB,47.266
 FFVLTL,FF,VLTL,3,-40,BAL,Gain @ 150 Hz,dB,47.266
-FFVLTL,FF,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,8.464e-07
-FFVLTL,FF,VLTL,3,-40,BAL,-3 dB bandwidth,kHz,337.199
+FFVLTL,FF,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,8.462e-07
+FFVLTL,FF,VLTL,3,-40,BAL,Total INA -3 dB bandwidth,kHz,337.291
 FFVLTL,FF,VLTL,3,-40,BAL,RLD loop UGF,kHz,1.166
 FFVLTL,FF,VLTL,3,-40,BAL,RLD phase margin,deg,100.409
 FFVLTL,FF,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,55.195
 FFVLTL,FF,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,53.808
-FFVLTL,FF,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.403
-FFVLTL,FF,VLTL,3,-40,BAL,RLD output excursion,mV,2.743
-FFVLTL,FF,VLTL,3,-40,BAL,Peak |RLD current|,nA,3.083
-FFVLTL,FF,VLTL,3,-40,BAL,Differential gain before interference,V/V,230.844
-FFVLTL,FF,VLTL,3,-40,BAL,Differential gain during interference,V/V,230.844
+FFVLTL,FF,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFVLTL,FF,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.083
+FFVLTL,FF,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,230.844
+FFVLTL,FF,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,230.844
 FFVLTL,FF,VLTL,3,-40,BAL,Gain change during CM interference,%,3.526e-05
+FFVLTL,FF,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.403
 FFVLTH,FF,VLTH,3,125,BAL,AVDD,V,3.000
 FFVLTH,FF,VLTH,3,125,BAL,Temperature,C,125.000
-FFVLTH,FF,VLTH,3,125,BAL,INA target gain,V/V,240.000
+FFVLTH,FF,VLTH,3,125,BAL,Stage-1 target gain,V/V,60.000
+FFVLTH,FF,VLTH,3,125,BAL,Stage-2 target gain,V/V,4.000
+FFVLTH,FF,VLTH,3,125,BAL,Total INA target gain,V/V,240.000
 FFVLTH,FF,VLTH,3,125,BAL,Total current,mA,5.739
 FFVLTH,FF,VLTH,3,125,BAL,Total power,mW,17.217
-FFVLTH,FF,VLTH,3,125,BAL,Output CM error vs VREF,mV,27.069
+FFVLTH,FF,VLTH,3,125,BAL,Output common-mode error vs VREF,mV,27.069
 FFVLTH,FF,VLTH,3,125,BAL,RLD DC error vs VREF,uV,11.716
-FFVLTH,FF,VLTH,3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.087
-FFVLTH,FF,VLTH,3,125,BAL,Gain @ 10 Hz (dB),dB,47.276
-FFVLTH,FF,VLTH,3,125,BAL,Gain error,%,-3.714
+FFVLTH,FF,VLTH,3,125,BAL,Stage-1 midband gain,V/V,58.270
+FFVLTH,FF,VLTH,3,125,BAL,Stage-1 gain error,%,-2.883
+FFVLTH,FF,VLTH,3,125,BAL,Stage-1 -3 dB bandwidth,kHz,287.499
+FFVLTH,FF,VLTH,3,125,BAL,Stage-2 midband gain,V/V,3.966
+FFVLTH,FF,VLTH,3,125,BAL,Stage-2 gain error,%,-0.856
+FFVLTH,FF,VLTH,3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2900.603
+FFVLTH,FF,VLTH,3,125,BAL,Total INA midband gain,V/V,231.087
+FFVLTH,FF,VLTH,3,125,BAL,Total INA midband gain,dB,47.276
+FFVLTH,FF,VLTH,3,125,BAL,Total INA gain error,%,-3.714
 FFVLTH,FF,VLTH,3,125,BAL,Gain @ 0.05 Hz,dB,47.276
 FFVLTH,FF,VLTH,3,125,BAL,Gain @ 150 Hz,dB,47.276
-FFVLTH,FF,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.187e-06
-FFVLTH,FF,VLTH,3,125,BAL,-3 dB bandwidth,kHz,284.684
+FFVLTH,FF,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.186e-06
+FFVLTH,FF,VLTH,3,125,BAL,Total INA -3 dB bandwidth,kHz,284.816
 FFVLTH,FF,VLTH,3,125,BAL,RLD loop UGF,kHz,1.502
 FFVLTH,FF,VLTH,3,125,BAL,RLD phase margin,deg,100.083
 FFVLTH,FF,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.299
 FFVLTH,FF,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,54.327
-FFVLTH,FF,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.785
-FFVLTH,FF,VLTH,3,125,BAL,RLD output excursion,mV,2.743
-FFVLTH,FF,VLTH,3,125,BAL,Peak |RLD current|,nA,3.095
-FFVLTH,FF,VLTH,3,125,BAL,Differential gain before interference,V/V,231.086
-FFVLTH,FF,VLTH,3,125,BAL,Differential gain during interference,V/V,231.087
+FFVLTH,FF,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFVLTH,FF,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.095
+FFVLTH,FF,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.086
+FFVLTH,FF,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.087
 FFVLTH,FF,VLTH,3,125,BAL,Gain change during CM interference,%,3.878e-04
+FFVLTH,FF,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.785
 FFVHTL,FF,VHTL,3.6,-40,BAL,AVDD,V,3.600
 FFVHTL,FF,VHTL,3.6,-40,BAL,Temperature,C,-40.000
-FFVHTL,FF,VHTL,3.6,-40,BAL,INA target gain,V/V,240.000
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-1 target gain,V/V,60.000
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-2 target gain,V/V,4.000
+FFVHTL,FF,VHTL,3.6,-40,BAL,Total INA target gain,V/V,240.000
 FFVHTL,FF,VHTL,3.6,-40,BAL,Total current,mA,4.409
 FFVHTL,FF,VHTL,3.6,-40,BAL,Total power,mW,15.872
-FFVHTL,FF,VHTL,3.6,-40,BAL,Output CM error vs VREF,mV,-22.809
+FFVHTL,FF,VHTL,3.6,-40,BAL,Output common-mode error vs VREF,mV,-22.809
 FFVHTL,FF,VHTL,3.6,-40,BAL,RLD DC error vs VREF,uV,17.584
-FFVHTL,FF,VHTL,3.6,-40,BAL,Gain @ 10 Hz (V/V),V/V,230.905
-FFVHTL,FF,VHTL,3.6,-40,BAL,Gain @ 10 Hz (dB),dB,47.269
-FFVHTL,FF,VHTL,3.6,-40,BAL,Gain error,%,-3.790
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-1 midband gain,V/V,58.246
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-1 gain error,%,-2.924
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-1 -3 dB bandwidth,kHz,350.403
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-2 midband gain,V/V,3.964
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-2 gain error,%,-0.892
+FFVHTL,FF,VHTL,3.6,-40,BAL,Stage-2 -3 dB bandwidth,kHz,3462.839
+FFVHTL,FF,VHTL,3.6,-40,BAL,Total INA midband gain,V/V,230.905
+FFVHTL,FF,VHTL,3.6,-40,BAL,Total INA midband gain,dB,47.269
+FFVHTL,FF,VHTL,3.6,-40,BAL,Total INA gain error,%,-3.790
 FFVHTL,FF,VHTL,3.6,-40,BAL,Gain @ 0.05 Hz,dB,47.269
 FFVHTL,FF,VHTL,3.6,-40,BAL,Gain @ 150 Hz,dB,47.269
-FFVHTL,FF,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,7.999e-07
-FFVHTL,FF,VHTL,3.6,-40,BAL,-3 dB bandwidth,kHz,346.860
+FFVHTL,FF,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,7.998e-07
+FFVHTL,FF,VHTL,3.6,-40,BAL,Total INA -3 dB bandwidth,kHz,346.908
 FFVHTL,FF,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,1.166
 FFVHTL,FF,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.475
 FFVHTL,FF,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,55.202
 FFVHTL,FF,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,53.846
-FFVHTL,FF,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.409
-FFVHTL,FF,VHTL,3.6,-40,BAL,RLD output excursion,mV,2.743
-FFVHTL,FF,VHTL,3.6,-40,BAL,Peak |RLD current|,nA,3.076
-FFVHTL,FF,VHTL,3.6,-40,BAL,Differential gain before interference,V/V,230.905
-FFVHTL,FF,VHTL,3.6,-40,BAL,Differential gain during interference,V/V,230.905
+FFVHTL,FF,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFVHTL,FF,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.076
+FFVHTL,FF,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,230.905
+FFVHTL,FF,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,230.905
 FFVHTL,FF,VHTL,3.6,-40,BAL,Gain change during CM interference,%,-2.745e-05
+FFVHTL,FF,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.409
 FFVHTH,FF,VHTH,3.6,125,BAL,AVDD,V,3.600
 FFVHTH,FF,VHTH,3.6,125,BAL,Temperature,C,125.000
-FFVHTH,FF,VHTH,3.6,125,BAL,INA target gain,V/V,240.000
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-1 target gain,V/V,60.000
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-2 target gain,V/V,4.000
+FFVHTH,FF,VHTH,3.6,125,BAL,Total INA target gain,V/V,240.000
 FFVHTH,FF,VHTH,3.6,125,BAL,Total current,mA,5.937
 FFVHTH,FF,VHTH,3.6,125,BAL,Total power,mW,21.373
-FFVHTH,FF,VHTH,3.6,125,BAL,Output CM error vs VREF,mV,27.152
+FFVHTH,FF,VHTH,3.6,125,BAL,Output common-mode error vs VREF,mV,27.152
 FFVHTH,FF,VHTH,3.6,125,BAL,RLD DC error vs VREF,uV,14.851
-FFVHTH,FF,VHTH,3.6,125,BAL,Gain @ 10 Hz (V/V),V/V,231.177
-FFVHTH,FF,VHTH,3.6,125,BAL,Gain @ 10 Hz (dB),dB,47.279
-FFVHTH,FF,VHTH,3.6,125,BAL,Gain error,%,-3.676
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-1 midband gain,V/V,58.290
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-1 gain error,%,-2.850
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-1 -3 dB bandwidth,kHz,295.590
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-2 midband gain,V/V,3.966
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-2 gain error,%,-0.851
+FFVHTH,FF,VHTH,3.6,125,BAL,Stage-2 -3 dB bandwidth,kHz,2986.606
+FFVHTH,FF,VHTH,3.6,125,BAL,Total INA midband gain,V/V,231.177
+FFVHTH,FF,VHTH,3.6,125,BAL,Total INA midband gain,dB,47.279
+FFVHTH,FF,VHTH,3.6,125,BAL,Total INA gain error,%,-3.676
 FFVHTH,FF,VHTH,3.6,125,BAL,Gain @ 0.05 Hz,dB,47.279
 FFVHTH,FF,VHTH,3.6,125,BAL,Gain @ 150 Hz,dB,47.279
-FFVHTH,FF,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,1.123e-06
-FFVHTH,FF,VHTH,3.6,125,BAL,-3 dB bandwidth,kHz,292.737
+FFVHTH,FF,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,1.122e-06
+FFVHTH,FF,VHTH,3.6,125,BAL,Total INA -3 dB bandwidth,kHz,292.815
 FFVHTH,FF,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.502
 FFVHTH,FF,VHTH,3.6,125,BAL,RLD phase margin,deg,100.161
 FFVHTH,FF,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.304
 FFVHTH,FF,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,54.360
-FFVHTH,FF,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.781
-FFVHTH,FF,VHTH,3.6,125,BAL,RLD output excursion,mV,2.743
-FFVHTH,FF,VHTH,3.6,125,BAL,Peak |RLD current|,nA,3.087
-FFVHTH,FF,VHTH,3.6,125,BAL,Differential gain before interference,V/V,231.177
-FFVHTH,FF,VHTH,3.6,125,BAL,Differential gain during interference,V/V,231.177
+FFVHTH,FF,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FFVHTH,FF,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.087
+FFVHTH,FF,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.177
+FFVHTH,FF,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.177
 FFVHTH,FF,VHTH,3.6,125,BAL,Gain change during CM interference,%,-2.275e-04
+FFVHTH,FF,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.781
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Temperature,C,27.000
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,INA target gain,V/V,240.000
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-1 target gain,V/V,60.000
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-2 target gain,V/V,4.000
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Total INA target gain,V/V,240.000
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Total current,mA,3.874
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Total power,mW,12.786
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Output CM error vs VREF,mV,4.040
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Output common-mode error vs VREF,mV,4.040
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD DC error vs VREF,uV,20.379
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.562
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (dB),dB,47.293
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain error,%,-3.516
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-1 midband gain,V/V,58.370
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-1 gain error,%,-2.717
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-1 -3 dB bandwidth,kHz,212.115
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-2 midband gain,V/V,3.967
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-2 gain error,%,-0.822
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Stage-2 -3 dB bandwidth,kHz,2050.092
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Total INA midband gain,V/V,231.562
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Total INA midband gain,dB,47.293
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Total INA gain error,%,-3.516
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain @ 0.05 Hz,dB,47.293
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain @ 150 Hz,dB,47.293
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,2.186e-06
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,-3 dB bandwidth,kHz,209.815
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,2.185e-06
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Total INA -3 dB bandwidth,kHz,209.917
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.717
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.907
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,54.808
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,52.242
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD output excursion,mV,2.743
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Peak |RLD current|,nA,3.059
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Differential gain before interference,V/V,231.562
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Differential gain during interference,V/V,231.561
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.059
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.562
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.561
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-4.061e-04
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
 SSVLNOM,SS,VLNOM,3,27,BAL,AVDD,V,3.000
 SSVLNOM,SS,VLNOM,3,27,BAL,Temperature,C,27.000
-SSVLNOM,SS,VLNOM,3,27,BAL,INA target gain,V/V,240.000
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-1 target gain,V/V,60.000
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-2 target gain,V/V,4.000
+SSVLNOM,SS,VLNOM,3,27,BAL,Total INA target gain,V/V,240.000
 SSVLNOM,SS,VLNOM,3,27,BAL,Total current,mA,3.768
 SSVLNOM,SS,VLNOM,3,27,BAL,Total power,mW,11.304
-SSVLNOM,SS,VLNOM,3,27,BAL,Output CM error vs VREF,mV,4.113
+SSVLNOM,SS,VLNOM,3,27,BAL,Output common-mode error vs VREF,mV,4.113
 SSVLNOM,SS,VLNOM,3,27,BAL,RLD DC error vs VREF,uV,18.363
-SSVLNOM,SS,VLNOM,3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.522
-SSVLNOM,SS,VLNOM,3,27,BAL,Gain @ 10 Hz (dB),dB,47.292
-SSVLNOM,SS,VLNOM,3,27,BAL,Gain error,%,-3.532
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-1 midband gain,V/V,58.361
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-1 gain error,%,-2.731
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-1 -3 dB bandwidth,kHz,207.416
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-2 midband gain,V/V,3.967
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-2 gain error,%,-0.824
+SSVLNOM,SS,VLNOM,3,27,BAL,Stage-2 -3 dB bandwidth,kHz,1998.381
+SSVLNOM,SS,VLNOM,3,27,BAL,Total INA midband gain,V/V,231.522
+SSVLNOM,SS,VLNOM,3,27,BAL,Total INA midband gain,dB,47.292
+SSVLNOM,SS,VLNOM,3,27,BAL,Total INA gain error,%,-3.532
 SSVLNOM,SS,VLNOM,3,27,BAL,Gain @ 0.05 Hz,dB,47.292
 SSVLNOM,SS,VLNOM,3,27,BAL,Gain @ 150 Hz,dB,47.292
-SSVLNOM,SS,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,2.288e-06
-SSVLNOM,SS,VLNOM,3,27,BAL,-3 dB bandwidth,kHz,205.061
+SSVLNOM,SS,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,2.286e-06
+SSVLNOM,SS,VLNOM,3,27,BAL,Total INA -3 dB bandwidth,kHz,205.277
 SSVLNOM,SS,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.717
 SSVLNOM,SS,VLNOM,3,27,BAL,RLD phase margin,deg,100.886
 SSVLNOM,SS,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,54.805
 SSVLNOM,SS,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,52.221
-SSVLNOM,SS,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
-SSVLNOM,SS,VLNOM,3,27,BAL,RLD output excursion,mV,2.743
-SSVLNOM,SS,VLNOM,3,27,BAL,Peak |RLD current|,nA,3.061
-SSVLNOM,SS,VLNOM,3,27,BAL,Differential gain before interference,V/V,231.522
-SSVLNOM,SS,VLNOM,3,27,BAL,Differential gain during interference,V/V,231.522
+SSVLNOM,SS,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSVLNOM,SS,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.061
+SSVLNOM,SS,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.522
+SSVLNOM,SS,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.522
 SSVLNOM,SS,VLNOM,3,27,BAL,Gain change during CM interference,%,-1.359e-04
+SSVLNOM,SS,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
 SSVHNOM,SS,VHNOM,3.6,27,BAL,AVDD,V,3.600
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Temperature,C,27.000
-SSVHNOM,SS,VHNOM,3.6,27,BAL,INA target gain,V/V,240.000
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-1 target gain,V/V,60.000
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-2 target gain,V/V,4.000
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Total INA target gain,V/V,240.000
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Total current,mA,3.949
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Total power,mW,14.218
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Output CM error vs VREF,mV,3.993
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Output common-mode error vs VREF,mV,3.993
 SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD DC error vs VREF,uV,22.398
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain @ 10 Hz (V/V),V/V,231.593
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain @ 10 Hz (dB),dB,47.294
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain error,%,-3.503
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-1 midband gain,V/V,58.377
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-1 gain error,%,-2.705
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-1 -3 dB bandwidth,kHz,215.217
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-2 midband gain,V/V,3.967
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-2 gain error,%,-0.820
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Stage-2 -3 dB bandwidth,kHz,2081.928
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Total INA midband gain,V/V,231.593
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Total INA midband gain,dB,47.294
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Total INA gain error,%,-3.503
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain @ 0.05 Hz,dB,47.294
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain @ 150 Hz,dB,47.294
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain flatness 0.05-150 Hz,dB,2.124e-06
-SSVHNOM,SS,VHNOM,3.6,27,BAL,-3 dB bandwidth,kHz,212.919
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain flatness 0.05-150 Hz,dB,2.123e-06
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Total INA -3 dB bandwidth,kHz,212.979
 SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.717
 SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.927
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,54.812
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,52.261
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
-SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD output excursion,mV,2.743
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Peak |RLD current|,nA,3.056
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Differential gain before interference,V/V,231.593
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Differential gain during interference,V/V,231.592
+SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.056
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.593
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.592
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain change during CM interference,%,-6.469e-04
+SSVHNOM,SS,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,INA target gain,V/V,240.000
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-1 target gain,V/V,60.000
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-2 target gain,V/V,4.000
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Total INA target gain,V/V,240.000
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Total current,mA,3.261
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Total power,mW,10.761
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Output CM error vs VREF,mV,-14.337
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Output common-mode error vs VREF,mV,-14.337
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD DC error vs VREF,uV,22.208
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.470
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (dB),dB,47.290
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain error,%,-3.554
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-1 midband gain,V/V,58.354
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-1 gain error,%,-2.743
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,221.455
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-2 midband gain,V/V,3.967
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-2 gain error,%,-0.834
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2118.333
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Total INA midband gain,V/V,231.470
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Total INA midband gain,dB,47.290
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Total INA gain error,%,-3.554
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain @ 0.05 Hz,dB,47.290
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain @ 150 Hz,dB,47.290
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,2.008e-06
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,-3 dB bandwidth,kHz,219.005
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,2.007e-06
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Total INA -3 dB bandwidth,kHz,219.088
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.636
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.989
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.650
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,51.708
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.673
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD output excursion,mV,2.743
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Peak |RLD current|,nA,3.055
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Differential gain before interference,V/V,231.470
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Differential gain during interference,V/V,231.470
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.055
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.470
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.470
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,1.565e-04
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.673
 SSNOMTH,SS,NOMTH,3.3,125,BAL,AVDD,V,3.300
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Temperature,C,125.000
-SSNOMTH,SS,NOMTH,3.3,125,BAL,INA target gain,V/V,240.000
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-1 target gain,V/V,60.000
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-2 target gain,V/V,4.000
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Total INA target gain,V/V,240.000
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Total current,mA,4.356
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Total power,mW,14.374
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Output CM error vs VREF,mV,33.025
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Output common-mode error vs VREF,mV,33.025
 SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD DC error vs VREF,uV,18.805
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.607
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain @ 10 Hz (dB),dB,47.295
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain error,%,-3.497
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-1 midband gain,V/V,58.374
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-1 gain error,%,-2.710
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-1 -3 dB bandwidth,kHz,184.475
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-2 midband gain,V/V,3.968
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-2 gain error,%,-0.809
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Stage-2 -3 dB bandwidth,kHz,1807.219
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Total INA midband gain,V/V,231.607
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Total INA midband gain,dB,47.295
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Total INA gain error,%,-3.497
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain @ 0.05 Hz,dB,47.295
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain @ 150 Hz,dB,47.295
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,2.886e-06
-SSNOMTH,SS,NOMTH,3.3,125,BAL,-3 dB bandwidth,kHz,182.534
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,2.885e-06
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Total INA -3 dB bandwidth,kHz,182.627
 SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,0.820
 SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.807
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,54.953
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,52.781
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.110
-SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD output excursion,mV,2.743
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Peak |RLD current|,nA,3.062
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Differential gain before interference,V/V,231.606
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Differential gain during interference,V/V,231.607
+SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.062
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.606
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.607
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain change during CM interference,%,5.260e-04
+SSNOMTH,SS,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.110
 SSVLTL,SS,VLTL,3,-40,BAL,AVDD,V,3.000
 SSVLTL,SS,VLTL,3,-40,BAL,Temperature,C,-40.000
-SSVLTL,SS,VLTL,3,-40,BAL,INA target gain,V/V,240.000
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-1 target gain,V/V,60.000
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-2 target gain,V/V,4.000
+SSVLTL,SS,VLTL,3,-40,BAL,Total INA target gain,V/V,240.000
 SSVLTL,SS,VLTL,3,-40,BAL,Total current,mA,3.167
 SSVLTL,SS,VLTL,3,-40,BAL,Total power,mW,9.501
-SSVLTL,SS,VLTL,3,-40,BAL,Output CM error vs VREF,mV,-14.252
+SSVLTL,SS,VLTL,3,-40,BAL,Output common-mode error vs VREF,mV,-14.252
 SSVLTL,SS,VLTL,3,-40,BAL,RLD DC error vs VREF,uV,20.048
-SSVLTL,SS,VLTL,3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.437
-SSVLTL,SS,VLTL,3,-40,BAL,Gain @ 10 Hz (dB),dB,47.289
-SSVLTL,SS,VLTL,3,-40,BAL,Gain error,%,-3.568
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-1 midband gain,V/V,58.347
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-1 gain error,%,-2.755
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,216.791
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-2 midband gain,V/V,3.967
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-2 gain error,%,-0.836
+SSVLTL,SS,VLTL,3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2067.795
+SSVLTL,SS,VLTL,3,-40,BAL,Total INA midband gain,V/V,231.437
+SSVLTL,SS,VLTL,3,-40,BAL,Total INA midband gain,dB,47.289
+SSVLTL,SS,VLTL,3,-40,BAL,Total INA gain error,%,-3.568
 SSVLTL,SS,VLTL,3,-40,BAL,Gain @ 0.05 Hz,dB,47.289
 SSVLTL,SS,VLTL,3,-40,BAL,Gain @ 150 Hz,dB,47.289
-SSVLTL,SS,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,2.096e-06
-SSVLTL,SS,VLTL,3,-40,BAL,-3 dB bandwidth,kHz,214.285
+SSVLTL,SS,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,2.094e-06
+SSVLTL,SS,VLTL,3,-40,BAL,Total INA -3 dB bandwidth,kHz,214.489
 SSVLTL,SS,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.636
 SSVLTL,SS,VLTL,3,-40,BAL,RLD phase margin,deg,100.969
 SSVLTL,SS,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.646
 SSVLTL,SS,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,51.686
-SSVLTL,SS,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.670
-SSVLTL,SS,VLTL,3,-40,BAL,RLD output excursion,mV,2.743
-SSVLTL,SS,VLTL,3,-40,BAL,Peak |RLD current|,nA,3.058
-SSVLTL,SS,VLTL,3,-40,BAL,Differential gain before interference,V/V,231.437
-SSVLTL,SS,VLTL,3,-40,BAL,Differential gain during interference,V/V,231.437
+SSVLTL,SS,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSVLTL,SS,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.058
+SSVLTL,SS,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.437
+SSVLTL,SS,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.437
 SSVLTL,SS,VLTL,3,-40,BAL,Gain change during CM interference,%,1.498e-04
+SSVLTL,SS,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.670
 SSVLTH,SS,VLTH,3,125,BAL,AVDD,V,3.000
 SSVLTH,SS,VLTH,3,125,BAL,Temperature,C,125.000
-SSVLTH,SS,VLTH,3,125,BAL,INA target gain,V/V,240.000
+SSVLTH,SS,VLTH,3,125,BAL,Stage-1 target gain,V/V,60.000
+SSVLTH,SS,VLTH,3,125,BAL,Stage-2 target gain,V/V,4.000
+SSVLTH,SS,VLTH,3,125,BAL,Total INA target gain,V/V,240.000
 SSVLTH,SS,VLTH,3,125,BAL,Total current,mA,4.250
 SSVLTH,SS,VLTH,3,125,BAL,Total power,mW,12.749
-SSVLTH,SS,VLTH,3,125,BAL,Output CM error vs VREF,mV,33.017
+SSVLTH,SS,VLTH,3,125,BAL,Output common-mode error vs VREF,mV,33.017
 SSVLTH,SS,VLTH,3,125,BAL,RLD DC error vs VREF,uV,16.939
-SSVLTH,SS,VLTH,3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.557
-SSVLTH,SS,VLTH,3,125,BAL,Gain @ 10 Hz (dB),dB,47.293
-SSVLTH,SS,VLTH,3,125,BAL,Gain error,%,-3.518
+SSVLTH,SS,VLTH,3,125,BAL,Stage-1 midband gain,V/V,58.363
+SSVLTH,SS,VLTH,3,125,BAL,Stage-1 gain error,%,-2.728
+SSVLTH,SS,VLTH,3,125,BAL,Stage-1 -3 dB bandwidth,kHz,180.515
+SSVLTH,SS,VLTH,3,125,BAL,Stage-2 midband gain,V/V,3.968
+SSVLTH,SS,VLTH,3,125,BAL,Stage-2 gain error,%,-0.812
+SSVLTH,SS,VLTH,3,125,BAL,Stage-2 -3 dB bandwidth,kHz,1764.271
+SSVLTH,SS,VLTH,3,125,BAL,Total INA midband gain,V/V,231.557
+SSVLTH,SS,VLTH,3,125,BAL,Total INA midband gain,dB,47.293
+SSVLTH,SS,VLTH,3,125,BAL,Total INA gain error,%,-3.518
 SSVLTH,SS,VLTH,3,125,BAL,Gain @ 0.05 Hz,dB,47.293
 SSVLTH,SS,VLTH,3,125,BAL,Gain @ 150 Hz,dB,47.293
-SSVLTH,SS,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,3.015e-06
-SSVLTH,SS,VLTH,3,125,BAL,-3 dB bandwidth,kHz,178.549
+SSVLTH,SS,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,3.013e-06
+SSVLTH,SS,VLTH,3,125,BAL,Total INA -3 dB bandwidth,kHz,178.714
 SSVLTH,SS,VLTH,3,125,BAL,RLD loop UGF,kHz,0.820
 SSVLTH,SS,VLTH,3,125,BAL,RLD phase margin,deg,100.784
 SSVLTH,SS,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,54.950
 SSVLTH,SS,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,52.762
-SSVLTH,SS,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.116
-SSVLTH,SS,VLTH,3,125,BAL,RLD output excursion,mV,2.743
-SSVLTH,SS,VLTH,3,125,BAL,Peak |RLD current|,nA,3.065
-SSVLTH,SS,VLTH,3,125,BAL,Differential gain before interference,V/V,231.559
-SSVLTH,SS,VLTH,3,125,BAL,Differential gain during interference,V/V,231.558
+SSVLTH,SS,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSVLTH,SS,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.065
+SSVLTH,SS,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.559
+SSVLTH,SS,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.558
 SSVLTH,SS,VLTH,3,125,BAL,Gain change during CM interference,%,-3.374e-04
+SSVLTH,SS,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.116
 SSVHTL,SS,VHTL,3.6,-40,BAL,AVDD,V,3.600
 SSVHTL,SS,VHTL,3.6,-40,BAL,Temperature,C,-40.000
-SSVHTL,SS,VHTL,3.6,-40,BAL,INA target gain,V/V,240.000
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-1 target gain,V/V,60.000
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-2 target gain,V/V,4.000
+SSVHTL,SS,VHTL,3.6,-40,BAL,Total INA target gain,V/V,240.000
 SSVHTL,SS,VHTL,3.6,-40,BAL,Total current,mA,3.331
 SSVHTL,SS,VHTL,3.6,-40,BAL,Total power,mW,11.993
-SSVHTL,SS,VHTL,3.6,-40,BAL,Output CM error vs VREF,mV,-14.377
+SSVHTL,SS,VHTL,3.6,-40,BAL,Output common-mode error vs VREF,mV,-14.377
 SSVHTL,SS,VHTL,3.6,-40,BAL,RLD DC error vs VREF,uV,24.367
-SSVHTL,SS,VHTL,3.6,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.497
-SSVHTL,SS,VHTL,3.6,-40,BAL,Gain @ 10 Hz (dB),dB,47.291
-SSVHTL,SS,VHTL,3.6,-40,BAL,Gain error,%,-3.543
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-1 midband gain,V/V,58.360
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-1 gain error,%,-2.733
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-1 -3 dB bandwidth,kHz,224.655
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-2 midband gain,V/V,3.967
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-2 gain error,%,-0.833
+SSVHTL,SS,VHTL,3.6,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2149.575
+SSVHTL,SS,VHTL,3.6,-40,BAL,Total INA midband gain,V/V,231.497
+SSVHTL,SS,VHTL,3.6,-40,BAL,Total INA midband gain,dB,47.291
+SSVHTL,SS,VHTL,3.6,-40,BAL,Total INA gain error,%,-3.543
 SSVHTL,SS,VHTL,3.6,-40,BAL,Gain @ 0.05 Hz,dB,47.291
 SSVHTL,SS,VHTL,3.6,-40,BAL,Gain @ 150 Hz,dB,47.291
-SSVHTL,SS,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.951e-06
-SSVHTL,SS,VHTL,3.6,-40,BAL,-3 dB bandwidth,kHz,222.197
+SSVHTL,SS,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.950e-06
+SSVHTL,SS,VHTL,3.6,-40,BAL,Total INA -3 dB bandwidth,kHz,222.242
 SSVHTL,SS,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.636
 SSVHTL,SS,VHTL,3.6,-40,BAL,RLD phase margin,deg,101.008
 SSVHTL,SS,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.653
 SSVHTL,SS,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,51.728
-SSVHTL,SS,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.677
-SSVHTL,SS,VHTL,3.6,-40,BAL,RLD output excursion,mV,2.743
-SSVHTL,SS,VHTL,3.6,-40,BAL,Peak |RLD current|,nA,3.053
-SSVHTL,SS,VHTL,3.6,-40,BAL,Differential gain before interference,V/V,231.496
-SSVHTL,SS,VHTL,3.6,-40,BAL,Differential gain during interference,V/V,231.497
+SSVHTL,SS,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSVHTL,SS,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.053
+SSVHTL,SS,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.496
+SSVHTL,SS,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.497
 SSVHTL,SS,VHTL,3.6,-40,BAL,Gain change during CM interference,%,4.324e-04
+SSVHTL,SS,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.677
 SSVHTH,SS,VHTH,3.6,125,BAL,AVDD,V,3.600
 SSVHTH,SS,VHTH,3.6,125,BAL,Temperature,C,125.000
-SSVHTH,SS,VHTH,3.6,125,BAL,INA target gain,V/V,240.000
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-1 target gain,V/V,60.000
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-2 target gain,V/V,4.000
+SSVHTH,SS,VHTH,3.6,125,BAL,Total INA target gain,V/V,240.000
 SSVHTH,SS,VHTH,3.6,125,BAL,Total current,mA,4.428
 SSVHTH,SS,VHTH,3.6,125,BAL,Total power,mW,15.942
-SSVHTH,SS,VHTH,3.6,125,BAL,Output CM error vs VREF,mV,33.017
+SSVHTH,SS,VHTH,3.6,125,BAL,Output common-mode error vs VREF,mV,33.017
 SSVHTH,SS,VHTH,3.6,125,BAL,RLD DC error vs VREF,uV,20.683
-SSVHTH,SS,VHTH,3.6,125,BAL,Gain @ 10 Hz (V/V),V/V,231.646
-SSVHTH,SS,VHTH,3.6,125,BAL,Gain @ 10 Hz (dB),dB,47.296
-SSVHTH,SS,VHTH,3.6,125,BAL,Gain error,%,-3.481
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-1 midband gain,V/V,58.383
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-1 gain error,%,-2.696
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-1 -3 dB bandwidth,kHz,187.110
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-2 midband gain,V/V,3.968
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-2 gain error,%,-0.807
+SSVHTH,SS,VHTH,3.6,125,BAL,Stage-2 -3 dB bandwidth,kHz,1834.872
+SSVHTH,SS,VHTH,3.6,125,BAL,Total INA midband gain,V/V,231.646
+SSVHTH,SS,VHTH,3.6,125,BAL,Total INA midband gain,dB,47.296
+SSVHTH,SS,VHTH,3.6,125,BAL,Total INA gain error,%,-3.481
 SSVHTH,SS,VHTH,3.6,125,BAL,Gain @ 0.05 Hz,dB,47.296
 SSVHTH,SS,VHTH,3.6,125,BAL,Gain @ 150 Hz,dB,47.296
-SSVHTH,SS,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,2.805e-06
-SSVHTH,SS,VHTH,3.6,125,BAL,-3 dB bandwidth,kHz,185.170
+SSVHTH,SS,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,2.804e-06
+SSVHTH,SS,VHTH,3.6,125,BAL,Total INA -3 dB bandwidth,kHz,185.232
 SSVHTH,SS,VHTH,3.6,125,BAL,RLD loop UGF,kHz,0.820
 SSVHTH,SS,VHTH,3.6,125,BAL,RLD phase margin,deg,100.829
 SSVHTH,SS,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,54.956
 SSVHTH,SS,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,52.798
-SSVHTH,SS,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.107
-SSVHTH,SS,VHTH,3.6,125,BAL,RLD output excursion,mV,2.743
-SSVHTH,SS,VHTH,3.6,125,BAL,Peak |RLD current|,nA,3.059
-SSVHTH,SS,VHTH,3.6,125,BAL,Differential gain before interference,V/V,231.646
-SSVHTH,SS,VHTH,3.6,125,BAL,Differential gain during interference,V/V,231.646
+SSVHTH,SS,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SSVHTH,SS,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.059
+SSVHTH,SS,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.646
+SSVHTH,SS,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.646
 SSVHTH,SS,VHTH,3.6,125,BAL,Gain change during CM interference,%,-1.898e-04
+SSVHTH,SS,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.107
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Temperature,C,27.000
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,INA target gain,V/V,240.000
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-1 target gain,V/V,60.000
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-2 target gain,V/V,4.000
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Total INA target gain,V/V,240.000
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Total current,mA,4.585
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Total power,mW,15.130
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Output CM error vs VREF,mV,0.756
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Output common-mode error vs VREF,mV,0.756
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD DC error vs VREF,uV,16.535
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.345
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (dB),dB,47.285
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain error,%,-3.606
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-1 midband gain,V/V,58.328
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-1 gain error,%,-2.787
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-1 -3 dB bandwidth,kHz,269.453
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-2 midband gain,V/V,3.966
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-2 gain error,%,-0.843
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Stage-2 -3 dB bandwidth,kHz,2649.713
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Total INA midband gain,V/V,231.345
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Total INA midband gain,dB,47.285
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Total INA gain error,%,-3.606
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain @ 0.05 Hz,dB,47.285
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain @ 150 Hz,dB,47.285
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.352e-06
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,-3 dB bandwidth,kHz,266.677
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Total INA -3 dB bandwidth,kHz,266.755
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.946
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.685
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.073
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,53.268
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.635
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD output excursion,mV,2.743
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Peak |RLD current|,nA,3.068
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Differential gain before interference,V/V,231.346
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Differential gain during interference,V/V,231.345
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.068
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.346
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.345
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-3.410e-04
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.635
 FSVLNOM,FS,VLNOM,3,27,BAL,AVDD,V,3.000
 FSVLNOM,FS,VLNOM,3,27,BAL,Temperature,C,27.000
-FSVLNOM,FS,VLNOM,3,27,BAL,INA target gain,V/V,240.000
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-1 target gain,V/V,60.000
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-2 target gain,V/V,4.000
+FSVLNOM,FS,VLNOM,3,27,BAL,Total INA target gain,V/V,240.000
 FSVLNOM,FS,VLNOM,3,27,BAL,Total current,mA,4.471
 FSVLNOM,FS,VLNOM,3,27,BAL,Total power,mW,13.414
-FSVLNOM,FS,VLNOM,3,27,BAL,Output CM error vs VREF,mV,0.758
+FSVLNOM,FS,VLNOM,3,27,BAL,Output common-mode error vs VREF,mV,0.758
 FSVLNOM,FS,VLNOM,3,27,BAL,RLD DC error vs VREF,uV,14.689
-FSVLNOM,FS,VLNOM,3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.303
-FSVLNOM,FS,VLNOM,3,27,BAL,Gain @ 10 Hz (dB),dB,47.284
-FSVLNOM,FS,VLNOM,3,27,BAL,Gain error,%,-3.624
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-1 midband gain,V/V,58.319
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-1 gain error,%,-2.802
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-1 -3 dB bandwidth,kHz,264.303
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-2 midband gain,V/V,3.966
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-2 gain error,%,-0.845
+FSVLNOM,FS,VLNOM,3,27,BAL,Stage-2 -3 dB bandwidth,kHz,2597.516
+FSVLNOM,FS,VLNOM,3,27,BAL,Total INA midband gain,V/V,231.303
+FSVLNOM,FS,VLNOM,3,27,BAL,Total INA midband gain,dB,47.284
+FSVLNOM,FS,VLNOM,3,27,BAL,Total INA gain error,%,-3.624
 FSVLNOM,FS,VLNOM,3,27,BAL,Gain @ 0.05 Hz,dB,47.284
 FSVLNOM,FS,VLNOM,3,27,BAL,Gain @ 150 Hz,dB,47.284
 FSVLNOM,FS,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.405e-06
-FSVLNOM,FS,VLNOM,3,27,BAL,-3 dB bandwidth,kHz,261.551
+FSVLNOM,FS,VLNOM,3,27,BAL,Total INA -3 dB bandwidth,kHz,261.671
 FSVLNOM,FS,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.946
 FSVLNOM,FS,VLNOM,3,27,BAL,RLD phase margin,deg,100.658
 FSVLNOM,FS,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.070
 FSVLNOM,FS,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,53.249
-FSVLNOM,FS,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.636
-FSVLNOM,FS,VLNOM,3,27,BAL,RLD output excursion,mV,2.743
-FSVLNOM,FS,VLNOM,3,27,BAL,Peak |RLD current|,nA,3.071
-FSVLNOM,FS,VLNOM,3,27,BAL,Differential gain before interference,V/V,231.303
-FSVLNOM,FS,VLNOM,3,27,BAL,Differential gain during interference,V/V,231.303
+FSVLNOM,FS,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSVLNOM,FS,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.071
+FSVLNOM,FS,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.303
+FSVLNOM,FS,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.303
 FSVLNOM,FS,VLNOM,3,27,BAL,Gain change during CM interference,%,2.225e-04
+FSVLNOM,FS,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.636
 FSVHNOM,FS,VHNOM,3.6,27,BAL,AVDD,V,3.600
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Temperature,C,27.000
-FSVHNOM,FS,VHNOM,3.6,27,BAL,INA target gain,V/V,240.000
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-1 target gain,V/V,60.000
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-2 target gain,V/V,4.000
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Total INA target gain,V/V,240.000
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Total current,mA,4.670
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Total power,mW,16.814
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Output CM error vs VREF,mV,0.748
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Output common-mode error vs VREF,mV,0.748
 FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD DC error vs VREF,uV,18.391
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain @ 10 Hz (V/V),V/V,231.380
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain @ 10 Hz (dB),dB,47.287
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain error,%,-3.592
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-1 midband gain,V/V,58.336
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-1 gain error,%,-2.774
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-1 -3 dB bandwidth,kHz,273.076
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-2 midband gain,V/V,3.966
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-2 gain error,%,-0.841
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Stage-2 -3 dB bandwidth,kHz,2685.124
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Total INA midband gain,V/V,231.380
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Total INA midband gain,dB,47.287
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Total INA gain error,%,-3.592
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain @ 0.05 Hz,dB,47.287
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain @ 150 Hz,dB,47.287
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain flatness 0.05-150 Hz,dB,1.316e-06
-FSVHNOM,FS,VHNOM,3.6,27,BAL,-3 dB bandwidth,kHz,270.275
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Total INA -3 dB bandwidth,kHz,270.331
 FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.946
 FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.710
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.076
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,53.285
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.636
-FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD output excursion,mV,2.743
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Peak |RLD current|,nA,3.064
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Differential gain before interference,V/V,231.380
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Differential gain during interference,V/V,231.380
+FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.064
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.380
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.380
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain change during CM interference,%,1.629e-04
+FSVHNOM,FS,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.636
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,INA target gain,V/V,240.000
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-1 target gain,V/V,60.000
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-2 target gain,V/V,4.000
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Total INA target gain,V/V,240.000
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Total current,mA,3.853
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Total power,mW,12.715
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Output CM error vs VREF,mV,-16.834
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Output common-mode error vs VREF,mV,-16.834
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD DC error vs VREF,uV,18.375
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.226
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (dB),dB,47.281
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain error,%,-3.656
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-1 midband gain,V/V,58.307
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-1 gain error,%,-2.822
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,280.743
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-2 midband gain,V/V,3.966
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-2 gain error,%,-0.859
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2731.983
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Total INA midband gain,V/V,231.226
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Total INA midband gain,dB,47.281
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Total INA gain error,%,-3.656
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain @ 0.05 Hz,dB,47.281
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain @ 150 Hz,dB,47.281
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.253e-06
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,-3 dB bandwidth,kHz,277.788
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.252e-06
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Total INA -3 dB bandwidth,kHz,277.845
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.839
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.790
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.975
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.863
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.506
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD output excursion,mV,2.743
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Peak |RLD current|,nA,3.064
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Differential gain before interference,V/V,231.226
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Differential gain during interference,V/V,231.225
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.064
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.226
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.225
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,-1.373e-04
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.506
 FSNOMTH,FS,NOMTH,3.3,125,BAL,AVDD,V,3.300
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Temperature,C,125.000
-FSNOMTH,FS,NOMTH,3.3,125,BAL,INA target gain,V/V,240.000
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-1 target gain,V/V,60.000
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-2 target gain,V/V,4.000
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Total INA target gain,V/V,240.000
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Total current,mA,5.179
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Total power,mW,17.092
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Output CM error vs VREF,mV,28.760
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Output common-mode error vs VREF,mV,28.760
 FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD DC error vs VREF,uV,14.799
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.421
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain @ 10 Hz (dB),dB,47.288
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain error,%,-3.575
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-1 midband gain,V/V,58.338
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-1 gain error,%,-2.770
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-1 -3 dB bandwidth,kHz,235.361
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-2 midband gain,V/V,3.967
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-2 gain error,%,-0.828
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2342.403
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Total INA midband gain,V/V,231.421
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Total INA midband gain,dB,47.288
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Total INA gain error,%,-3.575
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain @ 0.05 Hz,dB,47.288
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain @ 150 Hz,dB,47.288
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.772e-06
-FSNOMTH,FS,NOMTH,3.3,125,BAL,-3 dB bandwidth,kHz,232.997
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.771e-06
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Total INA -3 dB bandwidth,kHz,233.081
 FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.082
 FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.557
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.162
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,53.662
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.902
-FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD output excursion,mV,2.743
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Peak |RLD current|,nA,3.072
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Differential gain before interference,V/V,231.420
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Differential gain during interference,V/V,231.420
+FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.072
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.420
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.420
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain change during CM interference,%,-1.595e-04
+FSNOMTH,FS,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.902
 FSVLTL,FS,VLTL,3,-40,BAL,AVDD,V,3.000
 FSVLTL,FS,VLTL,3,-40,BAL,Temperature,C,-40.000
-FSVLTL,FS,VLTL,3,-40,BAL,INA target gain,V/V,240.000
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-1 target gain,V/V,60.000
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-2 target gain,V/V,4.000
+FSVLTL,FS,VLTL,3,-40,BAL,Total INA target gain,V/V,240.000
 FSVLTL,FS,VLTL,3,-40,BAL,Total current,mA,3.755
 FSVLTL,FS,VLTL,3,-40,BAL,Total power,mW,11.264
-FSVLTL,FS,VLTL,3,-40,BAL,Output CM error vs VREF,mV,-16.821
+FSVLTL,FS,VLTL,3,-40,BAL,Output common-mode error vs VREF,mV,-16.821
 FSVLTL,FS,VLTL,3,-40,BAL,RLD DC error vs VREF,uV,16.419
-FSVLTL,FS,VLTL,3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.190
-FSVLTL,FS,VLTL,3,-40,BAL,Gain @ 10 Hz (dB),dB,47.279
-FSVLTL,FS,VLTL,3,-40,BAL,Gain error,%,-3.671
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-1 midband gain,V/V,58.299
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-1 gain error,%,-2.835
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,275.770
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-2 midband gain,V/V,3.966
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-2 gain error,%,-0.860
+FSVLTL,FS,VLTL,3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2684.419
+FSVLTL,FS,VLTL,3,-40,BAL,Total INA midband gain,V/V,231.190
+FSVLTL,FS,VLTL,3,-40,BAL,Total INA midband gain,dB,47.279
+FSVLTL,FS,VLTL,3,-40,BAL,Total INA gain error,%,-3.671
 FSVLTL,FS,VLTL,3,-40,BAL,Gain @ 0.05 Hz,dB,47.279
 FSVLTL,FS,VLTL,3,-40,BAL,Gain @ 150 Hz,dB,47.279
-FSVLTL,FS,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.295e-06
-FSVLTL,FS,VLTL,3,-40,BAL,-3 dB bandwidth,kHz,272.849
+FSVLTL,FS,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.294e-06
+FSVLTL,FS,VLTL,3,-40,BAL,Total INA -3 dB bandwidth,kHz,272.939
 FSVLTL,FS,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.839
 FSVLTL,FS,VLTL,3,-40,BAL,RLD phase margin,deg,100.765
 FSVLTL,FS,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.971
 FSVLTL,FS,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.843
-FSVLTL,FS,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.503
-FSVLTL,FS,VLTL,3,-40,BAL,RLD output excursion,mV,2.743
-FSVLTL,FS,VLTL,3,-40,BAL,Peak |RLD current|,nA,3.067
-FSVLTL,FS,VLTL,3,-40,BAL,Differential gain before interference,V/V,231.189
-FSVLTL,FS,VLTL,3,-40,BAL,Differential gain during interference,V/V,231.189
+FSVLTL,FS,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSVLTL,FS,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.067
+FSVLTL,FS,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.189
+FSVLTL,FS,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.189
 FSVLTL,FS,VLTL,3,-40,BAL,Gain change during CM interference,%,1.903e-05
+FSVLTL,FS,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.503
 FSVLTH,FS,VLTH,3,125,BAL,AVDD,V,3.000
 FSVLTH,FS,VLTH,3,125,BAL,Temperature,C,125.000
-FSVLTH,FS,VLTH,3,125,BAL,INA target gain,V/V,240.000
+FSVLTH,FS,VLTH,3,125,BAL,Stage-1 target gain,V/V,60.000
+FSVLTH,FS,VLTH,3,125,BAL,Stage-2 target gain,V/V,4.000
+FSVLTH,FS,VLTH,3,125,BAL,Total INA target gain,V/V,240.000
 FSVLTH,FS,VLTH,3,125,BAL,Total current,mA,5.058
 FSVLTH,FS,VLTH,3,125,BAL,Total power,mW,15.174
-FSVLTH,FS,VLTH,3,125,BAL,Output CM error vs VREF,mV,28.676
+FSVLTH,FS,VLTH,3,125,BAL,Output common-mode error vs VREF,mV,28.676
 FSVLTH,FS,VLTH,3,125,BAL,RLD DC error vs VREF,uV,13.067
-FSVLTH,FS,VLTH,3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.368
-FSVLTH,FS,VLTH,3,125,BAL,Gain @ 10 Hz (dB),dB,47.286
-FSVLTH,FS,VLTH,3,125,BAL,Gain error,%,-3.597
+FSVLTH,FS,VLTH,3,125,BAL,Stage-1 midband gain,V/V,58.326
+FSVLTH,FS,VLTH,3,125,BAL,Stage-1 gain error,%,-2.790
+FSVLTH,FS,VLTH,3,125,BAL,Stage-1 -3 dB bandwidth,kHz,230.686
+FSVLTH,FS,VLTH,3,125,BAL,Stage-2 midband gain,V/V,3.967
+FSVLTH,FS,VLTH,3,125,BAL,Stage-2 gain error,%,-0.830
+FSVLTH,FS,VLTH,3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2293.528
+FSVLTH,FS,VLTH,3,125,BAL,Total INA midband gain,V/V,231.368
+FSVLTH,FS,VLTH,3,125,BAL,Total INA midband gain,dB,47.286
+FSVLTH,FS,VLTH,3,125,BAL,Total INA gain error,%,-3.597
 FSVLTH,FS,VLTH,3,125,BAL,Gain @ 0.05 Hz,dB,47.286
 FSVLTH,FS,VLTH,3,125,BAL,Gain @ 150 Hz,dB,47.286
-FSVLTH,FS,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.845e-06
-FSVLTH,FS,VLTH,3,125,BAL,-3 dB bandwidth,kHz,228.339
+FSVLTH,FS,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.844e-06
+FSVLTH,FS,VLTH,3,125,BAL,Total INA -3 dB bandwidth,kHz,228.459
 FSVLTH,FS,VLTH,3,125,BAL,RLD loop UGF,kHz,1.082
 FSVLTH,FS,VLTH,3,125,BAL,RLD phase margin,deg,100.527
 FSVLTH,FS,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.159
 FSVLTH,FS,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,53.645
-FSVLTH,FS,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.907
-FSVLTH,FS,VLTH,3,125,BAL,RLD output excursion,mV,2.743
-FSVLTH,FS,VLTH,3,125,BAL,Peak |RLD current|,nA,3.076
-FSVLTH,FS,VLTH,3,125,BAL,Differential gain before interference,V/V,231.367
-FSVLTH,FS,VLTH,3,125,BAL,Differential gain during interference,V/V,231.367
+FSVLTH,FS,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSVLTH,FS,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.076
+FSVLTH,FS,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.367
+FSVLTH,FS,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.367
 FSVLTH,FS,VLTH,3,125,BAL,Gain change during CM interference,%,-9.838e-05
+FSVLTH,FS,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.907
 FSVHTL,FS,VHTL,3.6,-40,BAL,AVDD,V,3.600
 FSVHTL,FS,VHTL,3.6,-40,BAL,Temperature,C,-40.000
-FSVHTL,FS,VHTL,3.6,-40,BAL,INA target gain,V/V,240.000
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-1 target gain,V/V,60.000
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-2 target gain,V/V,4.000
+FSVHTL,FS,VHTL,3.6,-40,BAL,Total INA target gain,V/V,240.000
 FSVHTL,FS,VHTL,3.6,-40,BAL,Total current,mA,3.933
 FSVHTL,FS,VHTL,3.6,-40,BAL,Total power,mW,14.160
-FSVHTL,FS,VHTL,3.6,-40,BAL,Output CM error vs VREF,mV,-16.834
+FSVHTL,FS,VHTL,3.6,-40,BAL,Output common-mode error vs VREF,mV,-16.834
 FSVHTL,FS,VHTL,3.6,-40,BAL,RLD DC error vs VREF,uV,20.334
-FSVHTL,FS,VHTL,3.6,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.256
-FSVHTL,FS,VHTL,3.6,-40,BAL,Gain @ 10 Hz (dB),dB,47.282
-FSVHTL,FS,VHTL,3.6,-40,BAL,Gain error,%,-3.643
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-1 midband gain,V/V,58.314
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-1 gain error,%,-2.810
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-1 -3 dB bandwidth,kHz,284.500
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-2 midband gain,V/V,3.966
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-2 gain error,%,-0.857
+FSVHTL,FS,VHTL,3.6,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2766.097
+FSVHTL,FS,VHTL,3.6,-40,BAL,Total INA midband gain,V/V,231.256
+FSVHTL,FS,VHTL,3.6,-40,BAL,Total INA midband gain,dB,47.282
+FSVHTL,FS,VHTL,3.6,-40,BAL,Total INA gain error,%,-3.643
 FSVHTL,FS,VHTL,3.6,-40,BAL,Gain @ 0.05 Hz,dB,47.282
 FSVHTL,FS,VHTL,3.6,-40,BAL,Gain @ 150 Hz,dB,47.282
 FSVHTL,FS,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.215e-06
-FSVHTL,FS,VHTL,3.6,-40,BAL,-3 dB bandwidth,kHz,281.509
+FSVHTL,FS,VHTL,3.6,-40,BAL,Total INA -3 dB bandwidth,kHz,281.548
 FSVHTL,FS,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.839
 FSVHTL,FS,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.813
 FSVHTL,FS,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.978
 FSVHTL,FS,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,52.881
-FSVHTL,FS,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.508
-FSVHTL,FS,VHTL,3.6,-40,BAL,RLD output excursion,mV,2.743
-FSVHTL,FS,VHTL,3.6,-40,BAL,Peak |RLD current|,nA,3.060
-FSVHTL,FS,VHTL,3.6,-40,BAL,Differential gain before interference,V/V,231.256
-FSVHTL,FS,VHTL,3.6,-40,BAL,Differential gain during interference,V/V,231.256
+FSVHTL,FS,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSVHTL,FS,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.060
+FSVHTL,FS,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.256
+FSVHTL,FS,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.256
 FSVHTL,FS,VHTL,3.6,-40,BAL,Gain change during CM interference,%,1.612e-04
+FSVHTL,FS,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.508
 FSVHTH,FS,VHTH,3.6,125,BAL,AVDD,V,3.600
 FSVHTH,FS,VHTH,3.6,125,BAL,Temperature,C,125.000
-FSVHTH,FS,VHTH,3.6,125,BAL,INA target gain,V/V,240.000
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-1 target gain,V/V,60.000
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-2 target gain,V/V,4.000
+FSVHTH,FS,VHTH,3.6,125,BAL,Total INA target gain,V/V,240.000
 FSVHTH,FS,VHTH,3.6,125,BAL,Total current,mA,5.264
 FSVHTH,FS,VHTH,3.6,125,BAL,Total power,mW,18.950
-FSVHTH,FS,VHTH,3.6,125,BAL,Output CM error vs VREF,mV,28.786
+FSVHTH,FS,VHTH,3.6,125,BAL,Output common-mode error vs VREF,mV,28.786
 FSVHTH,FS,VHTH,3.6,125,BAL,RLD DC error vs VREF,uV,16.550
-FSVHTH,FS,VHTH,3.6,125,BAL,Gain @ 10 Hz (V/V),V/V,231.465
-FSVHTH,FS,VHTH,3.6,125,BAL,Gain @ 10 Hz (dB),dB,47.290
-FSVHTH,FS,VHTH,3.6,125,BAL,Gain error,%,-3.556
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-1 midband gain,V/V,58.348
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-1 gain error,%,-2.754
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-1 -3 dB bandwidth,kHz,238.475
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-2 midband gain,V/V,3.967
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-2 gain error,%,-0.825
+FSVHTH,FS,VHTH,3.6,125,BAL,Stage-2 -3 dB bandwidth,kHz,2374.420
+FSVHTH,FS,VHTH,3.6,125,BAL,Total INA midband gain,V/V,231.465
+FSVHTH,FS,VHTH,3.6,125,BAL,Total INA midband gain,dB,47.290
+FSVHTH,FS,VHTH,3.6,125,BAL,Total INA gain error,%,-3.556
 FSVHTH,FS,VHTH,3.6,125,BAL,Gain @ 0.05 Hz,dB,47.290
 FSVHTH,FS,VHTH,3.6,125,BAL,Gain @ 150 Hz,dB,47.290
-FSVHTH,FS,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,1.726e-06
-FSVHTH,FS,VHTH,3.6,125,BAL,-3 dB bandwidth,kHz,236.097
+FSVHTH,FS,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,1.725e-06
+FSVHTH,FS,VHTH,3.6,125,BAL,Total INA -3 dB bandwidth,kHz,236.160
 FSVHTH,FS,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.082
 FSVHTH,FS,VHTH,3.6,125,BAL,RLD phase margin,deg,100.584
 FSVHTH,FS,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.165
 FSVHTH,FS,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,53.678
-FSVHTH,FS,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.900
-FSVHTH,FS,VHTH,3.6,125,BAL,RLD output excursion,mV,2.743
-FSVHTH,FS,VHTH,3.6,125,BAL,Peak |RLD current|,nA,3.069
-FSVHTH,FS,VHTH,3.6,125,BAL,Differential gain before interference,V/V,231.465
-FSVHTH,FS,VHTH,3.6,125,BAL,Differential gain during interference,V/V,231.465
+FSVHTH,FS,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+FSVHTH,FS,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.069
+FSVHTH,FS,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.465
+FSVHTH,FS,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.465
 FSVHTH,FS,VHTH,3.6,125,BAL,Gain change during CM interference,%,-1.035e-04
+FSVHTH,FS,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.900
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Temperature,C,27.000
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,INA target gain,V/V,240.000
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-1 target gain,V/V,60.000
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-2 target gain,V/V,4.000
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Total INA target gain,V/V,240.000
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Total current,mA,4.297
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Total power,mW,14.181
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Output CM error vs VREF,mV,-0.843
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Output common-mode error vs VREF,mV,-0.843
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD DC error vs VREF,uV,18.297
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.358
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain @ 10 Hz (dB),dB,47.286
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain error,%,-3.601
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-1 midband gain,V/V,58.330
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-1 gain error,%,-2.783
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-1 -3 dB bandwidth,kHz,256.554
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-2 midband gain,V/V,3.966
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-2 gain error,%,-0.841
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Stage-2 -3 dB bandwidth,kHz,2513.819
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Total INA midband gain,V/V,231.358
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Total INA midband gain,dB,47.286
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Total INA gain error,%,-3.601
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain @ 0.05 Hz,dB,47.286
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain @ 150 Hz,dB,47.286
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.492e-06
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,-3 dB bandwidth,kHz,253.886
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.491e-06
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Total INA -3 dB bandwidth,kHz,253.974
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.946
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.661
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.070
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,53.251
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.709
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD output excursion,mV,2.743
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Peak |RLD current|,nA,3.070
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Differential gain before interference,V/V,231.359
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Differential gain during interference,V/V,231.359
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.070
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.359
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.359
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-6.257e-05
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.709
 SFVLNOM,SF,VLNOM,3,27,BAL,AVDD,V,3.000
 SFVLNOM,SF,VLNOM,3,27,BAL,Temperature,C,27.000
-SFVLNOM,SF,VLNOM,3,27,BAL,INA target gain,V/V,240.000
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-1 target gain,V/V,60.000
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-2 target gain,V/V,4.000
+SFVLNOM,SF,VLNOM,3,27,BAL,Total INA target gain,V/V,240.000
 SFVLNOM,SF,VLNOM,3,27,BAL,Total current,mA,4.198
 SFVLNOM,SF,VLNOM,3,27,BAL,Total power,mW,12.593
-SFVLNOM,SF,VLNOM,3,27,BAL,Output CM error vs VREF,mV,-0.766
+SFVLNOM,SF,VLNOM,3,27,BAL,Output common-mode error vs VREF,mV,-0.766
 SFVLNOM,SF,VLNOM,3,27,BAL,RLD DC error vs VREF,uV,16.461
-SFVLNOM,SF,VLNOM,3,27,BAL,Gain @ 10 Hz (V/V),V/V,231.324
-SFVLNOM,SF,VLNOM,3,27,BAL,Gain @ 10 Hz (dB),dB,47.284
-SFVLNOM,SF,VLNOM,3,27,BAL,Gain error,%,-3.615
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-1 midband gain,V/V,58.323
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-1 gain error,%,-2.796
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-1 -3 dB bandwidth,kHz,251.875
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-2 midband gain,V/V,3.966
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-2 gain error,%,-0.843
+SFVLNOM,SF,VLNOM,3,27,BAL,Stage-2 -3 dB bandwidth,kHz,2464.184
+SFVLNOM,SF,VLNOM,3,27,BAL,Total INA midband gain,V/V,231.324
+SFVLNOM,SF,VLNOM,3,27,BAL,Total INA midband gain,dB,47.284
+SFVLNOM,SF,VLNOM,3,27,BAL,Total INA gain error,%,-3.615
 SFVLNOM,SF,VLNOM,3,27,BAL,Gain @ 0.05 Hz,dB,47.284
 SFVLNOM,SF,VLNOM,3,27,BAL,Gain @ 150 Hz,dB,47.284
-SFVLNOM,SF,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.548e-06
-SFVLNOM,SF,VLNOM,3,27,BAL,-3 dB bandwidth,kHz,249.202
+SFVLNOM,SF,VLNOM,3,27,BAL,Gain flatness 0.05-150 Hz,dB,1.547e-06
+SFVLNOM,SF,VLNOM,3,27,BAL,Total INA -3 dB bandwidth,kHz,249.350
 SFVLNOM,SF,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.946
 SFVLNOM,SF,VLNOM,3,27,BAL,RLD phase margin,deg,100.633
 SFVLNOM,SF,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.067
 SFVLNOM,SF,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,53.231
-SFVLNOM,SF,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.708
-SFVLNOM,SF,VLNOM,3,27,BAL,RLD output excursion,mV,2.743
-SFVLNOM,SF,VLNOM,3,27,BAL,Peak |RLD current|,nA,3.074
-SFVLNOM,SF,VLNOM,3,27,BAL,Differential gain before interference,V/V,231.323
-SFVLNOM,SF,VLNOM,3,27,BAL,Differential gain during interference,V/V,231.324
+SFVLNOM,SF,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFVLNOM,SF,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.074
+SFVLNOM,SF,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.323
+SFVLNOM,SF,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.324
 SFVLNOM,SF,VLNOM,3,27,BAL,Gain change during CM interference,%,1.298e-04
+SFVLNOM,SF,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.708
 SFVHNOM,SF,VHNOM,3.6,27,BAL,AVDD,V,3.600
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Temperature,C,27.000
-SFVHNOM,SF,VHNOM,3.6,27,BAL,INA target gain,V/V,240.000
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-1 target gain,V/V,60.000
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-2 target gain,V/V,4.000
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Total INA target gain,V/V,240.000
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Total current,mA,4.375
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Total power,mW,15.751
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Output CM error vs VREF,mV,-0.891
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Output common-mode error vs VREF,mV,-0.891
 SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD DC error vs VREF,uV,20.118
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain @ 10 Hz (V/V),V/V,231.382
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain @ 10 Hz (dB),dB,47.287
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain error,%,-3.591
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-1 midband gain,V/V,58.335
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-1 gain error,%,-2.774
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-1 -3 dB bandwidth,kHz,260.016
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-2 midband gain,V/V,3.966
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-2 gain error,%,-0.840
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Stage-2 -3 dB bandwidth,kHz,2548.500
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Total INA midband gain,V/V,231.382
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Total INA midband gain,dB,47.287
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Total INA gain error,%,-3.591
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain @ 0.05 Hz,dB,47.287
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain @ 150 Hz,dB,47.287
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain flatness 0.05-150 Hz,dB,1.452e-06
-SFVHNOM,SF,VHNOM,3.6,27,BAL,-3 dB bandwidth,kHz,257.329
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Total INA -3 dB bandwidth,kHz,257.388
 SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.946
 SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.687
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.074
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,53.270
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.710
-SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD output excursion,mV,2.743
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Peak |RLD current|,nA,3.067
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Differential gain before interference,V/V,231.382
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Differential gain during interference,V/V,231.382
+SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.067
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.382
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.382
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain change during CM interference,%,1.711e-04
+SFVHNOM,SF,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.710
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,INA target gain,V/V,240.000
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-1 target gain,V/V,60.000
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-2 target gain,V/V,4.000
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Total INA target gain,V/V,240.000
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Total current,mA,3.615
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Total power,mW,11.930
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Output CM error vs VREF,mV,-20.684
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Output common-mode error vs VREF,mV,-20.684
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD DC error vs VREF,uV,19.598
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.244
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain @ 10 Hz (dB),dB,47.281
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain error,%,-3.648
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-1 midband gain,V/V,58.311
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-1 gain error,%,-2.816
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,267.478
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-2 midband gain,V/V,3.966
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-2 gain error,%,-0.857
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2594.641
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Total INA midband gain,V/V,231.244
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Total INA midband gain,dB,47.281
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Total INA gain error,%,-3.648
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain @ 0.05 Hz,dB,47.281
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain @ 150 Hz,dB,47.281
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.378e-06
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,-3 dB bandwidth,kHz,264.638
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.377e-06
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Total INA -3 dB bandwidth,kHz,264.706
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.839
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.768
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.972
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.846
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.571
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD output excursion,mV,2.743
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Peak |RLD current|,nA,3.066
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Differential gain before interference,V/V,231.244
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Differential gain during interference,V/V,231.245
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.066
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.244
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.245
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,4.199e-04
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.571
 SFNOMTH,SF,NOMTH,3.3,125,BAL,AVDD,V,3.300
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Temperature,C,125.000
-SFNOMTH,SF,NOMTH,3.3,125,BAL,INA target gain,V/V,240.000
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-1 target gain,V/V,60.000
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-2 target gain,V/V,4.000
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Total INA target gain,V/V,240.000
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Total current,mA,4.859
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Total power,mW,16.034
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Output CM error vs VREF,mV,30.899
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Output common-mode error vs VREF,mV,30.899
 SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD DC error vs VREF,uV,17.255
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.424
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain @ 10 Hz (dB),dB,47.288
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain error,%,-3.573
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-1 midband gain,V/V,58.338
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-1 gain error,%,-2.771
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-1 -3 dB bandwidth,kHz,224.399
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-2 midband gain,V/V,3.967
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-2 gain error,%,-0.826
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2225.249
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Total INA midband gain,V/V,231.424
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Total INA midband gain,dB,47.288
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Total INA gain error,%,-3.573
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain @ 0.05 Hz,dB,47.288
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain @ 150 Hz,dB,47.288
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.950e-06
-SFNOMTH,SF,NOMTH,3.3,125,BAL,-3 dB bandwidth,kHz,222.121
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain flatness 0.05-150 Hz,dB,1.949e-06
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Total INA -3 dB bandwidth,kHz,222.209
 SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.082
 SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.530
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.159
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,53.647
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.985
-SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD output excursion,mV,2.743
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Peak |RLD current|,nA,3.075
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Differential gain before interference,V/V,231.424
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Differential gain during interference,V/V,231.423
+SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.075
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.424
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.423
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain change during CM interference,%,-3.709e-04
+SFNOMTH,SF,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.985
 SFVLTL,SF,VLTL,3,-40,BAL,AVDD,V,3.000
 SFVLTL,SF,VLTL,3,-40,BAL,Temperature,C,-40.000
-SFVLTL,SF,VLTL,3,-40,BAL,INA target gain,V/V,240.000
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-1 target gain,V/V,60.000
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-2 target gain,V/V,4.000
+SFVLTL,SF,VLTL,3,-40,BAL,Total INA target gain,V/V,240.000
 SFVLTL,SF,VLTL,3,-40,BAL,Total current,mA,3.523
 SFVLTL,SF,VLTL,3,-40,BAL,Total power,mW,10.569
-SFVLTL,SF,VLTL,3,-40,BAL,Output CM error vs VREF,mV,-20.607
+SFVLTL,SF,VLTL,3,-40,BAL,Output common-mode error vs VREF,mV,-20.607
 SFVLTL,SF,VLTL,3,-40,BAL,RLD DC error vs VREF,uV,17.641
-SFVLTL,SF,VLTL,3,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.214
-SFVLTL,SF,VLTL,3,-40,BAL,Gain @ 10 Hz (dB),dB,47.280
-SFVLTL,SF,VLTL,3,-40,BAL,Gain error,%,-3.661
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-1 midband gain,V/V,58.304
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-1 gain error,%,-2.827
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-1 -3 dB bandwidth,kHz,262.646
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-2 midband gain,V/V,3.966
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-2 gain error,%,-0.858
+SFVLTL,SF,VLTL,3,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2545.036
+SFVLTL,SF,VLTL,3,-40,BAL,Total INA midband gain,V/V,231.214
+SFVLTL,SF,VLTL,3,-40,BAL,Total INA midband gain,dB,47.280
+SFVLTL,SF,VLTL,3,-40,BAL,Total INA gain error,%,-3.661
 SFVLTL,SF,VLTL,3,-40,BAL,Gain @ 0.05 Hz,dB,47.280
 SFVLTL,SF,VLTL,3,-40,BAL,Gain @ 150 Hz,dB,47.280
-SFVLTL,SF,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.429e-06
-SFVLTL,SF,VLTL,3,-40,BAL,-3 dB bandwidth,kHz,259.811
+SFVLTL,SF,VLTL,3,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.428e-06
+SFVLTL,SF,VLTL,3,-40,BAL,Total INA -3 dB bandwidth,kHz,259.940
 SFVLTL,SF,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.839
 SFVLTL,SF,VLTL,3,-40,BAL,RLD phase margin,deg,100.742
 SFVLTL,SF,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.968
 SFVLTL,SF,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.824
-SFVLTL,SF,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.567
-SFVLTL,SF,VLTL,3,-40,BAL,RLD output excursion,mV,2.743
-SFVLTL,SF,VLTL,3,-40,BAL,Peak |RLD current|,nA,3.069
-SFVLTL,SF,VLTL,3,-40,BAL,Differential gain before interference,V/V,231.214
-SFVLTL,SF,VLTL,3,-40,BAL,Differential gain during interference,V/V,231.215
+SFVLTL,SF,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFVLTL,SF,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.069
+SFVLTL,SF,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.214
+SFVLTL,SF,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.215
 SFVLTL,SF,VLTL,3,-40,BAL,Gain change during CM interference,%,2.067e-04
+SFVLTL,SF,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.567
 SFVLTH,SF,VLTH,3,125,BAL,AVDD,V,3.000
 SFVLTH,SF,VLTH,3,125,BAL,Temperature,C,125.000
-SFVLTH,SF,VLTH,3,125,BAL,INA target gain,V/V,240.000
+SFVLTH,SF,VLTH,3,125,BAL,Stage-1 target gain,V/V,60.000
+SFVLTH,SF,VLTH,3,125,BAL,Stage-2 target gain,V/V,4.000
+SFVLTH,SF,VLTH,3,125,BAL,Total INA target gain,V/V,240.000
 SFVLTH,SF,VLTH,3,125,BAL,Total current,mA,4.763
 SFVLTH,SF,VLTH,3,125,BAL,Total power,mW,14.288
-SFVLTH,SF,VLTH,3,125,BAL,Output CM error vs VREF,mV,30.919
+SFVLTH,SF,VLTH,3,125,BAL,Output common-mode error vs VREF,mV,30.919
 SFVLTH,SF,VLTH,3,125,BAL,RLD DC error vs VREF,uV,15.546
-SFVLTH,SF,VLTH,3,125,BAL,Gain @ 10 Hz (V/V),V/V,231.380
-SFVLTH,SF,VLTH,3,125,BAL,Gain @ 10 Hz (dB),dB,47.287
-SFVLTH,SF,VLTH,3,125,BAL,Gain error,%,-3.592
+SFVLTH,SF,VLTH,3,125,BAL,Stage-1 midband gain,V/V,58.328
+SFVLTH,SF,VLTH,3,125,BAL,Stage-1 gain error,%,-2.787
+SFVLTH,SF,VLTH,3,125,BAL,Stage-1 -3 dB bandwidth,kHz,220.529
+SFVLTH,SF,VLTH,3,125,BAL,Stage-2 midband gain,V/V,3.967
+SFVLTH,SF,VLTH,3,125,BAL,Stage-2 gain error,%,-0.828
+SFVLTH,SF,VLTH,3,125,BAL,Stage-2 -3 dB bandwidth,kHz,2183.760
+SFVLTH,SF,VLTH,3,125,BAL,Total INA midband gain,V/V,231.380
+SFVLTH,SF,VLTH,3,125,BAL,Total INA midband gain,dB,47.287
+SFVLTH,SF,VLTH,3,125,BAL,Total INA gain error,%,-3.592
 SFVLTH,SF,VLTH,3,125,BAL,Gain @ 0.05 Hz,dB,47.287
 SFVLTH,SF,VLTH,3,125,BAL,Gain @ 150 Hz,dB,47.287
-SFVLTH,SF,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,2.019e-06
-SFVLTH,SF,VLTH,3,125,BAL,-3 dB bandwidth,kHz,218.251
+SFVLTH,SF,VLTH,3,125,BAL,Gain flatness 0.05-150 Hz,dB,2.018e-06
+SFVLTH,SF,VLTH,3,125,BAL,Total INA -3 dB bandwidth,kHz,218.384
 SFVLTH,SF,VLTH,3,125,BAL,RLD loop UGF,kHz,1.082
 SFVLTH,SF,VLTH,3,125,BAL,RLD phase margin,deg,100.499
 SFVLTH,SF,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.156
 SFVLTH,SF,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,53.628
-SFVLTH,SF,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.988
-SFVLTH,SF,VLTH,3,125,BAL,RLD output excursion,mV,2.743
-SFVLTH,SF,VLTH,3,125,BAL,Peak |RLD current|,nA,3.078
-SFVLTH,SF,VLTH,3,125,BAL,Differential gain before interference,V/V,231.381
-SFVLTH,SF,VLTH,3,125,BAL,Differential gain during interference,V/V,231.381
+SFVLTH,SF,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFVLTH,SF,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.078
+SFVLTH,SF,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.381
+SFVLTH,SF,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.381
 SFVLTH,SF,VLTH,3,125,BAL,Gain change during CM interference,%,-4.274e-06
+SFVLTH,SF,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.988
 SFVHTL,SF,VHTL,3.6,-40,BAL,AVDD,V,3.600
 SFVHTL,SF,VHTL,3.6,-40,BAL,Temperature,C,-40.000
-SFVHTL,SF,VHTL,3.6,-40,BAL,INA target gain,V/V,240.000
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-1 target gain,V/V,60.000
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-2 target gain,V/V,4.000
+SFVHTL,SF,VHTL,3.6,-40,BAL,Total INA target gain,V/V,240.000
 SFVHTL,SF,VHTL,3.6,-40,BAL,Total current,mA,3.689
 SFVHTL,SF,VHTL,3.6,-40,BAL,Total power,mW,13.281
-SFVHTL,SF,VHTL,3.6,-40,BAL,Output CM error vs VREF,mV,-20.721
+SFVHTL,SF,VHTL,3.6,-40,BAL,Output common-mode error vs VREF,mV,-20.721
 SFVHTL,SF,VHTL,3.6,-40,BAL,RLD DC error vs VREF,uV,21.537
-SFVHTL,SF,VHTL,3.6,-40,BAL,Gain @ 10 Hz (V/V),V/V,231.264
-SFVHTL,SF,VHTL,3.6,-40,BAL,Gain @ 10 Hz (dB),dB,47.282
-SFVHTL,SF,VHTL,3.6,-40,BAL,Gain error,%,-3.640
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-1 midband gain,V/V,58.315
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-1 gain error,%,-2.808
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-1 -3 dB bandwidth,kHz,271.098
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-2 midband gain,V/V,3.966
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-2 gain error,%,-0.856
+SFVHTL,SF,VHTL,3.6,-40,BAL,Stage-2 -3 dB bandwidth,kHz,2628.919
+SFVHTL,SF,VHTL,3.6,-40,BAL,Total INA midband gain,V/V,231.264
+SFVHTL,SF,VHTL,3.6,-40,BAL,Total INA midband gain,dB,47.282
+SFVHTL,SF,VHTL,3.6,-40,BAL,Total INA gain error,%,-3.640
 SFVHTL,SF,VHTL,3.6,-40,BAL,Gain @ 0.05 Hz,dB,47.282
 SFVHTL,SF,VHTL,3.6,-40,BAL,Gain @ 150 Hz,dB,47.282
-SFVHTL,SF,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.341e-06
-SFVHTL,SF,VHTL,3.6,-40,BAL,-3 dB bandwidth,kHz,268.232
+SFVHTL,SF,VHTL,3.6,-40,BAL,Gain flatness 0.05-150 Hz,dB,1.340e-06
+SFVHTL,SF,VHTL,3.6,-40,BAL,Total INA -3 dB bandwidth,kHz,268.275
 SFVHTL,SF,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.839
 SFVHTL,SF,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.792
 SFVHTL,SF,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.975
 SFVHTL,SF,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,52.865
-SFVHTL,SF,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.575
-SFVHTL,SF,VHTL,3.6,-40,BAL,RLD output excursion,mV,2.743
-SFVHTL,SF,VHTL,3.6,-40,BAL,Peak |RLD current|,nA,3.063
-SFVHTL,SF,VHTL,3.6,-40,BAL,Differential gain before interference,V/V,231.264
-SFVHTL,SF,VHTL,3.6,-40,BAL,Differential gain during interference,V/V,231.263
+SFVHTL,SF,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFVHTL,SF,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.063
+SFVHTL,SF,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.264
+SFVHTL,SF,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.263
 SFVHTL,SF,VHTL,3.6,-40,BAL,Gain change during CM interference,%,-1.213e-04
+SFVHTL,SF,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.575
 SFVHTH,SF,VHTH,3.6,125,BAL,AVDD,V,3.600
 SFVHTH,SF,VHTH,3.6,125,BAL,Temperature,C,125.000
-SFVHTH,SF,VHTH,3.6,125,BAL,INA target gain,V/V,240.000
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-1 target gain,V/V,60.000
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-2 target gain,V/V,4.000
+SFVHTH,SF,VHTH,3.6,125,BAL,Total INA target gain,V/V,240.000
 SFVHTH,SF,VHTH,3.6,125,BAL,Total current,mA,4.934
 SFVHTH,SF,VHTH,3.6,125,BAL,Total power,mW,17.764
-SFVHTH,SF,VHTH,3.6,125,BAL,Output CM error vs VREF,mV,30.883
+SFVHTH,SF,VHTH,3.6,125,BAL,Output common-mode error vs VREF,mV,30.883
 SFVHTH,SF,VHTH,3.6,125,BAL,RLD DC error vs VREF,uV,18.957
-SFVHTH,SF,VHTH,3.6,125,BAL,Gain @ 10 Hz (V/V),V/V,231.453
-SFVHTH,SF,VHTH,3.6,125,BAL,Gain @ 10 Hz (dB),dB,47.289
-SFVHTH,SF,VHTH,3.6,125,BAL,Gain error,%,-3.561
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-1 midband gain,V/V,58.344
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-1 gain error,%,-2.760
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-1 -3 dB bandwidth,kHz,227.347
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-2 midband gain,V/V,3.967
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-2 gain error,%,-0.824
+SFVHTH,SF,VHTH,3.6,125,BAL,Stage-2 -3 dB bandwidth,kHz,2255.841
+SFVHTH,SF,VHTH,3.6,125,BAL,Total INA midband gain,V/V,231.453
+SFVHTH,SF,VHTH,3.6,125,BAL,Total INA midband gain,dB,47.289
+SFVHTH,SF,VHTH,3.6,125,BAL,Total INA gain error,%,-3.561
 SFVHTH,SF,VHTH,3.6,125,BAL,Gain @ 0.05 Hz,dB,47.289
 SFVHTH,SF,VHTH,3.6,125,BAL,Gain @ 150 Hz,dB,47.289
 SFVHTH,SF,VHTH,3.6,125,BAL,Gain flatness 0.05-150 Hz,dB,1.899e-06
-SFVHTH,SF,VHTH,3.6,125,BAL,-3 dB bandwidth,kHz,225.060
+SFVHTH,SF,VHTH,3.6,125,BAL,Total INA -3 dB bandwidth,kHz,225.123
 SFVHTH,SF,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.082
 SFVHTH,SF,VHTH,3.6,125,BAL,RLD phase margin,deg,100.559
 SFVHTH,SF,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.162
 SFVHTH,SF,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,53.664
-SFVHTH,SF,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.983
-SFVHTH,SF,VHTH,3.6,125,BAL,RLD output excursion,mV,2.743
-SFVHTH,SF,VHTH,3.6,125,BAL,Peak |RLD current|,nA,3.072
-SFVHTH,SF,VHTH,3.6,125,BAL,Differential gain before interference,V/V,231.453
-SFVHTH,SF,VHTH,3.6,125,BAL,Differential gain during interference,V/V,231.453
+SFVHTH,SF,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
+SFVHTH,SF,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.072
+SFVHTH,SF,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.453
+SFVHTH,SF,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.453
 SFVHTH,SF,VHTH,3.6,125,BAL,Gain change during CM interference,%,2.688e-04
+SFVHTH,SF,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.983

@@ -61,11 +61,16 @@ All results represent deterministic pre-layout schematic simulations on the Glob
 | | Differential Settling Time ($2\text{ mV}$) | 153.6 ns | 236.6 ns | SSVLTL |
 | | CMFB Phase Margin / Settling | 86.428° / 313.6 ns | 84.1° / 507.1 ns | FFVLTH / SSVLTH |
 | **INA + RLD (BAL)** | Total current / power | 4.441 mA / 14.655 mW | 5.937 mA / 21.373 mW | FFVHTH |
-| | Differential gain @ 10 Hz | 231.355 V/V (47.286 dB) | 3.815% gain error | FFVLTL |
-| | RLD UGF / phase margin | 0.946 kHz / 100.673° | 0.717 kHz / 100.083° | FFVLTH |
-| | Input CM suppression @ 60 / 150 Hz | 55.072 / 53.260 dB | 54.646 / 51.686 dB | SSVLTL |
-| | Input noise (0.05–150 Hz) | 2.671 µVrms | 3.116 µVrms | SSVLTH |
-| | RLD output excursion / peak current | 2.743 mV / 3.069 nA | 2.731 mV / 3.095 nA | FFVLTH |
+| | Stage-1 / Stage-2 midband gain @ 10 Hz | 58.330 / 3.966 V/V | -2.783% / -0.842% error | — |
+| | Total INA midband gain @ 10 Hz | 231.355 V/V (47.286 dB) | 3.815% gain error | FFVLTL |
+| | Stage-1 / Stage-2 / Total INA -3 dB bandwidth | 263.040 / 2581.724 / 260.399 kHz | 178.714 kHz total | SSVLTH |
+| | RLD loop UGF | 0.946 kHz | 0.717 kHz | SSVLTL |
+| | RLD phase margin | 100.673° | 100.083° | FFVLTH |
+| | Input CM suppression @ 60 Hz | 55.072 dB | 54.646 dB | SSVLTL |
+| | Input CM suppression @ 150 Hz | 53.260 dB | 51.686 dB | SSVLTL |
+| | Input-referred noise (0.05–150 Hz) | 2.671 µVrms | 3.116 µVrms | SSVLTH |
+| | RLD output peak-to-peak excursion | 2.743 mV | 2.743 mV | FFVHNOM |
+| | Peak \|I<sub>RLD</sub>\| during CM interference | 3.069 nA | 3.095 nA | FFVLTH |
 
 For detailed characterization result plots and full methodology, see [Project_Report.md](Project_Report.md).
 
