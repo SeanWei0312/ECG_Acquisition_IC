@@ -303,17 +303,14 @@ The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF,
 ![INA + RLD RLD Loop Gain and Phase](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_loop_gain.png)
 *Figure 6.14: Nominal RLD loop gain and phase with −3 dB, UGF, and PM markers.*
 
-![INA + RLD Input CM Suppression](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_input_cm_suppression.png)
-*Figure 6.15: Nominal balanced-electrode input common-mode suppression.*
-
-![INA + RLD CM-to-Differential Conversion](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_cm_to_differential.png)
-*Figure 6.16: Mismatched-electrode CM-to-differential conversion with RLD OFF/ON.*
+![INA + RLD Common-Mode Rejection Performance](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_cm_rejection.png)
+*Figure 6.15: Nominal RLD common-mode rejection performance: balanced input CM suppression and mismatched-electrode CM-to-differential conversion.*
 
 ![INA + RLD Common-Mode Interference](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_transient.png)
-*Figure 6.17: Nominal balanced-electrode common-mode interference transient.*
+*Figure 6.16: Nominal balanced-electrode common-mode interference transient.*
 
 ![INA + RLD Input Noise](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_noise.png)
-*Figure 6.18: Nominal INA+RLD input-referred noise density.*
+*Figure 6.17: Nominal INA+RLD input-referred noise density.*
 
 ![SEL INT EXT Switching Functional Check](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_sel_functional_check.png)
 *Figure 6.19: Nominal selector switching control, available INT/EXT signals, and selected output.*

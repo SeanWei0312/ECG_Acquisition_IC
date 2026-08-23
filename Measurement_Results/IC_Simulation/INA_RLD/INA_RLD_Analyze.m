@@ -41,7 +41,6 @@ cornerCase = strings(1,nCorners);
 cornerVdd_V = nan(1,nCorners);
 cornerTemp_C = nan(1,nCorners);
 rawValues = nan(size(rows,1),nCorners);
-rldRailHeadroom_V = nan(1,nCorners);
 rldPeakCurrent_A = nan(1,nCorners);
 metrics = cell(nCorners,nElectrodes);
 
@@ -68,8 +67,6 @@ for processIndex = 1:numel(processes)
             if electrodeIndex == balIndex
                 rawValues(:,cornerIndex) = metricsToRaw( ...
                     m,rows,caseTemp_C(caseIndex),cfg.diffGainTarget_VV);
-                rldRailHeadroom_V(cornerIndex) = ...
-                    m.tran.rldRailHeadroom_V;
                 rldPeakCurrent_A(cornerIndex) = m.tran.peakRldCurrent_A;
             end
         end
@@ -109,8 +106,7 @@ fullPvtTable = buildFullPvtTable(rows,scaledValues,corners, ...
 writetable(fullPvtTable,fullfile(scriptDir,'INA_RLD_full_pvt_report.csv'));
 
 worstCase = buildWorstCaseTable( ...
-    rows,scaledValues,corners,rldRailHeadroom_V, ...
-    rldPeakCurrent_A);
+    rows,scaledValues,corners,rldPeakCurrent_A);
 fprintf('\nINA + RLD FULL-PVT WORST CASE\nBALANCED ELECTRODES\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(scriptDir,'INA_RLD_worst_case_report.csv'));
@@ -637,24 +633,22 @@ result = table(cornerColumn,processColumn,caseColumn,vddColumn, ...
     'Temperature_C','Electrode','Parameter','Unit','Value'});
 end
 
-function result = buildWorstCaseTable( ...
-    rows,values,corners,rldRailHeadroom_V, ...
-    rldPeakCurrent_A)
+function result = buildWorstCaseTable(rows,values,corners,rldPeakCurrent_A)
 definitions = [
     "Total current",                            "Total current",                         "max"
     "Total power",                              "Total power",                           "max"
     "Output CM error",                          "Output CM error",                       "maxabs"
     "RLD DC error",                             "RLD DC error",                          "maxabs"
-    "S1 gain",                                  "S1 gain",                               "min"
-    "S1 gain dB",                               "S1 gain dB",                            "min"
+    "S1 gain",                                  "__S1_GAIN_AT_ERROR__",                 "linked"
+    "S1 gain dB",                               "__S1_GAIN_DB_AT_ERROR__",              "linked"
     "S1 gain error",                            "S1 gain error",                         "maxabs"
     "S1 -3 dB bandwidth",                       "S1 -3 dB bandwidth",                    "min"
-    "S2 gain",                                  "S2 gain",                               "min"
-    "S2 gain dB",                               "S2 gain dB",                            "min"
+    "S2 gain",                                  "__S2_GAIN_AT_ERROR__",                 "linked"
+    "S2 gain dB",                               "__S2_GAIN_DB_AT_ERROR__",              "linked"
     "S2 gain error",                            "S2 gain error",                         "maxabs"
     "S2 -3 dB bandwidth",                       "S2 -3 dB bandwidth",                    "min"
-    "INA gain",                                 "INA gain",                              "min"
-    "INA gain dB",                              "INA gain dB",                           "min"
+    "INA gain",                                 "__INA_GAIN_AT_ERROR__",                "linked"
+    "INA gain dB",                              "__INA_GAIN_DB_AT_ERROR__",             "linked"
     "INA gain error",                           "INA gain error",                        "maxabs"
     "Gain flatness 0.05-150 Hz",                "Gain flatness 0.05-150 Hz",              "max"
     "INA -3 dB bandwidth",                      "INA -3 dB bandwidth",                    "min"
@@ -664,7 +658,6 @@ definitions = [
     "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
     "RLD Swing Ratio",                          "RLD Swing Ratio",                       "max"
     "RLD loop UGF",                             "RLD loop UGF",                          "min"
-    "RLD rail headroom",                        "__RLD_RAIL_HEADROOM__",                 "min"
     "RLD Peak Current",                         "__RLD_PEAK_CURRENT__",                  "max"
     "CM Interference Gain Change",               "CM Interference Gain Change",           "maxabs"
 ];
@@ -677,9 +670,38 @@ selectedCorner = strings(n,1);
 
 for definitionIndex = 1:n
     sourceName = definitions(definitionIndex,2);
-    if sourceName == "__RLD_RAIL_HEADROOM__"
-        [unit(definitionIndex),candidates] = ...
-            adaptValuesUnit("V",rldRailHeadroom_V);
+    linked = false;
+    linkedCandidates = [];
+    if startsWith(sourceName,"__S1_GAIN")
+        if contains(sourceName,"_DB_")
+            rowIndex = find(rows(:,1) == "S1 gain dB",1);
+        else
+            rowIndex = find(rows(:,1) == "S1 gain" & rows(:,2) == "V/V",1);
+        end
+        errorIndex = find(rows(:,1) == "S1 gain error",1);
+        linked = true;
+    elseif startsWith(sourceName,"__S2_GAIN")
+        if contains(sourceName,"_DB_")
+            rowIndex = find(rows(:,1) == "S2 gain dB",1);
+        else
+            rowIndex = find(rows(:,1) == "S2 gain" & rows(:,2) == "V/V",1);
+        end
+        errorIndex = find(rows(:,1) == "S2 gain error",1);
+        linked = true;
+    elseif startsWith(sourceName,"__INA_GAIN")
+        if contains(sourceName,"_DB_")
+            rowIndex = find(rows(:,1) == "INA gain dB",1);
+        else
+            rowIndex = find(rows(:,1) == "INA gain" & rows(:,2) == "V/V",1);
+        end
+        errorIndex = find(rows(:,1) == "INA gain error",1);
+        linked = true;
+    end
+    if linked
+        unit(definitionIndex) = rows(rowIndex,2);
+        candidates = values(rowIndex,:);
+        linkedCandidates = values(errorIndex,:);
+        [~,linkedIndex] = max(abs(linkedCandidates));
     elseif sourceName == "__RLD_PEAK_CURRENT__"
         [unit(definitionIndex),candidates] = ...
             adaptValuesUnit("A",rldPeakCurrent_A);
@@ -692,7 +714,11 @@ for definitionIndex = 1:n
         unit(definitionIndex) = rows(rowIndex,2);
         candidates = values(rowIndex,:);
     end
-    failureIndices = find(~isfinite(candidates));
+    failureMask = ~isfinite(candidates);
+    if linked
+        failureMask = failureMask | ~isfinite(linkedCandidates);
+    end
+    failureIndices = find(failureMask);
     if ~isempty(failureIndices)
         selectedIndex = failureIndices(1);
         if definitions(definitionIndex,3) == "maxabs"
@@ -703,15 +729,19 @@ for definitionIndex = 1:n
         selectedCorner(definitionIndex) = corners(selectedIndex);
         continue;
     end
-    switch definitions(definitionIndex,3)
-        case "min"
-            [~,selectedIndex] = min(candidates);
-        case "max"
-            [~,selectedIndex] = max(candidates);
-        case "maxabs"
-            [~,selectedIndex] = max(abs(candidates));
-        otherwise
-            error('INA_RLD_Analyze:WorstCaseMode','Unknown selection mode.');
+    if linked
+        selectedIndex = linkedIndex;
+    else
+        switch definitions(definitionIndex,3)
+            case "min"
+                [~,selectedIndex] = min(candidates);
+            case "max"
+                [~,selectedIndex] = max(candidates);
+            case "maxabs"
+                [~,selectedIndex] = max(abs(candidates));
+            otherwise
+                error('INA_RLD_Analyze:WorstCaseMode','Unknown selection mode.');
+        end
     end
     if definitions(definitionIndex,3) == "maxabs"
         selectedValue(definitionIndex) = abs(candidates(selectedIndex));
@@ -775,10 +805,8 @@ misFiles = runFiles(resultDir,"nom","nom","mis");
 selTransient = selTransientFile(resultDir,"nom","nom");
 plotDifferentialAc(balFiles.diff,nominalMetrics{1},plotDir);
 plotRldLoop(balFiles.loop,nominalMetrics{1},plotDir);
-plotInputCmSuppression(balFiles.cmOff,balFiles.cmOn, ...
-    nominalMetrics{1},plotDir);
-plotCmToDifferential(misFiles.cmOff,misFiles.cmOn, ...
-    nominalMetrics{2},plotDir);
+plotCmRejectionCombined(balFiles.cmOff,balFiles.cmOn, ...
+    misFiles.cmOff,misFiles.cmOn,nominalMetrics{1},nominalMetrics{2},plotDir);
 plotTransient(balFiles.tran,nominalMetrics{1},plotDir);
 plotNoise(balFiles.noise,nominalMetrics{1},plotDir);
 plotSelFunctionalCheck(selTransient,plotDir);
@@ -906,47 +934,50 @@ if showRegionLabels
 end
 end
 
-function plotInputCmSuppression(balOffFile,balOnFile,metric,plotDir)
-[fBal,balSuppression_dB] = inputCmSuppressionCurve( ...
-    balOffFile,balOnFile);
-fig = figure;
-semilogx(fBal,balSuppression_dB,'LineWidth',1.5);
-hold on;
-addCursorLine(60,metric.cm.inputSuppression_dB(1), ...
-    sprintf('60 Hz: %.2f dB',metric.cm.inputSuppression_dB(1)));
-addCursorLine(150,metric.cm.inputSuppression_dB(2), ...
-    sprintf('150 Hz: %.2f dB',metric.cm.inputSuppression_dB(2)));
-xlim([0.01 1e4]);
-ylabel('Input CM suppression (dB)');
-stylePlot('Frequency (Hz)','RLD Input Common-Mode Suppression - NOM');
-savePlot(fig,plotDir,'NOM.INA_RLD_input_cm_suppression.png');
-end
-
-function plotCmToDifferential(misOffFile,misOnFile,metric,plotDir)
+function plotCmRejectionCombined(balOffFile,balOnFile,misOffFile,misOnFile, ...
+    balMetric,misMetric,plotDir)
+[fBal,balSuppression_dB] = inputCmSuppressionCurve(balOffFile,balOnFile);
 [fOff,off] = commonModeTransfers(readNumericFile(misOffFile,13));
 [fOn,on] = commonModeTransfers(readNumericFile(misOnFile,13));
+offGain_dB = magnitudeDb(off.outDiff);
 fig = figure;
-semilogx(fOff,magnitudeDb(off.outDiff),'LineWidth',1.5, ...
-    'DisplayName','RLD OFF - MIS');
+layout = tiledlayout(fig,2,1);
+
+topAxes = nexttile(layout);
+semilogx(fBal,balSuppression_dB,'LineWidth',1.5, ...
+    'DisplayName','Balanced electrodes');
+hold on;
+cursorFrequencies_Hz = [60 150];
+for frequencyIndex = 1:2
+    frequency_Hz = cursorFrequencies_Hz(frequencyIndex);
+    addCursorLine(frequency_Hz,balMetric.cm.inputSuppression_dB(frequencyIndex), ...
+        sprintf('%g Hz: %.2f dB',frequency_Hz, ...
+        balMetric.cm.inputSuppression_dB(frequencyIndex)));
+end
+xlim([0.01 1e4]);
+ylabel('CM suppression (dB)');
+legend('Location','best');
+stylePlot('', '(a) Input Common-Mode Suppression - NOM, BAL');
+
+bottomAxes = nexttile(layout);
+semilogx(fOff,offGain_dB,'LineWidth',1.5,'DisplayName','RLD OFF - MIS');
 hold on;
 semilogx(fOn,magnitudeDb(on.outDiff),'--','LineWidth',1.5, ...
     'DisplayName','RLD ON - MIS');
-offGain_dB = magnitudeDb(off.outDiff);
-cursorFrequencies_Hz = [60 150];
-for frequencyIndex = 1:numel(cursorFrequencies_Hz)
+for frequencyIndex = 1:2
     frequency_Hz = cursorFrequencies_Hz(frequencyIndex);
-    markerGain_dB = interpLogFrequency( ...
-        fOff,offGain_dB,frequency_Hz);
+    markerGain_dB = interpLogFrequency(fOff,offGain_dB,frequency_Hz);
     addCursorLine(frequency_Hz,markerGain_dB, ...
-        sprintf('%g Hz reduction: %.2f dB', ...
-        frequency_Hz, ...
-        metric.cm.cmToDiffReduction_dB(frequencyIndex)));
+        sprintf('%g Hz: %.2f dB',frequency_Hz, ...
+        misMetric.cm.cmToDiffReduction_dB(frequencyIndex)));
 end
 xlim([0.01 1e4]);
 ylabel('CM-to-differential gain (dB)');
 legend('Location','best');
-stylePlot('Frequency (Hz)','CM-to-Differential Conversion - NOM, MIS');
-savePlot(fig,plotDir,'NOM.INA_RLD_cm_to_differential.png');
+stylePlot('Frequency (Hz)', '(b) CM-to-Differential Conversion - NOM, MIS');
+linkaxes([topAxes bottomAxes],'x');
+sgtitle('RLD Common-Mode Rejection Performance - NOM');
+savePlot(fig,plotDir,'NOM.INA_RLD_cm_rejection.png');
 end
 
 function [f,suppression_dB] = inputCmSuppressionCurve(offFile,onFile)
@@ -1022,46 +1053,45 @@ if ~isfinite(gainBal_VV), gainBal_VV = metric.diff.gain10_VV; end
 fig = figure;
 layout = tiledlayout(3,1);
 commonModeAxes = nexttile(layout);
-appliedCmDeviation_mV = (bal(:,2)-metric.vref_V)*1e3;
-inputCmDeviation_mV = (bal(:,4)-metric.vref_V)*1e3;
-plot(tBal_ms,appliedCmDeviation_mV,':','LineWidth',1.1, ...
-    'DisplayName','Applied CM interference');
-hold on;
-plot(tBal_ms,inputCmDeviation_mV,'LineWidth',1.5, ...
+inputCmError_mV = (bal(:,4)-metric.vref_V)*1e3;
+outputCmError_uV = (bal(:,17)-metric.vref_V)*1e6;
+yyaxis left;
+plot(tBal_ms,inputCmError_mV,'LineWidth',1.5, ...
     'DisplayName','INA input CM error');
+hold on;
 addTimeGuides(stepTimes_ms);
 yline(0,'--','HandleVisibility','off');
-ylabel('CM deviation (mV)');
+ylabel('Input CM error (mV)');
+text(mean(stepTimes_ms),0.85*max(abs(inputCmError_mV)), ...
+    '+300 mV CM interference','HorizontalAlignment','center', ...
+    'VerticalAlignment','top','HandleVisibility','off');
+yyaxis right;
+plot(tBal_ms,outputCmError_uV,'LineWidth',1.3, ...
+    'DisplayName','Output CM error');
+yline(0,'--','HandleVisibility','off');
+ylabel('Output CM error (\muV)');
 legend('Location','best');
-stylePlot('', 'CM Interference');
+stylePlot('', 'Input and Output Common-Mode Error');
 
 rldAxes = nexttile(layout);
-plot(tBal_ms,bal(:,14),'LineWidth',1.5);
+yyaxis left;
+rldDeviation_mV = (bal(:,14)-metric.vref_V)*1e3;
+plot(tBal_ms,rldDeviation_mV,'LineWidth',1.5, ...
+    'DisplayName','RLD output - VREF');
 hold on;
 addTimeGuides(stepTimes_ms);
-rldOutputCmError_mV = (bal(:,17)-metric.vref_V)*1e3;
-peakOutputCmError_mV = max(abs(rldOutputCmError_mV),[],'omitnan');
-rldSpan_V = metric.tran.rldOutMax_V-metric.tran.rldOutMin_V;
-if ~isfinite(rldSpan_V) || rldSpan_V <= 0
-    rldSpan_V = 1e-3;
-end
-ylim([metric.tran.rldOutMin_V-0.05*rldSpan_V ...
-    metric.tran.rldOutMax_V+4.0*rldSpan_V]);
-addMetricBox({ ...
-    sprintf('RLD excursion = %.3f mV', ...
-    metric.tran.rldOutExcursion_V*1e3); ...
-    sprintf('Peak |I_{RLD}| = %.3f nA', ...
-    metric.tran.peakRldCurrent_A*1e9); ...
-    sprintf('Output CM error pk = %.3f mV',peakOutputCmError_mV)});
-ylabel('RLD output (V)');
-stylePlot('', 'RLD Output');
-yyaxis right;
-plot(tBal_ms,rldOutputCmError_mV,'LineWidth',1.2, ...
-    'Color',[0.8500 0.3250 0.0980], ...
-    'DisplayName','Output CM error');
-hold on;
 yline(0,'--','HandleVisibility','off');
-ylabel('Output CM error (mV)');
+ylabel('RLD output deviation (mV)');
+yyaxis right;
+plot(tBal_ms,bal(:,19)*1e9,'LineWidth',1.2, ...
+    'Color',[0.8500 0.3250 0.0980], 'DisplayName','|I_{RLD}|');
+ylabel('|I_{RLD}| (nA)');
+legend('Location','best');
+addMetricBox({ ...
+    sprintf('RLD Swing Ratio = %.3f %%',metric.tran.rldVppNorm_pct); ...
+    sprintf('RLD Peak Current = %.3f nA', ...
+    metric.tran.peakRldCurrent_A*1e9)});
+stylePlot('', 'RLD Response');
 
 differentialAxes = nexttile(layout);
 plot(tBal_ms,bal(:,5)*1e3,'LineWidth',1.5, ...
@@ -1077,6 +1107,8 @@ end
 ylim([-1.1*signalLimit_mV 2.0*signalLimit_mV]);
 ylabel('Differential signal (mV)');
 legend('Location','northeast');
+addMetricBox({sprintf('CM Interference Gain Change = %.3g %%', ...
+    metric.tran.gainChangeDuringInterference_pct)});
 stylePlot('Time (ms)','ECG Differential Integrity');
 linkaxes([commonModeAxes rldAxes differentialAxes],'x');
 sgtitle('INA + RLD Common-Mode Interference Response - NOM, BAL');
@@ -1134,7 +1166,7 @@ end
 
 function addTimeGuides(times_ms)
 for time_ms = times_ms
-    xline(time_ms,':','HandleVisibility','off');
+    xline(time_ms,'--','HandleVisibility','off');
 end
 end
 

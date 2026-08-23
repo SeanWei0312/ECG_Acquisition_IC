@@ -22,6 +22,5 @@ Input CM suppression @ 150 Hz,dB,51.686,SSVLTL
 Input-referred noise 0.05-150 Hz,uVrms,3.116,SSVLTH
 RLD Swing Ratio,%,0.914,FFVHNOM
 RLD loop UGF,kHz,0.636,SSVLTL
-RLD rail headroom,V,1.497,FFVLTH
 RLD Peak Current,nA,3.095,FFVLTH
-CM Interference Gain Change,%,6.490e-04,NOMVHTL
+CM Interference Gain Change,%,6.469e-04,SSVHNOM
