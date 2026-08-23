@@ -12,11 +12,11 @@ This repository contains a pre-layout GF180 integrated circuit design for electr
 
 | Stage | Subsystem | Circuit Topology & Key Components | Stage Gain & Bandwidth |
 | :--- | :--- | :--- | :---: |
-| **Stage 1** | **Instrumentation Amp (`INA`)** | 3-opamp topology ($2\times$ `SE_OTA` input buffers, $1\times$ `FD_OTA` difference stage, $R_1 = 118\text{ k}\Omega$, $R_{\text{gain}} = 4\text{ k}\Omega$, $R_{2\text{--}5} = 10\text{--}40\text{ k}\Omega$) | $60\text{ V/V}$ ($35.6\text{ dB}$)<br>$\text{BW} > 10\text{ kHz}$ |
+| **Stage 1** | **Instrumentation Amp (`INA`)** | 3-opamp topology ($2\times$ `SE_OTA` input buffers, $1\times$ `FD_OTA` difference stage, $R_1 = 118\text{ k}\Omega$, $R_{\text{gain}} = 4\text{ k}\Omega$, $R_{2\text{--}5} = 10\text{--}40\text{ k}\Omega$) | $60\text{ V/V}$ stage setting; integrated INA+SEL target $240\text{ V/V}$ |
 | **Stage 2** | **Active Low-Pass Filter (`LPF`)** | Fully differential active 2nd-order RC filter ($1\times$ `FD_OTA`, $R = 3.7\text{ M}\Omega$, $C = 100\text{ pF}$ MIM) | $4\text{ V/V}$ ($12.0\text{ dB}$)<br>$f_c \approx 150\text{ Hz}$ |
 | **Stage 3** | **Programmable Gain Amp (`PGA`)** | Fully differential switched-resistor ladder ($1\times$ `FD_OTA`, $6\times$ `TG`, $R = 20\text{--}120\text{ k}\Omega$) | $1\times, 2\times, 4\times, 8\times, 16\times$<br>($0\text{ to }24.1\text{ dB}$) |
 | **Stage 4** | **Output Driver (`BUFFER`)** | Closed-loop differential unity follower ($1\times$ `FD_OTA`, $4\times 20\text{ k}\Omega$) driving sampling cap | $1\text{ V/V}$ ($0\text{ dB}$)<br>$C_L = 10\text{ pF}$ |
-| **Support** | **Right-Leg Drive (`RLD`)** | Active integrator sensing input CM ($1\times$ `SE_OTA`, $R_{\text{in}} = 4\text{ M}\Omega$, $R_f = 20\text{ M}\Omega$, $C_f = 80\text{ pF}$) | High active CM suppression ($> 100\text{ dB}$) |
+| **Support** | **Right-Leg Drive (`RLD`)** | Active integrator sensing input CM ($1\times$ `SE_OTA`, $R_{\text{in}} = 4\text{ M}\Omega$, $R_f = 20\text{ M}\Omega$, $C_f = 80\text{ pF}$) | Combined INA+RLD input-CM suppression: $55.1\text{ dB}$ @ 60 Hz nominal |
 | **Reference** | **Master Bias (`BIAS`/`MIRROR`)** | $\beta$-Multiplier reference ($40\text{ }\mu\text{A}$ target) with startup device and 11-channel cascode mirror tree | $\Delta I_{\text{bias}} < 0.15\%$ mirror tracking |
 | **Total Chain** | **Full AFE Performance** | Cascaded multi-stage biopotential recording path with analog channel selection (`SEL`) | **$240\text{ to }3840\text{ V/V}$**<br>($47.6\text{ to }71.7\text{ dB}$)<br>**$0.05\text{--}150\text{ Hz}$** |
 
@@ -29,8 +29,7 @@ This repository contains a pre-layout GF180 integrated circuit design for electr
 | **BIAS / SEL** | 45-point PVT + 2D Grid | 7 CSV reports (`table`, `startup`, `sel`, `dc2d`, `global_worst_case`, `reference`), 35 startup transient runs (**0 failures**), 6 nominal plots |
 | **SE OTA** | **45-point PVT** (5 processes $\times$ 9 V-T) | 450 raw ngspice exports, 9-column comparison CSV (`SEOTA_table_report.csv`), 45-point worst-case CSV (`SEOTA_worst_case_report.csv`), 8 nominal plots |
 | **FD OTA** | **45-point PVT** (5 processes $\times$ 9 V-T) | 9-column comparison CSV (`FDOTA_table_report.csv`), 45-point worst-case CSV (`FDOTA_worst_case_report.csv`), 9 nominal plots |
-| **FDC Core** | Standalone Nominal | Differential small-signal AC, plant AC/DC, CMFB sweep, noise, and offset summary (`NOM.FDC_summary.csv`), 6 plots |
-| **CMFB** | Standalone Nominal | Closed-loop DC, transient settling, and open-loop AC stability summary (`NOM.CMFB_summary.csv`), 3 plots |
+| **INA + RLD** | **45-point PVT** (BAL report) + 45-corner MIS stress audit | 9-column BAL comparison CSV, full-PVT BAL CSV, worst-case CSV, 7 nominal plots including switching SEL transient |
 | **Integrated AFE** | Multi-Stage Chain | Complete top-level schematic, AC/noise/transient testbenches, and multi-stage analyzer source (`AFE_Analyze.m`) |
 | **$g_m/I_D$ Sizing** | Device Characterization | Continuous $g_m/I_D$, $f_T$, $I_D/W$, and $g_m/g_{ds}$ lookup curves for 3.3 V NMOS and PMOS in GF180 |
 
@@ -61,6 +60,12 @@ All results represent deterministic pre-layout schematic simulations on the Glob
 | | Differential Slew Rate (Rise / Fall) | 7.238 / 7.140 V/µs | 5.138 / 5.073 V/µs | SSVLTL |
 | | Differential Settling Time ($2\text{ mV}$) | 153.6 ns | 236.6 ns | SSVLTL |
 | | CMFB Phase Margin / Settling | 86.428° / 313.6 ns | 84.1° / 507.1 ns | FFVLTH / SSVLTH |
+| **INA + RLD (BAL)** | Total current / power | 4.441 mA / 14.655 mW | 5.937 mA / 21.373 mW | FFVHTH |
+| | Differential gain @ 10 Hz | 231.355 V/V (47.286 dB) | 3.815% gain error | FFVLTL |
+| | RLD UGF / phase margin | 0.946 kHz / 100.673° | 0.717 kHz / 100.083° | FFVLTH |
+| | Input CM suppression @ 60 / 150 Hz | 55.072 / 53.260 dB | 54.646 / 51.686 dB | SSVLTL |
+| | Input noise (0.05–150 Hz) | 2.671 µVrms | 3.116 µVrms | SSVLTH |
+| | RLD output excursion / peak current | 2.743 mV / 3.069 nA | 2.731 mV / 3.095 nA | FFVLTH |
 
 For detailed characterization result plots and full methodology, see [Project_Report.md](Project_Report.md).
 
@@ -85,7 +90,8 @@ ECG_Acquisition_IC/
 │   └── IC_Simulation/
 │       ├── BIAS/                                      # BIAS_Analyze.m, CSV reports, and startup plots
 │       ├── SE_OTA/                                    # SEOTA_Analyze.m, 45-PVT CSV reports, and plots
-│       ├── FD_OTA/                                    # CMFB, FDC, and FDOTA 45-PVT analyzers and plots
+│       ├── FD_OTA/                                    # FDOTA_Analyze.m, 45-PVT CSV reports, and plots
+│       ├── INA_RLD/                                   # INA_RLD_Analyze.m, BAL/MIS reports, and seven plots
 │       ├── AFE/                                       # Top-level AFE_Analyze.m analyzer source
 │       └── Gm_Id/                                     # GF180 NMOS/PMOS gm/Id sizing scripts and data
 └── 2026-sscs-chipathon/                               # Upstream SSCS Chipathon reference snapshot
@@ -102,12 +108,13 @@ To execute the verification analysis and regenerate all CSV summary reports and 
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
 
 # 2. Single-Ended OTA 45-PVT Analysis
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA','SEOTA_Analyze.m'))"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA')); SEOTA_Analyze"
 
-# 3. Fully Differential OTA, Core, and CMFB Full Analysis
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','CMFB','CMFB_Analyze.m'))"
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDC','FDC_Analyze.m'))"
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDOTA','FDOTA_Analyze.m'))"
+# 3. Fully Differential OTA 45-PVT Analysis
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA')); FDOTA_Analyze"
+
+# 4. INA + RLD 45-PVT Analysis
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
 ```
 
 > [!TIP]

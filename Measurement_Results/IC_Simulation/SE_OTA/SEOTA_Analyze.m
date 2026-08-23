@@ -1,22 +1,30 @@
-%%
-% SEOTA nominal analysis
-clear; clc; close all;
+function SEOTA_Analyze
+% SEOTA_ANALYZE Characterize the single-ended OTA across PVT.
+%
+% Expected NGSPICE output is stored beside this file in:
+%   nom.Result_txt, ff.Result_txt, ss.Result_txt, fs.Result_txt,
+%   sf.Result_txt
+%
+% The analyzer reports the configured comparison corners and the full-PVT
+% worst case, then regenerates the NOM/NOM plots as native MATLAB figures.
+
+clc;
+close all;
 
 scriptDir = fileparts(mfilename('fullpath'));
-baseDir = fullfile(scriptDir,'NOM.Result_txt');
+baseDir = fullfile(scriptDir,'nom.Result_txt');
 plotDir = fullfile(scriptDir,'Plots');
-if ~exist(plotDir,'dir'), mkdir(plotDir); end
+if ~isfolder(plotDir)
+    mkdir(plotDir);
+end
 
-TAG = "NOM";
-MARK_FREQ_HZ = [0.05 60 150 1e3];
-CLOAD_SET_PF = 10;
-TRACK_LIMIT = 2e-3;
-SETTLE_LIMIT = 2e-3;
-NOISE_BAND_HZ = [0.05 150];
-NOISE_MARK_HZ = [NOISE_BAND_HZ(1) 60 NOISE_BAND_HZ(2)];
+cfg = analysisConfig();
+rows = reportRows();
+nominalToken = "nom";
+nominalFiles = runFiles(baseDir,nominalToken,cfg.nominalCase);
 
 %% Operating point
-op = cols(numdata(fullfile(baseDir,TAG + ".ol_nom_op.txt")),8);
+op = readNumericFile(nominalFiles.olOp,8);
 op = op(end,:);
 vdd_V = op(2);
 vinCm_V = 0.5*(op(3) + op(4));
@@ -28,99 +36,106 @@ totalPower_W = vdd_V*totalCurrent_A;
 voutTarget_V = 0.5*vdd_V;
 
 %% Open-loop: gain and phase
-[f_Hz,Ad] = transferFromFile(fullfile(baseDir,TAG + ".ol_nom_diff_ac.txt"));
-[gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f_Hz,Ad);
+[f_Hz,Ad] = transferFromFile(nominalFiles.diffAc);
+[gain_dB,phase_deg,ugf_Hz,phaseMargin_deg,f3dB_Hz] = ...
+    acMetrics(f_Hz,Ad);
 dcGain_dB = gain_dB(1);
 
-wideFigure();
+fig = figure;
 yyaxis left;
 semilogx(f_Hz,gain_dB,'LineWidth',1.5); hold on;
 yline(0,'--','HandleVisibility','off');
-addCursor(f3dB_Hz,dcGain_dB-3,sprintf('-3dB: %s',freqText(f3dB_Hz)));
-addCursor(ugf_Hz,0,sprintf('UGF: %s',freqText(ugf_Hz)));
+addCursor(f3dB_Hz,dcGain_dB-3, ...
+    sprintf('-3dB: %s',frequencyText(f3dB_Hz)));
+addCursor(ugf_Hz,0,sprintf('UGF: %s',frequencyText(ugf_Hz)));
 ylabel('Gain (dB)');
 
 yyaxis right;
 semilogx(f_Hz,phase_deg,'LineWidth',1.5); hold on;
-addCursor(ugf_Hz,interpAtFreq(f_Hz,phase_deg,ugf_Hz),sprintf('PM: %.4g deg',pm_deg));
+addCursor(ugf_Hz,interpAtFreq(f_Hz,phase_deg,ugf_Hz), ...
+    sprintf('PM: %.4g deg',phaseMargin_deg));
 ylabel('Phase (deg)');
 stylePlot('Frequency (Hz)','SEOTA Open-Loop Gain and Phase');
-saveFig(plotDir,'NOM.open_loop_gain_phase.png');
+savePlot(fig,plotDir,'NOM.open_loop_gain_phase.png');
 
 %% Open-loop: CMRR and PSRR
-[fCm_Hz,Acm] = transferFromFile(fullfile(baseDir,TAG + ".ol_nom_cm_ac.txt"));
-[fP_Hz,AsupP] = transferFromFile(fullfile(baseDir,TAG + ".ol_nom_psrrp_ac.txt"));
-[fN_Hz,AsupN] = transferFromFile(fullfile(baseDir,TAG + ".ol_nom_psrrn_ac.txt"));
+[fCm_Hz,Acm] = transferFromFile(nominalFiles.cmAc);
+[fP_Hz,AsupP] = transferFromFile(nominalFiles.psrrpAc);
+[fN_Hz,AsupN] = transferFromFile(nominalFiles.psrrnAc);
 
 cmrr_dB = rejectionDb(f_Hz,Ad,fCm_Hz,Acm);
 psrrP_dB = rejectionDb(f_Hz,Ad,fP_Hz,AsupP);
 psrrN_dB = rejectionDb(f_Hz,Ad,fN_Hz,AsupN);
-cmrrAt_dB = interpAtFreq(fCm_Hz,cmrr_dB,MARK_FREQ_HZ);
-psrrPAt_dB = interpAtFreq(fP_Hz,psrrP_dB,MARK_FREQ_HZ);
-psrrNAt_dB = interpAtFreq(fN_Hz,psrrN_dB,MARK_FREQ_HZ);
+cmrrAt_dB = interpAtFreq(fCm_Hz,cmrr_dB,cfg.markFrequencies_Hz);
+psrrPAt_dB = interpAtFreq(fP_Hz,psrrP_dB,cfg.markFrequencies_Hz);
+psrrNAt_dB = interpAtFreq(fN_Hz,psrrN_dB,cfg.markFrequencies_Hz);
 
-wideFigure();
+fig = figure;
 semilogx(fCm_Hz,cmrr_dB,'LineWidth',1.5); hold on;
-labelFreqSet(fCm_Hz,cmrr_dB,MARK_FREQ_HZ);
+labelFreqSet(fCm_Hz,cmrr_dB,cfg.markFrequencies_Hz);
 ylabel('CMRR (dB)');
 stylePlot('Frequency (Hz)','SEOTA CMRR versus Frequency');
-saveFig(plotDir,'NOM.cmrr.png');
+savePlot(fig,plotDir,'NOM.cmrr.png');
 
-wideFigure();
+fig = figure;
 tiledlayout(2,1);
 sgtitle('SEOTA PSRR+ and PSRR- versus Frequency');
 nexttile;
 semilogx(fP_Hz,psrrP_dB,'LineWidth',1.5); hold on;
-labelFreqSet(fP_Hz,psrrP_dB,MARK_FREQ_HZ);
+labelFreqSet(fP_Hz,psrrP_dB,cfg.markFrequencies_Hz);
 ylabel('PSRR+ (dB)');
 stylePlot('Frequency (Hz)','SEOTA PSRR+');
 
 nexttile;
 semilogx(fN_Hz,psrrN_dB,'LineWidth',1.5); hold on;
-labelFreqSet(fN_Hz,psrrN_dB,MARK_FREQ_HZ);
+labelFreqSet(fN_Hz,psrrN_dB,cfg.markFrequencies_Hz);
 ylabel('PSRR- (dB)');
 stylePlot('Frequency (Hz)','SEOTA PSRR-');
-saveFig(plotDir,'NOM.psrr.png');
+savePlot(fig,plotDir,'NOM.psrr.png');
 
 %% Open-loop: input-referred noise
-noise = cols(numdata(fullfile(baseDir,TAG + ".ol_nom_noise.txt")),3);
+noise = readNumericFile(nominalFiles.noise,3);
 fNoise_Hz = noise(:,1);
+validateFrequency(fNoise_Hz,nominalFiles.noise);
 inNoise_VrtHz = abs(noise(:,3));
-inputNoise_Vrms = integrateNoise(fNoise_Hz,inNoise_VrtHz,NOISE_BAND_HZ);
+inputNoise_Vrms = integrateNoise( ...
+    fNoise_Hz,inNoise_VrtHz,cfg.noiseBand_Hz);
 
-wideFigure();
-validNoise = fNoise_Hz >= NOISE_BAND_HZ(1) & ...
-    fNoise_Hz <= NOISE_BAND_HZ(2) & isfinite(inNoise_VrtHz) & inNoise_VrtHz > 0;
+fig = figure;
+validNoise = fNoise_Hz >= cfg.noiseBand_Hz(1) & ...
+    fNoise_Hz <= cfg.noiseBand_Hz(2) & ...
+    isfinite(inNoise_VrtHz) & inNoise_VrtHz > 0;
 loglog(fNoise_Hz(validNoise),inNoise_VrtHz(validNoise)*1e9,'LineWidth',1.5); hold on;
-for f0 = NOISE_MARK_HZ
+for f0 = cfg.noiseMarkFrequencies_Hz
     y0 = interpAtFreq(fNoise_Hz,inNoise_VrtHz,f0)*1e9;
-    addCursor(f0,y0,sprintf('%s: %.4g nV/rtHz',freqText(f0),y0));
+    addCursor(f0,y0,sprintf('%s: %.4g nV/rtHz',frequencyText(f0),y0));
 end
 ylabel('Input noise (nV/sqrtHz)');
-xlim(NOISE_BAND_HZ);
+xlim(cfg.noiseBand_Hz);
 stylePlot('Frequency (Hz)','SEOTA Input-Referred Noise Density versus Frequency');
-saveFig(plotDir,'NOM.input_referred_noise_density.png');
+savePlot(fig,plotDir,'NOM.input_referred_noise_density.png');
 
 %% Open-loop: VTC
-vtc = cols(numdata(fullfile(baseDir,TAG + ".ol_nom_vtc.txt")),6);
+vtc = readNumericFile(nominalFiles.vtc,6);
 vtcVinDiff_V = vtc(:,1);
 vtcVout_V = vtc(:,5);
-offset_V = zeroNoJump(vtcVinDiff_V,vtcVout_V - voutTarget_V,0.25*vdd_V);
+offset_V = zeroNoJump(vtcVinDiff_V,vtcVout_V-voutTarget_V, ...
+    cfg.offsetMaxJumpFraction*vdd_V);
 
-wideFigure();
+fig = figure;
 plot(vtcVinDiff_V*1e3,vtcVout_V,'LineWidth',1.5); hold on;
 yline(voutTarget_V,'--','VDD/2','HandleVisibility','off');
 addCursor(offset_V*1e3,voutTarget_V,sprintf('Vos: %.4g mV',offset_V*1e3));
 ylabel('Vout (V)');
 stylePlot('Vin,diff (mV)','SEOTA Open-Loop VTC');
-saveFig(plotDir,'NOM.open_loop_vtc.png');
+savePlot(fig,plotDir,'NOM.open_loop_vtc.png');
 
 %% Closed-loop: usable follower range
-clOp = cols(numdata(fullfile(baseDir,TAG + ".cl_nom_op.txt")),8);
+clOp = readNumericFile(nominalFiles.clOp,8);
 clOp = clOp(end,:);
 clVinDc_V = clOp(3);
 
-cl = cols(numdata(fullfile(baseDir,TAG + ".cl_nom_dc.txt")),6);
+cl = readNumericFile(nominalFiles.clDc,6);
 clVin_V = cl(:,1);
 clVout_V = cl(:,2);
 clErr_V = cl(:,3);
@@ -133,7 +148,7 @@ clGain = localSlope(clVin_V,clVout_V,clVinDc_V);
 gainError_pct = 100*(clGain - 1);
 voutClosedLoopDc_V = clVout_V(i0);
 
-validTrack = abs(clErr_V) <= TRACK_LIMIT;
+validTrack = abs(clErr_V) <= cfg.trackTolerance_V;
 [iLowTrack,iHighTrack] = continuousIndices(validTrack,i0);
 
 if isfinite(iLowTrack)
@@ -153,14 +168,14 @@ end
 inputHighHeadroom_V = vdd_V - usableInputHigh_V;
 outputHighHeadroom_V = vdd_V - usableOutputHigh_V;
 
-wideFigure();
+fig = figure;
 tiledlayout(2,1);
 sgtitle('SEOTA Closed-Loop Usable Input/Output Range');
 
 nexttile;
 plot(clVin_V,clErr_V*1e3,'LineWidth',1.5); hold on;
-yline(TRACK_LIMIT*1e3,'--','+2 mV','HandleVisibility','off');
-yline(-TRACK_LIMIT*1e3,'--','-2 mV','HandleVisibility','off');
+yline(cfg.trackTolerance_V*1e3,'--','+2 mV','HandleVisibility','off');
+yline(-cfg.trackTolerance_V*1e3,'--','-2 mV','HandleVisibility','off');
 if isfinite(usableInputLow_V)
     xline(usableInputLow_V,':', ...
         sprintf('Input low: %.4g V',usableInputLow_V), ...
@@ -192,16 +207,16 @@ end
 ylabel('Vout (V)');
 legend('Measured','Ideal Vout = Vin','Location','best');
 stylePlot('Vin (V)','Vout versus Vin');
-saveFig(plotDir,'NOM.closed_loop_usable_range.png');
+savePlot(fig,plotDir,'NOM.closed_loop_usable_range.png');
 
 %% Closed-loop: transient
-tr = cols(numdata(fullfile(baseDir,TAG + ".cl_nom_tran.txt")),7);
+tr = readNumericFile(nominalFiles.clTran,7);
 t_s = tr(:,1);
 trVin_V = tr(:,2);
 trVout_V = tr(:,3);
 [srRise_Vus,srFall_Vus,tRise_s,tFall_s,risePt,fallPt] = ...
-    stepMetrics(t_s,trVin_V,trVout_V,SETTLE_LIMIT);
-settle_s = maxFinite([tRise_s tFall_s]);
+    stepMetrics(t_s,trVin_V,trVout_V,cfg.settleTolerance_V);
+settlingTime_s = maxFinite([tRise_s tFall_s]);
 
 nomMetrics.vdd_V = vdd_V;
 nomMetrics.vinCm_V = vinCm_V;
@@ -209,7 +224,7 @@ nomMetrics.ibias_A = ibias_A;
 nomMetrics.totalCurrent_A = totalCurrent_A;
 nomMetrics.totalPower_W = totalPower_W;
 nomMetrics.ugf_Hz = ugf_Hz;
-nomMetrics.pm_deg = pm_deg;
+nomMetrics.phaseMargin_deg = phaseMargin_deg;
 nomMetrics.dcGain_dB = dcGain_dB;
 nomMetrics.cmrr_dB = cmrrAt_dB(2:3);
 nomMetrics.psrrP_dB = psrrPAt_dB(2:3);
@@ -227,24 +242,120 @@ nomMetrics.usableOutputHigh_V = usableOutputHigh_V;
 nomMetrics.outputHighHeadroom_V = outputHighHeadroom_V;
 nomMetrics.srRise_Vus = srRise_Vus;
 nomMetrics.srFall_Vus = srFall_Vus;
-nomMetrics.settle_s = settle_s;
+nomMetrics.settlingTime_s = settlingTime_s;
 
-wideFigure();
+fig = figure;
 plot(t_s*1e6,trVin_V,'--','LineWidth',1.2); hold on;
-plot(t_s*1e6,trVin_V+SETTLE_LIMIT,':','LineWidth',1.0, ...
+plot(t_s*1e6,trVin_V+cfg.settleTolerance_V,':','LineWidth',1.0, ...
     'HandleVisibility','off');
-plot(t_s*1e6,trVin_V-SETTLE_LIMIT,':','LineWidth',1.0, ...
+plot(t_s*1e6,trVin_V-cfg.settleTolerance_V,':','LineWidth',1.0, ...
     'HandleVisibility','off');
 plot(t_s*1e6,trVout_V,'LineWidth',1.5);
 addSrCursor(risePt,sprintf('Rise: %.4g V/us',srRise_Vus));
 addSrCursor(fallPt,sprintf('Fall: %.4g V/us',srFall_Vus));
-addMetricBox({sprintf('Settling time: %s ns',fmt(settle_s*1e9))});
+addMetricBox({sprintf('Settling time: %s ns', ...
+    formatFixed(settlingTime_s*1e9))});
 ylabel('Voltage (V)');
 legend('Input','Output','Location','best');
 stylePlot('Time (us)','SEOTA Closed-Loop Step Response');
-saveFig(plotDir,'NOM.closed_loop_step_response.png');
+savePlot(fig,plotDir,'NOM.closed_loop_step_response.png');
 
-%% Summary table: 2-column definition (parameter, unit only — no NOM values)
+%% Full-PVT analysis and reports
+allProcesses = ["NOM" "FF" "SS" "FS" "SF"];
+processTokens = lower(allProcesses);
+allCases = ["nom" "vl" "vh" "tl" "th" "vltl" "vlth" "vhtl" "vhth"];
+caseCornerText = ["NOMNOM" "VLNOM" "VHNOM" "NOMTL" "NOMTH" ...
+    "VLTL" "VLTH" "VHTL" "VHTH"];
+nExpectedCorners = numel(allProcesses)*numel(allCases);
+pvtCorners = strings(nExpectedCorners,1);
+pvtRawValues = nan(size(rows,1),nExpectedCorners);
+pvtMetrics = cell(nExpectedCorners,1);
+missingPvt = strings(nExpectedCorners,1);
+pvtIndex = 0;
+missingIndex = 0;
+for processIndex = 1:numel(allProcesses)
+    process = allProcesses(processIndex);
+    processToken = processTokens(processIndex);
+    for caseIndex = 1:numel(allCases)
+        caseName = allCases(caseIndex);
+        cornerName = process + caseCornerText(caseIndex);
+        resultDir = fullfile(scriptDir,processToken + ".Result_txt");
+        files = runFiles(resultDir,processToken,caseName);
+        requiredOl = [files.olOp files.diffAc files.cmAc files.psrrpAc ...
+            files.psrrnAc files.vtc files.noise];
+        if ~all(isfile(requiredOl))
+            missingIndex = missingIndex+1;
+            missingPvt(missingIndex) = cornerName;
+            continue;
+        end
+        pvtIndex = pvtIndex+1;
+        if process == "NOM" && caseName == "nom"
+            metrics = nomMetrics;
+        else
+            metrics = analyzeRun(scriptDir,processToken,caseName,cfg);
+        end
+        pvtMetrics{pvtIndex} = metrics;
+        pvtCorners(pvtIndex) = cornerName;
+        pvtRawValues(:,pvtIndex) = metricsToRaw( ...
+            metrics,rows,cfg);
+    end
+end
+pvtCorners = pvtCorners(1:pvtIndex);
+pvtRawValues = pvtRawValues(:,1:pvtIndex);
+pvtMetrics = pvtMetrics(1:pvtIndex);
+missingPvt = missingPvt(1:missingIndex);
+if ~isempty(missingPvt)
+    warning('SEOTA_Analyze:MissingPvtRuns', ...
+        'PVT runs missing required OL files: %s.',strjoin(missingPvt,', '));
+end
+
+[rows,pvtScaledValues] = adaptReportUnits(rows,pvtRawValues);
+pvtValues = formatReportValues(rows,pvtScaledValues);
+
+reportColumns = ["NOM" "FF" "SS" "FS" "SF" "VL" "VH" "TL" "TH"];
+reportCornerKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
+    "SFNOMNOM" "NOMVLNOM" "NOMVHNOM" "NOMNOMTL" "NOMNOMTH"];
+[foundReportCorners,reportIndices] = ismember(reportCornerKeys,pvtCorners);
+if ~all(foundReportCorners)
+    error('SEOTA_Analyze:MissingReportCorners', ...
+        'Required summary corners are missing: %s.', ...
+        strjoin(reportCornerKeys(~foundReportCorners),', '));
+end
+reportValues = pvtValues(:,reportIndices);
+
+summaryTable = table(rows(:,1),rows(:,2), ...
+    'VariableNames',{'Parameter','Unit'});
+summaryTable = [summaryTable array2table(reportValues, ...
+    'VariableNames',cellstr(reportColumns))];
+fprintf('\nSEOTA COMPARISON SUMMARY\n\n');
+printSummaryTable(rows,reportColumns,reportValues);
+writetable(summaryTable,fullfile(scriptDir,'SEOTA_table_report.csv'));
+writetable(summaryTable,fullfile(scriptDir,'NOM.SEOTA_summary.csv'));
+
+worstCase = buildWorstCaseTable( ...
+    rows,pvtCorners,pvtScaledValues,pvtMetrics,cfg);
+fprintf('\nSEOTA FULL-PVT WORST CASE\n\n');
+printWorstCaseTable(worstCase);
+writetable(worstCase,fullfile(scriptDir,'SEOTA_worst_case_report.csv'));
+
+end
+
+function cfg = analysisConfig
+cfg.cLoad_pF = 10;
+cfg.nominalCase = "nom";
+cfg.closedLoopTarget_VV = 1;
+cfg.biasTarget_A = 40e-6;
+cfg.trackTolerance_V = 2e-3;
+cfg.settleTolerance_V = 2e-3;
+cfg.offsetMaxJumpFraction = 0.25;
+cfg.noiseBand_Hz = [0.05 150];
+cfg.rejectionFrequencies_Hz = [60 150];
+cfg.markFrequencies_Hz = [0.05 cfg.rejectionFrequencies_Hz 1e3];
+cfg.noiseMarkFrequencies_Hz = [cfg.noiseBand_Hz(1) ...
+    cfg.rejectionFrequencies_Hz(1) cfg.noiseBand_Hz(2)];
+end
+
+function rows = reportRows
 rows = [
     "Set conditions",              ""
     "AVDD",                        "V"
@@ -282,100 +393,65 @@ rows = [
     "SR fall",                     "V/us"
     "Settling time",               "s"
 ];
-
-allProcesses = ["NOM" "FF" "SS" "FS" "SF"];
-allCases = ["nom" "vl" "vh" "tl" "th" "vltl" "vlth" "vhtl" "vhth"];
-caseCornerText = ["NOMNOM" "VLNOM" "VHNOM" "NOMTL" "NOMTH" ...
-    "VLTL" "VLTH" "VHTL" "VHTH"];
-pvtCorners = strings(0,1);
-pvtRawValues = nan(size(rows,1),0);
-pvtMetrics = {};
-missingPvt = strings(0,1);
-for process = allProcesses
-    for caseIndex = 1:numel(allCases)
-        caseName = allCases(caseIndex);
-        cornerName = process + caseCornerText(caseIndex);
-        resultDir = fullfile(scriptDir,process + ".Result_txt");
-        olPrefix = fullfile(resultDir,process + ".ol_" + caseName + "_");
-        requiredOl = olPrefix + ["op.txt" "diff_ac.txt" "cm_ac.txt" ...
-            "psrrp_ac.txt" "psrrn_ac.txt" "vtc.txt" "noise.txt"];
-        if ~all(isfile(requiredOl))
-            missingPvt(end+1) = cornerName; %#ok<SAGROW>
-            continue;
-        end
-        if process == "NOM" && caseName == "nom"
-            metrics = nomMetrics;
-        else
-            metrics = analyzeRun(scriptDir,process,caseName, ...
-                TRACK_LIMIT,SETTLE_LIMIT,NOISE_BAND_HZ);
-        end
-        pvtMetrics{end+1} = metrics; %#ok<SAGROW>
-        pvtCorners(end+1) = cornerName; %#ok<SAGROW>
-        pvtRawValues(:,end+1) = metricsToRaw( ...
-            metrics,rows,CLOAD_SET_PF); %#ok<SAGROW>
-    end
-end
-if ~isempty(missingPvt)
-    warning('SEOTA_Analyze:MissingPvtRuns', ...
-        'PVT runs missing required OL files: %s.',strjoin(missingPvt,', '));
 end
 
-[rows,pvtScaledValues] = adaptReportUnits(rows,pvtRawValues);
-pvtValues = formatReportValues(rows,pvtScaledValues);
-
-reportColumns = ["NOM" "FF" "SS" "FS" "SF" "VL" "VH" "TL" "TH"];
-reportCornerKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
-    "SFNOMNOM" "NOMVLNOM" "NOMVHNOM" "NOMNOMTL" "NOMNOMTH"];
-[foundReportCorners,reportIndices] = ismember(reportCornerKeys,pvtCorners);
-if ~all(foundReportCorners)
-    error('SEOTA_Analyze:MissingReportCorners', ...
-        'Required summary corners are missing: %s.', ...
-        strjoin(reportCornerKeys(~foundReportCorners),', '));
-end
-reportScaledValues = pvtScaledValues(:,reportIndices);
-reportValues = pvtValues(:,reportIndices);
-
-Result = table(rows(:,1),rows(:,2),'VariableNames',{'Parameter','Unit'});
-Result = [Result array2table(reportValues, ...
-    'VariableNames',cellstr(reportColumns))];
-fprintf('\nSEOTA COMPARISON SUMMARY\n\n');
-printSummaryTable(rows,reportColumns,reportValues);
-writetable(Result,fullfile(scriptDir,'SEOTA_table_report.csv'));
-writetable(Result,fullfile(scriptDir,'NOM.SEOTA_summary.csv'));
-
-WorstCase = buildWorstCaseTable( ...
-    rows,pvtCorners,pvtScaledValues,pvtMetrics);
-fprintf('\nSEOTA FULL-PVT WORST CASE\n\n');
-printWorstCaseTable(WorstCase);
-writetable(WorstCase,fullfile(scriptDir,'SEOTA_worst_case_report.csv'));
-
-%% Functions
-function D = numdata(file)
-    D = readmatrix(file,'FileType','text');
-    D = D(any(isfinite(D),2),:);
-    D = D(:,any(isfinite(D),1));
-    if isempty(D), error('No numeric data found in %s',file); end
+function files = runFiles(resultDir,process,caseName)
+olPrefix = fullfile(resultDir,process+".ol_"+caseName+"_");
+clPrefix = fullfile(resultDir,process+".cl_"+caseName+"_");
+files.olOp = olPrefix+"op.txt";
+files.diffAc = olPrefix+"diff_ac.txt";
+files.cmAc = olPrefix+"cm_ac.txt";
+files.psrrpAc = olPrefix+"psrrp_ac.txt";
+files.psrrnAc = olPrefix+"psrrn_ac.txt";
+files.vtc = olPrefix+"vtc.txt";
+files.noise = olPrefix+"noise.txt";
+files.clOp = clPrefix+"op.txt";
+files.clDc = clPrefix+"dc.txt";
+files.clTran = clPrefix+"tran.txt";
 end
 
-function C = cols(D,n)
-    if size(D,2) == n
-        C = D;
-    elseif size(D,2) == n+1
-        C = D(:,2:end);
-    elseif size(D,2) > n
-        C = D(:,end-n+1:end);
-    else
-        error('Expected at least %d columns, found %d.',n,size(D,2));
-    end
+function data = readNumericFile(file,expectedColumns)
+if ~isfile(file)
+    error('SEOTA_Analyze:MissingFile','Missing required file: %s',file);
+end
+data = readmatrix(file,'FileType','text');
+data = data(any(isfinite(data),2),:);
+data = data(:,any(isfinite(data),1));
+if isempty(data)
+    error('SEOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
+end
+if size(data,2) == expectedColumns+1 && columnsMatch(data(:,1),data(:,2))
+    data = data(:,2:end);
+end
+if size(data,2) ~= expectedColumns
+    error('SEOTA_Analyze:ColumnCount', ...
+        '%s must contain %d columns; found %d.', ...
+        file,expectedColumns,size(data,2));
+end
+if any(~isfinite(data),'all')
+    error('SEOTA_Analyze:NonfiniteData', ...
+        '%s contains nonfinite numeric samples.',file);
+end
 end
 
-function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
-        noiseBand)
+function tf = columnsMatch(a,b)
+scale = max([ones(size(a)) abs(a) abs(b)],[],2);
+tf = all(abs(a-b) <= 100*eps(scale));
+end
+
+function validateFrequency(f,label)
+if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
+    error('SEOTA_Analyze:FrequencyAxis', ...
+        '%s frequency must be finite, positive, and strictly increasing.', ...
+        label);
+end
+end
+
+function m = analyzeRun(scriptDir,process,caseName,cfg)
     resultDir = fullfile(scriptDir,process + ".Result_txt");
-    olPrefix = fullfile(resultDir,process + ".ol_" + caseName + "_");
-    clPrefix = fullfile(resultDir,process + ".cl_" + caseName + "_");
+    files = runFiles(resultDir,process,caseName);
 
-    op = cols(numdata(olPrefix + "op.txt"),8);
+    op = readNumericFile(files.olOp,8);
     op = op(end,:);
     m.vdd_V = op(2);
     m.vinCm_V = 0.5*(op(3)+op(4));
@@ -383,36 +459,43 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
     m.totalCurrent_A = abs(op(7));
     m.totalPower_W = m.vdd_V*m.totalCurrent_A;
 
-    [fAd_Hz,Ad] = transferFromFile(olPrefix + "diff_ac.txt");
-    [gain_dB,~,m.ugf_Hz,m.pm_deg] = acMetrics(fAd_Hz,Ad);
+    [fAd_Hz,Ad] = transferFromFile(files.diffAc);
+    [gain_dB,~,m.ugf_Hz,m.phaseMargin_deg] = acMetrics(fAd_Hz,Ad);
     m.dcGain_dB = gain_dB(1);
-    [fCm_Hz,Acm] = transferFromFile(olPrefix + "cm_ac.txt");
-    [fP_Hz,AsupP] = transferFromFile(olPrefix + "psrrp_ac.txt");
-    [fN_Hz,AsupN] = transferFromFile(olPrefix + "psrrn_ac.txt");
+    [fCm_Hz,Acm] = transferFromFile(files.cmAc);
+    [fP_Hz,AsupP] = transferFromFile(files.psrrpAc);
+    [fN_Hz,AsupN] = transferFromFile(files.psrrnAc);
     cmrr_dB = rejectionDb(fAd_Hz,Ad,fCm_Hz,Acm);
     psrrP_dB = rejectionDb(fAd_Hz,Ad,fP_Hz,AsupP);
     psrrN_dB = rejectionDb(fAd_Hz,Ad,fN_Hz,AsupN);
-    m.cmrr_dB = interpAtFreq(fCm_Hz,cmrr_dB,[60 150]);
-    m.psrrP_dB = interpAtFreq(fP_Hz,psrrP_dB,[60 150]);
-    m.psrrN_dB = interpAtFreq(fN_Hz,psrrN_dB,[60 150]);
+    m.cmrr_dB = interpAtFreq( ...
+        fCm_Hz,cmrr_dB,cfg.rejectionFrequencies_Hz);
+    m.psrrP_dB = interpAtFreq( ...
+        fP_Hz,psrrP_dB,cfg.rejectionFrequencies_Hz);
+    m.psrrN_dB = interpAtFreq( ...
+        fN_Hz,psrrN_dB,cfg.rejectionFrequencies_Hz);
 
-    vtc = cols(numdata(olPrefix + "vtc.txt"),6);
-    m.offset_V = zeroNoJump(vtc(:,1),vtc(:,5)-0.5*m.vdd_V,0.25*m.vdd_V);
-    noise = cols(numdata(olPrefix + "noise.txt"),3);
-    m.inputNoise_Vrms = integrateNoise(noise(:,1),abs(noise(:,3)),noiseBand);
+    vtc = readNumericFile(files.vtc,6);
+    m.offset_V = zeroNoJump(vtc(:,1),vtc(:,5)-0.5*m.vdd_V, ...
+        cfg.offsetMaxJumpFraction*m.vdd_V);
+    noise = readNumericFile(files.noise,3);
+    validateFrequency(noise(:,1),files.noise);
+    m.inputNoise_Vrms = integrateNoise( ...
+        noise(:,1),abs(noise(:,3)),cfg.noiseBand_Hz);
 
     m.clGain_dB = NaN; m.gainError_pct = NaN; m.voutDc_V = NaN;
     m.usableInputLow_V = NaN; m.usableInputHigh_V = NaN;
     m.inputHighHeadroom_V = NaN;
     m.usableOutputLow_V = NaN; m.usableOutputHigh_V = NaN;
     m.outputHighHeadroom_V = NaN;
-    m.srRise_Vus = NaN; m.srFall_Vus = NaN; m.settle_s = NaN;
-    clFiles = clPrefix + ["op.txt" "dc.txt" "tran.txt"];
+    m.srRise_Vus = NaN; m.srFall_Vus = NaN;
+    m.settlingTime_s = NaN;
+    clFiles = [files.clOp files.clDc files.clTran];
     if all(isfile(clFiles))
-        clOp = cols(numdata(clFiles(1)),8);
+        clOp = readNumericFile(clFiles(1),8);
         clOp = clOp(end,:);
         clVinDc_V = clOp(3);
-        cl = cols(numdata(clFiles(2)),6);
+        cl = readNumericFile(clFiles(2),6);
         [clVin_V,order] = sort(cl(:,1));
         clVout_V = cl(order,2);
         clErr_V = cl(order,3);
@@ -421,7 +504,8 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
         m.clGain_dB = 20*log10(abs(clGain));
         m.gainError_pct = 100*(clGain-1);
         m.voutDc_V = clVout_V(i0);
-        [iLow,iHigh] = continuousIndices(abs(clErr_V)<=trackLimit,i0);
+        [iLow,iHigh] = continuousIndices( ...
+            abs(clErr_V)<=cfg.trackTolerance_V,i0);
         if isfinite(iLow)
             m.usableInputLow_V = clVin_V(iLow);
             m.usableInputHigh_V = clVin_V(iHigh);
@@ -430,14 +514,15 @@ function m = analyzeRun(scriptDir,process,caseName,trackLimit,settleLimit, ...
             m.usableOutputHigh_V = max(clVout_V(iLow:iHigh));
             m.outputHighHeadroom_V = m.vdd_V - m.usableOutputHigh_V;
         end
-        tr = cols(numdata(clFiles(3)),7);
+        tr = readNumericFile(clFiles(3),7);
         [m.srRise_Vus,m.srFall_Vus,tRise_s,tFall_s] = ...
-            stepMetrics(tr(:,1),tr(:,2),tr(:,3),settleLimit);
-        m.settle_s = maxFinite([tRise_s tFall_s]);
+            stepMetrics(tr(:,1),tr(:,2),tr(:,3), ...
+            cfg.settleTolerance_V);
+        m.settlingTime_s = maxFinite([tRise_s tFall_s]);
     end
 end
 
-function values = metricsToRaw(m,rows,cLoad_pF)
+function values = metricsToRaw(m,rows,cfg)
     % Returns raw numeric values in the initial table units (no rounding).
     values = nan(size(rows,1),1);
     for rowIndex = 1:size(rows,1)
@@ -448,15 +533,17 @@ function values = metricsToRaw(m,rows,cLoad_pF)
         end
         switch parameter
             case "AVDD",                     values(rowIndex) = m.vdd_V;
-            case "CLoad",                    values(rowIndex) = cLoad_pF;
+            case "CLoad",                    values(rowIndex) = cfg.cLoad_pF;
             case "Vin,cm",                   values(rowIndex) = m.vinCm_V;
-            case "Closed-loop target gain",  values(rowIndex) = 1;
+            case "Closed-loop target gain"
+                values(rowIndex) = cfg.closedLoopTarget_VV;
             case "Bias current",             values(rowIndex) = m.ibias_A;
             case "Total current",            values(rowIndex) = m.totalCurrent_A;
             case "Total power",              values(rowIndex) = m.totalPower_W;
             case "DC gain",                  values(rowIndex) = m.dcGain_dB;
             case "UGF",                      values(rowIndex) = m.ugf_Hz;
-            case "Phase margin",             values(rowIndex) = m.pm_deg;
+            case "Phase margin"
+                values(rowIndex) = m.phaseMargin_deg;
             case "Input offset",             values(rowIndex) = m.offset_V;
             case "CMRR @ 60 Hz",             values(rowIndex) = m.cmrr_dB(1);
             case "CMRR @ 150 Hz",            values(rowIndex) = m.cmrr_dB(2);
@@ -477,12 +564,13 @@ function values = metricsToRaw(m,rows,cLoad_pF)
             case "Output high headroom",     values(rowIndex) = m.outputHighHeadroom_V;
             case "SR rise",                  values(rowIndex) = m.srRise_Vus;
             case "SR fall",                  values(rowIndex) = m.srFall_Vus;
-            case "Settling time",            values(rowIndex) = m.settle_s;
+            case "Settling time"
+                values(rowIndex) = m.settlingTime_s;
         end
     end
 end
 
-function results = buildWorstCaseTable(rows,columns,values,metrics)
+function results = buildWorstCaseTable(rows,columns,values,metrics,cfg)
     % values is numeric double (pvtScaledValues), already unit-adapted.
     keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
         ["AVDD" "CLoad" "Vin,cm" "Closed-loop target gain"]);
@@ -521,8 +609,9 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
             [selectedValue,localIndex] = min(candidates(valid));
             selectedColumn = validIndices(localIndex);
         elseif parameter == "Bias current"
-            rawCandidates = cellfun(@(m) m.ibias_A,metrics)*1e6;
-            [~,selectedColumn] = max(abs(rawCandidates-40));
+            rawCandidates = cellfun(@(m) m.ibias_A,metrics);
+            [~,selectedColumn] = max(abs( ...
+                rawCandidates-cfg.biasTarget_A));
             selectedValue = candidates(selectedColumn);
         elseif parameter == "Vout,DC"
             rawCandidates = cellfun(@(m) m.voutDc_V,metrics);
@@ -531,8 +620,8 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
             selectionError = abs(rawError_V);
             selectionError(~isfinite(selectionError)) = -Inf;
             [~,selectedColumn] = max(selectionError);
-            [selectedValue,newUnit] = scaleSingleMetric( ...
-                rawError_V(selectedColumn),"V");
+            [newUnit,selectedValue] = adaptValuesUnit( ...
+                "V",rawError_V(selectedColumn));
             parameters(resultIndex) = "Vout,DC error";
             units(resultIndex) = newUnit;
         elseif ismember(parameter,["Input offset" "Closed-loop gain" "Gain error"])
@@ -549,11 +638,8 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
 
     formatted = strings(size(worstValues));
     for resultIndex = 1:numel(worstValues)
-        if units(resultIndex) == "dB" || units(resultIndex) == "%"
-            formatted(resultIndex) = fmtDbPercent(worstValues(resultIndex));
-        else
-            formatted(resultIndex) = fmtMetric(worstValues(resultIndex),units(resultIndex));
-        end
+        formatted(resultIndex) = ...
+            formatOne(worstValues(resultIndex),units(resultIndex));
     end
     results = table(parameters,units,formatted,worstCorners, ...
         'VariableNames',{'Parameter','Unit','Value','Corner'});
@@ -572,19 +658,20 @@ function printWorstCaseTable(results)
 end
 
 function [f,H] = transferFromFile(file)
-    d = numdata(file);
-    d = cols(d,5);
+    d = readNumericFile(file,5);
     f = d(:,1);
+    validateFrequency(f,file);
     in = d(:,2) + 1j*d(:,3);
     out = d(:,4) + 1j*d(:,5);
     H = out ./ in;
 end
 
-function [gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f,H)
+function [gain_dB,phase_deg,ugf_Hz,phaseMargin_deg,f3dB_Hz] = ...
+        acMetrics(f,H)
     gain_dB = 20*log10(abs(H));
     phase_deg = unwrap(angle(H))*180/pi;
     ugf_Hz = gainCross(f,gain_dB,0);
-    pm_deg = 180 + interpAtFreq(f,phase_deg,ugf_Hz);
+    phaseMargin_deg = 180+interpAtFreq(f,phase_deg,ugf_Hz);
     f3dB_Hz = gainCross(f,gain_dB,gain_dB(1)-3);
 end
 
@@ -614,7 +701,8 @@ end
 function labelFreqSet(f,y,fList)
     for f0 = fList
         y0 = interpAtFreq(f,y,f0);
-        addCursorLine(f0,y0,sprintf('%s: %.4g dB',freqText(f0),y0));
+        addCursorLine(f0,y0, ...
+            sprintf('%s: %.4g dB',frequencyText(f0),y0));
     end
 end
 
@@ -663,6 +751,10 @@ function [iLow,iHigh] = continuousIndices(valid,iCenter)
 end
 
 function [srRise,srFall,tsRise,tsFall,risePt,fallPt] = stepMetrics(t,target,out,tol)
+    if any(~isfinite(t)) || any(diff(t) <= 0)
+        error('SEOTA_Analyze:TimeAxis', ...
+            'Transient time must be finite and strictly increasing.');
+    end
     events = stepEvents(target);
     srRiseList = []; srFallList = []; tsRiseList = []; tsFallList = [];
     risePtList = []; fallPtList = [];
@@ -790,12 +882,7 @@ function stylePlot(xLabelText,titleText)
     if strlength(string(titleText)) > 0, title(titleText); end
 end
 
-function fig = wideFigure()
-fig = figure;
-end
-
-function saveFig(plotDir,fileName)
-    fig = gcf;
+function savePlot(fig,plotDir,fileName)
     drawnow;
     fig.PaperUnits = 'inches';
     fig.PaperPosition = [0 0 10 4];
@@ -827,7 +914,7 @@ function printSummaryTable(rows,columns,values)
     end
 end
 
-function s = fmt(x)
+function s = formatFixed(x)
     if isnan(x)
         s = "NaN";
     elseif isinf(x)
@@ -837,20 +924,10 @@ function s = fmt(x)
     end
 end
 
-function s = fmtDbPercent(x)
-    if isnan(x)
+function s = frequencyText(f)
+    if ~isfinite(f)
         s = "NaN";
-    elseif isinf(x)
-        s = string(sprintf('%+g',x));
-    elseif x ~= 0 && (abs(x) < 1e-3 || abs(x) > 999)
-        s = string(sprintf('%.3e',x));
-    else
-        s = string(sprintf('%.3f',x));
-    end
-end
-
-function s = freqText(f)
-    if f >= 1e6
+    elseif f >= 1e6
         s = sprintf('%.4g MHz',f/1e6);
     elseif f >= 1e3
         s = sprintf('%.4g kHz',f/1e3);
@@ -860,52 +937,37 @@ function s = freqText(f)
 end
 
 function [rows,scaledValues] = adaptReportUnits(rows,rawValues)
-    % rawValues and scaledValues remain numeric doubles.
-    % Unit changes use exact powers of 1000 only.
     scaledValues = rawValues;
-
-    for i = 1:size(rows,1)
-        unit = string(rows(i,2));
-
-        if unit == "" || unit == "dB" || unit == "%"
-            continue;
-        end
-
-        x = rawValues(i,:);
-        finiteMask = isfinite(x);
-        nonzeroMask = finiteMask & x ~= 0;
-
-        if ~any(finiteMask)
-            continue;
-        end
-
-        if ~any(nonzeroMask)
-            continue;
-        end
-
-        magnitude = max(abs(x(nonzeroMask)));
-
-        [newUnit,scalePower] = scaleUnit(magnitude,unit);
-
-        scaledValues(i,:) = x * 1e3^scalePower;
-        rows(i,2) = newUnit;
+    for rowIndex = 1:size(rows,1)
+        [rows(rowIndex,2),scaledValues(rowIndex,:)] = ...
+            adaptValuesUnit(rows(rowIndex,2),rawValues(rowIndex,:));
     end
 end
 
-function formatted = formatReportValues(rows,scaledValues)
-    % First and only place numbers become strings.
-    formatted = strings(size(scaledValues));
-    for i = 1:size(scaledValues,1)
-        unit = string(rows(i,2));
+function [unit,scaledValues] = adaptValuesUnit(unit,values)
+    scaledValues = values;
+    if unit == "" || unit == "dB" || unit == "%" || unit == "V/V"
+        return;
+    end
+    nonzero = isfinite(values) & values ~= 0;
+    if ~any(nonzero)
+        return;
+    end
+    magnitude = max(abs(values(nonzero)));
+    [unit,scalePower] = scaleUnit(magnitude,unit);
+    scaledValues = values*1e3^scalePower;
+end
+
+function formatted = formatReportValues(rows,values)
+    formatted = strings(size(values));
+    for rowIndex = 1:size(values,1)
+        unit = rows(rowIndex,2);
         if unit == ""
             continue;
         end
-        for j = 1:size(scaledValues,2)
-            if unit == "dB" || unit == "%"
-                formatted(i,j) = fmtDbPercent(scaledValues(i,j));
-            else
-                formatted(i,j) = fmtMetric(scaledValues(i,j),unit);
-            end
+        for columnIndex = 1:size(values,2)
+            formatted(rowIndex,columnIndex) = ...
+                formatOne(values(rowIndex,columnIndex),unit);
         end
     end
 end
@@ -967,36 +1029,25 @@ function [prefix,core] = splitUnitPrefix(unit)
     end
 end
 
-function s = fmtMetric(x,unit)
+function s = formatOne(x,unit)
     if isnan(x)
         s = "NaN";
-        return;
-    end
-
-    if isinf(x)
+    elseif isinf(x)
         s = string(sprintf('%+g',x));
-        return;
-    end
-
-    [prefix,~] = splitUnitPrefix(unit);
-
-    if prefix == "f" && x ~= 0 && abs(x) < 1e-3
-        s = string(sprintf('%.3e',x));
-    elseif prefix == "T" && abs(x) > 999
-        s = string(sprintf('%.3e',x));
+    elseif unit == "dB" || unit == "%"
+        if x ~= 0 && (abs(x) < 1e-3 || abs(x) > 999)
+            s = string(sprintf('%.3e',x));
+        else
+            s = string(sprintf('%.3f',x));
+        end
     else
-        s = string(sprintf('%.3f',x));
+        [prefix,~] = splitUnitPrefix(unit);
+        if prefix == "f" && x ~= 0 && abs(x) < 1e-3
+            s = string(sprintf('%.3e',x));
+        elseif prefix == "T" && abs(x) > 999
+            s = string(sprintf('%.3e',x));
+        else
+            s = string(sprintf('%.3f',x));
+        end
     end
 end
-
-function [scaledValue,newUnit] = scaleSingleMetric(value,currentUnit)
-    if ~isfinite(value) || value == 0
-        scaledValue = value;
-        newUnit = currentUnit;
-        return;
-    end
-
-    [newUnit,scalePower] = scaleUnit(abs(value),currentUnit);
-    scaledValue = value * 1e3^scalePower;
-end
-

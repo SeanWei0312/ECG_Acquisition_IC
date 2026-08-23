@@ -1,154 +1,138 @@
+function FDOTA_Analyze
+% FDOTA_ANALYZE Characterize the fully differential OTA testbench.
+%
+% Expected NGSPICE output is stored beside this file in:
+%   nom.Result_txt, ff.Result_txt, ss.Result_txt, fs.Result_txt,
+%   sf.Result_txt
+%
+% Numerical reports cover the full 45-corner PVT sweep. Plots use the
+% NOM/3.3 V/27 C data and retain MATLAB's native floating figure style.
 
-
-% FDOTA nominal analysis
-clear; clc; close all;
+clc;
+close all;
 
 scriptDir = fileparts(mfilename('fullpath'));
-baseDir = fullfile(scriptDir,'NOM.Result_txt');
 plotDir = fullfile(scriptDir,'Plots');
-if ~exist(plotDir,'dir'), mkdir(plotDir); end
+if ~isfolder(plotDir)
+    mkdir(plotDir);
+end
 
-TAG = "nom";
-TRACK_LIMIT = 2e-3;
-ICMR_GAIN_ERROR_TOL = 0.005;
-VOUT_CM_TOL = 10e-3;
-ICMR_CURRENT_TOL = 0.20;
-CM_SETTLE_TOL = 5e-3;
-SETTLE_LIMIT = 2e-3;
-NOISE_BAND_HZ = [0.05 150];
-MARK_FREQ_HZ = [0.05 60 150 1e3];
-NOISE_MARK_HZ = [NOISE_BAND_HZ(1) 60 NOISE_BAND_HZ(2)];
+cfg = analysisConfig();
+rows = reportRows();
+nominalDir = fullfile(scriptDir,'nom.Result_txt');
+nominalFiles = runFiles(nominalDir,"nom",cfg.nominalCase);
 
 %% Operating point
-op = cols(numdata(fullfile(baseDir,"nom.ol_" + TAG + "_op.txt")),15);
+op = readNumericFile(nominalFiles.olOp,15);
 op = op(end,:);
 
 vdd_V = op(2);
 vinCm_V = 0.5*(op(3) + op(4));
-idd_A = abs(op(13));
-ibiasFdc_A = abs(op(14));
-ibiasCmfb_A = abs(op(15));
-% IDD_TOTAL already includes BIAS, mirrors, FDC, CMFB, and FDOTA.
-totalCurrent_A = idd_A;
-totalPower_W = vdd_V*totalCurrent_A;
 
 %% Open-loop: gain and phase
-[f_Hz,Ad] = transferFromFile(fullfile(baseDir,"nom.ol_" + TAG + "_diff_ac.txt"));
-[gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f_Hz,Ad);
+[f_Hz,Ad] = transferFromFile(nominalFiles.diffAc);
+[gain_dB,phase_deg,ugf_Hz,phaseMargin_deg,f3dB_Hz] = ...
+    acMetrics(f_Hz,Ad);
 dcGain_dB = gain_dB(1);
 
-figure;
+fig = figure;
 yyaxis left;
 semilogx(f_Hz,gain_dB,'LineWidth',1.5); hold on;
 yline(0,'--','HandleVisibility','off');
-addCursor(f3dB_Hz,dcGain_dB-3,sprintf('-3dB: %s',freqText(f3dB_Hz)));
-addCursor(ugf_Hz,0,sprintf('UGF: %s',freqText(ugf_Hz)));
+addCursor(f3dB_Hz,dcGain_dB-3, ...
+    sprintf('-3dB: %s',frequencyText(f3dB_Hz)));
+addCursor(ugf_Hz,0,sprintf('UGF: %s',frequencyText(ugf_Hz)));
 ylabel('Differential gain (dB)');
 
 yyaxis right;
 semilogx(f_Hz,phase_deg,'LineWidth',1.5); hold on;
-addCursor(ugf_Hz,interpAtFreq(f_Hz,phase_deg,ugf_Hz),sprintf('PM: %.4g deg',pm_deg));
+addCursor(ugf_Hz,interpAtFreq(f_Hz,phase_deg,ugf_Hz), ...
+    sprintf('PM: %.4g deg',phaseMargin_deg));
 ylabel('Differential phase (deg)');
 stylePlot('Frequency (Hz)','FDOTA Open-Loop Gain and Phase');
-saveFig(plotDir,'NOM.open_loop_gain_phase.png');
+savePlot(fig,plotDir,'NOM.open_loop_gain_phase.png');
 
 %% Open-loop: CMRR and PSRR
-[fCm_Hz,Acm] = transferFromFile(fullfile(baseDir,"nom.ol_" + TAG + "_cm_ac.txt"));
-[fP_Hz,AsupP] = transferFromFile(fullfile(baseDir,"nom.ol_" + TAG + "_psrrp_ac.txt"));
-[fN_Hz,AsupN] = transferFromFile(fullfile(baseDir,"nom.ol_" + TAG + "_psrrn_ac.txt"));
+[fCm_Hz,Acm] = transferFromFile(nominalFiles.cmAc);
+[fP_Hz,AsupP] = transferFromFile(nominalFiles.psrrpAc);
+[fN_Hz,AsupN] = transferFromFile(nominalFiles.psrrnAc);
 
 cmrr_dB = rejectionDb(f_Hz,Ad,fCm_Hz,Acm);
 psrrP_dB = rejectionDb(f_Hz,Ad,fP_Hz,AsupP);
 psrrN_dB = rejectionDb(f_Hz,Ad,fN_Hz,AsupN);
 
-cmrrAt_dB = interpAtFreq(fCm_Hz,cmrr_dB,MARK_FREQ_HZ);
-psrrPAt_dB = interpAtFreq(fP_Hz,psrrP_dB,MARK_FREQ_HZ);
-psrrNAt_dB = interpAtFreq(fN_Hz,psrrN_dB,MARK_FREQ_HZ);
-
-figure;
+fig = figure;
 semilogx(fCm_Hz,cmrr_dB,'LineWidth',1.5); hold on;
-labelFreqSet(fCm_Hz,cmrr_dB,MARK_FREQ_HZ);
+labelFreqSet(fCm_Hz,cmrr_dB,cfg.markFrequencies_Hz);
 ylabel('CMRR (dB)');
 stylePlot('Frequency (Hz)','FDOTA CMRR versus Frequency');
-saveFig(plotDir,'NOM.cmrr.png');
+savePlot(fig,plotDir,'NOM.cmrr.png');
 
-figure;
+fig = figure;
 tiledlayout(2,1);
 sgtitle('FDOTA PSRR+ and PSRR- versus Frequency');
 nexttile;
 semilogx(fP_Hz,psrrP_dB,'LineWidth',1.5); hold on;
-labelFreqSet(fP_Hz,psrrP_dB,MARK_FREQ_HZ);
+labelFreqSet(fP_Hz,psrrP_dB,cfg.markFrequencies_Hz);
 ylabel('PSRR+ (dB)');
 stylePlot('Frequency (Hz)','FDOTA PSRR+');
 
 nexttile;
 semilogx(fN_Hz,psrrN_dB,'LineWidth',1.5); hold on;
-labelFreqSet(fN_Hz,psrrN_dB,MARK_FREQ_HZ);
+labelFreqSet(fN_Hz,psrrN_dB,cfg.markFrequencies_Hz);
 ylabel('PSRR- (dB)');
 stylePlot('Frequency (Hz)','FDOTA PSRR-');
-saveFig(plotDir,'NOM.psrr.png');
+savePlot(fig,plotDir,'NOM.psrr.png');
 
 %% Open-loop: input-referred noise
-noise = cols(numdata(fullfile(baseDir,"nom.ol_" + TAG + "_noise.txt")),3);
+noise = readNumericFile(nominalFiles.noise,3);
 fNoise_Hz = noise(:,1);
 inNoise_VrtHz = abs(noise(:,3));
-inputNoise_Vrms = integrateNoise(fNoise_Hz,inNoise_VrtHz,NOISE_BAND_HZ);
 
-figure;
-validNoise = fNoise_Hz >= NOISE_BAND_HZ(1) & fNoise_Hz <= NOISE_BAND_HZ(2) & ...
+fig = figure;
+validNoise = fNoise_Hz >= cfg.noiseBand_Hz(1) & ...
+    fNoise_Hz <= cfg.noiseBand_Hz(2) & ...
     isfinite(inNoise_VrtHz) & inNoise_VrtHz > 0;
 loglog(fNoise_Hz(validNoise),inNoise_VrtHz(validNoise)*1e9,'LineWidth',1.5); hold on;
-for f0 = NOISE_MARK_HZ
+for f0 = cfg.noiseMarkFrequencies_Hz
     y0 = interpAtFreq(fNoise_Hz,inNoise_VrtHz,f0)*1e9;
-    addCursor(f0,y0,sprintf('%s: %.4g nV/rtHz',freqText(f0),y0));
+    addCursor(f0,y0, ...
+        sprintf('%s: %.4g nV/rtHz',frequencyText(f0),y0));
 end
 ylabel('Input noise (nV/sqrtHz)');
-xlim(NOISE_BAND_HZ);
+xlim(cfg.noiseBand_Hz);
 stylePlot('Frequency (Hz)','FDOTA Input-Referred Noise Density versus Frequency');
-saveFig(plotDir,'NOM.input_referred_noise_density.png');
+savePlot(fig,plotDir,'NOM.input_referred_noise_density.png');
 
 %% Open-loop: VTC
-vtc = cols(numdata(fullfile(baseDir,"nom.ol_" + TAG + "_vtc.txt")),10);
+vtc = readNumericFile(nominalFiles.vtc,10);
 vtcVinDiff_V = vtc(:,1);
 vtcVoutDiff_V = vtc(:,8);
-offset_V = zeroNoJump(vtcVinDiff_V,vtcVoutDiff_V,0.25*vdd_V);
+offset_V = zeroNoJump(vtcVinDiff_V,vtcVoutDiff_V, ...
+    cfg.offsetMaxJumpFraction*vdd_V);
 
-figure;
+fig = figure;
 plot(vtcVinDiff_V*1e3,vtcVoutDiff_V,'LineWidth',1.5); hold on;
 yline(0,'--','HandleVisibility','off');
 addCursor(offset_V*1e3,0,sprintf('Vos: %.4g mV',offset_V*1e3));
 ylabel('Vout,diff (V)');
 stylePlot('Vin,diff (mV)','FDOTA Open-Loop VTC');
-saveFig(plotDir,'NOM.open_loop_vtc.png');
+savePlot(fig,plotDir,'NOM.open_loop_vtc.png');
 
 %% Closed-loop: VTC and output swing
-clOp = cols(numdata(fullfile(baseDir,"nom.cl_" + TAG + "_op.txt")),14);
+clOp = readNumericFile(nominalFiles.clOp,14);
 clOp = clOp(end,:);
-VOUT_CM_TARGET = clOp(10);
-cl = cols(numdata(fullfile(baseDir,"nom.cl_" + TAG + "_diff_dc.txt")),12);
+voutCmTarget_V = clOp(10);
+cl = readNumericFile(nominalFiles.diffDc,12);
 clCmd_V = cl(:,1);
-clVoutp_V = cl(:,3);
-clVoutn_V = cl(:,4);
-clVoutcm_V = cl(:,5);
 clVoutdiff_V = cl(:,6);
 
 [clCmd_V,idx] = sort(clCmd_V);
-clVoutp_V = clVoutp_V(idx);
-clVoutn_V = clVoutn_V(idx);
-clVoutcm_V = clVoutcm_V(idx);
 clVoutdiff_V = clVoutdiff_V(idx);
 
 [~,i0] = min(abs(clCmd_V));
-clGain = localSlope(clCmd_V,clVoutdiff_V,0);
-gainError_pct = 100*(clGain - 1);
-voutpDC_V = clVoutp_V(i0);
-voutnDC_V = clVoutn_V(i0);
-voutcmDC_V = clVoutcm_V(i0);
-voutcmError_mV = 1e3*(voutcmDC_V - VOUT_CM_TARGET);
-voutdiffDC_V = clVoutdiff_V(i0);
-
 trackError_V = clVoutdiff_V - clCmd_V;
-validSwing = abs(trackError_V) <= TRACK_LIMIT;
+validSwing = abs(trackError_V) <= cfg.trackTolerance_V;
 [iLow,iHigh] = continuousIndices(validSwing,i0);
 if isfinite(iLow)
     inputLow_V = clCmd_V(iLow);
@@ -162,14 +146,14 @@ else
     swingHigh_V = NaN;
 end
 
-figure;
+fig = figure;
 tiledlayout(2,1);
 sgtitle('FDOTA Output Swing and Closed-Loop VTC');
 
 nexttile;
 plot(clCmd_V,trackError_V*1e3,'LineWidth',1.5); hold on;
-yline(TRACK_LIMIT*1e3,'--','+2mV','HandleVisibility','off');
-yline(-TRACK_LIMIT*1e3,'--','-2mV','HandleVisibility','off');
+yline(cfg.trackTolerance_V*1e3,'--','+2mV','HandleVisibility','off');
+yline(-cfg.trackTolerance_V*1e3,'--','-2mV','HandleVisibility','off');
 if isfinite(iLow)
     xline(clCmd_V(iLow),'--',sprintf('Low: %.4g V',clCmd_V(iLow)),'HandleVisibility','off');
     xline(clCmd_V(iHigh),'--',sprintf('High: %.4g V',clCmd_V(iHigh)),'HandleVisibility','off');
@@ -189,22 +173,24 @@ end
 ylabel('Vout,diff (V)');
 legend('Measured','Ideal','Location','best');
 stylePlot('Vin,diff command (V)','');
-saveFig(plotDir,'NOM.output_swing_and_closed_loop_vtc.png');
+savePlot(fig,plotDir,'NOM.output_swing_and_closed_loop_vtc.png');
 
 %% Closed-loop: input common-mode range
-ic = cols(numdata(fullfile(baseDir,"nom.cl_" + TAG + "_icmr.txt")),12);
+ic = readNumericFile(nominalFiles.icmr,12);
 [icmrLow_V,icmrHigh_V,icmr] = analyzeICMRSweep(ic(:,1),ic(:,2), ...
     ic(:,6),ic(:,7),ic(:,9),abs(ic(:,10)),vinCm_V, ...
-    ICMR_GAIN_ERROR_TOL,VOUT_CM_TOL,ICMR_CURRENT_TOL);
+    cfg.icmrGainErrorTolerance,cfg.incrementalCmTolerance_V, ...
+    cfg.icmrCurrentTolerance);
 icmrPlotValid = icmr.valid & icmr.vcm >= icmrLow_V & icmr.vcm <= icmrHigh_V;
 
-figure;
+fig = figure;
 tiledlayout(3,1);
 nexttile;
 plot(icmr.vcm,icmr.gainError_pct,'LineWidth',1.5); hold on;
 plot(icmr.vcm(icmrPlotValid),icmr.gainError_pct(icmrPlotValid), ...
     'r','LineWidth',2.0);
-yline(100*ICMR_GAIN_ERROR_TOL,'--','0.5% limit','HandleVisibility','off');
+yline(100*cfg.icmrGainErrorTolerance,'--','0.5% limit', ...
+    'HandleVisibility','off');
 labelRange(icmrLow_V,icmrHigh_V);
 ylabel('|Gain error| (%)');
 stylePlot('','FDOTA Input Common-Mode Range');
@@ -212,8 +198,10 @@ stylePlot('','FDOTA Input Common-Mode Range');
 nexttile;
 plot(icmr.vcm,icmr.incrementalCmErrorNeg_V*1e3,'LineWidth',1.5); hold on;
 plot(icmr.vcm,icmr.incrementalCmErrorPos_V*1e3,'LineWidth',1.5);
-yline(VOUT_CM_TOL*1e3,'--','+10 mV','HandleVisibility','off');
-yline(-VOUT_CM_TOL*1e3,'--','-10 mV','HandleVisibility','off');
+yline(cfg.incrementalCmTolerance_V*1e3,'--','+10 mV', ...
+    'HandleVisibility','off');
+yline(-cfg.incrementalCmTolerance_V*1e3,'--','-10 mV', ...
+    'HandleVisibility','off');
 labelRange(icmrLow_V,icmrHigh_V);
 ylabel('Incremental CM error (mV)');
 legend('-10 mV command','+10 mV command','Location','best');
@@ -221,31 +209,39 @@ stylePlot('','');
 
 nexttile;
 plot(icmr.vcm,icmr.currentDeviation_pct,'LineWidth',1.5); hold on;
-yline(100*ICMR_CURRENT_TOL,'--','+20%','HandleVisibility','off');
-yline(-100*ICMR_CURRENT_TOL,'--','-20%','HandleVisibility','off');
+yline(100*cfg.icmrCurrentTolerance,'--','+20%', ...
+    'HandleVisibility','off');
+yline(-100*cfg.icmrCurrentTolerance,'--','-20%', ...
+    'HandleVisibility','off');
 labelRange(icmrLow_V,icmrHigh_V);
 ylabel('IDD deviation (%)');
 stylePlot('Vin,cm (V)','');
-saveFig(plotDir,'NOM.input_common_mode_range.png');
+savePlot(fig,plotDir,'NOM.input_common_mode_range.png');
 
 %% Closed-loop: transient
-tr = cols(numdata(fullfile(baseDir,"nom.cl_" + TAG + "_diff_tran.txt")),13);
+tr = readNumericFile(nominalFiles.diffTran,13);
 tDiff_s = tr(:,1);
 trCmd_V = tr(:,2);
 trVoutp_V = tr(:,4);
 trVoutn_V = tr(:,5);
 trVoutdiff_V = tr(:,7);
 
-targetOutp_V = VOUT_CM_TARGET + 0.5*trCmd_V;
-targetOutn_V = VOUT_CM_TARGET - 0.5*trCmd_V;
-[srOutpRise_Vus,srOutpFall_Vus,tOutpRise_s,tOutpFall_s,outpRisePt,outpFallPt] = stepMetrics(tDiff_s,targetOutp_V,trVoutp_V,TRACK_LIMIT);
-[srOutnRise_Vus,srOutnFall_Vus,tOutnRise_s,tOutnFall_s,outnRisePt,outnFallPt] = stepMetrics(tDiff_s,targetOutn_V,trVoutn_V,TRACK_LIMIT);
-[srDiffRise_Vus,srDiffFall_Vus,tDiffRise_s,tDiffFall_s,diffRisePt,diffFallPt] = stepMetrics(tDiff_s,trCmd_V,trVoutdiff_V,TRACK_LIMIT);
+targetOutp_V = voutCmTarget_V + 0.5*trCmd_V;
+targetOutn_V = voutCmTarget_V - 0.5*trCmd_V;
+[srOutpRise_Vus,srOutpFall_Vus,tOutpRise_s,tOutpFall_s, ...
+    outpRisePt,outpFallPt] = stepMetrics( ...
+    tDiff_s,targetOutp_V,trVoutp_V,cfg.trackTolerance_V);
+[srOutnRise_Vus,srOutnFall_Vus,tOutnRise_s,tOutnFall_s, ...
+    outnRisePt,outnFallPt] = stepMetrics( ...
+    tDiff_s,targetOutn_V,trVoutn_V,cfg.trackTolerance_V);
+[srDiffRise_Vus,srDiffFall_Vus,tDiffRise_s,tDiffFall_s, ...
+    diffRisePt,diffFallPt] = stepMetrics( ...
+    tDiff_s,trCmd_V,trVoutdiff_V,cfg.trackTolerance_V);
 settleOutp_s = maxFinite([tOutpRise_s tOutpFall_s]);
 settleOutn_s = maxFinite([tOutnRise_s tOutnFall_s]);
 settleDiff_s = maxFinite([tDiffRise_s tDiffFall_s]);
 
-figure;
+fig = figure;
 tiledlayout(2,1);
 nexttile;
 plot(tDiff_s*1e6,targetOutp_V,'--','LineWidth',1.1); hold on;
@@ -257,50 +253,120 @@ addSrCursor(outpFallPt,sprintf('OUTP fall: %.4g V/us',srOutpFall_Vus));
 addSrCursor(outnRisePt,sprintf('OUTN rise: %.4g V/us',srOutnRise_Vus));
 addSrCursor(outnFallPt,sprintf('OUTN fall: %.4g V/us',srOutnFall_Vus));
 addMetricBox({ ...
-    sprintf('OUTP settle: %s ns',fmt(settleOutp_s*1e9)), ...
-    sprintf('OUTN settle: %s ns',fmt(settleOutn_s*1e9))});
+    sprintf('OUTP settle: %s ns',formatFixed(settleOutp_s*1e9)), ...
+    sprintf('OUTN settle: %s ns',formatFixed(settleOutn_s*1e9))});
 ylabel('Output voltage (V)');
 legend('OUTP target','OUTN target','OUTP','OUTN','Location','best');
 stylePlot('','FDOTA Closed-Loop Step Response');
 
 nexttile;
 plot(tDiff_s*1e6,trCmd_V,'--','LineWidth',1.2); hold on;
-plot(tDiff_s*1e6,trCmd_V+TRACK_LIMIT,':','LineWidth',1.0,'HandleVisibility','off');
-plot(tDiff_s*1e6,trCmd_V-TRACK_LIMIT,':','LineWidth',1.0,'HandleVisibility','off');
+plot(tDiff_s*1e6,trCmd_V+cfg.trackTolerance_V,':', ...
+    'LineWidth',1.0,'HandleVisibility','off');
+plot(tDiff_s*1e6,trCmd_V-cfg.trackTolerance_V,':', ...
+    'LineWidth',1.0,'HandleVisibility','off');
 plot(tDiff_s*1e6,trVoutdiff_V,'LineWidth',1.5);
 addSrCursor(diffRisePt,sprintf('Diff rise: %.4g V/us',srDiffRise_Vus));
 addSrCursor(diffFallPt,sprintf('Diff fall: %.4g V/us',srDiffFall_Vus));
-addMetricBox({sprintf('Diff settle: %s ns',fmt(settleDiff_s*1e9))});
+addMetricBox({sprintf('Diff settle: %s ns', ...
+    formatFixed(settleDiff_s*1e9))});
 ylabel('Differential voltage (V)');
 legend('Command','Output','Location','best');
 stylePlot('Time (us)','FDOTA Closed-Loop Step Response');
-saveFig(plotDir,'NOM.closed_loop_step_response.png');
+savePlot(fig,plotDir,'NOM.closed_loop_step_response.png');
 
-cm = cols(numdata(fullfile(baseDir,"nom.cl_" + TAG + "_cm_tran.txt")),12);
+cm = readNumericFile(nominalFiles.cmTran,12);
 tCm_s = cm(:,1);
 trVref_V = cm(:,2);
 trVrefBias_V = cm(:,3);
 trVoutcm_V = cm(:,6);
 trVocm_V = cm(:,8);
-[cmSrRise_Vus,cmSrFall_Vus] = ...
-    stepMetrics(tCm_s,trVref_V,trVoutcm_V,SETTLE_LIMIT);
 [cmSettleRise_s,cmSettleFall_s] = settleToFinal( ...
-    tCm_s,trVref_V,trVoutcm_V,CM_SETTLE_TOL);
+    tCm_s,trVref_V,trVoutcm_V,cfg.cmSettleTolerance_V);
 outputCmSettling_s = maxFinite([cmSettleRise_s cmSettleFall_s]);
 
-figure;
+fig = figure;
 plot(tCm_s*1e6,trVref_V,'--','LineWidth',1.2); hold on;
 plot(tCm_s*1e6,trVrefBias_V,':','LineWidth',1.2);
 plot(tCm_s*1e6,trVocm_V,'LineWidth',1.2);
 plot(tCm_s*1e6,trVoutcm_V,'LineWidth',1.5);
 addMetricBox({sprintf('CM settle (5 mV final-value band): %s ns', ...
-    fmt(outputCmSettling_s*1e9))});
+    formatFixed(outputCmSettling_s*1e9))});
 ylabel('Common-mode voltage (V)');
 legend('Applied VREF','BIAS VREF','VOCM pin','Vout,cm','Location','best');
 stylePlot('Time (us)','FDOTA Common-Mode Feedback Step Response');
-saveFig(plotDir,'NOM.output_cm_transient.png');
+savePlot(fig,plotDir,'NOM.output_cm_transient.png');
 
 %% Summary table
+processes = ["NOM" "FF" "SS" "FS" "SF"];
+processTokens = lower(processes);
+cases = ["nom" "vl" "vh" "tl" "th" "vltl" "vlth" "vhtl" "vhth"];
+caseLabels = ["NOMNOM" "VLNOM" "VHNOM" "NOMTL" "NOMTH" ...
+    "VLTL" "VLTH" "VHTL" "VHTH"];
+corners = strings(1,numel(processes)*numel(cases));
+rawValues = nan(size(rows,1),numel(corners));
+metrics = cell(1,numel(corners));
+cornerIndex = 0;
+for processIndex = 1:numel(processes)
+    for caseIndex = 1:numel(cases)
+        cornerIndex = cornerIndex+1;
+        process = processTokens(processIndex);
+        caseName = cases(caseIndex);
+        corners(cornerIndex) = processes(processIndex)+caseLabels(caseIndex);
+        metrics{cornerIndex} = analyzeRun( ...
+            scriptDir,process,caseName,cfg);
+        rawValues(:,cornerIndex) = ...
+            metricsToRaw(metrics{cornerIndex},rows,cfg);
+    end
+end
+
+[rows,scaledValues] = adaptReportUnits(rows,rawValues);
+formattedValues = formatReportValues(rows,scaledValues);
+
+reportColumns = ["NOM" "FF" "SS" "FS" "SF" "VL" "VH" "TL" "TH"];
+reportKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
+    "SFNOMNOM" "NOMVLNOM" "NOMVHNOM" "NOMNOMTL" "NOMNOMTH"];
+[found,reportIndices] = ismember(reportKeys,corners);
+if ~all(found)
+    error('FDOTA_Analyze:ReportCorners', ...
+        'One or more required comparison corners are missing.');
+end
+reportValues = formattedValues(:,reportIndices);
+summaryTable = table(rows(:,1),rows(:,2), ...
+    'VariableNames',{'Parameter','Unit'});
+summaryTable = [summaryTable array2table(reportValues, ...
+    'VariableNames',cellstr(reportColumns))];
+fprintf('\nFDOTA COMPARISON SUMMARY\n\n');
+printSummaryTable(rows,reportColumns,reportValues);
+writetable(summaryTable,fullfile(scriptDir,'FDOTA_table_report.csv'));
+writetable(summaryTable,fullfile(scriptDir,'NOM.FDOTA_summary.csv'));
+
+worstCase = buildWorstCaseTable(rows,corners,scaledValues,metrics,cfg);
+fprintf('\nFDOTA FULL-PVT WORST CASE\n\n');
+printWorstCaseTable(worstCase);
+writetable(worstCase,fullfile(scriptDir,'FDOTA_worst_case_report.csv'));
+
+end
+
+function cfg = analysisConfig
+cfg.nominalCase = "nom";
+cfg.closedLoopTarget_VV = 1;
+cfg.biasTarget_A = 40e-6;
+cfg.trackTolerance_V = 2e-3;
+cfg.settleTolerance_V = 2e-3;
+cfg.cmSettleTolerance_V = 5e-3;
+cfg.icmrGainErrorTolerance = 0.005;
+cfg.incrementalCmTolerance_V = 10e-3;
+cfg.icmrCurrentTolerance = 0.20;
+cfg.offsetMaxJumpFraction = 0.25;
+cfg.noiseBand_Hz = [0.05 150];
+cfg.rejectionFrequencies_Hz = [60 150];
+cfg.markFrequencies_Hz = [0.05 60 150 1e3];
+cfg.noiseMarkFrequencies_Hz = [cfg.noiseBand_Hz(1) 60 ...
+    cfg.noiseBand_Hz(2)];
+end
+
+function rows = reportRows
 rows = [
     "Set conditions",                        ""
     "AVDD",                                  "V"
@@ -346,85 +412,74 @@ rows = [
     "CMFB SR fall",                          "V/us"
     "CMFB settling time",                    "s"
 ];
-
-processes = ["NOM" "FF" "SS" "FS" "SF"];
-processTokens = lower(processes);
-cases = ["nom" "vl" "vh" "tl" "th" "vltl" "vlth" "vhtl" "vhth"];
-caseLabels = ["NOMNOM" "VLNOM" "VHNOM" "NOMTL" "NOMTH" ...
-    "VLTL" "VLTH" "VHTL" "VHTH"];
-corners = strings(1,numel(processes)*numel(cases));
-rawValues = nan(size(rows,1),numel(corners));
-metrics = cell(1,numel(corners));
-cornerIndex = 0;
-for processIndex = 1:numel(processes)
-    for caseIndex = 1:numel(cases)
-        cornerIndex = cornerIndex+1;
-        process = processTokens(processIndex);
-        caseName = cases(caseIndex);
-        corners(cornerIndex) = processes(processIndex)+caseLabels(caseIndex);
-        metrics{cornerIndex} = analyzeRun(scriptDir,process,caseName, ...
-            TRACK_LIMIT,SETTLE_LIMIT,NOISE_BAND_HZ, ...
-            ICMR_GAIN_ERROR_TOL,VOUT_CM_TOL,ICMR_CURRENT_TOL,CM_SETTLE_TOL);
-        rawValues(:,cornerIndex) = metricsToRaw(metrics{cornerIndex},rows);
-    end
 end
 
-[rows,scaledValues] = adaptReportUnits(rows,rawValues);
-formattedValues = formatReportValues(rows,scaledValues);
-
-reportColumns = ["NOM" "FF" "SS" "FS" "SF" "VL" "VH" "TL" "TH"];
-reportKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
-    "SFNOMNOM" "NOMVLNOM" "NOMVHNOM" "NOMNOMTL" "NOMNOMTH"];
-[found,reportIndices] = ismember(reportKeys,corners);
-if ~all(found), error('Required report corners are missing.'); end
-reportScaledValues = scaledValues(:,reportIndices);
-reportValues = formattedValues(:,reportIndices);
-Result = table(rows(:,1),rows(:,2),'VariableNames',{'Parameter','Unit'});
-Result = [Result array2table(reportValues,'VariableNames',cellstr(reportColumns))];
-fprintf('\nFDOTA COMPARISON SUMMARY\n\n');
-printSummaryTable(rows,reportColumns,reportValues);
-writetable(Result,fullfile(scriptDir,'FDOTA_table_report.csv'));
-writetable(Result,fullfile(scriptDir,'NOM.FDOTA_summary.csv'));
-
-WorstCase = buildWorstCaseTable(rows,corners,scaledValues,metrics);
-fprintf('\nFDOTA FULL-PVT WORST CASE\n\n');
-printWorstCaseTable(WorstCase);
-writetable(WorstCase,fullfile(scriptDir,'FDOTA_worst_case_report.csv'));
-
-%% Functions
-function D = numdata(file)
-    D = readmatrix(file,'FileType','text');
-    D = D(any(isfinite(D),2),:);
-    D = D(:,any(isfinite(D),1));
-    if isempty(D), error('No numeric data found in %s',file); end
+function files = runFiles(resultDir,process,caseName)
+olPrefix = fullfile(resultDir,process+".ol_"+caseName+"_");
+clPrefix = fullfile(resultDir,process+".cl_"+caseName+"_");
+files.olOp = olPrefix+"op.txt";
+files.diffAc = olPrefix+"diff_ac.txt";
+files.cmAc = olPrefix+"cm_ac.txt";
+files.psrrpAc = olPrefix+"psrrp_ac.txt";
+files.psrrnAc = olPrefix+"psrrn_ac.txt";
+files.vtc = olPrefix+"vtc.txt";
+files.noise = olPrefix+"noise.txt";
+files.clOp = clPrefix+"op.txt";
+files.diffDc = clPrefix+"diff_dc.txt";
+files.icmr = clPrefix+"icmr.txt";
+files.diffTran = clPrefix+"diff_tran.txt";
+files.cmTran = clPrefix+"cm_tran.txt";
 end
 
-function C = cols(D,n)
-    if size(D,2) == n
-        C = D;
-    elseif size(D,2) == n+1
-        C = D(:,2:end);
-    elseif size(D,2) > n
-        C = D(:,end-n+1:end);
-    else
-        error('Expected at least %d columns, found %d.',n,size(D,2));
-    end
+function data = readNumericFile(file,expectedColumns)
+if ~isfile(file)
+    error('FDOTA_Analyze:MissingFile','Missing required file: %s',file);
+end
+data = readmatrix(file,'FileType','text');
+data = data(any(isfinite(data),2),:);
+data = data(:,any(isfinite(data),1));
+if isempty(data)
+    error('FDOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
+end
+if size(data,2) == expectedColumns+1 && ...
+        columnsMatch(data(:,1),data(:,2))
+    data = data(:,2:end);
+end
+if size(data,2) ~= expectedColumns
+    error('FDOTA_Analyze:ColumnCount', ...
+        '%s must contain %d columns; found %d.', ...
+        file,expectedColumns,size(data,2));
+end
+if any(~isfinite(data),'all')
+    error('FDOTA_Analyze:NonfiniteData', ...
+        '%s contains nonfinite numeric samples.',file);
+end
 end
 
-function m = analyzeRun(scriptDir,process,caseName,trackTol,settleTol, ...
-        noiseBand,icmrGainErrorTol,cmTol,currentTol,cmSettleTol)
-    resultDir = fullfile(scriptDir,process + ".Result_txt");
-    ol = fullfile(resultDir,process + ".ol_" + caseName + "_");
-    cl = fullfile(resultDir,process + ".cl_" + caseName + "_");
-    required = [ol+["op.txt" "diff_ac.txt" "cm_ac.txt" "psrrp_ac.txt" ...
-        "psrrn_ac.txt" "vtc.txt" "noise.txt"] ...
-        cl+["op.txt" "diff_dc.txt" "icmr.txt" "diff_tran.txt" "cm_tran.txt"]];
+function tf = columnsMatch(a,b)
+scale = max([ones(size(a)) abs(a) abs(b)],[],2);
+tf = all(abs(a-b) <= 100*eps(scale));
+end
+
+function validateFrequency(f,label)
+if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
+    error('FDOTA_Analyze:FrequencyAxis', ...
+        '%s frequency must be finite, positive, and strictly increasing.', ...
+        label);
+end
+end
+
+function m = analyzeRun(scriptDir,process,caseName,cfg)
+    resultDir = fullfile(scriptDir,process+".Result_txt");
+    files = runFiles(resultDir,process,caseName);
+    required = string(struct2cell(files));
     if ~all(isfile(required))
-        error('FDOTA_Analyze:MissingFiles','Missing FDOTA files for %s/%s.', ...
-            process,caseName);
+        error('FDOTA_Analyze:MissingFiles', ...
+            'Missing FDOTA files for %s/%s.',process,caseName);
     end
 
-    op = cols(numdata(ol+"op.txt"),15); op = op(end,:);
+    op = readNumericFile(files.olOp,15);
+    op = op(end,:);
     m.vdd_V = op(2);
     m.vinCm_V = 0.5*(op(3)+op(4));
     m.vref_V = op(9);
@@ -433,36 +488,45 @@ function m = analyzeRun(scriptDir,process,caseName,trackTol,settleTol, ...
     m.totalCurrent_A = abs(op(13));
     m.totalPower_W = m.vdd_V*m.totalCurrent_A;
 
-    [fAd,Ad] = transferFromFile(ol+"diff_ac.txt");
-    [gainDb,~,m.ugf_Hz,m.pm_deg] = acMetrics(fAd,Ad);
-    m.dcGain_dB = gainDb(1);
-    [fCm,Acm] = transferFromFile(ol+"cm_ac.txt");
-    [fP,Ap] = transferFromFile(ol+"psrrp_ac.txt");
-    [fN,An] = transferFromFile(ol+"psrrn_ac.txt");
-    m.cmrr_dB = interpAtFreq(fCm,rejectionDb(fAd,Ad,fCm,Acm),[60 150]);
-    m.psrrP_dB = interpAtFreq(fP,rejectionDb(fAd,Ad,fP,Ap),[60 150]);
-    m.psrrN_dB = interpAtFreq(fN,rejectionDb(fAd,Ad,fN,An),[60 150]);
-    vtc = cols(numdata(ol+"vtc.txt"),10);
-    m.offset_V = zeroNoJump(vtc(:,1),vtc(:,8),0.25*m.vdd_V);
-    noise = cols(numdata(ol+"noise.txt"),3);
-    m.inputNoise_Vrms = integrateNoise(noise(:,1),abs(noise(:,3)),noiseBand);
+    [fAd,Ad] = transferFromFile(files.diffAc);
+    [gain_dB,~,m.ugf_Hz,m.phaseMargin_deg] = acMetrics(fAd,Ad);
+    m.dcGain_dB = gain_dB(1);
+    [fCm,Acm] = transferFromFile(files.cmAc);
+    [fP,Ap] = transferFromFile(files.psrrpAc);
+    [fN,An] = transferFromFile(files.psrrnAc);
+    m.cmrr_dB = interpAtFreq(fCm,rejectionDb(fAd,Ad,fCm,Acm), ...
+        cfg.rejectionFrequencies_Hz);
+    m.psrrP_dB = interpAtFreq(fP,rejectionDb(fAd,Ad,fP,Ap), ...
+        cfg.rejectionFrequencies_Hz);
+    m.psrrN_dB = interpAtFreq(fN,rejectionDb(fAd,Ad,fN,An), ...
+        cfg.rejectionFrequencies_Hz);
+    vtc = readNumericFile(files.vtc,10);
+    m.offset_V = zeroNoJump(vtc(:,1),vtc(:,8), ...
+        cfg.offsetMaxJumpFraction*m.vdd_V);
+    noise = readNumericFile(files.noise,3);
+    m.inputNoise_Vrms = integrateNoise( ...
+        noise(:,1),abs(noise(:,3)),cfg.noiseBand_Hz);
 
-    clOp = cols(numdata(cl+"op.txt"),14); clOp = clOp(end,:);
+    clOp = readNumericFile(files.clOp,14);
+    clOp = clOp(end,:);
     m.vref_V = clOp(10);
     m.voutCmDc_V = clOp(8);
     m.voutCmError_V = clOp(8)-clOp(10);
     m.voutDiffDc_V = clOp(9);
 
-    dc = cols(numdata(cl+"diff_dc.txt"),12);
+    dc = readNumericFile(files.diffDc,12);
     [cmd,order] = sort(dc(:,1));
     outDiff = dc(order,6); dcError = dc(order,7);
     [~,i0] = min(abs(cmd));
     gain = localSlope(cmd,outDiff,0);
     m.clGain_dB = 20*log10(abs(gain));
     m.gainError_pct = 100*(gain-1);
-    [iLow,iHigh] = continuousIndices(abs(dcError)<=trackTol,i0);
-    m.diffCmdLow_V = NaN; m.diffCmdHigh_V = NaN;
-    m.diffSwingLow_V = NaN; m.diffSwingHigh_V = NaN;
+    [iLow,iHigh] = continuousIndices( ...
+        abs(dcError)<=cfg.trackTolerance_V,i0);
+    m.diffCmdLow_V = NaN;
+    m.diffCmdHigh_V = NaN;
+    m.diffSwingLow_V = NaN;
+    m.diffSwingHigh_V = NaN;
     if isfinite(iLow)
         m.diffCmdLow_V = cmd(iLow);
         m.diffCmdHigh_V = cmd(iHigh);
@@ -470,27 +534,28 @@ function m = analyzeRun(scriptDir,process,caseName,trackTol,settleTol, ...
         m.diffSwingHigh_V = max(outDiff(iLow:iHigh));
     end
 
-    ic = cols(numdata(cl+"icmr.txt"),12);
+    ic = readNumericFile(files.icmr,12);
     [m.icmrLow_V,m.icmrHigh_V] = analyzeICMRSweep(ic(:,1),ic(:,2), ...
         ic(:,6),ic(:,7),ic(:,9),abs(ic(:,10)),m.vinCm_V, ...
-        icmrGainErrorTol,cmTol,currentTol);
+        cfg.icmrGainErrorTolerance,cfg.incrementalCmTolerance_V, ...
+        cfg.icmrCurrentTolerance);
     m.icmrHighHeadroom_V = m.vdd_V-m.icmrHigh_V;
 
-    tr = cols(numdata(cl+"diff_tran.txt"),13);
+    tr = readNumericFile(files.diffTran,13);
     [m.diffSrRise_Vus,m.diffSrFall_Vus,tRise,tFall] = ...
-        stepMetrics(tr(:,1),tr(:,2),tr(:,7),settleTol);
-    m.diffSettle_s = maxFinite([tRise tFall]);
+        stepMetrics(tr(:,1),tr(:,2),tr(:,7),cfg.settleTolerance_V);
+    m.diffSettlingTime_s = maxFinite([tRise tFall]);
     m.diffCmDisturbance_V = max(abs(tr(:,6)-tr(:,10)));
 
-    cm = cols(numdata(cl+"cm_tran.txt"),12);
+    cm = readNumericFile(files.cmTran,12);
     [m.cmSrRise_Vus,m.cmSrFall_Vus] = ...
-        stepMetrics(cm(:,1),cm(:,2),cm(:,6),settleTol);
+        stepMetrics(cm(:,1),cm(:,2),cm(:,6),cfg.settleTolerance_V);
     [cmRise,cmFall] = settleToFinal( ...
-        cm(:,1),cm(:,2),cm(:,6),cmSettleTol);
-    m.cmSettle_s = maxFinite([cmRise cmFall]);
+        cm(:,1),cm(:,2),cm(:,6),cfg.cmSettleTolerance_V);
+    m.cmSettlingTime_s = maxFinite([cmRise cmFall]);
 end
 
-function values = metricsToRaw(m,rows)
+function values = metricsToRaw(m,rows,cfg)
     % Returns raw numeric doubles in the initial table units. No rounding.
     values = nan(size(rows,1),1);
     for i = 1:size(rows,1)
@@ -500,14 +565,16 @@ function values = metricsToRaw(m,rows)
             case "AVDD",                             values(i) = m.vdd_V;
             case "Vin,cm",                           values(i) = m.vinCm_V;
             case "VREF",                             values(i) = m.vref_V;
-            case "Closed-loop target gain",          values(i) = 1;
+            case "Closed-loop target gain"
+                values(i) = cfg.closedLoopTarget_VV;
             case "FDC bias current",                 values(i) = m.fdcBias_A;
             case "CMFB bias current",                values(i) = m.cmfbBias_A;
             case "Total current",                    values(i) = m.totalCurrent_A;
             case "Total power",                      values(i) = m.totalPower_W;
             case "Differential DC gain",             values(i) = m.dcGain_dB;
             case "Differential UGF",                 values(i) = m.ugf_Hz;
-            case "Differential phase margin",        values(i) = m.pm_deg;
+            case "Differential phase margin"
+                values(i) = m.phaseMargin_deg;
             case "Input differential offset",        values(i) = m.offset_V;
             case "CMRR @ 60 Hz",                     values(i) = m.cmrr_dB(1);
             case "CMRR @ 150 Hz",                    values(i) = m.cmrr_dB(2);
@@ -530,16 +597,18 @@ function values = metricsToRaw(m,rows)
             case "Differential output swing high",   values(i) = m.diffSwingHigh_V;
             case "Differential SR rise",             values(i) = m.diffSrRise_Vus;
             case "Differential SR fall",             values(i) = m.diffSrFall_Vus;
-            case "Differential settling time",       values(i) = m.diffSettle_s;
+            case "Differential settling time"
+                values(i) = m.diffSettlingTime_s;
             case "Differential-step CM disturbance", values(i) = m.diffCmDisturbance_V;
             case "CMFB SR rise",                     values(i) = m.cmSrRise_Vus;
             case "CMFB SR fall",                     values(i) = m.cmSrFall_Vus;
-            case "CMFB settling time",               values(i) = m.cmSettle_s;
+            case "CMFB settling time"
+                values(i) = m.cmSettlingTime_s;
         end
     end
 end
 
-function result = buildWorstCaseTable(rows,corners,values,metrics)
+function result = buildWorstCaseTable(rows,corners,values,metrics,cfg)
     keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
         ["AVDD" "Vin,cm" "VREF" "Closed-loop target gain"]);
     parameters = rows(keep,1); units = rows(keep,2); source = find(keep);
@@ -593,11 +662,13 @@ function result = buildWorstCaseTable(rows,corners,values,metrics)
             [~,j] = max(abs(candidates(valid))); index = valid(j);
             selected(i) = candidates(index);
         elseif parameter == "FDC bias current"
-            raw = cellfun(@(x)x.fdcBias_A,metrics)*1e6;
-            [~,index] = max(abs(raw-40)); selected(i) = candidates(index);
+            raw = cellfun(@(x)x.fdcBias_A,metrics);
+            [~,index] = max(abs(raw-cfg.biasTarget_A));
+            selected(i) = candidates(index);
         elseif parameter == "CMFB bias current"
-            raw = cellfun(@(x)x.cmfbBias_A,metrics)*1e6;
-            [~,index] = max(abs(raw-40)); selected(i) = candidates(index);
+            raw = cellfun(@(x)x.cmfbBias_A,metrics);
+            [~,index] = max(abs(raw-cfg.biasTarget_A));
+            selected(i) = candidates(index);
         else
             [selected(i),j] = max(candidates(valid)); index = valid(j);
         end
@@ -605,11 +676,7 @@ function result = buildWorstCaseTable(rows,corners,values,metrics)
     end
     formatted = strings(size(selected));
     for i = 1:numel(selected)
-        if units(i) == "dB" || units(i) == "%"
-            formatted(i) = fmtDbPercent(selected(i));
-        else
-            formatted(i) = fmtMetric(selected(i),units(i));
-        end
+        formatted(i) = formatOne(selected(i),units(i));
     end
     result = table(parameters,units,formatted,selectedCorner, ...
         'VariableNames',{'Parameter','Unit','Value','Corner'});
@@ -643,14 +710,16 @@ function printWorstCaseTable(result)
 end
 
 function [f,A] = transferFromFile(file)
-    D = cols(numdata(file),5);
+    D = readNumericFile(file,5);
     f = D(:,1);
+    validateFrequency(f,file);
     vin = D(:,2) + 1j*D(:,3);
     vout = D(:,4) + 1j*D(:,5);
     A = vout ./ vin;
 end
 
-function [gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f,A)
+function [gain_dB,phase_deg,ugf_Hz,phaseMargin_deg,f3dB_Hz] = ...
+        acMetrics(f,A)
     gain_dB = 20*log10(max(abs(A),realmin));
     phase_deg = unwrap(angle(A))*180/pi;
     if abs(phase_deg(1)) > 90
@@ -659,7 +728,7 @@ function [gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f,A)
     end
     f3dB_Hz = gainCross(f,gain_dB,gain_dB(1)-3);
     ugf_Hz = gainCross(f,gain_dB,0);
-    pm_deg = 180 + interpAtFreq(f,phase_deg,ugf_Hz);
+    phaseMargin_deg = 180 + interpAtFreq(f,phase_deg,ugf_Hz);
 end
 
 function f0 = gainCross(f,g,target)
@@ -687,11 +756,13 @@ end
 function labelFreqSet(f,y,fSet)
     for f0 = fSet
         y0 = interpAtFreq(f,y,f0);
-        addCursorLine(f0,y0,sprintf('%s: %.4g dB',freqText(f0),y0));
+        addCursorLine(f0,y0, ...
+            sprintf('%s: %.4g dB',frequencyText(f0),y0));
     end
 end
 
 function vn = integrateNoise(f,en,band)
+    validateFrequency(f,'Noise');
     ok = isfinite(f) & isfinite(en) & f > 0 & en >= 0;
     f = f(ok);
     en = en(ok);
@@ -818,6 +889,18 @@ function [iLow,iHigh] = continuousIndices(valid,iCenter)
 end
 
 function [srRise,srFall,tsRise,tsFall,risePt,fallPt] = stepMetrics(t,target,out,tol)
+    if numel(t) ~= numel(target) || numel(t) ~= numel(out)
+        error('FDOTA_Analyze:TransientLength', ...
+            'Time, target, and output vectors must have equal lengths.');
+    end
+    if any(~isfinite(t)) || any(diff(t) <= 0)
+        error('FDOTA_Analyze:TimeAxis', ...
+            'Transient time must be finite and strictly increasing.');
+    end
+    if any(~isfinite(target)) || any(~isfinite(out))
+        error('FDOTA_Analyze:TransientData', ...
+            'Transient target and output samples must be finite.');
+    end
     events = stepEvents(target);
     srRiseList = []; srFallList = []; tsRiseList = []; tsFallList = [];
     risePtList = []; fallPtList = [];
@@ -924,12 +1007,20 @@ function addMetricBox(lines)
 end
 
 function labelRange(lo,hi)
-    if isfinite(lo), xline(lo,'--',sprintf('Lo: %.4g V',lo),'HandleVisibility','off'); end
-    if isfinite(hi), xline(hi,'--',sprintf('Hi: %.4g V',hi),'HandleVisibility','off'); end
+    if isfinite(lo)
+        xline(lo,'--',sprintf('Lo: %.4g V',lo), ...
+            'HandleVisibility','off');
+    end
+    if isfinite(hi)
+        xline(hi,'--',sprintf('Hi: %.4g V',hi), ...
+            'HandleVisibility','off');
+    end
 end
 
 function addCursor(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y), return; end
+    if ~isfinite(x) || ~isfinite(y)
+        return;
+    end
     xline(x,':','HandleVisibility','off');
     plot(x,y,'o','MarkerFaceColor','r','MarkerEdgeColor','r', ...
         'MarkerSize',6,'HandleVisibility','off');
@@ -939,25 +1030,32 @@ function addCursor(x,y,labelText)
 end
 
 function addCursorLine(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y), return; end
+    if ~isfinite(x) || ~isfinite(y)
+        return;
+    end
     xline(x,':'," " + string(labelText),'HandleVisibility','off', ...
         'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
 end
 
 function addCursorHLine(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y), return; end
+    if ~isfinite(x) || ~isfinite(y)
+        return;
+    end
     yline(y,':'," " + string(labelText),'HandleVisibility','off', ...
         'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
 end
 
 function stylePlot(xLabelText,titleText)
     grid on;
-    if strlength(string(xLabelText)) > 0, xlabel(xLabelText); end
-    if strlength(string(titleText)) > 0, title(titleText); end
+    if strlength(string(xLabelText)) > 0
+        xlabel(xLabelText);
+    end
+    if strlength(string(titleText)) > 0
+        title(titleText);
+    end
 end
 
-function saveFig(plotDir,fileName)
-    fig = gcf;
+function savePlot(fig,plotDir,fileName)
     drawnow;
     fig.PaperUnits = 'inches';
     fig.PaperPosition = [0 0 10 4];
@@ -989,7 +1087,7 @@ function [tsRise,tsFall] = settleToFinal(t,command,out,tolerance)
     tsFall = maxFinite(fallTimes);
 end
 
-function s = fmt(x)
+function s = formatFixed(x)
     if isnan(x)
         s = "NaN";
     elseif isinf(x)
@@ -999,19 +1097,7 @@ function s = fmt(x)
     end
 end
 
-function s = fmtDbPercent(x)
-    if isnan(x)
-        s = "NaN";
-    elseif isinf(x)
-        s = string(sprintf('%+g',x));
-    elseif x ~= 0 && (abs(x) < 1e-3 || abs(x) > 999)
-        s = string(sprintf('%.3e',x));
-    else
-        s = string(sprintf('%.3f',x));
-    end
-end
-
-function s = freqText(f)
+function s = frequencyText(f)
     if ~isfinite(f)
         s = 'NaN';
     elseif f >= 1e6
@@ -1024,126 +1110,91 @@ function s = freqText(f)
 end
 
 function [rows,scaledValues] = adaptReportUnits(rows,rawValues)
-    % rawValues and scaledValues remain numeric doubles.
-    % Unit changes use exact powers of 1000 only.
-    scaledValues = rawValues;
+scaledValues = rawValues;
+for rowIndex = 1:size(rows,1)
+    [rows(rowIndex,2),scaledValues(rowIndex,:)] = ...
+        adaptValuesUnit(rows(rowIndex,2),rawValues(rowIndex,:));
+end
+end
 
-    for i = 1:size(rows,1)
-        unit = string(rows(i,2));
-
-        if unit == "" || unit == "dB" || unit == "%"
-            continue;
-        end
-
-        x = rawValues(i,:);
-        finiteMask = isfinite(x);
-        nonzeroMask = finiteMask & x ~= 0;
-
-        if ~any(finiteMask)
-            continue;
-        end
-
-        if ~any(nonzeroMask)
-            continue;
-        end
-
-        magnitude = max(abs(x(nonzeroMask)));
-
-        [newUnit,scalePower] = scaleUnit(magnitude,unit);
-
-        scaledValues(i,:) = x * 1e3^scalePower;
-        rows(i,2) = newUnit;
-    end
+function [unit,scaledValues] = adaptValuesUnit(unit,values)
+scaledValues = values;
+if unit == "" || unit == "dB" || unit == "%"
+    return;
+end
+nonzero = isfinite(values) & values ~= 0;
+if ~any(nonzero)
+    return;
+end
+magnitude = max(abs(values(nonzero)));
+[unit,scalePower] = scaleUnit(magnitude,unit);
+scaledValues = values*1e3^scalePower;
 end
 
 function formatted = formatReportValues(rows,scaledValues)
-    % First and only place numbers become strings.
-    formatted = strings(size(scaledValues));
-    for i = 1:size(scaledValues,1)
-        unit = string(rows(i,2));
-        if unit == ""
-            continue;
-        end
-        for j = 1:size(scaledValues,2)
-            if unit == "dB" || unit == "%"
-                formatted(i,j) = fmtDbPercent(scaledValues(i,j));
-            else
-                formatted(i,j) = fmtMetric(scaledValues(i,j),unit);
-            end
-        end
+formatted = strings(size(scaledValues));
+for rowIndex = 1:size(scaledValues,1)
+    unit = rows(rowIndex,2);
+    if unit == ""
+        continue;
     end
+    for columnIndex = 1:size(scaledValues,2)
+        formatted(rowIndex,columnIndex) = ...
+            formatOne(scaledValues(rowIndex,columnIndex),unit);
+    end
+end
 end
 
 function [newUnit,scalePower] = scaleUnit(magnitude,currentUnit)
-    prefixOrder = ["f" "p" "n" "u" "m" "" "k" "M" "G" "T"];
-
-    [prefix,core] = splitUnitPrefix(currentUnit);
-    index = find(prefixOrder == prefix,1);
-
-    if isempty(index)
-        newUnit = currentUnit;
-        scalePower = 0;
-        return;
-    end
-
-    scaled = abs(magnitude);
-    scalePower = 0;
-
-    if scaled == 0
-        newUnit = currentUnit;
-        return;
-    end
-
-    while scaled < 1 && index > 1
-        scaled = scaled * 1e3;
-        index = index - 1;
-        scalePower = scalePower + 1;
-    end
-
-    while scaled >= 1000 && index < numel(prefixOrder)
-        scaled = scaled / 1e3;
-        index = index + 1;
-        scalePower = scalePower - 1;
-    end
-
-    newUnit = prefixOrder(index) + core;
+prefixOrder = ["f" "p" "n" "u" "m" "" "k" "M" "G" "T"];
+[prefix,core] = splitUnitPrefix(currentUnit);
+index = find(prefixOrder == prefix,1);
+scaled = abs(magnitude);
+scalePower = 0;
+while scaled < 1 && index > 1
+    scaled = scaled*1e3;
+    index = index-1;
+    scalePower = scalePower+1;
+end
+while scaled >= 1000 && index < numel(prefixOrder)
+    scaled = scaled/1e3;
+    index = index+1;
+    scalePower = scalePower-1;
+end
+newUnit = prefixOrder(index)+core;
 end
 
 function [prefix,core] = splitUnitPrefix(unit)
-    unit = string(unit);
-
-    knownPrefixes = ["T" "G" "M" "k" "m" "u" "n" "p" "f"];
-
-    if strlength(unit) == 0
-        prefix = "";
-        core = "";
-        return;
-    end
-
-    firstCharacter = extractBetween(unit,1,1);
-
-    if ismember(firstCharacter,knownPrefixes)
-        prefix = firstCharacter;
-        core = extractAfter(unit,1);
-    else
-        prefix = "";
-        core = unit;
-    end
+knownPrefixes = ["T" "G" "M" "k" "m" "u" "n" "p" "f"];
+unit = string(unit);
+if unit == ""
+    prefix = "";
+    core = "";
+    return;
+end
+firstCharacter = extractBetween(unit,1,1);
+if ismember(firstCharacter,knownPrefixes)
+    prefix = firstCharacter;
+    core = extractAfter(unit,1);
+else
+    prefix = "";
+    core = unit;
+end
 end
 
-function s = fmtMetric(x,unit)
-    if isnan(x)
-        s = "NaN";
-        return;
+function s = formatOne(x,unit)
+if isnan(x)
+    s = "NaN";
+elseif isinf(x)
+    s = string(sprintf('%+g',x));
+elseif unit == "dB" || unit == "%"
+    if x ~= 0 && (abs(x) < 1e-3 || abs(x) > 999)
+        s = string(sprintf('%.3e',x));
+    else
+        s = string(sprintf('%.3f',x));
     end
-
-    if isinf(x)
-        s = string(sprintf('%+g',x));
-        return;
-    end
-
+else
     [prefix,~] = splitUnitPrefix(unit);
-
     if prefix == "f" && x ~= 0 && abs(x) < 1e-3
         s = string(sprintf('%.3e',x));
     elseif prefix == "T" && abs(x) > 999
@@ -1151,5 +1202,6 @@ function s = fmtMetric(x,unit)
     else
         s = string(sprintf('%.3f',x));
     end
+end
 end
 

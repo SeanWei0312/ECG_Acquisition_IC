@@ -15,8 +15,9 @@ This report documents the design, transistor-level sizing, simulation methodolog
 1. **Master Bias & Reference (`BIAS` / `SEL`)**: Characterized across 5 process corners, continuous supply voltage sweeps ($3.0\text{--}3.6\text{ V}$), temperature sweeps ($-40^\circ\text{C}\text{ to }+125^\circ\text{C}$), 35 startup transient runs (**0 failures**), and analog multiplexer transmission accuracy ($< 26\text{ nV}$ error).
 2. **Single-Ended OTA (`SE_OTA`)**: Full 45-point PVT characterization ($5\text{ processes} \times 9\text{ V-T corners}$) covering open-loop stability, rejection, noise integration ($0.05\text{--}150\text{ Hz}$), closed-loop tracking, high-side headroom, and transient step settling.
 3. **Fully Differential OTA (`FD_OTA`)**: Full 45-point PVT characterization of the core amplifier with dynamic continuous-time common-mode feedback (`CMFB`), closed-loop differential tracking, input common-mode range, and step response.
-4. **$g_m/I_D$ Sizing Automation**: Semi-empirical transistor sizing based on continuous lookups of transconductance efficiency ($g_m/I_D$), current density ($I_D/W$), transit frequency ($f_T$), and self-gain ($g_m/g_{ds}$).
-5. **Data Integrity Pipeline**: All post-processing analyzers implement a strict numeric-first double-precision pipeline (`ngspice TXT -> double -> PVT worst-case selection -> SI scaling -> string format`), eliminating intermediate truncation and prefix errors.
+4. **Instrumentation Amplifier + Right-Leg Drive (`INA_RLD`)**: Full 45-point BAL report with a 45-corner MIS stress audit, nominal loop/transient characterization, and switching selector functional verification.
+5. **$g_m/I_D$ Sizing Automation**: Semi-empirical transistor sizing based on continuous lookups of transconductance efficiency ($g_m/I_D$), current density ($I_D/W$), transit frequency ($f_T$), and self-gain ($g_m/g_{ds}$).
+6. **Data Integrity Pipeline**: All post-processing analyzers implement a strict numeric-first double-precision pipeline (`ngspice TXT -> double -> PVT worst-case selection -> SI scaling -> string format`), eliminating intermediate truncation and prefix errors.
 
 > [!NOTE]
 > All reported performance metrics are pre-layout schematic simulations. Monte Carlo mismatch analysis, physical layout parasitics (PEX), mixed-signal SAR ADC integration, and laboratory silicon validation are detailed in [Section 9](#9-limitations-and-future-work).
@@ -35,11 +36,11 @@ The integrated top-level AFE schematic combines the biopotential instrumentation
 
 | Stage | Subsystem | Circuit Topology & Key Components | Stage Gain & Bandwidth |
 | :--- | :--- | :--- | :---: |
-| **Stage 1** | **Instrumentation Amp (`INA`)** | 3-opamp topology ($2\times$ `SE_OTA` input buffers, $1\times$ `FD_OTA` difference stage, $R_1 = 118\text{ k}\Omega$, $R_{\text{gain}} = 4\text{ k}\Omega$, $R_{2\text{--}5} = 10\text{--}40\text{ k}\Omega$) | $60\text{ V/V}$ ($35.6\text{ dB}$)<br>$\text{BW} > 10\text{ kHz}$ |
+| **Stage 1** | **Instrumentation Amp (`INA`)** | 3-opamp topology ($2\times$ `SE_OTA` input buffers, $1\times$ `FD_OTA` difference stage, $R_1 = 118\text{ k}\Omega$, $R_{\text{gain}} = 4\text{ k}\Omega$, $R_{2\text{--}5} = 10\text{--}40\text{ k}\Omega$) | $60\text{ V/V}$ stage setting; integrated INA+SEL target $240\text{ V/V}$ |
 | **Stage 2** | **Active Low-Pass Filter (`LPF`)** | Fully differential active 2nd-order RC filter ($1\times$ `FD_OTA`, $R = 3.7\text{ M}\Omega$, $C = 100\text{ pF}$ MIM) | $4\text{ V/V}$ ($12.0\text{ dB}$)<br>$f_c \approx 150\text{ Hz}$ |
 | **Stage 3** | **Programmable Gain Amp (`PGA`)** | Fully differential switched-resistor ladder ($1\times$ `FD_OTA`, $6\times$ `TG`, $R = 20\text{--}120\text{ k}\Omega$) | $1\times, 2\times, 4\times, 8\times, 16\times$<br>($0\text{ to }24.1\text{ dB}$) |
 | **Stage 4** | **Output Driver (`BUFFER`)** | Closed-loop differential unity follower ($1\times$ `FD_OTA`, $4\times 20\text{ k}\Omega$) driving sampling cap | $1\text{ V/V}$ ($0\text{ dB}$)<br>$C_L = 10\text{ pF}$ |
-| **Support** | **Right-Leg Drive (`RLD`)** | Active integrator sensing input CM ($1\times$ `SE_OTA`, $R_{\text{in}} = 4\text{ M}\Omega$, $R_f = 20\text{ M}\Omega$, $C_f = 80\text{ pF}$) | High active CM suppression ($> 100\text{ dB}$) |
+| **Support** | **Right-Leg Drive (`RLD`)** | Active integrator sensing input CM ($1\times$ `SE_OTA`, $R_{\text{in}} = 4\text{ M}\Omega$, $R_f = 20\text{ M}\Omega$, $C_f = 80\text{ pF}$) | Combined INA+RLD input-CM suppression: $55.1\text{ dB}$ @ 60 Hz nominal |
 | **Reference** | **Master Bias (`BIAS`/`MIRROR`)** | $\beta$-Multiplier reference ($40\text{ }\mu\text{A}$ target) with startup device and 11-channel cascode mirror tree | $\Delta I_{\text{bias}} < 0.15\%$ mirror tracking |
 | **Total Chain** | **Full AFE Performance** | Cascaded multi-stage biopotential recording path with analog channel selection (`SEL`) | **$240\text{ to }3840\text{ V/V}$**<br>($47.6\text{ to }71.7\text{ dB}$)<br>**$0.05\text{--}150\text{ Hz}$** |
 
@@ -51,7 +52,7 @@ All operational transconductance amplifiers and reference circuits are sized usi
 
 ### 3.1 Single-Ended OTA (`SE_OTA`) Sizing
 
-Implemented in [`SE_OTA_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Design_Files/IC%20Design/Schematic/SE_OTA/SE_OTA_Sizing.m):
+Implemented in [`SE_OTA_Sizing.m`](Design_Files/IC%20Design/Schematic/SE_OTA/SE_OTA_Sizing.m):
 
 * **Topology**: 2-stage Miller-compensated folded-cascode single-ended OTA.
 * **Input Pair ($M_1, M_2$)**: PMOS differential pair operated in moderate/weak inversion ($g_m/I_D = 16.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$) for high transconductance efficiency and minimal thermal/flicker noise.
@@ -62,7 +63,7 @@ Implemented in [`SE_OTA_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_I
 
 ### 3.2 Fully Differential Core (`FDC`) & CMFB Sizing
 
-Implemented in [`FDC_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Design_Files/IC%20Design/Schematic/FD_OTA/FDC/FDC_Sizing.m) and [`CMFB_Sizing.m`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Design_Files/IC%20Design/Schematic/FD_OTA/CMFB/CMFB_Sizing.m):
+Implemented in [`FDC_Sizing.m`](Design_Files/IC%20Design/Schematic/FD_OTA/FDC/FDC_Sizing.m) and [`CMFB_Sizing.m`](Design_Files/IC%20Design/Schematic/FD_OTA/CMFB/CMFB_Sizing.m):
 
 * **Differential Core Input Pair ($M_1, M_2$)**: NMOS differential pair sized with $g_m/I_D = 20.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$ for high transconductance at low bias currents.
 * **CMFB Controlled Loads ($M_3, M_4$)**: PMOS current sources ($g_m/I_D = 20.0\text{ V}^{-1}$, $L = 2.0\text{ }\mu\text{m}$) dynamically modulated by the $V_{\text{CMFB}}$ error voltage.
@@ -180,27 +181,27 @@ Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fas
 | **Differential Settling Time ($2\text{ mV}$)** | $\text{ns}$ | 153.6 | 236.6 | `SSVLTL` |
 | **CMFB Phase Margin / Settling** | $\text{deg} / \text{ns}$ | 86.428 / 313.6 | 84.1 / 507.1 | `FFVLTH` / `SSVLTH` |
 
-![FD OTA Open-Loop Gain and Phase](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.open_loop_gain_phase.png)
+![FD OTA Open-Loop Gain and Phase](Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.open_loop_gain_phase.png)
 *Figure 6.7: FD OTA differential open-loop gain and phase ($A_{v,0} = 86.39\text{ dB}$, $\text{UGF} = 12.26\text{ MHz}$, $\text{PM} = 73.80^\circ$).*
 
-![FD OTA Input-Referred Noise Density](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.input_referred_noise_density.png)
+![FD OTA Input-Referred Noise Density](Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.input_referred_noise_density.png)
 *Figure 6.8: FD OTA input-referred noise spectral density ($3.111\text{ }\mu\text{Vrms}$ integrated in $0.05\text{--}150\text{ Hz}$).*
 
-![FD OTA Symmetrical Output Swing & VTC](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
+![FD OTA Symmetrical Output Swing & VTC](Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
 *Figure 6.9: FD OTA closed-loop differential transfer curve and dynamic output swing limits ($\pm 3.158\text{ V}$).*
 
-![FD OTA Input Common-Mode Range](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.input_common_mode_range.png)
+![FD OTA Input Common-Mode Range](Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.input_common_mode_range.png)
 *Figure 6.10: FD OTA input common-mode range (ICMR) verification across common-mode input sweeps.*
 
-![FD OTA Closed-Loop Step Response](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.closed_loop_step_response.png)
+![FD OTA Closed-Loop Step Response](Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.closed_loop_step_response.png)
 *Figure 6.11: FD OTA closed-loop differential step transient and settling performance.*
 
-![FD OTA Output CM Transient Settling](Measurement_Results/IC_Simulation/FD_OTA/FDOTA/Plots/NOM.output_cm_transient.png)
+![FD OTA Output CM Transient Settling](Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.output_cm_transient.png)
 *Figure 6.12: CMFB transient regulation settling output common-mode voltage back to $V_{\text{REF}} = 1.65\text{ V}$.*
 
 ---
 
-### 6.4 Standalone Core (`FDC`) & CMFB Subsystems
+### 6.4 Fully Differential OTA Internal FDC/CMFB Design Checks
 
 | Sub-Block | Characterization Metric | Nominal Result | Design Specification |
 | :--- | :--- | :---: | :---: |
@@ -215,11 +216,46 @@ Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fas
 | | Valid Reference Voltage Range | $1.120\text{ to }2.760\text{ V}$ | Symmetric tracking around $1.65\text{ V}$ |
 | | Transient Settling Time ($V_{\text{REF}}$ step) | 5.2 ns | Instantaneous CM recovery |
 
-![FDC Core Open-Loop AC](Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.diff_ac.png)
-*Figure 6.13: FDC differential core open-loop AC frequency response.*
+---
 
-![CMFB Loop Stability AC](Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.ol_ac.png)
-*Figure 6.14: CMFB loop open-loop frequency response ($A_{\text{cm}} = 43.91\text{ dB}$, $\text{UGF} = 800.9\text{ MHz}$, $\text{PM} = 86.43^\circ$).*
+### 6.5 Instrumentation Amplifier + Right-Leg Drive (`INA_RLD`)
+
+The combined INA+RLD testbench is analyzed at all 45 process/environment corners for balanced electrodes (`BAL`). Mismatched electrodes (`MIS`) are retained for a separate 45-corner stress audit. The nominal report uses the final differential output and the RLD return ratio; selector switching is verified separately with a nominal transient.
+
+| Parameter | Unit | Nominal BAL | Worst BAL | Worst Corner |
+| :--- | :---: | :---: | :---: | :---: |
+| Total current | mA | 4.441 | 5.937 | `FFVHTH` |
+| Total power | mW | 14.655 | 21.373 | `FFVHTH` |
+| Differential gain @ 10 Hz | V/V | 231.355 | 3.815% gain error | `FFVLTL` |
+| RLD UGF / phase margin | kHz / deg | 0.946 / 100.673 | 0.717 / 100.083 | `FFVLTH` |
+| Input CM suppression @ 60 / 150 Hz | dB | 55.072 / 53.260 | 54.646 / 51.686 | `SSVLTL` |
+| Input-referred noise 0.05–150 Hz | µVrms | 2.671 | 3.116 | `SSVLTH` |
+| Output CM error vs VREF | mV | -0.057 | 33.025 | `SSNOMTH` |
+| RLD output excursion / peak current | mV / nA | 2.743 / 3.069 | 2.731 / 3.095 | `FFVLTH` |
+| RLD rail headroom | V | — | 1.497 | `FFVLTH` |
+
+The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF, and 100.67° phase margin. The selector switching transient uses `nom.sel_tran_nom.txt`: `SEL` changes from 0 V to 3.3 V at 200 ms, and the output changes from the approximately 10 Hz internal waveform to the approximately 25 Hz external waveform.
+
+![INA + RLD Differential Frequency Response](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_differential_ac.png)
+*Figure 6.13: Nominal INA+RLD differential response and gain markers.*
+
+![INA + RLD RLD Loop Gain and Phase](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_loop_gain.png)
+*Figure 6.14: Nominal RLD loop gain and phase with −3 dB, UGF, and PM markers.*
+
+![INA + RLD Input CM Suppression](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_input_cm_suppression.png)
+*Figure 6.15: Nominal balanced-electrode input common-mode suppression.*
+
+![INA + RLD CM-to-Differential Conversion](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_cm_to_differential.png)
+*Figure 6.16: Mismatched-electrode CM-to-differential conversion with RLD OFF/ON.*
+
+![INA + RLD Common-Mode Interference](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_transient.png)
+*Figure 6.17: Nominal balanced-electrode common-mode interference transient.*
+
+![INA + RLD Input Noise](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_noise.png)
+*Figure 6.18: Nominal INA+RLD input-referred noise density.*
+
+![SEL INT EXT Switching Functional Check](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_sel_functional_check.png)
+*Figure 6.19: Nominal selector switching control, available INT/EXT signals, and selected output.*
 
 ---
 
@@ -228,22 +264,26 @@ Corner labels combine process and environmental codes (e.g., `FFVHTH` = Fast-Fas
 ### 7.1 CSV Summary Datasets
 
 - **BIAS Subsystem**:
-  - [`BIAS_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_table_report.csv): 9-corner comparison summary
-  - [`BIAS_global_worst_case.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_global_worst_case.csv): Global PVT extrema search
-  - [`BIAS_startup_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_startup_report.csv): 35 startup transient runs
-  - [`BIAS_sel_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_sel_report.csv): Transmission gate code error
-  - [`BIAS_dc2d_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_dc2d_report.csv): 2D DC voltage/temperature surface grid
-  - [`BIAS_reference_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/BIAS_reference_report.csv): Reference voltage stability report
+  - [`BIAS_table_report.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_table_report.csv): 9-corner comparison summary
+  - [`BIAS_global_worst_case.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_global_worst_case.csv): Global PVT extrema search
+  - [`BIAS_startup_report.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_startup_report.csv): 35 startup transient runs
+  - [`BIAS_sel_report.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_sel_report.csv): Transmission gate code error
+  - [`BIAS_dc2d_report.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_dc2d_report.csv): 2D DC voltage/temperature surface grid
+  - [`BIAS_reference_report.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_reference_report.csv): Reference voltage stability report
 - **Single-Ended OTA (`SE_OTA`)**:
-  - [`SEOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_table_report.csv): 9-column comparison summary
-  - [`SEOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/SEOTA_worst_case_report.csv): 45-point full-PVT worst-case dataset
-  - [`NOM.SEOTA_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/SE_OTA/NOM.SEOTA_summary.csv): Compatibility summary export
+  - [`SEOTA_table_report.csv`](Measurement_Results/IC_Simulation/SE_OTA/SEOTA_table_report.csv): 9-column comparison summary
+  - [`SEOTA_worst_case_report.csv`](Measurement_Results/IC_Simulation/SE_OTA/SEOTA_worst_case_report.csv): 45-point full-PVT worst-case dataset
+  - [`NOM.SEOTA_summary.csv`](Measurement_Results/IC_Simulation/SE_OTA/NOM.SEOTA_summary.csv): Compatibility summary export
 - **Fully Differential OTA (`FD_OTA`)**:
-  - [`FDOTA_table_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_table_report.csv): 9-column comparison summary
-  - [`FDOTA_worst_case_report.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/FDOTA_worst_case_report.csv): 45-point full-PVT worst-case dataset
-  - [`NOM.FDOTA_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDOTA/NOM.FDOTA_summary.csv): Compatibility summary export
-  - [`NOM.FDC_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.FDC_summary.csv): Differential core standalone summary
-  - [`NOM.CMFB_summary.csv`](file:///d:/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.CMFB_summary.csv): CMFB standalone summary
+  - [`FDOTA_table_report.csv`](Measurement_Results/IC_Simulation/FD_OTA/FDOTA_table_report.csv): 9-column comparison summary
+  - [`FDOTA_worst_case_report.csv`](Measurement_Results/IC_Simulation/FD_OTA/FDOTA_worst_case_report.csv): 45-point full-PVT worst-case dataset
+  - [`NOM.FDOTA_summary.csv`](Measurement_Results/IC_Simulation/FD_OTA/NOM.FDOTA_summary.csv): Compatibility summary export
+- **INA + RLD (`INA_RLD`)**:
+  - [`INA_RLD_table_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_table_report.csv): 9-column BAL comparison summary
+  - [`INA_RLD_full_pvt_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_full_pvt_report.csv): Full 45-corner BAL dataset
+  - [`INA_RLD_worst_case_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_worst_case_report.csv): Full-PVT BAL worst-case summary
+  - [`NOM.INA_RLD_summary.csv`](Measurement_Results/IC_Simulation/INA_RLD/NOM.INA_RLD_summary.csv): Compatibility summary export
+  - [`nom.sel_tran_nom.txt`](Measurement_Results/IC_Simulation/INA_RLD/nom.Result_txt/nom.sel_tran_nom.txt): Nominal SEL switching transient source for Figure 6.19
 
 ---
 
@@ -256,12 +296,13 @@ Execute all simulations and post-processing analyzers from the repository root:
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
 
 # 2. Single-Ended OTA Full 45-PVT Analysis
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA','SEOTA_Analyze.m'))"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA')); SEOTA_Analyze"
 
-# 3. Fully Differential OTA, Core, and CMFB Full Analysis
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','CMFB','CMFB_Analyze.m'))"
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDC','FDC_Analyze.m'))"
-matlab -batch "run(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA','FDOTA','FDOTA_Analyze.m'))"
+# 3. Fully Differential OTA Full 45-PVT Analysis
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA')); FDOTA_Analyze"
+
+# 4. INA + RLD Full 45-PVT Analysis
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
 ```
 
 All analysis routines have been validated in MATLAB R2026a under Windows and Linux environments.

@@ -1,7 +1,13 @@
 function BIAS_Analyze
-% BIAS characterization across process, transient environment, and DC2D.
+% BIAS_ANALYZE Characterize the BIAS reference, startup, and selectors.
+%
+% Transient results cover process and seven environment conditions. DC2D
+% results cover the complete temperature/supply grid for each process.
+% Reports retain the established BIAS units and formatting rules; plots use
+% the native MATLAB theme and remain independent floating figures.
 
-clc; close all;
+clc;
+close all;
 
 scriptDir = fileparts(mfilename('fullpath'));
 plotDir = fullfile(scriptDir,'Plots');
@@ -9,91 +15,36 @@ if ~isfolder(plotDir)
     mkdir(plotDir);
 end
 
-processes = {'NOM','FF','SS','FS','SF'};
-conditions = {'NOM','VL','VH','TL','TH','TLVL','THVH'};
-conditionTokens = {'nom','vl','vh','tl','th','tlvl','thvh'};
-conditionTemp_C = [27 27 27 -40 125 -40 125];
-conditionVdd_V = [3.3 3.0 3.6 3.3 3.3 3.0 3.6];
+[processes,conditions,conditionTokens,conditionTemp_C,conditionVdd_V] = ...
+    sweepDefinition();
 normalColumns = [processes conditions(2:5)];
 
-cfg.ibiasTarget_A = 40e-6;
-cfg.startupMinimumFinal_A = 0.1*cfg.ibiasTarget_A;
-cfg.vddRampStart_s = 100e-6;
-cfg.plateauTrimFraction = 0.10;
-cfg.expectedTranEnd_s = 10e-3;
-cfg.expectedDcTemp_C = (-40:125).';
-cfg.expectedDcVdd_V = (3.0:0.01:3.6).';
-cfg.expectedDcRows = numel(cfg.expectedDcTemp_C)* ...
-    numel(cfg.expectedDcVdd_V);
-cfg.tcVdd_V = 3.3;
-cfg.lineTemp_C = 27;
+cfg = analysisConfig();
+rows = reportRows();
+normalParameter = rows.normal(:,1);
+normalUnit = rows.normal(:,2);
+dcParameter = rows.dc(:,1);
+dcUnit = rows.dc(:,2);
+referenceParameter = rows.reference(:,1);
+referenceUnit = rows.reference(:,2);
+selParameter = rows.selector;
 
-normalParameter = [
-    "Ibias"
-    "Ibias error"
-    "IRS"
-    "Mirror error"
-    "BP"
-    "VREF"
-    "VREF error"
-    "IMST"
-    "MST margin"
-    "IDD"
-    "Power"
-    "Startup time"
-];
-normalUnit = ["uA";"%";"uA";"%";"V";"V";"uV"; ...
-    "fA";"V";"uA";"uW";"us"];
-
-dcParameter = [
-    "Ibias minimum"
-    "Ibias maximum"
-    "Ibias error minimum"
-    "Ibias error maximum"
-    "BP minimum"
-    "BP maximum"
-    "Maximum |VREF error|"
-    "Maximum |mirror error|"
-    "Maximum IMST"
-    "Minimum MST margin"
-    "IDD minimum"
-    "IDD maximum"
-    "Power maximum"
-];
-dcUnit = ["uA";"uA";"%";"%";"V";"V";"uV";"%"; ...
-    "fA";"V";"uA";"uA";"uW"];
-
-referenceParameter = [
-    "Temperature coefficient"
-    "Temperature variation"
-    "Line regulation"
-    "Supply variation"
-];
-referenceUnit = ["ppm/C";"%";"%/V";"%"];
-
-selParameter = [
-    "Maximum |BP INT SEL error|"
-    "Maximum |BP EXT SEL error|"
-    "Maximum |VREF INT SEL error|"
-    "Maximum |VREF EXT SEL error|"
-];
-
-nProcess = numel(processes);
-nCondition = numel(conditions);
+nProcesses = numel(processes);
+nConditions = numel(conditions);
 normalValues = nan(numel(normalParameter),numel(normalColumns));
-startup_us = nan(nProcess,nCondition);
-startupAnalyzed = false(nProcess,nCondition);
-selRunMax_V = nan(numel(selParameter),nProcess,nCondition);
+startup_us = nan(nProcesses,nConditions);
+startupAnalyzed = false(nProcesses,nConditions);
+selRunMax_V = nan(numel(selParameter),nProcesses,nConditions);
 broadcastTransientCount = 0;
 nomTransient = [];
 nomTransientAnalysis = struct([]);
-missingTransient = strings(nProcess,nCondition);
-invalidTransient = strings(nProcess,nCondition);
+missingTransient = strings(nProcesses,nConditions);
+invalidTransient = strings(nProcesses,nConditions);
 
-for processIndex = 1:nProcess
+for processIndex = 1:nProcesses
     process = processes{processIndex};
     resultDir = fullfile(scriptDir,[process '.Result_txt']);
-    for conditionIndex = 1:nCondition
+    for conditionIndex = 1:nConditions
         condition = conditions{conditionIndex};
         token = conditionTokens{conditionIndex};
         fileLabel = sprintf('%s.tran_%s.txt',process,token);
@@ -118,7 +69,7 @@ for processIndex = 1:nProcess
             if conditionIndex == 1
                 normalValues(:,processIndex) = analysis.normalValues;
             elseif processIndex == 1 && conditionIndex <= 5
-                normalValues(:,nProcess+conditionIndex-1) = ...
+                normalValues(:,nProcesses+conditionIndex-1) = ...
                     analysis.normalValues;
             end
             if processIndex == 1 && conditionIndex == 1
@@ -151,18 +102,18 @@ if broadcastTransientCount > 0
         ['IRS/IMST/VGS/VTH are constant exports in %d of %d transient ' ...
          'runs. They are used only as final operating-point scalars; ' ...
          'IMST is not plotted as a waveform for those runs.'], ...
-        broadcastTransientCount,nProcess*nCondition);
+        broadcastTransientCount,nProcesses*nConditions);
 end
 
-dcValues = nan(numel(dcParameter),nProcess);
+dcValues = nan(numel(dcParameter),nProcesses);
 dcTemp_C = nan(size(dcValues));
 dcVdd_V = nan(size(dcValues));
-referenceValues = nan(numel(referenceParameter),nProcess);
+referenceValues = nan(numel(referenceParameter),nProcesses);
 nomDc = [];
-legacyDc = strings(nProcess,1);
-missingDc = strings(nProcess,1);
+legacyDc = strings(nProcesses,1);
+missingDc = strings(nProcesses,1);
 
-for processIndex = 1:nProcess
+for processIndex = 1:nProcesses
     process = processes{processIndex};
     fileLabel = sprintf('%s.dc2d.txt',process);
     dataFile = fullfile(scriptDir,[process '.Result_txt'],fileLabel);
@@ -224,7 +175,7 @@ printComparisonTable(normalParameter,normalUnit,normalColumns,formattedNormal);
 fprintf('\nBIAS STARTUP ROBUSTNESS\n\n');
 printStartupTable(processes,conditions,startup_us);
 fprintf('\n');
-printStartupSummary(startupSummary,nProcess*nCondition);
+printStartupSummary(startupSummary,nProcesses*nConditions);
 
 fprintf('\nBIAS SEL WORST CASE\n\n');
 printLocationResultTable(selGlobal);
@@ -245,7 +196,7 @@ writeComparisonCsv(normalParameter,normalUnit,normalColumns, ...
     formattedNormal,fullfile(scriptDir,'BIAS_table_report.csv'));
 writeStartupCsv(processes,conditions,startup_us, ...
     fullfile(scriptDir,'BIAS_startup_report.csv'));
-writeStartupSummaryCsv(startupSummary,nProcess*nCondition, ...
+writeStartupSummaryCsv(startupSummary,nProcesses*nConditions, ...
     fullfile(scriptDir,'BIAS_startup_summary.csv'));
 writeLocationResultCsv(selGlobal,fullfile(scriptDir,'BIAS_sel_report.csv'));
 writeDcCsv(dcParameter,dcUnit,processes,formattedDc,dcTemp_C,dcVdd_V, ...
@@ -268,6 +219,72 @@ else
     plotNominalDc(nomDc,plotDir,cfg);
 end
 
+end
+
+function [processes,conditions,tokens,temp_C,vdd_V] = sweepDefinition
+processes = {'NOM','FF','SS','FS','SF'};
+conditions = {'NOM','VL','VH','TL','TH','TLVL','THVH'};
+tokens = {'nom','vl','vh','tl','th','tlvl','thvh'};
+temp_C = [27 27 27 -40 125 -40 125];
+vdd_V = [3.3 3.0 3.6 3.3 3.3 3.0 3.6];
+end
+
+function cfg = analysisConfig
+cfg.ibiasTarget_A = 40e-6;
+cfg.startupMinimumFinal_A = 0.1*cfg.ibiasTarget_A;
+cfg.vddRampStart_s = 100e-6;
+cfg.plateauTrimFraction = 0.10;
+cfg.expectedTranEnd_s = 10e-3;
+cfg.expectedDcTemp_C = (-40:125).';
+cfg.expectedDcVdd_V = (3.0:0.01:3.6).';
+cfg.expectedDcRows = numel(cfg.expectedDcTemp_C)* ...
+    numel(cfg.expectedDcVdd_V);
+cfg.tcVdd_V = 3.3;
+cfg.lineTemp_C = 27;
+end
+
+function rows = reportRows
+rows.normal = [
+    "Ibias",         "uA"
+    "Ibias error",   "%"
+    "IRS",           "uA"
+    "Mirror error",  "%"
+    "BP",            "V"
+    "VREF",          "V"
+    "VREF error",    "uV"
+    "IMST",          "fA"
+    "MST margin",    "V"
+    "IDD",           "uA"
+    "Power",         "uW"
+    "Startup time",  "us"
+];
+rows.dc = [
+    "Ibias minimum",                "uA"
+    "Ibias maximum",                "uA"
+    "Ibias error minimum",          "%"
+    "Ibias error maximum",          "%"
+    "BP minimum",                   "V"
+    "BP maximum",                   "V"
+    "Maximum |VREF error|",         "uV"
+    "Maximum |mirror error|",       "%"
+    "Maximum IMST",                 "fA"
+    "Minimum MST margin",           "V"
+    "IDD minimum",                  "uA"
+    "IDD maximum",                  "uA"
+    "Power maximum",                "uW"
+];
+rows.reference = [
+    "Temperature coefficient",  "ppm/C"
+    "Temperature variation",    "%"
+    "Line regulation",          "%/V"
+    "Supply variation",         "%"
+];
+rows.selector = [
+    "Maximum |BP INT SEL error|"
+    "Maximum |BP EXT SEL error|"
+    "Maximum |VREF INT SEL error|"
+    "Maximum |VREF EXT SEL error|"
+];
 end
 
 function data = readTransientData(dataFile,fileLabel,expectedVdd_V,cfg)
@@ -858,7 +875,7 @@ time_ms = data(:,1)*1e3;
 startupEnd_s = min(4e-3,analysis.firstSelTime_s);
 startupRows = data(:,1) >= 0 & data(:,1) <= startupEnd_s;
 
-fig = wideFigure();
+fig = figure;
 if analysis.imstWaveformUsable
     yyaxis left;
 end
@@ -886,14 +903,11 @@ if isfinite(analysis.startupCrossing_s)
         'HandleVisibility','off');
 end
 xlim([0 startupEnd_s*1e3]);
-xlabel('Time (ms)');
-title('BIAS Startup Current - NOM');
-grid on;
-box on;
+stylePlot('Time (ms)','BIAS Startup Current - NOM');
 legend('Location','best');
-saveNomFigure(fig,plotDir,'NOM_BIAS_STARTUP.png');
+savePlot(fig,plotDir,'NOM_BIAS_STARTUP.png');
 
-fig = wideFigure();
+fig = figure;
 plot(time_ms(startupRows),data(startupRows,2), ...
     'LineWidth',1.5,'DisplayName','AVDD');
 hold on;
@@ -902,16 +916,13 @@ plot(time_ms(startupRows),data(startupRows,4), ...
 plot(time_ms(startupRows),data(startupRows,7), ...
     'LineWidth',1.5,'DisplayName','VREFINT');
 xlim([0 startupEnd_s*1e3]);
-xlabel('Time (ms)');
 ylabel('Voltage (V)');
-title('BIAS Startup Voltage - NOM');
-grid on;
-box on;
+stylePlot('Time (ms)','BIAS Startup Voltage - NOM');
 legend('Location','best');
-saveNomFigure(fig,plotDir,'NOM_BIAS_STARTUP_VOLTAGE.png');
+savePlot(fig,plotDir,'NOM_BIAS_STARTUP_VOLTAGE.png');
 
 selectionRows = data(:,1) >= 0 & data(:,1) <= cfg.expectedTranEnd_s;
-fig = wideFigure();
+fig = figure;
 bpAxes = subplot(2,1,1);
 plot(time_ms(selectionRows),data(selectionRows,3), ...
     'LineWidth',1.5,'DisplayName','SEL');
@@ -925,9 +936,7 @@ plot(time_ms(selectionRows),data(selectionRows,6), ...
 addSelectionGuides(analysis.firstSelTime_s*1e3, ...
     analysis.secondSelTime_s*1e3,cfg.expectedTranEnd_s*1e3);
 ylabel('Voltage (V)');
-title('BP Selector');
-grid on;
-box on;
+stylePlot('','BP Selector');
 legend('Location','best');
 
 vrefAxes = subplot(2,1,2);
@@ -942,15 +951,12 @@ plot(time_ms(selectionRows),data(selectionRows,9), ...
     'LineWidth',1.5,'DisplayName','VREFEXT');
 addSelectionGuides(analysis.firstSelTime_s*1e3, ...
     analysis.secondSelTime_s*1e3,cfg.expectedTranEnd_s*1e3);
-xlabel('Time (ms)');
 ylabel('Voltage (V)');
-title('VREF Selector');
-grid on;
-box on;
+stylePlot('Time (ms)','VREF Selector');
 legend('Location','best');
 linkaxes([bpAxes vrefAxes],'x');
 sgtitle('BIAS Internal / External Selection - NOM');
-saveNomFigure(fig,plotDir,'NOM_BIAS_SEL.png');
+savePlot(fig,plotDir,'NOM_BIAS_SEL.png');
 end
 
 function addSelectionGuides(firstEdge_ms,secondEdge_ms,endTime_ms)
@@ -971,7 +977,7 @@ temperature_C = data(:,1);
 vdd_V = data(:,2);
 ibias_uA = data(:,7)*1e6;
 
-fig = wideFigure();
+fig = figure;
 hold on;
 for targetVdd_V = [3.0 3.3 3.6]
     rows = abs(vdd_V-targetVdd_V) <= 5e-4;
@@ -981,15 +987,12 @@ for targetVdd_V = [3.0 3.3 3.6]
         'LineWidth',1.5,'DisplayName', ...
         sprintf('VDD = %.1f V',targetVdd_V));
 end
-xlabel('Temperature (C)');
 ylabel('I_{BIAS} (uA)');
-title('BIAS Current vs Temperature - NOM');
-grid on;
-box on;
+stylePlot('Temperature (C)','BIAS Current vs Temperature - NOM');
 legend('Location','best');
-saveNomFigure(fig,plotDir,'NOM_BIAS_TEMP.png');
+savePlot(fig,plotDir,'NOM_BIAS_TEMP.png');
 
-fig = wideFigure();
+fig = figure;
 hold on;
 for targetTemp_C = [-40 27 125]
     rows = abs(temperature_C-targetTemp_C) <= 1e-8;
@@ -1000,13 +1003,10 @@ for targetTemp_C = [-40 27 125]
         sprintf('T = %.0f C',targetTemp_C));
 end
 xlim([cfg.expectedDcVdd_V(1) cfg.expectedDcVdd_V(end)]);
-xlabel('VDD (V)');
 ylabel('I_{BIAS} (uA)');
-title('BIAS Current vs Supply - NOM');
-grid on;
-box on;
+stylePlot('VDD (V)','BIAS Current vs Supply - NOM');
 legend('Location','best');
-saveNomFigure(fig,plotDir,'NOM_BIAS_VDD.png');
+savePlot(fig,plotDir,'NOM_BIAS_VDD.png');
 
 [temperatureAxis_C,~,temperatureIndex] = unique(temperature_C);
 [vddAxis_V,~,vddIndex] = unique(vdd_V);
@@ -1014,7 +1014,7 @@ ibiasError_pct = 100*(data(:,7)-cfg.ibiasTarget_A)/cfg.ibiasTarget_A;
 errorGrid_pct = accumarray([temperatureIndex vddIndex],ibiasError_pct, ...
     [numel(temperatureAxis_C) numel(vddAxis_V)],@mean,NaN);
 
-fig = wideFigure();
+fig = figure;
 imagesc(vddAxis_V,temperatureAxis_C,errorGrid_pct);
 axis xy tight;
 colorLimit_pct = max(abs(errorGrid_pct),[],'all');
@@ -1044,22 +1044,21 @@ xlabel('VDD (V)');
 ylabel('Temperature (C)');
 title('BIAS Current Error vs Temperature and Supply - NOM');
 box on;
-saveNomFigure(fig,plotDir,'NOM_BIAS_2D.png');
+savePlot(fig,plotDir,'NOM_BIAS_2D.png');
 end
 
-function fig = wideFigure()
-fig = figure;
+function stylePlot(xLabelText,titleText)
+grid on;
+if strlength(string(xLabelText)) > 0
+    xlabel(xLabelText);
+end
+if strlength(string(titleText)) > 0
+    title(titleText);
+end
 end
 
-function saveNomFigure(fig,plotDir,fileName)
+function savePlot(fig,plotDir,fileName)
 drawnow;
-axesHandles = findall(fig,'Type','axes');
-for axesIndex = 1:numel(axesHandles)
-    toolbar = axesHandles(axesIndex).Toolbar;
-    if ~isempty(toolbar)
-        toolbar.Visible = 'off';
-    end
-end
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 10 4];
 fig.PaperSize = [10 4];
