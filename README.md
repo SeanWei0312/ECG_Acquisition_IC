@@ -69,8 +69,8 @@ All results represent deterministic pre-layout schematic simulations on the Glob
 | | Input CM suppression @ 60 Hz | 55.072 dB | 54.646 dB | SSVLTL |
 | | Input CM suppression @ 150 Hz | 53.260 dB | 51.686 dB | SSVLTL |
 | | Input-referred noise (0.05–150 Hz) | 2.671 µVrms | 3.116 µVrms | SSVLTH |
-| | RLD output peak-to-peak excursion | 2.743 mV | 2.743 mV | FFVHNOM |
-| | Peak \|I<sub>RLD</sub>\| during CM interference | 3.069 nA | 3.095 nA | FFVLTH |
+| | RLD Swing Ratio | 0.914% | 0.914% | FFVHNOM |
+| | RLD Peak Current | 3.069 nA | 3.095 nA | FFVLTH |
 
 For detailed characterization result plots and full methodology, see [Project_Report.md](Project_Report.md).
 

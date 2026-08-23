@@ -25,11 +25,9 @@ NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.946
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.673
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.072
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,53.260
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.069
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.355
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.356
-NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,9.938e-05
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD Swing Ratio,%,0.914
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,RLD Peak Current,nA,3.069
+NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,CM Interference Gain Change,%,9.938e-05
 NOMNOMNOM,NOM,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.671
 NOMVLNOM,NOM,VLNOM,3,27,BAL,AVDD,V,3.000
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Temperature,C,27.000
@@ -57,11 +55,9 @@ NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.946
 NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD phase margin,deg,100.645
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.068
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,53.240
-NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.072
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.316
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.317
-NOMVLNOM,NOM,VLNOM,3,27,BAL,Gain change during CM interference,%,2.670e-04
+NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD Swing Ratio,%,0.914
+NOMVLNOM,NOM,VLNOM,3,27,BAL,RLD Peak Current,nA,3.072
+NOMVLNOM,NOM,VLNOM,3,27,BAL,CM Interference Gain Change,%,2.670e-04
 NOMVLNOM,NOM,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.671
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,AVDD,V,3.600
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Temperature,C,27.000
@@ -89,11 +85,9 @@ NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.946
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.699
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.075
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,53.277
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.066
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.386
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.386
-NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Gain change during CM interference,%,1.682e-04
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD Swing Ratio,%,0.914
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,RLD Peak Current,nA,3.066
+NOMVHNOM,NOM,VHNOM,3.6,27,BAL,CM Interference Gain Change,%,1.682e-04
 NOMVHNOM,NOM,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.672
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
@@ -121,11 +115,9 @@ NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.839
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.779
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.973
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.855
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.065
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.237
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.237
-NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,1.720e-04
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD Swing Ratio,%,0.914
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,RLD Peak Current,nA,3.065
+NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,CM Interference Gain Change,%,1.720e-04
 NOMNOMTL,NOM,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.538
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,AVDD,V,3.300
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Temperature,C,125.000
@@ -153,11 +145,9 @@ NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.082
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.544
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.161
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,53.655
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.074
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.428
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.428
-NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Gain change during CM interference,%,3.495e-04
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD Swing Ratio,%,0.914
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,RLD Peak Current,nA,3.074
+NOMNOMTH,NOM,NOMTH,3.3,125,BAL,CM Interference Gain Change,%,3.495e-04
 NOMNOMTH,NOM,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.943
 NOMVLTL,NOM,VLTL,3,-40,BAL,AVDD,V,3.000
 NOMVLTL,NOM,VLTL,3,-40,BAL,Temperature,C,-40.000
@@ -185,11 +175,9 @@ NOMVLTL,NOM,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.839
 NOMVLTL,NOM,VLTL,3,-40,BAL,RLD phase margin,deg,100.753
 NOMVLTL,NOM,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.970
 NOMVLTL,NOM,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.834
-NOMVLTL,NOM,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMVLTL,NOM,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.068
-NOMVLTL,NOM,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.203
-NOMVLTL,NOM,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.204
-NOMVLTL,NOM,VLTL,3,-40,BAL,Gain change during CM interference,%,3.639e-04
+NOMVLTL,NOM,VLTL,3,-40,BAL,RLD Swing Ratio,%,0.914
+NOMVLTL,NOM,VLTL,3,-40,BAL,RLD Peak Current,nA,3.068
+NOMVLTL,NOM,VLTL,3,-40,BAL,CM Interference Gain Change,%,3.639e-04
 NOMVLTL,NOM,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.534
 NOMVLTH,NOM,VLTH,3,125,BAL,AVDD,V,3.000
 NOMVLTH,NOM,VLTH,3,125,BAL,Temperature,C,125.000
@@ -217,11 +205,9 @@ NOMVLTH,NOM,VLTH,3,125,BAL,RLD loop UGF,kHz,1.082
 NOMVLTH,NOM,VLTH,3,125,BAL,RLD phase margin,deg,100.514
 NOMVLTH,NOM,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.158
 NOMVLTH,NOM,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,53.636
-NOMVLTH,NOM,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMVLTH,NOM,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.077
-NOMVLTH,NOM,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.380
-NOMVLTH,NOM,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.380
-NOMVLTH,NOM,VLTH,3,125,BAL,Gain change during CM interference,%,1.550e-04
+NOMVLTH,NOM,VLTH,3,125,BAL,RLD Swing Ratio,%,0.914
+NOMVLTH,NOM,VLTH,3,125,BAL,RLD Peak Current,nA,3.077
+NOMVLTH,NOM,VLTH,3,125,BAL,CM Interference Gain Change,%,1.550e-04
 NOMVLTH,NOM,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.946
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,AVDD,V,3.600
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Temperature,C,-40.000
@@ -249,11 +235,9 @@ NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.839
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.803
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.977
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,52.873
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.062
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.265
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.263
-NOMVHTL,NOM,VHTL,3.6,-40,BAL,Gain change during CM interference,%,-6.490e-04
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD Swing Ratio,%,0.914
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,RLD Peak Current,nA,3.062
+NOMVHTL,NOM,VHTL,3.6,-40,BAL,CM Interference Gain Change,%,-6.490e-04
 NOMVHTL,NOM,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.541
 NOMVHTH,NOM,VHTH,3.6,125,BAL,AVDD,V,3.600
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Temperature,C,125.000
@@ -281,11 +265,9 @@ NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.082
 NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD phase margin,deg,100.571
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.164
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,53.671
-NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.070
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.465
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.465
-NOMVHTH,NOM,VHTH,3.6,125,BAL,Gain change during CM interference,%,1.489e-04
+NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD Swing Ratio,%,0.914
+NOMVHTH,NOM,VHTH,3.6,125,BAL,RLD Peak Current,nA,3.070
+NOMVHTH,NOM,VHTH,3.6,125,BAL,CM Interference Gain Change,%,1.489e-04
 NOMVHTH,NOM,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.941
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Temperature,C,27.000
@@ -313,11 +295,9 @@ FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,1.313
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.300
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.253
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,54.094
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.085
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.032
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.032
-FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-9.466e-05
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD Swing Ratio,%,0.914
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,RLD Peak Current,nA,3.085
+FFNOMNOM,FF,NOMNOM,3.3,27,BAL,CM Interference Gain Change,%,-9.466e-05
 FFNOMNOM,FF,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.530
 FFVLNOM,FF,VLNOM,3,27,BAL,AVDD,V,3.000
 FFVLNOM,FF,VLNOM,3,27,BAL,Temperature,C,27.000
@@ -345,11 +325,9 @@ FFVLNOM,FF,VLNOM,3,27,BAL,RLD loop UGF,kHz,1.313
 FFVLNOM,FF,VLNOM,3,27,BAL,RLD phase margin,deg,100.262
 FFVLNOM,FF,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.250
 FFVLNOM,FF,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,54.075
-FFVLNOM,FF,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFVLNOM,FF,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.089
-FFVLNOM,FF,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,230.992
-FFVLNOM,FF,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,230.992
-FFVLNOM,FF,VLNOM,3,27,BAL,Gain change during CM interference,%,2.479e-04
+FFVLNOM,FF,VLNOM,3,27,BAL,RLD Swing Ratio,%,0.914
+FFVLNOM,FF,VLNOM,3,27,BAL,RLD Peak Current,nA,3.089
+FFVLNOM,FF,VLNOM,3,27,BAL,CM Interference Gain Change,%,2.479e-04
 FFVLNOM,FF,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.529
 FFVHNOM,FF,VHNOM,3.6,27,BAL,AVDD,V,3.600
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Temperature,C,27.000
@@ -377,11 +355,9 @@ FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,1.313
 FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.334
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.256
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,54.110
-FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.081
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.064
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.063
-FFVHNOM,FF,VHNOM,3.6,27,BAL,Gain change during CM interference,%,-4.801e-05
+FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD Swing Ratio,%,0.914
+FFVHNOM,FF,VHNOM,3.6,27,BAL,RLD Peak Current,nA,3.081
+FFVHNOM,FF,VHNOM,3.6,27,BAL,CM Interference Gain Change,%,-4.801e-05
 FFVHNOM,FF,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.531
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
@@ -409,11 +385,9 @@ FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,1.166
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.443
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,55.199
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,53.828
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.080
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,230.878
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,230.878
-FFNOMTL,FF,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,5.811e-05
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD Swing Ratio,%,0.914
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,RLD Peak Current,nA,3.080
+FFNOMTL,FF,NOMTL,3.3,-40,BAL,CM Interference Gain Change,%,5.811e-05
 FFNOMTL,FF,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.406
 FFNOMTH,FF,NOMTH,3.3,125,BAL,AVDD,V,3.300
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Temperature,C,125.000
@@ -441,11 +415,9 @@ FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.502
 FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.124
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.302
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,54.345
-FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.091
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.137
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.137
-FFNOMTH,FF,NOMTH,3.3,125,BAL,Gain change during CM interference,%,2.128e-04
+FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD Swing Ratio,%,0.914
+FFNOMTH,FF,NOMTH,3.3,125,BAL,RLD Peak Current,nA,3.091
+FFNOMTH,FF,NOMTH,3.3,125,BAL,CM Interference Gain Change,%,2.128e-04
 FFNOMTH,FF,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.782
 FFVLTL,FF,VLTL,3,-40,BAL,AVDD,V,3.000
 FFVLTL,FF,VLTL,3,-40,BAL,Temperature,C,-40.000
@@ -473,11 +445,9 @@ FFVLTL,FF,VLTL,3,-40,BAL,RLD loop UGF,kHz,1.166
 FFVLTL,FF,VLTL,3,-40,BAL,RLD phase margin,deg,100.409
 FFVLTL,FF,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,55.195
 FFVLTL,FF,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,53.808
-FFVLTL,FF,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFVLTL,FF,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.083
-FFVLTL,FF,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,230.844
-FFVLTL,FF,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,230.844
-FFVLTL,FF,VLTL,3,-40,BAL,Gain change during CM interference,%,3.526e-05
+FFVLTL,FF,VLTL,3,-40,BAL,RLD Swing Ratio,%,0.914
+FFVLTL,FF,VLTL,3,-40,BAL,RLD Peak Current,nA,3.083
+FFVLTL,FF,VLTL,3,-40,BAL,CM Interference Gain Change,%,3.526e-05
 FFVLTL,FF,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.403
 FFVLTH,FF,VLTH,3,125,BAL,AVDD,V,3.000
 FFVLTH,FF,VLTH,3,125,BAL,Temperature,C,125.000
@@ -505,11 +475,9 @@ FFVLTH,FF,VLTH,3,125,BAL,RLD loop UGF,kHz,1.502
 FFVLTH,FF,VLTH,3,125,BAL,RLD phase margin,deg,100.083
 FFVLTH,FF,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.299
 FFVLTH,FF,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,54.327
-FFVLTH,FF,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFVLTH,FF,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.095
-FFVLTH,FF,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.086
-FFVLTH,FF,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.087
-FFVLTH,FF,VLTH,3,125,BAL,Gain change during CM interference,%,3.878e-04
+FFVLTH,FF,VLTH,3,125,BAL,RLD Swing Ratio,%,0.914
+FFVLTH,FF,VLTH,3,125,BAL,RLD Peak Current,nA,3.095
+FFVLTH,FF,VLTH,3,125,BAL,CM Interference Gain Change,%,3.878e-04
 FFVLTH,FF,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.785
 FFVHTL,FF,VHTL,3.6,-40,BAL,AVDD,V,3.600
 FFVHTL,FF,VHTL,3.6,-40,BAL,Temperature,C,-40.000
@@ -537,11 +505,9 @@ FFVHTL,FF,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,1.166
 FFVHTL,FF,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.475
 FFVHTL,FF,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,55.202
 FFVHTL,FF,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,53.846
-FFVHTL,FF,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFVHTL,FF,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.076
-FFVHTL,FF,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,230.905
-FFVHTL,FF,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,230.905
-FFVHTL,FF,VHTL,3.6,-40,BAL,Gain change during CM interference,%,-2.745e-05
+FFVHTL,FF,VHTL,3.6,-40,BAL,RLD Swing Ratio,%,0.914
+FFVHTL,FF,VHTL,3.6,-40,BAL,RLD Peak Current,nA,3.076
+FFVHTL,FF,VHTL,3.6,-40,BAL,CM Interference Gain Change,%,-2.745e-05
 FFVHTL,FF,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.409
 FFVHTH,FF,VHTH,3.6,125,BAL,AVDD,V,3.600
 FFVHTH,FF,VHTH,3.6,125,BAL,Temperature,C,125.000
@@ -569,11 +535,9 @@ FFVHTH,FF,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.502
 FFVHTH,FF,VHTH,3.6,125,BAL,RLD phase margin,deg,100.161
 FFVHTH,FF,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.304
 FFVHTH,FF,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,54.360
-FFVHTH,FF,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FFVHTH,FF,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.087
-FFVHTH,FF,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.177
-FFVHTH,FF,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.177
-FFVHTH,FF,VHTH,3.6,125,BAL,Gain change during CM interference,%,-2.275e-04
+FFVHTH,FF,VHTH,3.6,125,BAL,RLD Swing Ratio,%,0.914
+FFVHTH,FF,VHTH,3.6,125,BAL,RLD Peak Current,nA,3.087
+FFVHTH,FF,VHTH,3.6,125,BAL,CM Interference Gain Change,%,-2.275e-04
 FFVHTH,FF,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.781
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Temperature,C,27.000
@@ -601,11 +565,9 @@ SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.717
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.907
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,54.808
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,52.242
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.059
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.562
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.561
-SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-4.061e-04
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD Swing Ratio,%,0.914
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,RLD Peak Current,nA,3.059
+SSNOMNOM,SS,NOMNOM,3.3,27,BAL,CM Interference Gain Change,%,-4.061e-04
 SSNOMNOM,SS,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
 SSVLNOM,SS,VLNOM,3,27,BAL,AVDD,V,3.000
 SSVLNOM,SS,VLNOM,3,27,BAL,Temperature,C,27.000
@@ -633,11 +595,9 @@ SSVLNOM,SS,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.717
 SSVLNOM,SS,VLNOM,3,27,BAL,RLD phase margin,deg,100.886
 SSVLNOM,SS,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,54.805
 SSVLNOM,SS,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,52.221
-SSVLNOM,SS,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSVLNOM,SS,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.061
-SSVLNOM,SS,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.522
-SSVLNOM,SS,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.522
-SSVLNOM,SS,VLNOM,3,27,BAL,Gain change during CM interference,%,-1.359e-04
+SSVLNOM,SS,VLNOM,3,27,BAL,RLD Swing Ratio,%,0.914
+SSVLNOM,SS,VLNOM,3,27,BAL,RLD Peak Current,nA,3.061
+SSVLNOM,SS,VLNOM,3,27,BAL,CM Interference Gain Change,%,-1.359e-04
 SSVLNOM,SS,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
 SSVHNOM,SS,VHNOM,3.6,27,BAL,AVDD,V,3.600
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Temperature,C,27.000
@@ -665,11 +625,9 @@ SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.717
 SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.927
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,54.812
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,52.261
-SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.056
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.593
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.592
-SSVHNOM,SS,VHNOM,3.6,27,BAL,Gain change during CM interference,%,-6.469e-04
+SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD Swing Ratio,%,0.914
+SSVHNOM,SS,VHNOM,3.6,27,BAL,RLD Peak Current,nA,3.056
+SSVHNOM,SS,VHNOM,3.6,27,BAL,CM Interference Gain Change,%,-6.469e-04
 SSVHNOM,SS,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.819
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
@@ -697,11 +655,9 @@ SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.636
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.989
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.650
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,51.708
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.055
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.470
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.470
-SSNOMTL,SS,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,1.565e-04
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD Swing Ratio,%,0.914
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,RLD Peak Current,nA,3.055
+SSNOMTL,SS,NOMTL,3.3,-40,BAL,CM Interference Gain Change,%,1.565e-04
 SSNOMTL,SS,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.673
 SSNOMTH,SS,NOMTH,3.3,125,BAL,AVDD,V,3.300
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Temperature,C,125.000
@@ -729,11 +685,9 @@ SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,0.820
 SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.807
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,54.953
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,52.781
-SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.062
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.606
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.607
-SSNOMTH,SS,NOMTH,3.3,125,BAL,Gain change during CM interference,%,5.260e-04
+SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD Swing Ratio,%,0.914
+SSNOMTH,SS,NOMTH,3.3,125,BAL,RLD Peak Current,nA,3.062
+SSNOMTH,SS,NOMTH,3.3,125,BAL,CM Interference Gain Change,%,5.260e-04
 SSNOMTH,SS,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.110
 SSVLTL,SS,VLTL,3,-40,BAL,AVDD,V,3.000
 SSVLTL,SS,VLTL,3,-40,BAL,Temperature,C,-40.000
@@ -761,11 +715,9 @@ SSVLTL,SS,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.636
 SSVLTL,SS,VLTL,3,-40,BAL,RLD phase margin,deg,100.969
 SSVLTL,SS,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.646
 SSVLTL,SS,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,51.686
-SSVLTL,SS,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSVLTL,SS,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.058
-SSVLTL,SS,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.437
-SSVLTL,SS,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.437
-SSVLTL,SS,VLTL,3,-40,BAL,Gain change during CM interference,%,1.498e-04
+SSVLTL,SS,VLTL,3,-40,BAL,RLD Swing Ratio,%,0.914
+SSVLTL,SS,VLTL,3,-40,BAL,RLD Peak Current,nA,3.058
+SSVLTL,SS,VLTL,3,-40,BAL,CM Interference Gain Change,%,1.498e-04
 SSVLTL,SS,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.670
 SSVLTH,SS,VLTH,3,125,BAL,AVDD,V,3.000
 SSVLTH,SS,VLTH,3,125,BAL,Temperature,C,125.000
@@ -793,11 +745,9 @@ SSVLTH,SS,VLTH,3,125,BAL,RLD loop UGF,kHz,0.820
 SSVLTH,SS,VLTH,3,125,BAL,RLD phase margin,deg,100.784
 SSVLTH,SS,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,54.950
 SSVLTH,SS,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,52.762
-SSVLTH,SS,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSVLTH,SS,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.065
-SSVLTH,SS,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.559
-SSVLTH,SS,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.558
-SSVLTH,SS,VLTH,3,125,BAL,Gain change during CM interference,%,-3.374e-04
+SSVLTH,SS,VLTH,3,125,BAL,RLD Swing Ratio,%,0.914
+SSVLTH,SS,VLTH,3,125,BAL,RLD Peak Current,nA,3.065
+SSVLTH,SS,VLTH,3,125,BAL,CM Interference Gain Change,%,-3.374e-04
 SSVLTH,SS,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.116
 SSVHTL,SS,VHTL,3.6,-40,BAL,AVDD,V,3.600
 SSVHTL,SS,VHTL,3.6,-40,BAL,Temperature,C,-40.000
@@ -825,11 +775,9 @@ SSVHTL,SS,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.636
 SSVHTL,SS,VHTL,3.6,-40,BAL,RLD phase margin,deg,101.008
 SSVHTL,SS,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.653
 SSVHTL,SS,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,51.728
-SSVHTL,SS,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSVHTL,SS,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.053
-SSVHTL,SS,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.496
-SSVHTL,SS,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.497
-SSVHTL,SS,VHTL,3.6,-40,BAL,Gain change during CM interference,%,4.324e-04
+SSVHTL,SS,VHTL,3.6,-40,BAL,RLD Swing Ratio,%,0.914
+SSVHTL,SS,VHTL,3.6,-40,BAL,RLD Peak Current,nA,3.053
+SSVHTL,SS,VHTL,3.6,-40,BAL,CM Interference Gain Change,%,4.324e-04
 SSVHTL,SS,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.677
 SSVHTH,SS,VHTH,3.6,125,BAL,AVDD,V,3.600
 SSVHTH,SS,VHTH,3.6,125,BAL,Temperature,C,125.000
@@ -857,11 +805,9 @@ SSVHTH,SS,VHTH,3.6,125,BAL,RLD loop UGF,kHz,0.820
 SSVHTH,SS,VHTH,3.6,125,BAL,RLD phase margin,deg,100.829
 SSVHTH,SS,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,54.956
 SSVHTH,SS,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,52.798
-SSVHTH,SS,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SSVHTH,SS,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.059
-SSVHTH,SS,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.646
-SSVHTH,SS,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.646
-SSVHTH,SS,VHTH,3.6,125,BAL,Gain change during CM interference,%,-1.898e-04
+SSVHTH,SS,VHTH,3.6,125,BAL,RLD Swing Ratio,%,0.914
+SSVHTH,SS,VHTH,3.6,125,BAL,RLD Peak Current,nA,3.059
+SSVHTH,SS,VHTH,3.6,125,BAL,CM Interference Gain Change,%,-1.898e-04
 SSVHTH,SS,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,3.107
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Temperature,C,27.000
@@ -889,11 +835,9 @@ FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.946
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.685
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.073
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,53.268
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.068
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.346
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.345
-FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-3.410e-04
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD Swing Ratio,%,0.914
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,RLD Peak Current,nA,3.068
+FSNOMNOM,FS,NOMNOM,3.3,27,BAL,CM Interference Gain Change,%,-3.410e-04
 FSNOMNOM,FS,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.635
 FSVLNOM,FS,VLNOM,3,27,BAL,AVDD,V,3.000
 FSVLNOM,FS,VLNOM,3,27,BAL,Temperature,C,27.000
@@ -921,11 +865,9 @@ FSVLNOM,FS,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.946
 FSVLNOM,FS,VLNOM,3,27,BAL,RLD phase margin,deg,100.658
 FSVLNOM,FS,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.070
 FSVLNOM,FS,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,53.249
-FSVLNOM,FS,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSVLNOM,FS,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.071
-FSVLNOM,FS,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.303
-FSVLNOM,FS,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.303
-FSVLNOM,FS,VLNOM,3,27,BAL,Gain change during CM interference,%,2.225e-04
+FSVLNOM,FS,VLNOM,3,27,BAL,RLD Swing Ratio,%,0.914
+FSVLNOM,FS,VLNOM,3,27,BAL,RLD Peak Current,nA,3.071
+FSVLNOM,FS,VLNOM,3,27,BAL,CM Interference Gain Change,%,2.225e-04
 FSVLNOM,FS,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.636
 FSVHNOM,FS,VHNOM,3.6,27,BAL,AVDD,V,3.600
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Temperature,C,27.000
@@ -953,11 +895,9 @@ FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.946
 FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.710
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.076
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,53.285
-FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.064
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.380
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.380
-FSVHNOM,FS,VHNOM,3.6,27,BAL,Gain change during CM interference,%,1.629e-04
+FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD Swing Ratio,%,0.914
+FSVHNOM,FS,VHNOM,3.6,27,BAL,RLD Peak Current,nA,3.064
+FSVHNOM,FS,VHNOM,3.6,27,BAL,CM Interference Gain Change,%,1.629e-04
 FSVHNOM,FS,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.636
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
@@ -985,11 +925,9 @@ FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.839
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.790
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.975
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.863
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.064
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.226
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.225
-FSNOMTL,FS,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,-1.373e-04
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD Swing Ratio,%,0.914
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,RLD Peak Current,nA,3.064
+FSNOMTL,FS,NOMTL,3.3,-40,BAL,CM Interference Gain Change,%,-1.373e-04
 FSNOMTL,FS,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.506
 FSNOMTH,FS,NOMTH,3.3,125,BAL,AVDD,V,3.300
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Temperature,C,125.000
@@ -1017,11 +955,9 @@ FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.082
 FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.557
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.162
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,53.662
-FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.072
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.420
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.420
-FSNOMTH,FS,NOMTH,3.3,125,BAL,Gain change during CM interference,%,-1.595e-04
+FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD Swing Ratio,%,0.914
+FSNOMTH,FS,NOMTH,3.3,125,BAL,RLD Peak Current,nA,3.072
+FSNOMTH,FS,NOMTH,3.3,125,BAL,CM Interference Gain Change,%,-1.595e-04
 FSNOMTH,FS,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.902
 FSVLTL,FS,VLTL,3,-40,BAL,AVDD,V,3.000
 FSVLTL,FS,VLTL,3,-40,BAL,Temperature,C,-40.000
@@ -1049,11 +985,9 @@ FSVLTL,FS,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.839
 FSVLTL,FS,VLTL,3,-40,BAL,RLD phase margin,deg,100.765
 FSVLTL,FS,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.971
 FSVLTL,FS,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.843
-FSVLTL,FS,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSVLTL,FS,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.067
-FSVLTL,FS,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.189
-FSVLTL,FS,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.189
-FSVLTL,FS,VLTL,3,-40,BAL,Gain change during CM interference,%,1.903e-05
+FSVLTL,FS,VLTL,3,-40,BAL,RLD Swing Ratio,%,0.914
+FSVLTL,FS,VLTL,3,-40,BAL,RLD Peak Current,nA,3.067
+FSVLTL,FS,VLTL,3,-40,BAL,CM Interference Gain Change,%,1.903e-05
 FSVLTL,FS,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.503
 FSVLTH,FS,VLTH,3,125,BAL,AVDD,V,3.000
 FSVLTH,FS,VLTH,3,125,BAL,Temperature,C,125.000
@@ -1081,11 +1015,9 @@ FSVLTH,FS,VLTH,3,125,BAL,RLD loop UGF,kHz,1.082
 FSVLTH,FS,VLTH,3,125,BAL,RLD phase margin,deg,100.527
 FSVLTH,FS,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.159
 FSVLTH,FS,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,53.645
-FSVLTH,FS,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSVLTH,FS,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.076
-FSVLTH,FS,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.367
-FSVLTH,FS,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.367
-FSVLTH,FS,VLTH,3,125,BAL,Gain change during CM interference,%,-9.838e-05
+FSVLTH,FS,VLTH,3,125,BAL,RLD Swing Ratio,%,0.914
+FSVLTH,FS,VLTH,3,125,BAL,RLD Peak Current,nA,3.076
+FSVLTH,FS,VLTH,3,125,BAL,CM Interference Gain Change,%,-9.838e-05
 FSVLTH,FS,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.907
 FSVHTL,FS,VHTL,3.6,-40,BAL,AVDD,V,3.600
 FSVHTL,FS,VHTL,3.6,-40,BAL,Temperature,C,-40.000
@@ -1113,11 +1045,9 @@ FSVHTL,FS,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.839
 FSVHTL,FS,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.813
 FSVHTL,FS,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.978
 FSVHTL,FS,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,52.881
-FSVHTL,FS,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSVHTL,FS,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.060
-FSVHTL,FS,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.256
-FSVHTL,FS,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.256
-FSVHTL,FS,VHTL,3.6,-40,BAL,Gain change during CM interference,%,1.612e-04
+FSVHTL,FS,VHTL,3.6,-40,BAL,RLD Swing Ratio,%,0.914
+FSVHTL,FS,VHTL,3.6,-40,BAL,RLD Peak Current,nA,3.060
+FSVHTL,FS,VHTL,3.6,-40,BAL,CM Interference Gain Change,%,1.612e-04
 FSVHTL,FS,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.508
 FSVHTH,FS,VHTH,3.6,125,BAL,AVDD,V,3.600
 FSVHTH,FS,VHTH,3.6,125,BAL,Temperature,C,125.000
@@ -1145,11 +1075,9 @@ FSVHTH,FS,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.082
 FSVHTH,FS,VHTH,3.6,125,BAL,RLD phase margin,deg,100.584
 FSVHTH,FS,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.165
 FSVHTH,FS,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,53.678
-FSVHTH,FS,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-FSVHTH,FS,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.069
-FSVHTH,FS,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.465
-FSVHTH,FS,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.465
-FSVHTH,FS,VHTH,3.6,125,BAL,Gain change during CM interference,%,-1.035e-04
+FSVHTH,FS,VHTH,3.6,125,BAL,RLD Swing Ratio,%,0.914
+FSVHTH,FS,VHTH,3.6,125,BAL,RLD Peak Current,nA,3.069
+FSVHTH,FS,VHTH,3.6,125,BAL,CM Interference Gain Change,%,-1.035e-04
 FSVHTH,FS,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.900
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,AVDD,V,3.300
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Temperature,C,27.000
@@ -1177,11 +1105,9 @@ SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD loop UGF,kHz,0.946
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD phase margin,deg,100.661
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Input CM suppression @ 60 Hz,dB,55.070
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Input CM suppression @ 150 Hz,dB,53.251
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Peak |I_RLD| during CM interference,nA,3.070
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Differential gain before CM interference,V/V,231.359
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Differential gain during CM interference,V/V,231.359
-SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Gain change during CM interference,%,-6.257e-05
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD Swing Ratio,%,0.914
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,RLD Peak Current,nA,3.070
+SFNOMNOM,SF,NOMNOM,3.3,27,BAL,CM Interference Gain Change,%,-6.257e-05
 SFNOMNOM,SF,NOMNOM,3.3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.709
 SFVLNOM,SF,VLNOM,3,27,BAL,AVDD,V,3.000
 SFVLNOM,SF,VLNOM,3,27,BAL,Temperature,C,27.000
@@ -1209,11 +1135,9 @@ SFVLNOM,SF,VLNOM,3,27,BAL,RLD loop UGF,kHz,0.946
 SFVLNOM,SF,VLNOM,3,27,BAL,RLD phase margin,deg,100.633
 SFVLNOM,SF,VLNOM,3,27,BAL,Input CM suppression @ 60 Hz,dB,55.067
 SFVLNOM,SF,VLNOM,3,27,BAL,Input CM suppression @ 150 Hz,dB,53.231
-SFVLNOM,SF,VLNOM,3,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFVLNOM,SF,VLNOM,3,27,BAL,Peak |I_RLD| during CM interference,nA,3.074
-SFVLNOM,SF,VLNOM,3,27,BAL,Differential gain before CM interference,V/V,231.323
-SFVLNOM,SF,VLNOM,3,27,BAL,Differential gain during CM interference,V/V,231.324
-SFVLNOM,SF,VLNOM,3,27,BAL,Gain change during CM interference,%,1.298e-04
+SFVLNOM,SF,VLNOM,3,27,BAL,RLD Swing Ratio,%,0.914
+SFVLNOM,SF,VLNOM,3,27,BAL,RLD Peak Current,nA,3.074
+SFVLNOM,SF,VLNOM,3,27,BAL,CM Interference Gain Change,%,1.298e-04
 SFVLNOM,SF,VLNOM,3,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.708
 SFVHNOM,SF,VHNOM,3.6,27,BAL,AVDD,V,3.600
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Temperature,C,27.000
@@ -1241,11 +1165,9 @@ SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD loop UGF,kHz,0.946
 SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD phase margin,deg,100.687
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Input CM suppression @ 60 Hz,dB,55.074
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Input CM suppression @ 150 Hz,dB,53.270
-SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Peak |I_RLD| during CM interference,nA,3.067
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Differential gain before CM interference,V/V,231.382
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Differential gain during CM interference,V/V,231.382
-SFVHNOM,SF,VHNOM,3.6,27,BAL,Gain change during CM interference,%,1.711e-04
+SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD Swing Ratio,%,0.914
+SFVHNOM,SF,VHNOM,3.6,27,BAL,RLD Peak Current,nA,3.067
+SFVHNOM,SF,VHNOM,3.6,27,BAL,CM Interference Gain Change,%,1.711e-04
 SFVHNOM,SF,VHNOM,3.6,27,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.710
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,AVDD,V,3.300
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Temperature,C,-40.000
@@ -1273,11 +1195,9 @@ SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD loop UGF,kHz,0.839
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD phase margin,deg,100.768
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.972
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.846
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.066
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Differential gain before CM interference,V/V,231.244
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Differential gain during CM interference,V/V,231.245
-SFNOMTL,SF,NOMTL,3.3,-40,BAL,Gain change during CM interference,%,4.199e-04
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD Swing Ratio,%,0.914
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,RLD Peak Current,nA,3.066
+SFNOMTL,SF,NOMTL,3.3,-40,BAL,CM Interference Gain Change,%,4.199e-04
 SFNOMTL,SF,NOMTL,3.3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.571
 SFNOMTH,SF,NOMTH,3.3,125,BAL,AVDD,V,3.300
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Temperature,C,125.000
@@ -1305,11 +1225,9 @@ SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD loop UGF,kHz,1.082
 SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD phase margin,deg,100.530
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Input CM suppression @ 60 Hz,dB,55.159
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Input CM suppression @ 150 Hz,dB,53.647
-SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Peak |I_RLD| during CM interference,nA,3.075
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Differential gain before CM interference,V/V,231.424
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Differential gain during CM interference,V/V,231.423
-SFNOMTH,SF,NOMTH,3.3,125,BAL,Gain change during CM interference,%,-3.709e-04
+SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD Swing Ratio,%,0.914
+SFNOMTH,SF,NOMTH,3.3,125,BAL,RLD Peak Current,nA,3.075
+SFNOMTH,SF,NOMTH,3.3,125,BAL,CM Interference Gain Change,%,-3.709e-04
 SFNOMTH,SF,NOMTH,3.3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.985
 SFVLTL,SF,VLTL,3,-40,BAL,AVDD,V,3.000
 SFVLTL,SF,VLTL,3,-40,BAL,Temperature,C,-40.000
@@ -1337,11 +1255,9 @@ SFVLTL,SF,VLTL,3,-40,BAL,RLD loop UGF,kHz,0.839
 SFVLTL,SF,VLTL,3,-40,BAL,RLD phase margin,deg,100.742
 SFVLTL,SF,VLTL,3,-40,BAL,Input CM suppression @ 60 Hz,dB,54.968
 SFVLTL,SF,VLTL,3,-40,BAL,Input CM suppression @ 150 Hz,dB,52.824
-SFVLTL,SF,VLTL,3,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFVLTL,SF,VLTL,3,-40,BAL,Peak |I_RLD| during CM interference,nA,3.069
-SFVLTL,SF,VLTL,3,-40,BAL,Differential gain before CM interference,V/V,231.214
-SFVLTL,SF,VLTL,3,-40,BAL,Differential gain during CM interference,V/V,231.215
-SFVLTL,SF,VLTL,3,-40,BAL,Gain change during CM interference,%,2.067e-04
+SFVLTL,SF,VLTL,3,-40,BAL,RLD Swing Ratio,%,0.914
+SFVLTL,SF,VLTL,3,-40,BAL,RLD Peak Current,nA,3.069
+SFVLTL,SF,VLTL,3,-40,BAL,CM Interference Gain Change,%,2.067e-04
 SFVLTL,SF,VLTL,3,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.567
 SFVLTH,SF,VLTH,3,125,BAL,AVDD,V,3.000
 SFVLTH,SF,VLTH,3,125,BAL,Temperature,C,125.000
@@ -1369,11 +1285,9 @@ SFVLTH,SF,VLTH,3,125,BAL,RLD loop UGF,kHz,1.082
 SFVLTH,SF,VLTH,3,125,BAL,RLD phase margin,deg,100.499
 SFVLTH,SF,VLTH,3,125,BAL,Input CM suppression @ 60 Hz,dB,55.156
 SFVLTH,SF,VLTH,3,125,BAL,Input CM suppression @ 150 Hz,dB,53.628
-SFVLTH,SF,VLTH,3,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFVLTH,SF,VLTH,3,125,BAL,Peak |I_RLD| during CM interference,nA,3.078
-SFVLTH,SF,VLTH,3,125,BAL,Differential gain before CM interference,V/V,231.381
-SFVLTH,SF,VLTH,3,125,BAL,Differential gain during CM interference,V/V,231.381
-SFVLTH,SF,VLTH,3,125,BAL,Gain change during CM interference,%,-4.274e-06
+SFVLTH,SF,VLTH,3,125,BAL,RLD Swing Ratio,%,0.914
+SFVLTH,SF,VLTH,3,125,BAL,RLD Peak Current,nA,3.078
+SFVLTH,SF,VLTH,3,125,BAL,CM Interference Gain Change,%,-4.274e-06
 SFVLTH,SF,VLTH,3,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.988
 SFVHTL,SF,VHTL,3.6,-40,BAL,AVDD,V,3.600
 SFVHTL,SF,VHTL,3.6,-40,BAL,Temperature,C,-40.000
@@ -1401,11 +1315,9 @@ SFVHTL,SF,VHTL,3.6,-40,BAL,RLD loop UGF,kHz,0.839
 SFVHTL,SF,VHTL,3.6,-40,BAL,RLD phase margin,deg,100.792
 SFVHTL,SF,VHTL,3.6,-40,BAL,Input CM suppression @ 60 Hz,dB,54.975
 SFVHTL,SF,VHTL,3.6,-40,BAL,Input CM suppression @ 150 Hz,dB,52.865
-SFVHTL,SF,VHTL,3.6,-40,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFVHTL,SF,VHTL,3.6,-40,BAL,Peak |I_RLD| during CM interference,nA,3.063
-SFVHTL,SF,VHTL,3.6,-40,BAL,Differential gain before CM interference,V/V,231.264
-SFVHTL,SF,VHTL,3.6,-40,BAL,Differential gain during CM interference,V/V,231.263
-SFVHTL,SF,VHTL,3.6,-40,BAL,Gain change during CM interference,%,-1.213e-04
+SFVHTL,SF,VHTL,3.6,-40,BAL,RLD Swing Ratio,%,0.914
+SFVHTL,SF,VHTL,3.6,-40,BAL,RLD Peak Current,nA,3.063
+SFVHTL,SF,VHTL,3.6,-40,BAL,CM Interference Gain Change,%,-1.213e-04
 SFVHTL,SF,VHTL,3.6,-40,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.575
 SFVHTH,SF,VHTH,3.6,125,BAL,AVDD,V,3.600
 SFVHTH,SF,VHTH,3.6,125,BAL,Temperature,C,125.000
@@ -1433,9 +1345,7 @@ SFVHTH,SF,VHTH,3.6,125,BAL,RLD loop UGF,kHz,1.082
 SFVHTH,SF,VHTH,3.6,125,BAL,RLD phase margin,deg,100.559
 SFVHTH,SF,VHTH,3.6,125,BAL,Input CM suppression @ 60 Hz,dB,55.162
 SFVHTH,SF,VHTH,3.6,125,BAL,Input CM suppression @ 150 Hz,dB,53.664
-SFVHTH,SF,VHTH,3.6,125,BAL,RLD output peak-to-peak excursion during CM interference,mV,2.743
-SFVHTH,SF,VHTH,3.6,125,BAL,Peak |I_RLD| during CM interference,nA,3.072
-SFVHTH,SF,VHTH,3.6,125,BAL,Differential gain before CM interference,V/V,231.453
-SFVHTH,SF,VHTH,3.6,125,BAL,Differential gain during CM interference,V/V,231.453
-SFVHTH,SF,VHTH,3.6,125,BAL,Gain change during CM interference,%,2.688e-04
+SFVHTH,SF,VHTH,3.6,125,BAL,RLD Swing Ratio,%,0.914
+SFVHTH,SF,VHTH,3.6,125,BAL,RLD Peak Current,nA,3.072
+SFVHTH,SF,VHTH,3.6,125,BAL,CM Interference Gain Change,%,2.688e-04
 SFVHTH,SF,VHTH,3.6,125,BAL,Input-referred noise 0.05-150 Hz,uVrms,2.983

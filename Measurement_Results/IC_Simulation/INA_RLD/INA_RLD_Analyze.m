@@ -235,11 +235,9 @@ rows = [
     "RLD phase margin",                            "deg"
     "Input CM suppression @ 60 Hz",                "dB"
     "Input CM suppression @ 150 Hz",               "dB"
-    "RLD output peak-to-peak excursion during CM interference", "V"
-    "Peak |I_RLD| during CM interference",          "A"
-    "Differential gain before CM interference",     "V/V"
-    "Differential gain during CM interference",     "V/V"
-    "Gain change during CM interference",           "%"
+    "RLD Swing Ratio",                             "%"
+    "RLD Peak Current",                            "A"
+    "CM Interference Gain Change",                  "%"
     "",                                             ""
     "NOISE",                                        ""
     "Input-referred noise 0.05-150 Hz",             "Vrms"
@@ -284,6 +282,7 @@ end
 function m = analyzeOperatingPoint(data)
 m.vdd_V = median(data(:,2),'omitnan');
 vref_V = median(data(:,3),'omitnan');
+m.vref_V = vref_V;
 m.outCmError_V = median(data(:,17),'omitnan')-vref_V;
 m.rldDcError_V = median(data(:,19),'omitnan')-vref_V;
 m.totalCurrent_A = abs(median(data(:,22),'omitnan'));
@@ -395,6 +394,7 @@ edges = detectCmStep(t,cmSource);
 result.rldOutMin_V = min(rldOut,[],'omitnan');
 result.rldOutMax_V = max(rldOut,[],'omitnan');
 result.rldOutExcursion_V = result.rldOutMax_V-result.rldOutMin_V;
+result.rldVppNorm_pct = 100*result.rldOutExcursion_V/300e-3;
 result.rldRailHeadroom_V = min([rldOut; vdd_V-rldOut],[],'omitnan');
 result.peakRldCurrent_A = max(abs(rldCurrent),[],'omitnan');
 beforeRows = t >= edges.riseTime_s-cfg.transientPreStartGuard_s & ...
@@ -465,15 +465,11 @@ for rowIndex = 1:size(rows,1)
         case "Input CM suppression @ 60 Hz", values(rowIndex) = m.cm.inputSuppression_dB(1);
         case "Input CM suppression @ 150 Hz", values(rowIndex) = m.cm.inputSuppression_dB(2);
         case "Input-referred noise 0.05-150 Hz", values(rowIndex) = m.noise.inputRms_V;
-        case "RLD output peak-to-peak excursion during CM interference"
-            values(rowIndex) = m.tran.rldOutExcursion_V;
-        case "Peak |I_RLD| during CM interference"
+        case "RLD Swing Ratio"
+            values(rowIndex) = m.tran.rldVppNorm_pct;
+        case "RLD Peak Current"
             values(rowIndex) = m.tran.peakRldCurrent_A;
-        case "Differential gain before CM interference"
-            values(rowIndex) = m.tran.gainBeforeInterference_VV;
-        case "Differential gain during CM interference"
-            values(rowIndex) = m.tran.gainDuringInterference_VV;
-        case "Gain change during CM interference"
+        case "CM Interference Gain Change"
             values(rowIndex) = m.tran.gainChangeDuringInterference_pct;
     end
 end
@@ -647,6 +643,18 @@ function result = buildWorstCaseTable( ...
 definitions = [
     "Total current",                            "Total current",                         "max"
     "Total power",                              "Total power",                           "max"
+    "Output CM error",                          "Output CM error",                       "maxabs"
+    "RLD DC error",                             "RLD DC error",                          "maxabs"
+    "S1 gain",                                  "S1 gain",                               "min"
+    "S1 gain dB",                               "S1 gain dB",                            "min"
+    "S1 gain error",                            "S1 gain error",                         "maxabs"
+    "S1 -3 dB bandwidth",                       "S1 -3 dB bandwidth",                    "min"
+    "S2 gain",                                  "S2 gain",                               "min"
+    "S2 gain dB",                               "S2 gain dB",                            "min"
+    "S2 gain error",                            "S2 gain error",                         "maxabs"
+    "S2 -3 dB bandwidth",                       "S2 -3 dB bandwidth",                    "min"
+    "INA gain",                                 "INA gain",                              "min"
+    "INA gain dB",                              "INA gain dB",                           "min"
     "INA gain error",                           "INA gain error",                        "maxabs"
     "Gain flatness 0.05-150 Hz",                "Gain flatness 0.05-150 Hz",              "max"
     "INA -3 dB bandwidth",                      "INA -3 dB bandwidth",                    "min"
@@ -654,12 +662,11 @@ definitions = [
     "Input CM suppression @ 60 Hz",             "Input CM suppression @ 60 Hz",          "min"
     "Input CM suppression @ 150 Hz",            "Input CM suppression @ 150 Hz",         "min"
     "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
-    "Output CM error",                          "Output CM error",                       "maxabs"
-    "RLD DC error",                             "RLD DC error",                          "maxabs"
-    "RLD output peak-to-peak excursion during CM interference", "RLD output peak-to-peak excursion during CM interference", "max"
+    "RLD Swing Ratio",                          "RLD Swing Ratio",                       "max"
+    "RLD loop UGF",                             "RLD loop UGF",                          "min"
     "RLD rail headroom",                        "__RLD_RAIL_HEADROOM__",                 "min"
-    "Peak |I_RLD| during CM interference",      "__RLD_PEAK_CURRENT__",                  "max"
-    "Gain change during CM interference",        "Gain change during CM interference",    "maxabs"
+    "RLD Peak Current",                         "__RLD_PEAK_CURRENT__",                  "max"
+    "CM Interference Gain Change",               "CM Interference Gain Change",           "maxabs"
 ];
 
 n = size(definitions,1);
@@ -1015,19 +1022,25 @@ if ~isfinite(gainBal_VV), gainBal_VV = metric.diff.gain10_VV; end
 fig = figure;
 layout = tiledlayout(3,1);
 commonModeAxes = nexttile(layout);
-plot(tBal_ms,bal(:,2),':','LineWidth',1.1, ...
-    'DisplayName','Applied CM source');
+appliedCmDeviation_mV = (bal(:,2)-metric.vref_V)*1e3;
+inputCmDeviation_mV = (bal(:,4)-metric.vref_V)*1e3;
+plot(tBal_ms,appliedCmDeviation_mV,':','LineWidth',1.1, ...
+    'DisplayName','Applied CM interference');
 hold on;
-plot(tBal_ms,bal(:,4),'LineWidth',1.5,'DisplayName','INA input CM');
+plot(tBal_ms,inputCmDeviation_mV,'LineWidth',1.5, ...
+    'DisplayName','INA input CM error');
 addTimeGuides(stepTimes_ms);
-ylabel('Common-mode voltage (V)');
+yline(0,'--','HandleVisibility','off');
+ylabel('CM deviation (mV)');
 legend('Location','best');
-stylePlot('', 'Applied CM Source and INA Input Common Mode');
+stylePlot('', 'CM Interference');
 
 rldAxes = nexttile(layout);
 plot(tBal_ms,bal(:,14),'LineWidth',1.5);
 hold on;
 addTimeGuides(stepTimes_ms);
+rldOutputCmError_mV = (bal(:,17)-metric.vref_V)*1e3;
+peakOutputCmError_mV = max(abs(rldOutputCmError_mV),[],'omitnan');
 rldSpan_V = metric.tran.rldOutMax_V-metric.tran.rldOutMin_V;
 if ~isfinite(rldSpan_V) || rldSpan_V <= 0
     rldSpan_V = 1e-3;
@@ -1038,9 +1051,17 @@ addMetricBox({ ...
     sprintf('RLD excursion = %.3f mV', ...
     metric.tran.rldOutExcursion_V*1e3); ...
     sprintf('Peak |I_{RLD}| = %.3f nA', ...
-    metric.tran.peakRldCurrent_A*1e9)});
+    metric.tran.peakRldCurrent_A*1e9); ...
+    sprintf('Output CM error pk = %.3f mV',peakOutputCmError_mV)});
 ylabel('RLD output (V)');
 stylePlot('', 'RLD Output');
+yyaxis right;
+plot(tBal_ms,rldOutputCmError_mV,'LineWidth',1.2, ...
+    'Color',[0.8500 0.3250 0.0980], ...
+    'DisplayName','Output CM error');
+hold on;
+yline(0,'--','HandleVisibility','off');
+ylabel('Output CM error (mV)');
 
 differentialAxes = nexttile(layout);
 plot(tBal_ms,bal(:,5)*1e3,'LineWidth',1.5, ...

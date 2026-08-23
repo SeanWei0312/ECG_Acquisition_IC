@@ -31,7 +31,7 @@ value="
 
 .control
 
-shell mkdir -p /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/
+shell mkdir -p /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt
 
 set wr_vecnames
 set wr_singlescale
@@ -60,7 +60,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L0p28u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L0p28u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 0.5u
 reset
@@ -78,7 +78,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L0p5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L0p5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 1u
 reset
@@ -96,7 +96,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L1u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L1u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 1.5u
 reset
@@ -114,7 +114,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L1p5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L1p5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 2u
 reset
@@ -132,7 +132,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L2u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L2u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 3u
 reset
@@ -150,7 +150,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L3u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L3u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 4u
 reset
@@ -168,7 +168,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L4u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L4u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 alterparam PLen = 5u
 reset
@@ -186,7 +186,7 @@ let cgb = abs(@m.xm1.m0[cgb])
 let cgg = cgs + cgd + cgb
 let ft_hz = gm/(6.283185307179586*(cgg + 1e-30))
 let ft_mhz = ft_hz/1e6
-wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/pmos_L5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
+wrdata /foss/designs/ecg_acquisition_ic/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/Results_txt/pmos_L5u_W10u.txt vsg_out vsd_out id id_w gm gds cgs cgd cgb cgg ft_hz ft_mhz
 
 .endc
 "}

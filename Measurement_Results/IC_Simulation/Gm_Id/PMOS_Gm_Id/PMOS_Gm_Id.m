@@ -1,7 +1,8 @@
-clear; clc; close all;
+clc; close all;
 
 %% User settings and output paths
-baseDir = "/Users/sean/Documents/GitHub/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id";
+baseDir = fileparts(mfilename("fullpath"));
+inputDir = fullfile(baseDir, "Results_txt");
 plotDir = fullfile(baseDir, "Plots");
 terminalTablePath = fullfile(baseDir, "pmos_gmid_terminal_table.txt");
 
@@ -9,14 +10,14 @@ targetVSD  = 1.65;
 targetGmId = 4:1:20;
 gmIdMin = 2.00;
 
-files = dir(fullfile(baseDir, "pmos_L*u_W*u.txt"));
+files = dir(fullfile(inputDir, "pmos_L*u_W*u.txt"));
 
 if ~exist(plotDir, "dir")
     mkdir(plotDir);
 end
 
 if isempty(files)
-    error("No PMOS simulation .txt files found in: %s", baseDir);
+    error("No PMOS simulation .txt files found in: %s", inputDir);
 end
 
 %% Read all ngspice text files and build one data table
@@ -451,8 +452,13 @@ function saveCurrentFigure(plotDir, baseName)
     pngPath = fullfile(plotDir, baseName + ".png");
     figPath = fullfile(plotDir, baseName + ".fig");
 
-    saveas(gcf, pngPath);
-    savefig(gcf, figPath);
+    fig = gcf;
+    drawnow;
+    fig.PaperUnits = "inches";
+    fig.PaperPosition = [0 0 10 4];
+    fig.PaperSize = [10 4];
+    print(fig, pngPath, "-dpng", "-r250");
+    savefig(fig, figPath);
 
     fprintf("Saved plot: %s\n", pngPath);
 

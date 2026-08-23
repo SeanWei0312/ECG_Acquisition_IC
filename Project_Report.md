@@ -44,6 +44,50 @@ The integrated top-level AFE schematic combines the biopotential instrumentation
 | **Reference** | **Master Bias (`BIAS`/`MIRROR`)** | $\beta$-Multiplier reference ($40\text{ }\mu\text{A}$ target) with startup device and 11-channel cascode mirror tree | $\Delta I_{\text{bias}} < 0.15\%$ mirror tracking |
 | **Total Chain** | **Full AFE Performance** | Cascaded multi-stage biopotential recording path with analog channel selection (`SEL`) | **$240\text{ to }3840\text{ V/V}$**<br>($47.6\text{ to }71.7\text{ dB}$)<br>**$0.05\text{--}150\text{ Hz}$** |
 
+### 2.3 Schematic Reference Images
+
+![BIAS Schematic](Design_Files/IC%20Design/Schematic/BIAS/BIAS.png)
+*BIAS and reference-current generation schematic.*
+
+![Mirror Schematic](Design_Files/IC%20Design/Schematic/MIRROR/MIRROR.png)
+*Bias mirror distribution schematic.*
+
+![Single-Ended OTA Schematic](Design_Files/IC%20Design/Schematic/SE_OTA/SE_OTA.png)
+*Single-ended OTA schematic.*
+
+![Fully Differential OTA Schematic](Design_Files/IC%20Design/Schematic/FD_OTA/FDOTA/FD_OTA.png)
+*Fully differential OTA top-level schematic.*
+
+![Fully Differential Core Schematic](Design_Files/IC%20Design/Schematic/FD_OTA/FDC/FDC.png)
+*Fully differential core schematic.*
+
+![CMFB Schematic](Design_Files/IC%20Design/Schematic/FD_OTA/CMFB/CMFB.png)
+*Common-mode feedback schematic.*
+
+![Instrumentation Amplifier Schematic](Design_Files/IC%20Design/Schematic/INA/INA.png)
+*Instrumentation amplifier schematic.*
+
+![RLD Schematic](Design_Files/IC%20Design/Schematic/RLD/RLD.png)
+*Right-leg drive schematic.*
+
+![Low-Pass Filter Schematic](Design_Files/IC%20Design/Schematic/LPF/LPF.png)
+*Active low-pass filter schematic.*
+
+![Programmable Gain Amplifier Schematic](Design_Files/IC%20Design/Schematic/PGA/PGA.png)
+*Programmable gain amplifier schematic.*
+
+![Output Buffer Schematic](Design_Files/IC%20Design/Schematic/BUFFER/BUFFER.png)
+*Output buffer schematic.*
+
+![Selector Schematic](Design_Files/IC%20Design/Schematic/SEL/SEL.png)
+*Analog selector schematic.*
+
+![Transmission Gate Schematic](Design_Files/IC%20Design/Schematic/TG/TG.png)
+*Transmission-gate schematic.*
+
+![Inverter Schematic](Design_Files/IC%20Design/Schematic/INV/INV.png)
+*Inverter schematic.*
+
 ---
 
 ## 3. Transistor-Level Sizing & $g_m/I_D$ Methodology
@@ -244,10 +288,9 @@ The combined INA+RLD testbench is analyzed at all 45 process/environment corners
 | Input CM suppression @ 150 Hz | dB | 53.260 | 51.686 | `SSVLTL` |
 | Input-referred noise 0.05–150 Hz | µVrms | 2.671 | 3.116 | `SSVLTH` |
 | Output CM error | mV | -0.057 | 33.025 | `SSNOMTH` |
-| RLD output peak-to-peak excursion during CM interference | mV | 2.743 | 2.743 | `FFVHNOM` |
-| Peak \|I<sub>RLD</sub>\| during CM interference | nA | 3.069 | 3.095 | `FFVLTH` |
-| Differential gain before / during CM interference | V/V | 231.355 / 231.356 | — | — |
-| Gain change during CM interference | % | 9.938e-05 | 6.490e-04 | `NOMVHTL` |
+| RLD Swing Ratio | % | 0.914 | 0.914 | `FFVHNOM` |
+| RLD Peak Current | nA | 3.069 | 3.095 | `FFVLTH` |
+| CM Interference Gain Change | % | 9.938e-05 | 6.490e-04 | `NOMVHTL` |
 | RLD rail headroom | V | — | 1.497 | `FFVLTH` |
 
 The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF, and 100.67° phase margin. The INA differential path has separate nominal −3 dB bandwidths of 263.040 kHz (stage 1), 2581.724 kHz (stage 2), and 260.399 kHz (total). The selector switching transient uses `nom.sel_tran_nom.txt`: `SEL` changes from 0 V to 3.3 V at 200 ms, and the output changes from the approximately 10 Hz internal waveform to the approximately 25 Hz external waveform.
