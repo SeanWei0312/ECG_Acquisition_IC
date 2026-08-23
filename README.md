@@ -61,9 +61,9 @@ All results represent deterministic pre-layout schematic simulations on the Glob
 | | Differential Settling Time ($2\text{ mV}$) | 153.6 ns | 236.6 ns | SSVLTL |
 | | CMFB Phase Margin / Settling | 86.428° / 313.6 ns | 84.1° / 507.1 ns | FFVLTH / SSVLTH |
 | **INA + RLD (BAL)** | Total current / power | 4.441 mA / 14.655 mW | 5.937 mA / 21.373 mW | FFVHTH |
-| | Stage-1 / Stage-2 midband gain @ 10 Hz | 58.330 / 3.966 V/V | -2.783% / -0.842% error | — |
-| | Total INA midband gain @ 10 Hz | 231.355 V/V (47.286 dB) | 3.815% gain error | FFVLTL |
-| | Stage-1 / Stage-2 / Total INA -3 dB bandwidth | 263.040 / 2581.724 / 260.399 kHz | 178.714 kHz total | SSVLTH |
+| | S1 / S2 gain @ 10 Hz | 58.330 / 3.966 V/V | -2.783% / -0.842% error | — |
+| | INA gain @ 10 Hz | 231.355 V/V (47.286 dB) | 3.815% gain error | FFVLTL |
+| | S1 / S2 / INA -3 dB bandwidth | 263.040 / 2581.724 / 260.399 kHz | 178.714 kHz total | SSVLTH |
 | | RLD loop UGF | 0.946 kHz | 0.717 kHz | SSVLTL |
 | | RLD phase margin | 100.673° | 100.083° | FFVLTH |
 | | Input CM suppression @ 60 Hz | 55.072 dB | 54.646 dB | SSVLTL |

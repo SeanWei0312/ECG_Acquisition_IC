@@ -226,22 +226,24 @@ The combined INA+RLD testbench is analyzed at all 45 process/environment corners
 | :--- | :---: | :---: | :---: | :---: |
 | Total current | mA | 4.441 | 5.937 | `FFVHTH` |
 | Total power | mW | 14.655 | 21.373 | `FFVHTH` |
-| Stage-1 midband gain | V/V | 58.330 | — | — |
-| Stage-1 gain error | % | -2.783 | — | — |
-| Stage-1 −3 dB bandwidth | kHz | 263.040 | — | — |
-| Stage-2 midband gain | V/V | 3.966 | — | — |
-| Stage-2 gain error | % | -0.842 | — | — |
-| Stage-2 −3 dB bandwidth | kHz | 2581.724 | — | — |
-| Total INA midband gain | V/V | 231.355 | — | — |
-| Total INA midband gain | dB | 47.286 | — | — |
-| Total INA gain error | % | -3.602 | 3.815 | `FFVLTL` |
-| Total INA −3 dB bandwidth | kHz | 260.399 | 178.714 | `SSVLTH` |
+| S1 gain | V/V | 58.330 | — | — |
+| S1 gain dB | dB | 35.318 | — | — |
+| S1 gain error | % | -2.783 | — | — |
+| S1 −3 dB bandwidth | kHz | 263.040 | — | — |
+| S2 gain | V/V | 3.966 | — | — |
+| S2 gain dB | dB | 11.968 | — | — |
+| S2 gain error | % | -0.842 | — | — |
+| S2 −3 dB bandwidth | kHz | 2581.724 | — | — |
+| INA gain | V/V | 231.355 | — | — |
+| INA gain dB | dB | 47.286 | — | — |
+| INA gain error | % | -3.602 | 3.815 | `FFVLTL` |
+| INA −3 dB bandwidth | kHz | 260.399 | 178.714 | `SSVLTH` |
 | RLD loop UGF | kHz | 0.946 | 0.717 | `SSVLTL` |
 | RLD phase margin | deg | 100.673 | 100.083 | `FFVLTH` |
 | Input CM suppression @ 60 Hz | dB | 55.072 | 54.646 | `SSVLTL` |
 | Input CM suppression @ 150 Hz | dB | 53.260 | 51.686 | `SSVLTL` |
 | Input-referred noise 0.05–150 Hz | µVrms | 2.671 | 3.116 | `SSVLTH` |
-| Output common-mode error vs VREF | mV | -0.057 | 33.025 | `SSNOMTH` |
+| Output CM error | mV | -0.057 | 33.025 | `SSNOMTH` |
 | RLD output peak-to-peak excursion during CM interference | mV | 2.743 | 2.743 | `FFVHNOM` |
 | Peak \|I<sub>RLD</sub>\| during CM interference | nA | 3.069 | 3.095 | `FFVLTH` |
 | Differential gain before / during CM interference | V/V | 231.355 / 231.356 | — | — |

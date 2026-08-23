@@ -205,30 +205,30 @@ rows = [
     "Set conditions",                              ""
     "AVDD",                                        "V"
     "Temperature",                                 "C"
-    "Stage-1 target gain",                         "V/V"
-    "Stage-2 target gain",                         "V/V"
-    "Total INA target gain",                       "V/V"
+    "S1 target gain",                              "V/V"
+    "S2 target gain",                              "V/V"
+    "INA target gain",                             "V/V"
     "",                                            ""
     "Operating point",                             ""
     "Total current",                               "A"
     "Total power",                                 "W"
-    "Output common-mode error vs VREF",             "V"
-    "RLD DC error vs VREF",                        "V"
+    "Output CM error",                              "V"
+    "RLD DC error",                                 "V"
     "",                                            ""
     "INA",                                         ""
-    "Stage-1 midband gain",                        "V/V"
-    "Stage-1 gain error",                          "%"
-    "Stage-1 -3 dB bandwidth",                    "kHz"
-    "Stage-2 midband gain",                        "V/V"
-    "Stage-2 gain error",                          "%"
-    "Stage-2 -3 dB bandwidth",                    "kHz"
-    "Total INA midband gain",                      "V/V"
-    "Total INA midband gain",                      "dB"
-    "Total INA gain error",                        "%"
-    "Gain @ 0.05 Hz",                              "dB"
-    "Gain @ 150 Hz",                               "dB"
+    "S1 gain",                                    "V/V"
+    "S1 gain dB",                                 "dB"
+    "S1 gain error",                               "%"
+    "S1 -3 dB bandwidth",                          "kHz"
+    "S2 gain",                                    "V/V"
+    "S2 gain dB",                                 "dB"
+    "S2 gain error",                               "%"
+    "S2 -3 dB bandwidth",                          "kHz"
+    "INA gain",                                   "V/V"
+    "INA gain dB",                                "dB"
+    "INA gain error",                              "%"
     "Gain flatness 0.05-150 Hz",                   "dB"
-    "Total INA -3 dB bandwidth",                   "kHz"
+    "INA -3 dB bandwidth",                         "kHz"
     "",                                            ""
     "RLD",                                         ""
     "RLD loop UGF",                                "Hz"
@@ -312,9 +312,7 @@ result.stage1Bandwidth3dB_Hz = upperCrossing(f,stage1Gain_dB, ...
     20*log10(stage1Gain10_VV)-3,10);
 result.stage2Bandwidth3dB_Hz = upperCrossing(f,stage2Gain_dB, ...
     20*log10(stage2Gain10_VV)-3,10);
-result.gain005_dB = interpLogFrequency(f,totalGain_dB,0.05);
 result.gain10_dB = interpLogFrequency(f,totalGain_dB,10);
-result.gain150_dB = interpLogFrequency(f,totalGain_dB,150);
 result.gain10_VV = interpLogFrequency(f,abs(total),10);
 result.gainError_pct = 100*(result.gain10_VV/cfg.diffGainTarget_VV-1);
 bandFrequency_Hz = [cfg.noiseBand_Hz(1); ...
@@ -442,30 +440,26 @@ for rowIndex = 1:size(rows,1)
     switch rows(rowIndex,1)
         case "AVDD", values(rowIndex) = m.vdd_V;
         case "Temperature", values(rowIndex) = temperature_C;
-        case "Stage-1 target gain", values(rowIndex) = 60;
-        case "Stage-2 target gain", values(rowIndex) = 4;
-        case "Total INA target gain", values(rowIndex) = diffGainTarget_VV;
+        case "S1 target gain", values(rowIndex) = 60;
+        case "S2 target gain", values(rowIndex) = 4;
+        case "INA target gain", values(rowIndex) = diffGainTarget_VV;
         case "Total current", values(rowIndex) = m.totalCurrent_A;
         case "Total power", values(rowIndex) = m.totalPower_W;
-        case "Output common-mode error vs VREF", values(rowIndex) = m.outCmError_V;
-        case "RLD DC error vs VREF", values(rowIndex) = m.rldDcError_V;
-        case "Stage-1 midband gain", values(rowIndex) = m.diff.stage1Gain10_VV;
-        case "Stage-1 gain error", values(rowIndex) = m.diff.stage1GainError_pct;
-        case "Stage-1 -3 dB bandwidth", values(rowIndex) = m.diff.stage1Bandwidth3dB_Hz/1e3;
-        case "Stage-2 midband gain", values(rowIndex) = m.diff.stage2Gain10_VV;
-        case "Stage-2 gain error", values(rowIndex) = m.diff.stage2GainError_pct;
-        case "Stage-2 -3 dB bandwidth", values(rowIndex) = m.diff.stage2Bandwidth3dB_Hz/1e3;
-        case "Total INA midband gain"
-            if rows(rowIndex,2) == "V/V"
-                values(rowIndex) = m.diff.gain10_VV;
-            else
-                values(rowIndex) = m.diff.gain10_dB;
-            end
-        case "Total INA gain error", values(rowIndex) = m.diff.gainError_pct;
-        case "Gain @ 0.05 Hz", values(rowIndex) = m.diff.gain005_dB;
-        case "Gain @ 150 Hz", values(rowIndex) = m.diff.gain150_dB;
+        case "Output CM error", values(rowIndex) = m.outCmError_V;
+        case "RLD DC error", values(rowIndex) = m.rldDcError_V;
+        case "S1 gain", values(rowIndex) = m.diff.stage1Gain10_VV;
+        case "S1 gain dB", values(rowIndex) = 20*log10(m.diff.stage1Gain10_VV);
+        case "S1 gain error", values(rowIndex) = m.diff.stage1GainError_pct;
+        case "S1 -3 dB bandwidth", values(rowIndex) = m.diff.stage1Bandwidth3dB_Hz/1e3;
+        case "S2 gain", values(rowIndex) = m.diff.stage2Gain10_VV;
+        case "S2 gain dB", values(rowIndex) = 20*log10(m.diff.stage2Gain10_VV);
+        case "S2 gain error", values(rowIndex) = m.diff.stage2GainError_pct;
+        case "S2 -3 dB bandwidth", values(rowIndex) = m.diff.stage2Bandwidth3dB_Hz/1e3;
+        case "INA gain", values(rowIndex) = m.diff.gain10_VV;
+        case "INA gain dB", values(rowIndex) = m.diff.gain10_dB;
+        case "INA gain error", values(rowIndex) = m.diff.gainError_pct;
         case "Gain flatness 0.05-150 Hz", values(rowIndex) = m.diff.flatness_dB;
-        case "Total INA -3 dB bandwidth", values(rowIndex) = m.diff.bandwidth3dB_Hz/1e3;
+        case "INA -3 dB bandwidth", values(rowIndex) = m.diff.bandwidth3dB_Hz/1e3;
         case "RLD loop UGF", values(rowIndex) = m.loop.crossover_Hz;
         case "RLD phase margin", values(rowIndex) = m.loop.phaseMargin_deg;
         case "Input CM suppression @ 60 Hz", values(rowIndex) = m.cm.inputSuppression_dB(1);
@@ -653,15 +647,15 @@ function result = buildWorstCaseTable( ...
 definitions = [
     "Total current",                            "Total current",                         "max"
     "Total power",                              "Total power",                           "max"
-    "Total INA gain error",                     "Total INA gain error",                  "maxabs"
+    "INA gain error",                           "INA gain error",                        "maxabs"
     "Gain flatness 0.05-150 Hz",                "Gain flatness 0.05-150 Hz",              "max"
-    "Total INA -3 dB bandwidth",                "Total INA -3 dB bandwidth",              "min"
+    "INA -3 dB bandwidth",                      "INA -3 dB bandwidth",                    "min"
     "RLD phase margin",                         "RLD phase margin",                      "min"
     "Input CM suppression @ 60 Hz",             "Input CM suppression @ 60 Hz",          "min"
     "Input CM suppression @ 150 Hz",            "Input CM suppression @ 150 Hz",         "min"
     "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
-    "Output common-mode error vs VREF",         "Output common-mode error vs VREF",      "maxabs"
-    "RLD DC error vs VREF",                     "RLD DC error vs VREF",                  "maxabs"
+    "Output CM error",                          "Output CM error",                       "maxabs"
+    "RLD DC error",                             "RLD DC error",                          "maxabs"
     "RLD output peak-to-peak excursion during CM interference", "RLD output peak-to-peak excursion during CM interference", "max"
     "RLD rail headroom",                        "__RLD_RAIL_HEADROOM__",                 "min"
     "Peak |I_RLD| during CM interference",      "__RLD_PEAK_CURRENT__",                  "max"

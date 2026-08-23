@@ -1,15 +1,15 @@
 Parameter,Unit,Value,Corner
 Total current,mA,5.937,FFVHTH
 Total power,mW,21.373,FFVHTH
-Total INA gain error,%,3.815,FFVLTL
+INA gain error,%,3.815,FFVLTL
 Gain flatness 0.05-150 Hz,dB,3.013e-06,SSVLTH
-Total INA -3 dB bandwidth,kHz,178.714,SSVLTH
+INA -3 dB bandwidth,kHz,178.714,SSVLTH
 RLD phase margin,deg,100.083,FFVLTH
 Input CM suppression @ 60 Hz,dB,54.646,SSVLTL
 Input CM suppression @ 150 Hz,dB,51.686,SSVLTL
 Input-referred noise 0.05-150 Hz,uVrms,3.116,SSVLTH
-Output common-mode error vs VREF,mV,33.025,SSNOMTH
-RLD DC error vs VREF,uV,24.367,SSVHTL
+Output CM error,mV,33.025,SSNOMTH
+RLD DC error,uV,24.367,SSVHTL
 RLD output peak-to-peak excursion during CM interference,mV,2.743,FFVHNOM
 RLD rail headroom,V,1.497,FFVLTH
 Peak |I_RLD| during CM interference,nA,3.095,FFVLTH
