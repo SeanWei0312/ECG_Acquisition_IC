@@ -29,7 +29,8 @@ This repository contains a pre-layout GF180 integrated circuit design for electr
 | **BIAS / SEL** | 45-point PVT + 2D Grid | 7 CSV reports (`table`, `startup`, `sel`, `dc2d`, `global_worst_case`, `reference`), 35 startup transient runs (**0 failures**), 6 nominal plots |
 | **SE OTA** | **45-point PVT** (5 processes $\times$ 9 V-T) | 450 raw ngspice exports, 9-column comparison CSV (`SEOTA_table_report.csv`), 45-point worst-case CSV (`SEOTA_worst_case_report.csv`), 8 nominal plots |
 | **FD OTA** | **45-point PVT** (5 processes $\times$ 9 V-T) | 9-column comparison CSV (`FDOTA_table_report.csv`), 45-point worst-case CSV (`FDOTA_worst_case_report.csv`), 9 nominal plots |
-| **INA + RLD** | **45-point PVT** (BAL report) + 45-corner MIS stress audit | 9-column BAL comparison CSV, full-PVT BAL CSV, worst-case CSV, 7 nominal plots including switching SEL transient |
+| **INA + RLD** | **45-point PVT** (BAL report) + 45-corner MIS stress audit | 9-column BAL comparison CSV, full-PVT BAL CSV, worst-case CSV, 6 nominal plots including switching SEL transient |
+| **INA + RLD MC** | **MM / GL / FULL** scalar distributions | Separate MC summary, comparison/full-statistics CSVs, and offset/gain-error/RLD-PM/RLD-UGF histograms |
 | **Integrated AFE** | Multi-Stage Chain | Complete top-level schematic, AC/noise/transient testbenches, and multi-stage analyzer source (`AFE_Analyze.m`) |
 | **$g_m/I_D$ Sizing** | Device Characterization | Portable NMOS/PMOS MATLAB generators, target-$g_m/I_D$ terminal tables, and six 2500×1000 plots per device |
 
@@ -37,7 +38,7 @@ This repository contains a pre-layout GF180 integrated circuit design for electr
 
 ## Headline Performance Summary
 
-All results represent deterministic pre-layout schematic simulations on the GlobalFoundries 180 nm MCU PDK (`gf180mcu`).
+All PVT results represent deterministic pre-layout schematic simulations on the GlobalFoundries 180 nm MCU PDK (`gf180mcu`). Monte Carlo results are reported separately from the three scalar MM/GL/FULL summary exports.
 
 | Circuit Block | Key Metric | Nominal Value | Full-PVT Worst Case | Worst-Case Corner |
 | :--- | :--- | :---: | :---: | :---: |
@@ -72,6 +73,18 @@ All results represent deterministic pre-layout schematic simulations on the Glob
 | | RLD Swing Ratio | 0.914% | 0.914% | FFVHNOM |
 | | RLD Peak Current | 3.069 nA | 3.095 nA | FFVLTH |
 
+### INA + RLD Monte Carlo status
+
+The separate `INA_RLD_MC_Analyze.m` reads scalar summaries from `MM`, `GL`, and `FULL` runs and generates mean, standard deviation, mean ± 3σ, observed extrema, run validity, and histogram reports. The current 200-run exports contain 200 finite rows in each mode. The analyzer reports two input-data warnings: `GL` has no variation across runs, and `FULL` matches `MM` sample-for-sample. These indicate that global variation is not currently enabled in the GL/FULL ngspice runs; they are not MATLAB calculation failures.
+
+MC outputs are written to `Measurement_Results/IC_Simulation/INA_RLD/`:
+
+- `INA_RLD_MC_Summary.txt`
+- `INA_RLD_MC_Statistics.csv`
+- `INA_RLD_MC_Comparison.csv`
+- `INA_RLD_MC_FULL_Summary.csv`
+- `MC_Plots/Fig_MC_01_Vos_Histogram.png` through `Fig_MC_05_Current_Histogram.png`
+
 For detailed characterization result plots and full methodology, see [Project_Report.md](Project_Report.md).
 
 ---
@@ -96,7 +109,7 @@ ECG_Acquisition_IC/
 │       ├── BIAS/                                      # BIAS_Analyze.m, CSV reports, and startup plots
 │       ├── SE_OTA/                                    # SEOTA_Analyze.m, 45-PVT CSV reports, and plots
 │       ├── FD_OTA/                                    # FDOTA_Analyze.m, 45-PVT CSV reports, and plots
-│       ├── INA_RLD/                                   # INA_RLD_Analyze.m, BAL/MIS reports, and seven plots
+│       ├── INA_RLD/                                   # PVT/MIS reports, MC analyzer, and nominal/MC plots
 │       ├── AFE/                                       # Top-level AFE_Analyze.m analyzer source
 │       └── Gm_Id/                                     # Portable NMOS/PMOS gm/Id generators, data, tables, and plots
 └── 2026-sscs-chipathon/                               # Upstream SSCS Chipathon reference snapshot
@@ -121,10 +134,14 @@ matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OT
 # 4. INA + RLD 45-PVT Analysis
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
 
-# 5. NMOS gm/Id Characterization
+# 5. INA + RLD Monte Carlo Analysis
+# Requires MM/GL/FULL.mc_summary.txt exports documented in INA_RLD_MC_Analyze.m.
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_MC_Analyze"
+
+# 6. NMOS gm/Id Characterization
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','NMOS_Gm_Id')); NMOS_Gm_Id"
 
-# 6. PMOS gm/Id Characterization
+# 7. PMOS gm/Id Characterization
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','PMOS_Gm_Id')); PMOS_Gm_Id"
 ```
 

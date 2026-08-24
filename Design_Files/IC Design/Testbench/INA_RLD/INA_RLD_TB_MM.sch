@@ -139,15 +139,19 @@ value="
 .include $::180MCU_MODELS/design.ngspice
 
 .param sw_stat_global=0
-.param sw_stat_mismatch=0
+.param sw_stat_mismatch=1
 
-.lib $::180MCU_MODELS/sm141064.ngspice fs
+.param mc_skew=3
+.param res_mc_skew=3
+.param cap_mc_skew=3
+
+.lib $::180MCU_MODELS/sm141064.ngspice statistical
 .lib $::180MCU_MODELS/sm141064.ngspice res_typical
 .lib $::180MCU_MODELS/sm141064.ngspice mimcap_typical
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
 .lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
 
-.csparam PROC_ID=3
+.csparam PROC_ID=5
 "}
 C {devices/code_shown.sym} 80 -790 0 0 {name=SETUP
 only_toplevel=true
@@ -204,121 +208,68 @@ option method=gear
 option maxord=2
 option plotwinsize=0
 
-if $&PROC_ID = 0
-set proc=NOM
+if $&PROC_ID = 5
+set proc=MM
 else
-if $&PROC_ID = 1
-set proc=FF
+if $&PROC_ID = 6
+set proc=GL
 else
-if $&PROC_ID = 2
-set proc=SS
-else
-if $&PROC_ID = 3
-set proc=FS
-else
-set proc=SF
-end
-end
+set proc=FULL
 end
 end
 
 shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.*.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
 
-foreach vddval 3.3 3.0 3.6
-foreach tval 27 -40 125
+echo run vos_in_V out_cm_error_V rld_dc_error_V idd_A power_W s1_gain s2_gain ina_gain ina_gain_error_pct ina_gain_150 rld_ugf_Hz rld_pm_deg > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
 
-if $vddval = 3.3
-if $tval = 27
-set env=nom
-else
-if $tval = -40
-set env=tl
-else
-set env=th
-end
-end
-else
-if $vddval = 3.0
-if $tval = 27
-set env=vl
-else
-if $tval = -40
-set env=vltl
-else
-set env=vlth
-end
-end
-else
-if $tval = 27
-set env=vh
-else
-if $tval = -40
-set env=vhtl
-else
-set env=vhth
-end
-end
-end
-end
+let run=1
+let mc_runs=$&MC_RUNS
 
-alterparam VDD_SET=$vddval
-alterparam TEMP_SET=$tval
-reset
+dowhile run <= mc_runs
+
+set runnum=$&run
+
+setseed $runnum
+mc_source
+
+option klu
+option numdgt=15
+option method=gear
+option maxord=2
+option plotwinsize=0
 
 save all
-save @m.xmbse0.m0[id]
-save @m.xmbse1.m0[id]
-save @m.xmbse2.m0[id]
-save @m.xmbfdc.m0[id]
-save @m.xmbcmfb.m0[id]
 
-foreach emode 0 1
-
-if $emode = 0
-set elec=bal
 alter RELECP 100k
 alter RELECN 100k
 alter CELECP 100n
 alter CELECN 100n
-else
-set elec=mis
-alter RELECP 100k
-alter RELECN 200k
-alter CELECP 100n
-alter CELECN 50n
-end
-
-
-* OP
-
 alter RRLD_SAFE 1Meg
+
 alter @VSEL[DC]=0
 alter @VDIFF[ACMAG]=0
 alter @VCMAC[ACMAG]=0
 alter @VLOOP[ACMAG]=0
 alter @VEXTDIFF[ACMAG]=0
 
+
+* OP
+
 op
 
-let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
-let vin_diff=v(INP)-v(INN)
-let se_cm=0.5*(v(SEOP)+v(SEON))-v(AGND)
-let se_diff=v(SEOP)-v(SEON)
-let ina_out_cm=0.5*(v(INA_OUTP)+v(INA_OUTN))-v(AGND)
-let ina_out_diff=v(INA_OUTP)-v(INA_OUTN)
+let ina_offset_out=v(INA_OUTP)-v(INA_OUTN)
 let out_cm=0.5*(v(OUTP)+v(OUTN))-v(AGND)
-let out_diff=v(OUTP)-v(OUTN)
+let out_cm_error=out_cm-(v(REF)-v(AGND))
+let rld_dc_error=v(RLD)-v(REF)
 let idd_total=abs(vavdd#branch)
 let power_total=(v(AVDD)-v(AGND))*idd_total
-let irld=abs(vloop#branch)
-let ibse0=abs(@m.xmbse0.m0[id])
-let ibse1=abs(@m.xmbse1.m0[id])
-let ibse2=abs(@m.xmbse2.m0[id])
-let ibfdc=abs(@m.xmbfdc.m0[id])
-let ibcmfb=abs(@m.xmbcmfb.m0[id])
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}_\{$elec\}.txt v(AVDD) v(REF) v(BP) vin_cm vin_diff v(SEOP) v(SEON) se_cm se_diff v(INA_OUTP) v(INA_OUTN) ina_out_cm ina_out_diff v(OUTP) v(OUTN) out_cm out_diff v(RLD) v(BODY) irld idd_total power_total ibse0 ibse1 ibse2 ibfdc ibcmfb
+set ina_offset_out_val=$&ina_offset_out
+set out_cm_error_val=$&out_cm_error
+set rld_dc_error_val=$&rld_dc_error
+set idd_val=$&idd_total
+set power_val=$&power_total
 
 destroy all
 
@@ -333,103 +284,30 @@ alter @VCMAC[ACMAG]=0
 alter @VLOOP[ACMAG]=0
 alter @VEXTDIFF[ACMAG]=0
 
-ac dec 200 0.01 10Meg
+ac dec 100 0.1 1Meg
 
 let vin_diff=v(INP)-v(INN)
 let se_diff=v(SEOP)-v(SEON)
-let ina_out_diff=v(INA_OUTP)-v(INA_OUTN)
-let out_diff=v(OUTP)-v(OUTN)
+let ina_diff=v(INA_OUTP)-v(INA_OUTN)
 
-let vin_diff_real=real(vin_diff)
-let vin_diff_imag=imag(vin_diff)
-let se_diff_real=real(se_diff)
-let se_diff_imag=imag(se_diff)
-let ina_out_diff_real=real(ina_out_diff)
-let ina_out_diff_imag=imag(ina_out_diff)
-let out_diff_real=real(out_diff)
-let out_diff_imag=imag(out_diff)
-let rld_real=real(v(RLD))
-let rld_imag=imag(v(RLD))
+let s1_gain=mag(se_diff/vin_diff)
+let s2_gain=mag(ina_diff/se_diff)
+let ina_gain=mag(ina_diff/vin_diff)
 
-setscale frequency
+meas ac s1_gain_10 find s1_gain at=10
+meas ac s2_gain_10 find s2_gain at=10
+meas ac ina_gain_10 find ina_gain at=10
+meas ac ina_gain_150 find ina_gain at=150
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}_\{$elec\}.txt vin_diff_real vin_diff_imag se_diff_real se_diff_imag ina_out_diff_real ina_out_diff_imag out_diff_real out_diff_imag rld_real rld_imag
+let ina_gain_error_pct=100*(ina_gain_10/240-1)
+let vos_in=$ina_offset_out_val/ina_gain_10
 
-destroy all
-
-
-* RLD OFF
-
-alter RRLD_SAFE 1e15
-alter @VSEL[DC]=0
-alter @VDIFF[ACMAG]=0
-alter @VCMAC[ACMAG]=1
-alter @VCMAC[ACPHASE]=0
-alter @VLOOP[ACMAG]=0
-alter @VEXTDIFF[ACMAG]=0
-
-ac dec 200 0.01 10Meg
-
-let vcm_src=v(CMSRC)-v(AGND)
-let body=v(BODY)-v(AGND)
-let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
-let se_cm=0.5*(v(SEOP)+v(SEON))-v(AGND)
-let out_diff=v(OUTP)-v(OUTN)
-
-let vcm_src_real=real(vcm_src)
-let vcm_src_imag=imag(vcm_src)
-let body_real=real(body)
-let body_imag=imag(body)
-let vin_cm_real=real(vin_cm)
-let vin_cm_imag=imag(vin_cm)
-let se_cm_real=real(se_cm)
-let se_cm_imag=imag(se_cm)
-let out_diff_real=real(out_diff)
-let out_diff_imag=imag(out_diff)
-let rld_real=real(v(RLD))
-let rld_imag=imag(v(RLD))
-
-setscale frequency
-
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.cm_off_ac_\{$env\}_\{$elec\}.txt vcm_src_real vcm_src_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag out_diff_real out_diff_imag rld_real rld_imag
-
-destroy all
-
-
-* RLD ON
-
-alter RRLD_SAFE 1Meg
-alter @VSEL[DC]=0
-alter @VDIFF[ACMAG]=0
-alter @VCMAC[ACMAG]=1
-alter @VCMAC[ACPHASE]=0
-alter @VLOOP[ACMAG]=0
-alter @VEXTDIFF[ACMAG]=0
-
-ac dec 200 0.01 10Meg
-
-let vcm_src=v(CMSRC)-v(AGND)
-let body=v(BODY)-v(AGND)
-let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
-let se_cm=0.5*(v(SEOP)+v(SEON))-v(AGND)
-let out_diff=v(OUTP)-v(OUTN)
-
-let vcm_src_real=real(vcm_src)
-let vcm_src_imag=imag(vcm_src)
-let body_real=real(body)
-let body_imag=imag(body)
-let vin_cm_real=real(vin_cm)
-let vin_cm_imag=imag(vin_cm)
-let se_cm_real=real(se_cm)
-let se_cm_imag=imag(se_cm)
-let out_diff_real=real(out_diff)
-let out_diff_imag=imag(out_diff)
-let rld_real=real(v(RLD))
-let rld_imag=imag(v(RLD))
-
-setscale frequency
-
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.cm_on_ac_\{$env\}_\{$elec\}.txt vcm_src_real vcm_src_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag out_diff_real out_diff_imag rld_real rld_imag
+set vos_val=$&vos_in
+set s1_val=$&s1_gain_10
+set s2_val=$&s2_gain_10
+set ina_val=$&ina_gain_10
+set ina_err_val=$&ina_gain_error_pct
+set ina150_val=$&ina_gain_150
 
 destroy all
 
@@ -444,120 +322,28 @@ alter @VLOOP[ACMAG]=1
 alter @VLOOP[ACPHASE]=0
 alter @VEXTDIFF[ACMAG]=0
 
-ac dec 200 0.01 10Meg
+ac dec 100 0.1 100k
 
 let loop_in=v(RLD_DRV)-v(AGND)
 let loop_out=v(RLD)-v(AGND)
-let body=v(BODY)-v(AGND)
-let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
-let se_cm=0.5*(v(SEOP)+v(SEON))-v(AGND)
 
-let loop_in_real=real(loop_in)
-let loop_in_imag=imag(loop_in)
-let loop_out_real=real(loop_out)
-let loop_out_imag=imag(loop_out)
-let body_real=real(body)
-let body_imag=imag(body)
-let vin_cm_real=real(vin_cm)
-let vin_cm_imag=imag(vin_cm)
-let se_cm_real=real(se_cm)
-let se_cm_imag=imag(se_cm)
+let loop_tf=-loop_out/loop_in
+let loop_mag=mag(loop_tf)
+let loop_phase=(180/3.141592653589793)*cph(loop_tf)
 
-setscale frequency
+meas ac rld_ugf when loop_mag=1 cross=1
+meas ac rld_phase find loop_phase at=$&rld_ugf
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.rld_loop_ac_\{$env\}_\{$elec\}.txt loop_in_real loop_in_imag loop_out_real loop_out_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag
+let rld_pm=180+rld_phase
+
+set ugf_val=$&rld_ugf
+set pm_val=$&rld_pm
+
+echo $runnum $vos_val $out_cm_error_val $rld_dc_error_val $idd_val $power_val $s1_val $s2_val $ina_val $ina_err_val $ina150_val $ugf_val $pm_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
 
 destroy all
 
-
-* NOISE
-
-alter RRLD_SAFE 1Meg
-alter @VSEL[DC]=0
-alter @VDIFF[ACMAG]=1
-alter @VDIFF[ACPHASE]=0
-alter @VCMAC[ACMAG]=0
-alter @VLOOP[ACMAG]=0
-alter @VEXTDIFF[ACMAG]=0
-
-option sparse
-
-noise v(VOUTDIFF) VDIFF dec 100 0.01 1k
-
-setplot previous
-setscale frequency
-
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}_\{$elec\}.txt onoise_spectrum inoise_spectrum
-
-destroy all
-
-
-* CM TRAN
-
-alter RRLD_SAFE 1Meg
-alter @VSEL[DC]=0
-alter @VDIFF[ACMAG]=0
-alter @VCMAC[ACMAG]=0
-alter @VLOOP[ACMAG]=0
-alter @VEXTDIFF[ACMAG]=0
-
-tran 10u 200m
-
-let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
-let vin_diff=v(INP)-v(INN)
-let se_cm=0.5*(v(SEOP)+v(SEON))-v(AGND)
-let se_diff=v(SEOP)-v(SEON)
-let ina_out_cm=0.5*(v(INA_OUTP)+v(INA_OUTN))-v(AGND)
-let ina_out_diff=v(INA_OUTP)-v(INA_OUTN)
-let out_cm=0.5*(v(OUTP)+v(OUTN))-v(AGND)
-let out_diff=v(OUTP)-v(OUTN)
-let irld=abs(vloop#branch)
-let idd_total=abs(vavdd#branch)
-
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.tran_\{$env\}_\{$elec\}.txt v(CMSRC) v(BODY) vin_cm vin_diff v(SEOP) v(SEON) se_cm se_diff v(INA_OUTP) v(INA_OUTN) ina_out_cm ina_out_diff v(RLD) v(OUTP) v(OUTN) out_cm out_diff irld idd_total
-
-destroy all
-
-end
-
-end
-end
-
-
-* SEL NOM
-
-if $&PROC_ID = 0
-
-alterparam VDD_SET=3.3
-alterparam TEMP_SET=27
-alterparam VCM_STEP_SET=0
-alterparam SEL_TRAN_HIGH_SET=3.3
-alterparam EXT_TRAN_AMP_SET=50m
-alterparam EXT_TRAN_FREQ_SET=25
-
-reset
-save all
-
-alter RELECP 100k
-alter RELECN 100k
-alter CELECP 100n
-alter CELECN 100n
-alter RRLD_SAFE 1Meg
-
-alter @VDIFF[ACMAG]=0
-alter @VCMAC[ACMAG]=0
-alter @VLOOP[ACMAG]=0
-alter @VEXTDIFF[ACMAG]=0
-
-tran 10u 400m
-
-let ina_out_diff=v(INA_OUTP)-v(INA_OUTN)
-let ext_in_diff=v(INA_EXTP)-v(INA_EXTN)
-let out_diff=v(OUTP)-v(OUTN)
-
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(INA_SEL) ina_out_diff ext_in_diff out_diff
-
-destroy all
+let run=run+1
 
 end
 

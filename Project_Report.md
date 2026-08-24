@@ -15,12 +15,12 @@ This report documents the design, transistor-level sizing, simulation methodolog
 1. **Master Bias & Reference (`BIAS` / `SEL`)**: Characterized across 5 process corners, continuous supply voltage sweeps ($3.0\text{--}3.6\text{ V}$), temperature sweeps ($-40^\circ\text{C}\text{ to }+125^\circ\text{C}$), 35 startup transient runs (**0 failures**), and analog multiplexer transmission accuracy ($< 26\text{ nV}$ error).
 2. **Single-Ended OTA (`SE_OTA`)**: Full 45-point PVT characterization ($5\text{ processes} \times 9\text{ V-T corners}$) covering open-loop stability, rejection, noise integration ($0.05\text{--}150\text{ Hz}$), closed-loop tracking, high-side headroom, and transient step settling.
 3. **Fully Differential OTA (`FD_OTA`)**: Full 45-point PVT characterization of the core amplifier with dynamic continuous-time common-mode feedback (`CMFB`), closed-loop differential tracking, input common-mode range, and step response.
-4. **Instrumentation Amplifier + Right-Leg Drive (`INA_RLD`)**: Full 45-point BAL report with a 45-corner MIS stress audit, nominal loop/transient characterization, and switching selector functional verification.
+4. **Instrumentation Amplifier + Right-Leg Drive (`INA_RLD`)**: Full 45-point BAL report with a 45-corner MIS stress audit, nominal loop/transient characterization, switching selector verification, and a separate MM/GL/FULL Monte Carlo analyzer.
 5. **$g_m/I_D$ Sizing Automation**: Semi-empirical transistor sizing based on continuous lookups of transconductance efficiency ($g_m/I_D$), current density ($I_D/W$), transit frequency ($f_T$), and self-gain ($g_m/g_{ds}$).
 6. **Data Integrity Pipeline**: All post-processing analyzers implement a strict numeric-first double-precision pipeline (`ngspice TXT -> double -> PVT worst-case selection -> SI scaling -> string format`), eliminating intermediate truncation and prefix errors.
 
 > [!NOTE]
-> All reported performance metrics are pre-layout schematic simulations. Monte Carlo mismatch analysis, physical layout parasitics (PEX), mixed-signal SAR ADC integration, and laboratory silicon validation are detailed in [Section 9](#9-limitations-and-future-work).
+> All reported performance metrics are pre-layout schematic simulations. Deterministic PVT results and the separate MM/GL/FULL Monte Carlo distributions are documented in this report; physical layout parasitics (PEX), mixed-signal SAR ADC integration, and laboratory silicon validation remain future work in [Section 9](#9-limitations-and-future-work).
 
 ---
 
@@ -293,7 +293,6 @@ The combined INA+RLD testbench is analyzed at all 45 process/environment corners
 | RLD Swing Ratio | % | 0.914 | 0.914 | `FFVHNOM` |
 | RLD Peak Current | nA | 3.069 | 3.095 | `FFVLTH` |
 | CM Interference Gain Change | % | 9.938e-05 | 6.490e-04 | `NOMVHTL` |
-| RLD rail headroom | V | — | 1.497 | `FFVLTH` |
 
 The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF, and 100.67° phase margin. The INA differential path has separate nominal −3 dB bandwidths of 263.040 kHz (stage 1), 2581.724 kHz (stage 2), and 260.399 kHz (total). The selector switching transient uses `nom.sel_tran_nom.txt`: `SEL` changes from 0 V to 3.3 V at 200 ms, and the output changes from the approximately 10 Hz internal waveform to the approximately 25 Hz external waveform.
 
@@ -313,7 +312,28 @@ The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF,
 *Figure 6.17: Nominal INA+RLD input-referred noise density.*
 
 ![SEL INT EXT Switching Functional Check](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_sel_functional_check.png)
-*Figure 6.19: Nominal selector switching control, available INT/EXT signals, and selected output.*
+*Figure 6.18: Nominal selector switching control, available INT/EXT signals, and selected output.*
+
+### 6.6 INA + RLD Monte Carlo Analysis
+
+`INA_RLD_MC_Analyze.m` is intentionally separate from the deterministic PVT analyzer. It reads only `MM.Result_txt/MM.mc_summary.txt`, `GL.Result_txt/GL.mc_summary.txt`, and `FULL.Result_txt/FULL.mc_summary.txt`, then reports the mean, σ, mean ± 3σ, observed minimum/maximum, worst absolute value, valid/failed runs, and run-completion yield for each scalar metric.
+
+The current exports contain 200 finite rows for each mode. The current MC data also produces two data-quality warnings: GL is constant across all runs, and FULL is identical to MM sample-for-sample. Therefore the present files do not yet demonstrate global process variation; the analyzer leaves this visible instead of treating the data as a valid global-variation result. Specification yield remains `N/A` until explicit MC limits are entered in `INA_RLD_MC_Analyze.m`.
+
+![INA+RLD MC input-referred offset](Measurement_Results/IC_Simulation/INA_RLD/MC_Plots/Fig_MC_01_Vos_Histogram.png)
+*Figure 6.19: MC input-referred offset distribution for MM and FULL.*
+
+![INA+RLD MC INA gain error](Measurement_Results/IC_Simulation/INA_RLD/MC_Plots/Fig_MC_02_INA_Gain_Error_Histogram.png)
+*Figure 6.20: MC INA gain-error distribution for MM, GL, and FULL.*
+
+![INA+RLD MC RLD phase margin](Measurement_Results/IC_Simulation/INA_RLD/MC_Plots/Fig_MC_03_RLD_PM_Histogram.png)
+*Figure 6.21: MC RLD phase-margin distribution with the 60° reference limit.*
+
+![INA+RLD MC RLD UGF](Measurement_Results/IC_Simulation/INA_RLD/MC_Plots/Fig_MC_04_RLD_UGF_Histogram.png)
+*Figure 6.22: MC RLD unity-gain-frequency distribution.*
+
+![INA+RLD MC current](Measurement_Results/IC_Simulation/INA_RLD/MC_Plots/Fig_MC_05_Current_Histogram.png)
+*Figure 6.23: MC total-current distribution.*
 
 ---
 
@@ -341,7 +361,12 @@ The nominal RLD loop has a 195 Hz return-ratio −3 dB bandwidth, 0.946 kHz UGF,
   - [`INA_RLD_full_pvt_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_full_pvt_report.csv): Full 45-corner BAL dataset
   - [`INA_RLD_worst_case_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_worst_case_report.csv): Full-PVT BAL worst-case summary
   - [`NOM.INA_RLD_summary.csv`](Measurement_Results/IC_Simulation/INA_RLD/NOM.INA_RLD_summary.csv): Compatibility summary export
-  - [`nom.sel_tran_nom.txt`](Measurement_Results/IC_Simulation/INA_RLD/nom.Result_txt/nom.sel_tran_nom.txt): Nominal SEL switching transient source for Figure 6.19
+  - [`INA_RLD_MC_Analyze.m`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_MC_Analyze.m): Separate MM/GL/FULL Monte Carlo distribution analyzer
+  - [`INA_RLD_MC_Summary.txt`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_MC_Summary.txt): MC run status, comparison, and FULL statistical summary
+  - [`INA_RLD_MC_Statistics.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_MC_Statistics.csv): Per-mode/per-metric statistics
+  - [`INA_RLD_MC_Comparison.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_MC_Comparison.csv): MM/GL/FULL sigma comparison
+  - [`INA_RLD_MC_FULL_Summary.csv`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_MC_FULL_Summary.csv): FULL-mode statistical summary
+  - [`nom.sel_tran_nom.txt`](Measurement_Results/IC_Simulation/INA_RLD/nom.Result_txt/nom.sel_tran_nom.txt): Nominal SEL switching transient source for Figure 6.18
 - **$g_m/I_D$ Characterization**:
   - [`NMOS_Gm_Id.m`](Measurement_Results/IC_Simulation/Gm_Id/NMOS_Gm_Id/NMOS_Gm_Id.m): NMOS target-$g_m/I_D$ table and six standardized plots
   - [`PMOS_Gm_Id.m`](Measurement_Results/IC_Simulation/Gm_Id/PMOS_Gm_Id/PMOS_Gm_Id.m): PMOS target-$g_m/I_D$ table and six standardized plots
@@ -367,10 +392,14 @@ matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OT
 # 4. INA + RLD Full 45-PVT Analysis
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
 
-# 5. NMOS gm/Id Characterization
+# 5. INA + RLD Monte Carlo Analysis
+# Requires MM/GL/FULL.mc_summary.txt exports; see INA_RLD_MC_Analyze.m for the column schema.
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_MC_Analyze"
+
+# 6. NMOS gm/Id Characterization
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','NMOS_Gm_Id')); NMOS_Gm_Id"
 
-# 6. PMOS gm/Id Characterization
+# 7. PMOS gm/Id Characterization
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','PMOS_Gm_Id')); PMOS_Gm_Id"
 ```
 
@@ -383,7 +412,7 @@ All analysis routines have been validated in MATLAB R2026a under Windows and Lin
 | Phase | Milestone | Objective / Completion Criteria |
 | :---: | :--- | :--- |
 | **Phase 1** | **Top-Level AFE Verification** | Execute full-chain transient and frequency-domain verification across the cascaded `INA -> LPF -> PGA -> BUFFER` path. |
-| **Phase 2** | **Mismatch & Monte Carlo** | Run statistical mismatch simulations to establish true yield, realistic CMRR/PSRR floors, and statistical input offset bounds. |
+| **Phase 2** | **Mismatch & Monte Carlo** | Complete GL/FULL global-variation enables, establish true joint yield, realistic CMRR/PSRR floors, and statistical input-offset bounds. |
 | **Phase 3** | **Physical Layout & Extraction** | Complete DRC/LVS-clean layout on GF180 1P6M, extract parasitic $RC$ networks, and perform post-layout extracted re-simulation. |
 | **Phase 4** | **Mixed-Signal ADC Integration** | Integrate the 10-bit SAR ADC converter macro with the analog frontend core. |
 | **Phase 5** | **Silicon Tapeout & Laboratory Test** | Prepare pad ring, chip assembly, evaluation PCB testbench, and bio-signal measurement validation. |

@@ -96,7 +96,7 @@ summaryTable = table(rows(:,1),rows(:,2), ...
     'VariableNames',{'Parameter','Unit'});
 summaryTable = [summaryTable array2table(reportValues, ...
     'VariableNames',cellstr(reportColumns))];
-fprintf('\nINA + RLD COMPARISON SUMMARY\nBALANCED ELECTRODES\n\n');
+fprintf('\nINA + RLD COMPARISON SUMMARY\n\n');
 printSummaryTable(rows,reportColumns,reportValues);
 writetable(summaryTable,fullfile(scriptDir,'INA_RLD_table_report.csv'));
 writetable(summaryTable,fullfile(scriptDir,'NOM.INA_RLD_summary.csv'));
@@ -107,7 +107,7 @@ writetable(fullPvtTable,fullfile(scriptDir,'INA_RLD_full_pvt_report.csv'));
 
 worstCase = buildWorstCaseTable( ...
     rows,scaledValues,corners,rldPeakCurrent_A);
-fprintf('\nINA + RLD FULL-PVT WORST CASE\nBALANCED ELECTRODES\n\n');
+fprintf('\nINA + RLD FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(scriptDir,'INA_RLD_worst_case_report.csv'));
 
@@ -186,10 +186,7 @@ for cornerIndex = 1:size(metrics,1)
             strjoin(issues,'; '); %#ok<AGROW>
     end
 end
-if isempty(messages)
-    fprintf('\nMIS STRESS CHECK: PASS (%d/%d corners)\n', ...
-        size(metrics,1),size(metrics,1));
-else
+if ~isempty(messages)
     warning('INA_RLD_Analyze:MisStress', ...
         'MIS stress check failed at %d corner(s):\n%s', ...
         numel(messages),strjoin(messages,newline));
@@ -652,14 +649,14 @@ definitions = [
     "INA gain error",                           "INA gain error",                        "maxabs"
     "Gain flatness 0.05-150 Hz",                "Gain flatness 0.05-150 Hz",              "max"
     "INA -3 dB bandwidth",                      "INA -3 dB bandwidth",                    "min"
+    "RLD loop UGF",                             "RLD loop UGF",                          "min"
     "RLD phase margin",                         "RLD phase margin",                      "min"
     "Input CM suppression @ 60 Hz",             "Input CM suppression @ 60 Hz",          "min"
     "Input CM suppression @ 150 Hz",            "Input CM suppression @ 150 Hz",         "min"
-    "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
     "RLD Swing Ratio",                          "RLD Swing Ratio",                       "max"
-    "RLD loop UGF",                             "RLD loop UGF",                          "min"
     "RLD Peak Current",                         "__RLD_PEAK_CURRENT__",                  "max"
     "CM Interference Gain Change",               "CM Interference Gain Change",           "maxabs"
+    "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
 ];
 
 n = size(definitions,1);

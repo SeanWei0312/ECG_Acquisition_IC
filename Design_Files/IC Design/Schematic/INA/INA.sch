@@ -121,14 +121,14 @@ C {iopin.sym} 140 -280 0 1 {name=p49 lab=INA_BSE2}
 C {lab_wire.sym} 160 -280 0 1 {name=p50 sig_type=std_logic lab=INA_BSE2}
 C {symbols/ppolyf_u_2k.sym} 1070 -640 3 0 {name=RFDFBP
 W=4e-6
-L=80.7e-6
+L=80.68e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 1070 -600 0 0 {name=p6 sig_type=std_logic lab=INA_SS}
 C {symbols/ppolyf_u_2k.sym} 1070 -240 3 1 {name=RFDFBN
 W=4e-6
-L=80.7e-6
+L=80.68e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
@@ -151,7 +151,7 @@ C {lab_wire.sym} 800 -310 2 1 {name=RFDINN1 sig_type=std_logic lab=INA_SS
 L=20e-6}
 C {symbols/ppolyf_u_2k.sym} 640 -570 0 0 {name=RSEFP
 W=4e-6
-L=243.1e-6
+L=242.9e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
@@ -159,7 +159,7 @@ C {lab_wire.sym} 600 -570 0 0 {name=p52 sig_type=std_logic lab=INA_SS
 L=20e-6}
 C {symbols/ppolyf_u_2k.sym} 640 -310 2 1 {name=RSEFN
 W=4e-6
-L=243.1e-6
+L=242.9e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
