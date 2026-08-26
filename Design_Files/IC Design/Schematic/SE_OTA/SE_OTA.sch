@@ -86,9 +86,9 @@ C {iopin.sym} 140 -400 0 1 {name=p1 lab=SEOTA_B}
 C {lab_wire.sym} 160 -400 0 1 {name=p19 sig_type=std_logic lab=SEOTA_B}
 C {symbols/pfet_03v3.sym} 540 -520 0 1 {name=M3
 L=4u
-W=1u
+W=30u
 nf=1
-m=60
+m=2
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -100,9 +100,9 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 1020 -200 0 0 {name=M7
 L=0.5u
-W=1u
+W=100u
 nf=1
-m=100
+m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -114,9 +114,9 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 620 -200 0 0 {name=M5
 L=2u
-W=1u
+W=10u
 nf=1
-m=10
+m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -127,9 +127,9 @@ model=nfet_03v3
 spiceprefix=X}
 C {symbols/pfet_03v3.sym} 1020 -520 0 0 {name=M6
 L=0.5u
-W=1u
+W=50u
 nf=1
-m=400
+m=8
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -141,9 +141,9 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 340 -200 0 1 {name=M8
 L=2u
-W=1u
+W=20u
 nf=1
-m=20
+m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -166,9 +166,9 @@ C {lab_wire.sym} 580 -200 2 1 {name=p22 sig_type=std_logic lab=SEOTA_B
 }
 C {symbols/pfet_03v3.sym} 740 -520 0 0 {name=M4
 L=4u
-W=1u
+W=30u
 nf=1
-m=60
+m=2
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -180,9 +180,9 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 500 -360 0 0 {name=M1
 L=4u
-W=1u
+W=100u
 nf=1
-m=400
+m=4
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -194,9 +194,9 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 780 -360 0 1 {name=M2
 L=4u
-W=1u
+W=100u
 nf=1
-m=400
+m=4
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"

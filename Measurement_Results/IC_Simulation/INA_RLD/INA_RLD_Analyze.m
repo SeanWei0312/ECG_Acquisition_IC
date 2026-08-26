@@ -18,6 +18,10 @@ plotDir = fullfile(scriptDir,'Plots');
 if ~isfolder(plotDir)
     mkdir(plotDir);
 end
+reportDir = fullfile(scriptDir,'Reports');
+if ~isfolder(reportDir)
+    mkdir(reportDir);
+end
 
 cfg = analysisConfig();
 rows = reportRows();
@@ -77,6 +81,8 @@ checkMisStress(metrics,corners,cfg);
 
 [rows,scaledValues] = adaptReportUnits(rows,rawValues);
 formattedValues = formatReportValues(rows,scaledValues);
+specifications = pvtSpecStrings(rows);
+checkPvtSpecifications(rows,scaledValues,corners);
 
 nominalCorner = find(corners == "NOMNOMNOM",1);
 if isempty(nominalCorner)
@@ -92,27 +98,297 @@ if ~all(found)
         'One or more required comparison corners are missing.');
 end
 reportValues = formattedValues(:,reportIndices);
-summaryTable = table(rows(:,1),rows(:,2), ...
-    'VariableNames',{'Parameter','Unit'});
+summaryTable = table(rows(:,1),rows(:,2),specifications, ...
+    'VariableNames',{'Parameter','Unit','Spec'});
 summaryTable = [summaryTable array2table(reportValues, ...
     'VariableNames',cellstr(reportColumns))];
 fprintf('\nINA + RLD COMPARISON SUMMARY\n\n');
-printSummaryTable(rows,reportColumns,reportValues);
-writetable(summaryTable,fullfile(scriptDir,'INA_RLD_table_report.csv'));
-writetable(summaryTable,fullfile(scriptDir,'NOM.INA_RLD_summary.csv'));
+printSummaryTable(rows,specifications,reportColumns,reportValues);
+writetable(summaryTable,fullfile(reportDir,'INA_RLD_table_report.csv'));
+writetable(summaryTable,fullfile(reportDir,'NOM.INA_RLD_summary.csv'));
 
 fullPvtTable = buildFullPvtTable(rows,scaledValues,corners, ...
     cornerProcess,cornerCase,cornerVdd_V,cornerTemp_C,electrodes(balIndex));
-writetable(fullPvtTable,fullfile(scriptDir,'INA_RLD_full_pvt_report.csv'));
+writetable(fullPvtTable,fullfile(reportDir,'INA_RLD_full_pvt_report.csv'));
 
 worstCase = buildWorstCaseTable( ...
     rows,scaledValues,corners,rldPeakCurrent_A);
 fprintf('\nINA + RLD FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
-writetable(worstCase,fullfile(scriptDir,'INA_RLD_worst_case_report.csv'));
+writetable(worstCase,fullfile(reportDir,'INA_RLD_worst_case_report.csv'));
 
 plotNominalResults(scriptDir,plotDir,metrics(nominalCorner,:));
+runMcSection(scriptDir);
 
+end
+
+function runMcSection(rootDir)
+% Monte Carlo reporting is integrated here; the deterministic PVT flow is unchanged.
+modes = ["MM","GL","FULL"];
+files = string({fullfile(rootDir,'MM.Result_txt','mm.mc_summary.txt'), ...
+                fullfile(rootDir,'GL.Result_txt','gl.mc_summary.txt'), ...
+                fullfile(rootDir,'FULL.Result_txt','full.mc_summary.txt')});
+missingFiles = files(~isfile(files));
+if ~isempty(missingFiles)
+    warning('INA_RLD_Analyze:MissingMcSummaries', ...
+        'MC reporting skipped. Missing source file(s):\n%s',strjoin(missingFiles,newline));
+    return
+end
+reportDir = fullfile(rootDir,'Reports');
+if ~isfolder(reportDir), mkdir(reportDir); end
+plotDir = fullfile(rootDir,'Plots');
+if ~isfolder(plotDir), mkdir(plotDir); end
+defs = mcDefinitions();
+results = cell(numel(modes),1);
+missingSuppression = false;
+for k = 1:numel(modes)
+    [raw,hasSuppression] = mcReadSummary(files(k));
+    missingSuppression = missingSuppression || ~hasSuppression;
+    results{k} = mcSummarize(raw,defs,modes(k));
+    writetable(results{k}.table,fullfile(reportDir,modes(k) + "_MC_Summary.csv"));
+    mcPrintSummary(results{k});
+end
+runTable = table(modes',cellfun(@(r) r.requested,results), ...
+    cellfun(@(r) r.valid,results),cellfun(@(r) r.failed,results), ...
+    cellfun(@(r) r.overallYield,results), ...
+    'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns','OverallYield_pct'});
+writetable(runTable,fullfile(reportDir,'MC_Run_Summary.csv'));
+mcPlotHistograms(results,plotDir);
+if missingSuppression
+    warning('INA_RLD_Analyze:MissingMcSuppression', ...
+        ['MC summary files have 13 columns, so 60 Hz and 150 Hz CM suppression are unavailable. ' ...
+         'Their CSV rows are N/A and the suppression histogram is skipped.']);
+else
+    mcPlotSuppression(results,defs,plotDir);
+end
+end
+
+function defs = mcDefinitions()
+defs.names = ["Total current","Total power","Output CM error","RLD DC error", ...
+    "Input-referred offset","S1 gain","S1 gain error","S2 gain","S2 gain error", ...
+    "INA gain","INA gain error","RLD loop UGF","RLD phase margin", ...
+    "Input CM suppression @ 60 Hz","Input CM suppression @ 150 Hz"];
+defs.units = ["mA","mW","mV","uV","uV","V/V","%","V/V","%","V/V","%", ...
+    "kHz","deg","dB","dB"];
+defs.specs = strictSpecStrings(defs.names,defs.units);
+defs.columns = [5 6 3 4 2 7 NaN 8 NaN 9 10 12 13 14 15];
+defs.scales = [1e3 1e3 1 1e3 1e3 1 1 1 1 1 1 1e-3 1 1 1];
+% Gain V/V is report-only; its corresponding gain-error row is the requirement.
+defs.required = strlength(defs.specs) > 0;
+defs.yieldChecked = defs.required;
+end
+
+function [raw,hasSuppression] = mcReadSummary(filePath)
+raw = readmatrix(filePath,'FileType','text');
+raw = raw(any(isfinite(raw),2),:);
+if size(raw,2) ~= 13 && size(raw,2) ~= 15
+    error('INA_RLD_Analyze:McColumns','%s must have 13 or 15 numeric columns.',filePath);
+end
+hasSuppression = size(raw,2) >= 15;
+if ~hasSuppression, raw(:,14:15) = NaN; end
+end
+
+function r = mcSummarize(raw,defs,mode)
+values = nan(size(raw,1),numel(defs.names));
+sourceMask = isfinite(defs.columns);
+values(:,sourceMask) = raw(:,defs.columns(sourceMask)).*defs.scales(sourceMask);
+values(:,7) = 100*(values(:,6)/60-1);
+values(:,9) = 100*(values(:,8)/4-1);
+validMask = all(isfinite(values(:,1:11)),2);
+count = numel(defs.names);
+r.mode = mode; r.values = values; r.available = any(isfinite(values),1);
+r.requested = size(raw,1); r.valid = nnz(validMask); r.failed = r.requested-r.valid;
+r.stats = nan(count,7); r.yield = nan(count,1); r.pass = false(r.requested,count);
+lowGainRows = find(validMask & values(:,11) <= -90);
+if ~isempty(lowGainRows)
+    warning('INA_RLD_Analyze:SuspiciousMcGain', ...
+        ['%s has %d valid sample(s) with INA gain error <= -90%% (MC run ID(s): %s). ' ...
+         'Verify circuit collapse versus an ngspice measurement failure before trusting these samples.'], ...
+        char(mode),numel(lowGainRows),char(strjoin(string(raw(lowGainRows,1)),', ')));
+end
+for j = 1:count
+    validRows = find(validMask);
+    finiteRows = validRows(isfinite(values(validMask,j)));
+    v = values(finiteRows,j);
+    if isempty(v), continue; end
+    mu = mean(v); sigma = std(v,0);
+    r.stats(j,:) = [min(v),mu-3*sigma,mu-sigma,mu,mu+sigma,mu+3*sigma,max(v)];
+    if defs.yieldChecked(j)
+        r.pass(finiteRows,j) = strictSpecPass(defs.names(j),v,defs.units(j));
+        r.yield(j) = 100*mean(r.pass(finiteRows,j));
+    end
+end
+requiredAvailable = defs.required & r.available;
+jointPass = all(r.pass(:,requiredAvailable),2) & validMask;
+if r.valid > 0, r.overallYield = 100*nnz(jointPass)/r.valid; else, r.overallYield = NaN; end
+yieldText = strings(count,1);
+for j = 1:count
+    if ~defs.yieldChecked(j), yieldText(j) = "";
+    elseif ~r.available(j), yieldText(j) = "N/A";
+    else, yieldText(j) = sprintf('%.2f',r.yield(j));
+    end
+end
+stat = r.stats;
+r.table = table(defs.names',defs.units',defs.specs',stat(:,1),stat(:,2),stat(:,3), ...
+    stat(:,4),stat(:,5),stat(:,6),stat(:,7),yieldText, ...
+    'VariableNames',{'Parameter','Unit','Spec','Min','MeanMinus3Sigma','MeanMinusSigma', ...
+    'Mean','MeanPlusSigma','MeanPlus3Sigma','Max','Yield_pct'});
+end
+
+
+function mcPrintSummary(r)
+fprintf('\n%s MONTE CARLO SUMMARY\n',r.mode);
+fprintf('Requested: %d  Valid: %d  Failed: %d  Overall yield: %s%%\n', ...
+    r.requested,r.valid,r.failed,formatOne(r.overallYield,"%"));
+fprintf('%-34s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
+    'Parameter','Unit','Spec','Min','μ-3σ','μ-σ','Mean','μ+σ','μ+3σ','Max','Yield');
+for j = 1:height(r.table)
+    fprintf('%-34s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
+        char(r.table.Parameter(j)),char(r.table.Unit(j)),char(r.table.Spec(j)), ...
+        char(formatOne(r.table.Min(j),r.table.Unit(j))), ...
+        char(formatOne(r.table.MeanMinus3Sigma(j),r.table.Unit(j))), ...
+        char(formatOne(r.table.MeanMinusSigma(j),r.table.Unit(j))), ...
+        char(formatOne(r.table.Mean(j),r.table.Unit(j))), ...
+        char(formatOne(r.table.MeanPlusSigma(j),r.table.Unit(j))), ...
+        char(formatOne(r.table.MeanPlus3Sigma(j),r.table.Unit(j))), ...
+        char(formatOne(r.table.Max(j),r.table.Unit(j))), ...
+        char(r.table.Yield_pct(j)));
+end
+end
+
+function mcPlotHistograms(results,plotDir)
+mcHistogram(results,5,plotDir,'Fig_MC_01_Vos_Histogram.png', ...
+    'Input-Referred Offset Distribution - MM / GL / FULL', ...
+    'Input-referred offset (uV)',[-500 500]);
+mcHistogram(results,11,plotDir,'Fig_MC_02_INA_Gain_Error_Histogram.png', ...
+    'INA Gain Error Distribution - MM / GL / FULL', ...
+    'INA gain error (%)',[-1 1]);
+mcHistogram(results,12,plotDir,'Fig_MC_03_RLD_UGF_Histogram.png', ...
+    'RLD Loop UGF Distribution - MM / GL / FULL', ...
+    'RLD loop UGF (kHz)',[0.3 2]);
+mcHistogram(results,13,plotDir,'Fig_MC_04_RLD_PM_Histogram.png', ...
+    'RLD Phase Margin Distribution - MM / GL / FULL', ...
+    'RLD phase margin (deg)',60);
+end
+
+function mcHistogram(results,index,plotDir,fileName,titleText,xLabelText,specLines)
+fig = figure;
+hold on; colors = lines(numel(results)); allValues = [];
+for k = 1:numel(results)
+    values = results{k}.values(:,index);
+    allValues = [allValues; values(isfinite(values))]; %#ok<AGROW>
+end
+if isempty(allValues)
+    close(fig);
+    return
+end
+[lo,hi,displayMask] = mcDisplayRange(allValues,results,index);
+displayValues = allValues(displayMask);
+binCount = max(12,min(40,ceil(sqrt(numel(displayValues)))));
+edges = linspace(lo,hi,binCount+1);
+for k = 1:numel(results)
+    v = results{k}.values(:,index); v = v(isfinite(v));
+    v = v(v >= lo & v <= hi);
+    if ~isempty(v)
+        probability_pct = 100*histcounts(v,edges,'Normalization','probability');
+        stairs(edges,[probability_pct 0],'LineWidth',1.5, ...
+            'Color',colors(k,:),'DisplayName',results{k}.mode);
+    end
+end
+for x = specLines
+    if x >= lo && x <= hi
+        xline(x,'--','HandleVisibility','off');
+    end
+end
+xlim([lo hi]);
+ylabel('Samples (%)');
+stylePlot(xLabelText,titleText);
+legend('Location','best');
+mcAddFullStatMarkers(results{3},index);
+savePlot(fig,plotDir,fileName);
+end
+
+function mcPlotSuppression(results,defs,plotDir)
+fig = figure;
+layout = tiledlayout(2,1);
+indices = [14 15]; limits = [50 45]; colors = lines(numel(results));
+for p = 1:2
+    nexttile(layout); hold on;
+    allValues = [];
+    for k = 1:numel(results)
+        values = results{k}.values(:,indices(p));
+        allValues = [allValues; values(isfinite(values))]; %#ok<AGROW>
+    end
+    if isempty(allValues), continue; end
+    [lo,hi,displayMask] = mcDisplayRange(allValues,results,indices(p));
+    displayValues = allValues(displayMask);
+    edges = linspace(lo,hi,max(12,min(40,ceil(sqrt(numel(displayValues)))))+1);
+    for k = 1:numel(results)
+        v = results{k}.values(:,indices(p)); v = v(isfinite(v));
+        v = v(v >= lo & v <= hi);
+        probability_pct = 100*histcounts(v,edges,'Normalization','probability');
+        stairs(edges,[probability_pct 0],'LineWidth',1.5, ...
+            'Color',colors(k,:),'DisplayName',results{k}.mode);
+    end
+    if limits(p) >= lo && limits(p) <= hi
+        xline(limits(p),'--','HandleVisibility','off');
+    end
+    xlim([lo hi]);
+    ylabel('Samples (%)');
+    stylePlot(defs.names(indices(p)) + " (dB)", ...
+        defs.names(indices(p)) + " Distribution - MM / GL / FULL");
+    legend('Location','best');
+    mcAddFullStatMarkers(results{3},indices(p));
+end
+savePlot(fig,plotDir,'Fig_MC_05_Input_CM_Suppression_Histogram.png');
+end
+
+function [lo,hi,displayMask] = mcDisplayRange(values,results,index)
+% Use one physical x-axis spanning the MM/GL/FULL statistical cores.
+limits = nan(numel(results),2);
+for k = 1:numel(results)
+    mu = results{k}.stats(index,4);
+    sigma = abs(results{k}.stats(index,5)-mu);
+    if isfinite(mu) && isfinite(sigma)
+        limits(k,:) = [mu-4*sigma mu+4*sigma];
+    end
+end
+limits = limits(isfinite(limits));
+if isempty(limits)
+    lo = min(values);
+    hi = max(values);
+else
+    lo = min(limits);
+    hi = max(limits);
+end
+if lo == hi
+    pad = max(abs(lo)*0.05,1);
+    lo = lo-pad;
+    hi = hi+pad;
+end
+pad = max(0.05*(hi-lo),eps(max(abs([lo hi]))));
+lo = lo-pad;
+hi = hi+pad;
+displayMask = values >= lo & values <= hi;
+if ~any(displayMask)
+    lo = min(values); hi = max(values);
+    if lo == hi
+        pad = max(abs(lo)*0.05,1);
+        lo = lo-pad; hi = hi+pad;
+    end
+    displayMask = true(size(values));
+end
+end
+
+function mcAddFullStatMarkers(fullResult,index)
+markers = fullResult.stats(index,2:6);
+labels = ["-3σ","-σ","μ","+σ","+3σ"];
+for markerIndex = 1:numel(markers)
+    marker = markers(markerIndex);
+    if isfinite(marker)
+        addCursorLine(marker,0,labels(markerIndex));
+    end
+end
 end
 
 function cfg = analysisConfig
@@ -216,7 +492,7 @@ rows = [
     "S2 gain",                                    "V/V"
     "S2 gain dB",                                 "dB"
     "S2 gain error",                               "%"
-    "S2 -3 dB bandwidth",                          "kHz"
+    "S2 -3 dB bandwidth",                          "Hz"
     "INA gain",                                   "V/V"
     "INA gain dB",                                "dB"
     "INA gain error",                              "%"
@@ -235,6 +511,94 @@ rows = [
     "NOISE",                                        ""
     "Input-referred noise 0.05-150 Hz",             "Vrms"
 ];
+end
+
+function specifications = pvtSpecStrings(rows)
+specifications = strictSpecStrings(rows(:,1),rows(:,2));
+end
+
+function specifications = strictSpecStrings(parameters,units)
+specifications = strings(size(parameters));
+for parameterIndex = 1:numel(parameters)
+    specifications(parameterIndex) = strictSpecText( ...
+        parameters(parameterIndex),units(parameterIndex));
+end
+end
+
+function specification = strictSpecText(parameter,unit)
+switch string(parameter)
+    case "Total current", specification = "≤"+specNumber(6.2e-3,unit);
+    case "Total power", specification = "≤"+specNumber(22e-3,unit);
+    case "Output CM error", specification = "±"+specNumber(40e-3,unit);
+    case "RLD DC error", specification = "±"+specNumber(30e-6,unit);
+    case "Input-referred offset", specification = "±"+specNumber(300e-6,unit);
+    case "S1 gain error", specification = "±0.25";
+    case "S1 -3 dB bandwidth", specification = "≥"+specNumber(170e3,unit);
+    case "S2 gain error", specification = "±0.10";
+    case "S2 -3 dB bandwidth", specification = "≥"+specNumber(1.7e6,unit);
+    case "INA gain error", specification = "±0.30";
+    case "Gain flatness 0.05-150 Hz", specification = "≤0.001";
+    case "INA -3 dB bandwidth", specification = "≥"+specNumber(170e3,unit);
+    case "RLD loop UGF", specification = specNumber(1e3,unit)+"±"+specNumber(0.5e3,unit);
+    case "RLD phase margin", specification = "≥95";
+    case "Input CM suppression @ 60 Hz", specification = "≥54";
+    case "Input CM suppression @ 150 Hz", specification = "≥51";
+    case "RLD Swing Ratio", specification = "≤1.0";
+    case "RLD Peak Current", specification = "≤"+specNumber(3.2e-9,unit);
+    case "CM Interference Gain Change", specification = "±0.001";
+    case "Input-referred noise 0.05-150 Hz", specification = "≤3.2";
+    otherwise, specification = "";
+end
+end
+
+function pass = strictSpecPass(parameter,value,unit)
+baseValue = value*unitScaleToBase(unit);
+switch string(parameter)
+    case "Total current", pass = baseValue <= 6.2e-3;
+    case "Total power", pass = baseValue <= 22e-3;
+    case "Output CM error", pass = abs(baseValue) <= 40e-3;
+    case "RLD DC error", pass = abs(baseValue) <= 30e-6;
+    case "Input-referred offset", pass = abs(baseValue) <= 300e-6;
+    case "S1 gain error", pass = baseValue >= -0.25 & baseValue <= 0.25;
+    case "S1 -3 dB bandwidth", pass = baseValue >= 170e3;
+    case "S2 gain error", pass = baseValue >= -0.10 & baseValue <= 0.10;
+    case "S2 -3 dB bandwidth", pass = baseValue >= 1.7e6;
+    case "INA gain error", pass = baseValue >= -0.30 & baseValue <= 0.30;
+    case "Gain flatness 0.05-150 Hz", pass = baseValue <= 0.001;
+    case "INA -3 dB bandwidth", pass = baseValue >= 170e3;
+    case "RLD loop UGF", pass = baseValue >= 0.5e3 & baseValue <= 1.5e3;
+    case "RLD phase margin", pass = baseValue >= 95;
+    case "Input CM suppression @ 60 Hz", pass = baseValue >= 54;
+    case "Input CM suppression @ 150 Hz", pass = baseValue >= 51;
+    case "RLD Swing Ratio", pass = baseValue <= 1.0;
+    case "RLD Peak Current", pass = baseValue <= 3.2e-9;
+    case "CM Interference Gain Change", pass = baseValue >= -0.001 & baseValue <= 0.001;
+    case "Input-referred noise 0.05-150 Hz", pass = baseValue <= 3.2e-6;
+    otherwise, pass = true(size(value));
+end
+end
+
+function checkPvtSpecifications(rows,values,corners)
+checkedRows = false(size(rows,1),1);
+passMatrix = true(size(values));
+for rowIndex = 1:size(rows,1)
+    parameter = rows(rowIndex,1);
+    value = values(rowIndex,:);
+    if strlength(strictSpecText(parameter,rows(rowIndex,2))) == 0, continue; end
+    pass = strictSpecPass(parameter,value,rows(rowIndex,2));
+    checkedRows(rowIndex) = true;
+    passMatrix(rowIndex,:) = isfinite(value) & pass;
+end
+cornerPass = all(passMatrix(checkedRows,:),1);
+if all(cornerPass)
+    fprintf('\nINA + RLD STRICT PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
+        nnz(cornerPass),numel(corners));
+else
+    failedCorners = corners(~cornerPass);
+    warning('INA_RLD_Analyze:PvtSpecFailure', ...
+        'INA + RLD strict PVT specification: FAIL (%d/%d corners): %s', ...
+        nnz(cornerPass),numel(corners),strjoin(failedCorners,', '));
+end
 end
 
 function m = analyzeRun(resultDir,process,caseName,electrode, ...
@@ -447,7 +811,7 @@ for rowIndex = 1:size(rows,1)
         case "S2 gain", values(rowIndex) = m.diff.stage2Gain10_VV;
         case "S2 gain dB", values(rowIndex) = 20*log10(m.diff.stage2Gain10_VV);
         case "S2 gain error", values(rowIndex) = m.diff.stage2GainError_pct;
-        case "S2 -3 dB bandwidth", values(rowIndex) = m.diff.stage2Bandwidth3dB_Hz/1e3;
+        case "S2 -3 dB bandwidth", values(rowIndex) = m.diff.stage2Bandwidth3dB_Hz;
         case "INA gain", values(rowIndex) = m.diff.gain10_VV;
         case "INA gain dB", values(rowIndex) = m.diff.gain10_dB;
         case "INA gain error", values(rowIndex) = m.diff.gainError_pct;
@@ -662,10 +1026,16 @@ definitions = [
 n = size(definitions,1);
 parameter = definitions(:,1);
 unit = strings(n,1);
+specification = strings(n,1);
 selectedValue = nan(n,1);
 selectedCorner = strings(n,1);
+pvtSpecifications = pvtSpecStrings(rows);
 
 for definitionIndex = 1:n
+    specificationIndex = find(rows(:,1) == parameter(definitionIndex),1);
+    if ~isempty(specificationIndex)
+        specification(definitionIndex) = pvtSpecifications(specificationIndex);
+    end
     sourceName = definitions(definitionIndex,2);
     linked = false;
     linkedCandidates = [];
@@ -700,8 +1070,7 @@ for definitionIndex = 1:n
         linkedCandidates = values(errorIndex,:);
         [~,linkedIndex] = max(abs(linkedCandidates));
     elseif sourceName == "__RLD_PEAK_CURRENT__"
-        [unit(definitionIndex),candidates] = ...
-            adaptValuesUnit("A",rldPeakCurrent_A);
+        [unit(definitionIndex),candidates] = adaptValuesUnit("A",rldPeakCurrent_A);
     else
         rowIndex = find(rows(:,1) == sourceName,1);
         if isempty(rowIndex)
@@ -753,18 +1122,18 @@ for valueIndex = 1:numel(selectedValue)
     formattedValue(valueIndex) = ...
         formatOne(selectedValue(valueIndex),unit(valueIndex));
 end
-result = table(parameter,unit,formattedValue,selectedCorner, ...
-    'VariableNames',{'Parameter','Unit','Value','Corner'});
+result = table(parameter,unit,specification,formattedValue,selectedCorner, ...
+    'VariableNames',{'Parameter','Unit','Spec','Value','Corner'});
 end
 
-function printSummaryTable(rows,columns,values)
+function printSummaryTable(rows,specifications,columns,values)
 parameterWidth = max(42,max(strlength(rows(:,1)))+2);
-fprintf('%-*s %-8s',parameterWidth,'Parameter','Unit');
+fprintf('%-*s %-8s %-14s',parameterWidth,'Parameter','Unit','Spec');
 for columnIndex = 1:numel(columns)
     fprintf(' %13s',columns(columnIndex));
 end
 fprintf('\n%s\n',repmat('-',1, ...
-    parameterWidth+9+14*numel(columns)));
+    parameterWidth+24+14*numel(columns)));
 for rowIndex = 1:size(rows,1)
     if rows(rowIndex,1) == "" && rows(rowIndex,2) == ""
         fprintf('\n');
@@ -772,8 +1141,9 @@ for rowIndex = 1:size(rows,1)
         fprintf('%-*s\n',parameterWidth, ...
             upper(char(rows(rowIndex,1))));
     else
-        fprintf('%-*s %-8s',parameterWidth, ...
-            char(rows(rowIndex,1)),char(rows(rowIndex,2)));
+        fprintf('%-*s %-8s %-14s',parameterWidth, ...
+            char(rows(rowIndex,1)),char(rows(rowIndex,2)), ...
+            char(specifications(rowIndex)));
         for columnIndex = 1:numel(columns)
             fprintf(' %13s',values(rowIndex,columnIndex));
         end
@@ -784,12 +1154,13 @@ end
 
 function printWorstCaseTable(result)
 parameterWidth = max(42,max(strlength(result.Parameter))+2);
-fprintf('%-*s %-8s %13s %-10s\n',parameterWidth, ...
-    'Parameter','Unit','Value','Corner');
-fprintf('%s\n',repmat('-',1,parameterWidth+34));
+fprintf('%-*s %-8s %-14s %13s %-10s\n',parameterWidth, ...
+    'Parameter','Unit','Spec','Value','Corner');
+fprintf('%s\n',repmat('-',1,parameterWidth+49));
 for rowIndex = 1:height(result)
-    fprintf('%-*s %-8s %13s %-10s\n',parameterWidth, ...
+    fprintf('%-*s %-8s %-14s %13s %-10s\n',parameterWidth, ...
         char(result.Parameter(rowIndex)),char(result.Unit(rowIndex)), ...
+        char(result.Spec(rowIndex)), ...
         char(result.Value(rowIndex)), ...
         char(result.Corner(rowIndex)));
 end
@@ -1207,15 +1578,14 @@ end
 
 function [unit,scaledValues] = adaptValuesUnit(unit,values)
 scaledValues = values;
-if unit == "" || unit == "dB" || unit == "%" || unit == "V/V" || unit == "kHz"
+if unit == "" || unit == "dB" || unit == "%" || unit == "V/V" || unit == "deg"
     return;
 end
 nonzero = isfinite(values) & values ~= 0;
 if ~any(nonzero)
     return;
 end
-magnitude = max(abs(values(nonzero)));
-[unit,scalePower] = scaleUnit(magnitude,unit);
+[unit,scalePower] = scaleUnit(max(abs(values(nonzero))),unit);
 scaledValues = values*1e3^scalePower;
 end
 
@@ -1270,6 +1640,26 @@ else
 end
 end
 
+function value = specNumber(baseValue,unit)
+value = string(sprintf('%.6g',baseValue/unitScaleToBase(unit)));
+end
+
+function factor = unitScaleToBase(unit)
+[prefix,~] = splitUnitPrefix(unit);
+switch prefix
+    case "T", factor = 1e12;
+    case "G", factor = 1e9;
+    case "M", factor = 1e6;
+    case "k", factor = 1e3;
+    case "m", factor = 1e-3;
+    case "u", factor = 1e-6;
+    case "n", factor = 1e-9;
+    case "p", factor = 1e-12;
+    case "f", factor = 1e-15;
+    otherwise, factor = 1;
+end
+end
+
 function textValue = formatOne(value,unit)
 if isnan(value)
     textValue = "NaN";
@@ -1282,13 +1672,6 @@ elseif unit == "dB" || unit == "%"
         textValue = string(sprintf('%.3f',value));
     end
 else
-    [prefix,~] = splitUnitPrefix(unit);
-    if prefix == "f" && value ~= 0 && abs(value) < 1e-3
-        textValue = string(sprintf('%.3e',value));
-    elseif prefix == "T" && abs(value) > 999
-        textValue = string(sprintf('%.3e',value));
-    else
-        textValue = string(sprintf('%.3f',value));
-    end
+    textValue = string(sprintf('%.3f',value));
 end
 end

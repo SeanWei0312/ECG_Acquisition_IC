@@ -75,15 +75,9 @@ All PVT results represent deterministic pre-layout schematic simulations on the 
 
 ### INA + RLD Monte Carlo status
 
-The separate `INA_RLD_MC_Analyze.m` reads scalar summaries from `MM`, `GL`, and `FULL` runs and generates mean, standard deviation, mean ± 3σ, observed extrema, run validity, and histogram reports. The current 200-run exports contain 200 finite rows in each mode. The analyzer reports two input-data warnings: `GL` has no variation across runs, and `FULL` matches `MM` sample-for-sample. These indicate that global variation is not currently enabled in the GL/FULL ngspice runs; they are not MATLAB calculation failures.
+`INA_RLD_Analyze.m` includes MC reporting after its unchanged deterministic PVT flow. When the MM, GL, and FULL scalar exports are present, it writes CSV-only reports to `Measurement_Results/IC_Simulation/INA_RLD/Reports/`: one summary per mode plus a run-status summary. All PVT and MC figures are written to `Measurement_Results/IC_Simulation/INA_RLD/Plots/`.
 
-MC outputs are written to `Measurement_Results/IC_Simulation/INA_RLD/`:
-
-- `INA_RLD_MC_Summary.txt`
-- `INA_RLD_MC_Statistics.csv`
-- `INA_RLD_MC_Comparison.csv`
-- `INA_RLD_MC_FULL_Summary.csv`
-- `MC_Plots/Fig_MC_01_Vos_Histogram.png` through `Fig_MC_05_Current_Histogram.png`
+The current 13-column, 200-run exports do not include the 60 Hz and 150 Hz CM-suppression fields. Those two report rows are therefore `N/A` and their histogram is skipped until 15-column MC exports are available.
 
 For detailed characterization result plots and full methodology, see [Project_Report.md](Project_Report.md).
 
@@ -134,9 +128,8 @@ matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OT
 # 4. INA + RLD 45-PVT Analysis
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
 
-# 5. INA + RLD Monte Carlo Analysis
-# Requires MM/GL/FULL.mc_summary.txt exports documented in INA_RLD_MC_Analyze.m.
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_MC_Analyze"
+# 5. Monte Carlo is included automatically in INA_RLD_Analyze when
+# MM/GL/FULL.mc_summary.txt exports are present.
 
 # 6. NMOS gm/Id Characterization
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','NMOS_Gm_Id')); NMOS_Gm_Id"

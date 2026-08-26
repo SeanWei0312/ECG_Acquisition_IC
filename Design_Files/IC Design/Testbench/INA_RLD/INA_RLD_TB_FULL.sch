@@ -190,167 +190,6 @@ value="
 .options rshunt=1e12
 .options method=gear
 "}
-C {devices/code_shown.sym} 960 -1350 0 0 {name=NGSPICE
-only_toplevel=true
-value="
-
-.control
-
-destroy all
-
-set noaskquit
-set wr_singlescale
-unset wr_vecnames
-
-option klu
-option numdgt=15
-option method=gear
-option maxord=2
-option plotwinsize=0
-
-if $&PROC_ID = 5
-set proc=MM
-else
-if $&PROC_ID = 6
-set proc=GL
-else
-set proc=FULL
-end
-end
-
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
-
-echo run vos_in_V out_cm_error_V rld_dc_error_V idd_A power_W s1_gain s2_gain ina_gain ina_gain_error_pct ina_gain_150 rld_ugf_Hz rld_pm_deg > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
-
-let run=1
-let mc_runs=$&MC_RUNS
-
-dowhile run <= mc_runs
-
-set runnum=$&run
-
-setseed $runnum
-mc_source
-
-option klu
-option numdgt=15
-option method=gear
-option maxord=2
-option plotwinsize=0
-
-save all
-
-alter RELECP 100k
-alter RELECN 100k
-alter CELECP 100n
-alter CELECN 100n
-alter RRLD_SAFE 1Meg
-
-alter @VSEL[DC]=0
-alter @VDIFF[ACMAG]=0
-alter @VCMAC[ACMAG]=0
-alter @VLOOP[ACMAG]=0
-alter @VEXTDIFF[ACMAG]=0
-
-
-* OP
-
-op
-
-let ina_offset_out=v(INA_OUTP)-v(INA_OUTN)
-let out_cm=0.5*(v(OUTP)+v(OUTN))-v(AGND)
-let out_cm_error=out_cm-(v(REF)-v(AGND))
-let rld_dc_error=v(RLD)-v(REF)
-let idd_total=abs(vavdd#branch)
-let power_total=(v(AVDD)-v(AGND))*idd_total
-
-set ina_offset_out_val=$&ina_offset_out
-set out_cm_error_val=$&out_cm_error
-set rld_dc_error_val=$&rld_dc_error
-set idd_val=$&idd_total
-set power_val=$&power_total
-
-destroy all
-
-
-* INA AC
-
-alter RRLD_SAFE 1Meg
-alter @VSEL[DC]=0
-alter @VDIFF[ACMAG]=1
-alter @VDIFF[ACPHASE]=0
-alter @VCMAC[ACMAG]=0
-alter @VLOOP[ACMAG]=0
-alter @VEXTDIFF[ACMAG]=0
-
-ac dec 100 0.1 1Meg
-
-let vin_diff=v(INP)-v(INN)
-let se_diff=v(SEOP)-v(SEON)
-let ina_diff=v(INA_OUTP)-v(INA_OUTN)
-
-let s1_gain=mag(se_diff/vin_diff)
-let s2_gain=mag(ina_diff/se_diff)
-let ina_gain=mag(ina_diff/vin_diff)
-
-meas ac s1_gain_10 find s1_gain at=10
-meas ac s2_gain_10 find s2_gain at=10
-meas ac ina_gain_10 find ina_gain at=10
-meas ac ina_gain_150 find ina_gain at=150
-
-let ina_gain_error_pct=100*(ina_gain_10/240-1)
-let vos_in=$ina_offset_out_val/ina_gain_10
-
-set vos_val=$&vos_in
-set s1_val=$&s1_gain_10
-set s2_val=$&s2_gain_10
-set ina_val=$&ina_gain_10
-set ina_err_val=$&ina_gain_error_pct
-set ina150_val=$&ina_gain_150
-
-destroy all
-
-
-* RLD LOOP
-
-alter RRLD_SAFE 1Meg
-alter @VSEL[DC]=0
-alter @VDIFF[ACMAG]=0
-alter @VCMAC[ACMAG]=0
-alter @VLOOP[ACMAG]=1
-alter @VLOOP[ACPHASE]=0
-alter @VEXTDIFF[ACMAG]=0
-
-ac dec 100 0.1 100k
-
-let loop_in=v(RLD_DRV)-v(AGND)
-let loop_out=v(RLD)-v(AGND)
-
-let loop_tf=-loop_out/loop_in
-let loop_mag=mag(loop_tf)
-let loop_phase=(180/3.141592653589793)*cph(loop_tf)
-
-meas ac rld_ugf when loop_mag=1 cross=1
-meas ac rld_phase find loop_phase at=$&rld_ugf
-
-let rld_pm=180+rld_phase
-
-set ugf_val=$&rld_ugf
-set pm_val=$&rld_pm
-
-echo $runnum $vos_val $out_cm_error_val $rld_dc_error_val $idd_val $power_val $s1_val $s2_val $ina_val $ina_err_val $ina150_val $ugf_val $pm_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
-
-destroy all
-
-let run=run+1
-
-end
-
-quit
-
-.endc
-"}
 C {lab_wire.sym} 160 -2240 0 0 {name=p28 sig_type=std_logic lab=INP}
 C {lab_wire.sym} 160 -2080 0 0 {name=p29 sig_type=std_logic lab=INN}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/SEL/SEL.sym} 1020 -2000 0 0 {name=xSEL2}
@@ -595,3 +434,326 @@ footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 3200 -1680 0 0 {name=p92 sig_type=std_logic lab=RLDE}
 C {lab_wire.sym} 3200 -1580 2 0 {name=p93 sig_type=std_logic lab=BODY}
+C {devices/code_shown.sym} 960 -1350 0 0 {name=NGSPICE
+only_toplevel=true
+value="
+
+.control
+
+destroy all
+
+set noaskquit
+set wr_singlescale
+unset wr_vecnames
+
+option klu
+option numdgt=15
+option method=gear
+option maxord=2
+option plotwinsize=0
+
+
+if $&PROC_ID = 5
+set proc=MM
+else
+if $&PROC_ID = 6
+set proc=GL
+else
+set proc=FULL
+end
+end
+
+
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt
+
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_bad_ac_run_*.txt
+
+
+echo run vos_in_V out_cm_error_V rld_dc_error_V idd_A power_W s1_gain s2_gain ina_gain ina_gain_error_pct ina_gain_150 rld_ugf_Hz rld_pm_deg cm_supp_60_dB cm_supp_150_dB > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
+
+echo run REF_V BP_V BFDC_V BCMFB_V SEOP_V SEON_V SE_CM_V SE_DIFF_V FDINP_V FDINN_V FDIN_CM_V FDIN_DIFF_V INA_OUTP_V INA_OUTN_V INA_OUT_CM_V INA_OUT_DIFF_V RLD_V IBSE1_A IBSE2_A IBFDC_A IBCMFB_A IDD_A POWER_W > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
+
+
+let run=1
+let mc_runs=$&MC_RUNS
+
+
+dowhile run <= mc_runs
+
+set runnum=$&run
+
+setseed $runnum
+mc_source
+
+option klu
+option numdgt=15
+option method=gear
+option maxord=2
+option plotwinsize=0
+
+
+save all
+
+save @m.xmbse1.m0[id]
+save @m.xmbse2.m0[id]
+save @m.xmbfdc.m0[id]
+save @m.xmbcmfb.m0[id]
+
+
+* BAL
+
+alter RELECP 100k
+alter RELECN 100k
+alter CELECP 100n
+alter CELECN 100n
+
+alter RRLD_SAFE 1Meg
+
+alter @VSEL[DC]=0
+alter @VDIFF[ACMAG]=0
+alter @VCMAC[ACMAG]=0
+alter @VLOOP[ACMAG]=0
+alter @VEXTDIFF[ACMAG]=0
+
+
+* OP
+
+op
+
+let ref_op=v(REF)-v(AGND)
+let bp_op=v(BP)-v(AGND)
+let bfdc_op=v(BFDC)-v(AGND)
+let bcmfb_op=v(BCMFB)-v(AGND)
+
+let seop_op=v(SEOP)-v(AGND)
+let seon_op=v(SEON)-v(AGND)
+let se_cm_op=0.5*(v(SEOP)+v(SEON))-v(AGND)
+let se_diff_op=v(SEOP)-v(SEON)
+
+let fdinp_op=v(xina1.ina_fdinp)-v(AGND)
+let fdinn_op=v(xina1.ina_fdinn)-v(AGND)
+let fdin_cm_op=0.5*(v(xina1.ina_fdinp)+v(xina1.ina_fdinn))-v(AGND)
+let fdin_diff_op=v(xina1.ina_fdinp)-v(xina1.ina_fdinn)
+
+let ina_outp_op=v(INA_OUTP)-v(AGND)
+let ina_outn_op=v(INA_OUTN)-v(AGND)
+let ina_out_cm_op=0.5*(v(INA_OUTP)+v(INA_OUTN))-v(AGND)
+let ina_out_diff_op=v(INA_OUTP)-v(INA_OUTN)
+
+let ina_offset_out=ina_out_diff_op
+
+let out_cm=0.5*(v(OUTP)+v(OUTN))-v(AGND)
+let out_cm_error=out_cm-ref_op
+
+let rld_op=v(RLD)-v(AGND)
+let rld_dc_error=rld_op-ref_op
+
+let ibse1=abs(@m.xmbse1.m0[id])
+let ibse2=abs(@m.xmbse2.m0[id])
+let ibfdc=abs(@m.xmbfdc.m0[id])
+let ibcmfb=abs(@m.xmbcmfb.m0[id])
+
+let idd_total=abs(vavdd#branch)
+let power_total=(v(AVDD)-v(AGND))*idd_total
+
+
+set ref_val=$&ref_op
+set bp_val=$&bp_op
+set bfdc_val=$&bfdc_op
+set bcmfb_val=$&bcmfb_op
+
+set seop_val=$&seop_op
+set seon_val=$&seon_op
+set se_cm_val=$&se_cm_op
+set se_diff_val=$&se_diff_op
+
+set fdinp_val=$&fdinp_op
+set fdinn_val=$&fdinn_op
+set fdin_cm_val=$&fdin_cm_op
+set fdin_diff_val=$&fdin_diff_op
+
+set ina_outp_val=$&ina_outp_op
+set ina_outn_val=$&ina_outn_op
+set ina_out_cm_val=$&ina_out_cm_op
+set ina_out_diff_val=$&ina_out_diff_op
+
+set rld_op_val=$&rld_op
+
+set ibse1_val=$&ibse1
+set ibse2_val=$&ibse2
+set ibfdc_val=$&ibfdc
+set ibcmfb_val=$&ibcmfb
+
+set ina_offset_out_val=$&ina_offset_out
+set out_cm_error_val=$&out_cm_error
+set rld_dc_error_val=$&rld_dc_error
+set idd_val=$&idd_total
+set power_val=$&power_total
+
+
+echo $runnum $ref_val $bp_val $bfdc_val $bcmfb_val $seop_val $seon_val $se_cm_val $se_diff_val $fdinp_val $fdinn_val $fdin_cm_val $fdin_diff_val $ina_outp_val $ina_outn_val $ina_out_cm_val $ina_out_diff_val $rld_op_val $ibse1_val $ibse2_val $ibfdc_val $ibcmfb_val $idd_val $power_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
+
+
+destroy all
+
+
+* INA AC
+
+alter RRLD_SAFE 1Meg
+
+alter @VSEL[DC]=0
+alter @VDIFF[ACMAG]=1
+alter @VDIFF[ACPHASE]=0
+alter @VCMAC[ACMAG]=0
+alter @VLOOP[ACMAG]=0
+alter @VEXTDIFF[ACMAG]=0
+
+ac dec 100 0.1 1Meg
+
+let vin_diff=v(INP)-v(INN)
+let se_diff=v(SEOP)-v(SEON)
+let ina_diff=v(INA_OUTP)-v(INA_OUTN)
+
+let s1_gain=mag(se_diff/vin_diff)
+let s2_gain=mag(ina_diff/se_diff)
+let ina_gain=mag(ina_diff/vin_diff)
+
+meas ac s1_gain_10 find s1_gain at=10
+meas ac s2_gain_10 find s2_gain at=10
+meas ac ina_gain_10 find ina_gain at=10
+meas ac ina_gain_150 find ina_gain at=150
+
+let ina_gain_error_pct=100*(ina_gain_10/240-1)
+let vos_in=$ina_offset_out_val/ina_gain_10
+
+set vos_val=$&vos_in
+set s1_val=$&s1_gain_10
+set s2_val=$&s2_gain_10
+set ina_val=$&ina_gain_10
+set ina_err_val=$&ina_gain_error_pct
+set ina150_val=$&ina_gain_150
+
+
+* BAD GAIN DEBUG
+
+if $&ina_gain_error_pct < -90
+
+let vin_diff_real=real(vin_diff)
+let vin_diff_imag=imag(vin_diff)
+
+let se_diff_real=real(se_diff)
+let se_diff_imag=imag(se_diff)
+
+let ina_diff_real=real(ina_diff)
+let ina_diff_imag=imag(ina_diff)
+
+setscale frequency
+
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_bad_ac_run_\{$runnum\}.txt vin_diff_real vin_diff_imag se_diff_real se_diff_imag ina_diff_real ina_diff_imag
+
+end
+
+
+destroy all
+
+
+* RLD LOOP
+
+alter RRLD_SAFE 1Meg
+
+alter @VSEL[DC]=0
+alter @VDIFF[ACMAG]=0
+alter @VCMAC[ACMAG]=0
+alter @VLOOP[ACMAG]=1
+alter @VLOOP[ACPHASE]=0
+alter @VEXTDIFF[ACMAG]=0
+
+ac dec 100 0.1 100k
+
+let loop_in=v(RLD_DRV)-v(AGND)
+let loop_out=v(RLD)-v(AGND)
+
+let loop_tf=-loop_out/loop_in
+let loop_mag=mag(loop_tf)
+let loop_phase=(180/3.141592653589793)*cph(loop_tf)
+
+meas ac rld_ugf when loop_mag=1 cross=1
+meas ac rld_phase find loop_phase at=$&rld_ugf
+
+let rld_pm=180+rld_phase
+
+set ugf_val=$&rld_ugf
+set pm_val=$&rld_pm
+
+destroy all
+
+
+* CM OFF
+
+alter RRLD_SAFE 1e15
+
+alter @VSEL[DC]=0
+alter @VDIFF[ACMAG]=0
+alter @VCMAC[ACMAG]=1
+alter @VCMAC[ACPHASE]=0
+alter @VLOOP[ACMAG]=0
+alter @VEXTDIFF[ACMAG]=0
+
+ac dec 100 1 1k
+
+let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
+let vin_cm_mag=mag(vin_cm)
+
+meas ac vin_cm_off_60 find vin_cm_mag at=60
+meas ac vin_cm_off_150 find vin_cm_mag at=150
+
+set vin_cm_off_60_val=$&vin_cm_off_60
+set vin_cm_off_150_val=$&vin_cm_off_150
+
+destroy all
+
+
+* CM ON
+
+alter RRLD_SAFE 1Meg
+
+alter @VSEL[DC]=0
+alter @VDIFF[ACMAG]=0
+alter @VCMAC[ACMAG]=1
+alter @VCMAC[ACPHASE]=0
+alter @VLOOP[ACMAG]=0
+alter @VEXTDIFF[ACMAG]=0
+
+ac dec 100 1 1k
+
+let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
+let vin_cm_mag=mag(vin_cm)
+
+meas ac vin_cm_on_60 find vin_cm_mag at=60
+meas ac vin_cm_on_150 find vin_cm_mag at=150
+
+let cm_supp_60=20*log10($vin_cm_off_60_val/vin_cm_on_60)
+let cm_supp_150=20*log10($vin_cm_off_150_val/vin_cm_on_150)
+
+set cm_supp_60_val=$&cm_supp_60
+set cm_supp_150_val=$&cm_supp_150
+
+
+* SUMMARY
+
+echo $runnum $vos_val $out_cm_error_val $rld_dc_error_val $idd_val $power_val $s1_val $s2_val $ina_val $ina_err_val $ina150_val $ugf_val $pm_val $cm_supp_60_val $cm_supp_150_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
+
+
+destroy all
+
+let run=run+1
+
+end
+
+
+quit
+
+.endc
+"}

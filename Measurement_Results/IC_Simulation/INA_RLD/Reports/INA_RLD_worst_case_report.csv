@@ -1,0 +1,26 @@
+Parameter,Unit,Spec,Value,Corner
+Total current,mA,≤6.2,5.937,FFVHTH
+Total power,mW,≤22,21.373,FFVHTH
+Output CM error,mV,±40,33.025,SSNOMTH
+RLD DC error,uV,±30,24.346,SSVHTL
+S1 gain,V/V,,59.900,FFVLTL
+S1 gain dB,dB,,35.548,FFVLTL
+S1 gain error,%,±0.25,0.167,FFVLTL
+S1 -3 dB bandwidth,kHz,≥170,175.431,SSVLTH
+S2 gain,V/V,,3.998,FFVLTL
+S2 gain dB,dB,,12.036,FFVLTL
+S2 gain error,%,±0.10,0.055,FFVLTL
+S2 -3 dB bandwidth,MHz,≥1.7,1.753,SSVLTH
+INA gain,V/V,,239.466,FFVLTL
+INA gain dB,dB,,47.585,FFVLTL
+INA gain error,%,±0.30,0.222,FFVLTL
+Gain flatness 0.05-150 Hz,dB,≤0.001,3.188e-06,SSVLTH
+INA -3 dB bandwidth,kHz,≥170,173.756,SSVLTH
+RLD loop UGF,kHz,1±0.5,0.636,SSVLTL
+RLD phase margin,deg,≥95,100.085,FFVLTH
+Input CM suppression @ 60 Hz,dB,≥54,54.646,SSVLTL
+Input CM suppression @ 150 Hz,dB,≥51,51.686,SSVLTL
+RLD Swing Ratio,%,≤1.0,0.914,FFVHNOM
+RLD Peak Current,nA,≤3.2,3.095,FFVLTH
+CM Interference Gain Change,%,±0.001,6.506e-04,SSNOMNOM
+Input-referred noise 0.05-150 Hz,uVrms,≤3.2,3.115,SSVLTH

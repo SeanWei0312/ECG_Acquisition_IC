@@ -1,0 +1,27 @@
+Parameter,Unit,Value
+"Set conditions",,
+"AVDD",V,3.3
+"Bias current",uA,40
+"CLoad per output",pF,10
+"Vin,diff",V,0
+"VCMFB,REF",V,1.65
+"Vout,cm target",V,1.65
+"",,
+"Operating",,
+"Total current",uA,39.8239
+"Total power",mW,0.131419
+"VCMFB,OUT",V,2.4833
+"VCMFB,IN",V,1.65045
+"VCMFB,OUT target",V,2.4833
+"",,
+"Open-loop",,
+"DC gain",dB,45.1282
+"UGF",MHz,966.924
+"PM",deg,71.9059
+"",,
+"Closed-loop",,
+"VCMFB,OUT err",mV,0.000905528
+"VCMFB,IN err",mV,0.452764
+"Valid VCMFB,REF",V,1.06-3.08
+"tsettle low",ns,4.8
+"tsettle high",ns,5.2

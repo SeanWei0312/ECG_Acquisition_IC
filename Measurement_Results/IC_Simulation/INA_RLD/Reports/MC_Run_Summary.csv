@@ -1,0 +1,4 @@
+Mode,RequestedRuns,ValidRuns,FailedRuns,OverallYield_pct
+MM,200,200,0,95.5
+GL,200,200,0,100
+FULL,372,372,0,44.0860215053763
