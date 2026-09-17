@@ -75,19 +75,63 @@ ECG_Acquisition_IC/
 ├── Docker_Instructions.md
 ├── Design_Files/
 │   └── IC Design/
-│       ├── Schematic/              # Xschem hierarchy and sizing scripts
-│       └── Testbench/              # PVT and Monte Carlo testbenches
+│       ├── Layout/                         # Physical-design workspace
+│       ├── Schematic/
+│       │   ├── AFE_BLOCKS/                 # Analog-front-end hierarchy
+│       │   │   ├── AFE/
+│       │   │   ├── BIAS/
+│       │   │   ├── BUFFER/
+│       │   │   ├── FD_OTA/
+│       │   │   ├── INA/
+│       │   │   ├── INV/
+│       │   │   ├── LPF/
+│       │   │   ├── MIRROR/
+│       │   │   ├── PGA/
+│       │   │   ├── RLD/
+│       │   │   ├── SEL/
+│       │   │   ├── SE_OTA/
+│       │   │   ├── SW/
+│       │   │   └── TG/
+│       │   └── SAR_ADC_BLOCKS/             # SAR ADC hierarchy
+│       │       ├── BSW/
+│       │       ├── CDAC/
+│       │       ├── CLK_GEN/
+│       │       ├── COMP/
+│       │       ├── DLY_CELL/
+│       │       ├── INV/
+│       │       ├── INV2/
+│       │       ├── MUX/
+│       │       ├── NAND/
+│       │       ├── OUT_REG/
+│       │       ├── RS_LATCH/
+│       │       ├── SAR_ADC/
+│       │       ├── SAR_LOGIC/
+│       │       ├── SA_LATCH/
+│       │       ├── SW_NW/
+│       │       ├── TG_SW/
+│       │       ├── TSPC_FF/
+│       │       └── XOR/
+│       └── Testbench/
+│           └── AFE_BLOCKS/                 # AFE PVT and Monte Carlo benches
+│               ├── BIAS/
+│               ├── BUFFER/
+│               ├── FD_OTA/
+│               ├── Gm_Id/
+│               ├── INA_RLD/
+│               ├── LPF/
+│               ├── PGA/
+│               └── SE_OTA/
 ├── Measurement_Results/
-│   └── IC_Simulation/
+│   └── IC_Simulation/                     # Per-block raw data, reports, and plots
+│       ├── AFE/
 │       ├── BIAS/
-│       ├── SE_OTA/
+│       ├── BUFFER/
 │       ├── FD_OTA/
+│       ├── Gm_Id/
 │       ├── INA_RLD/
 │       ├── LPF/
 │       ├── PGA/
-│       ├── BUFFER/
-│       ├── AFE/
-│       └── Gm_Id/
+│       └── SE_OTA/
 └── 2026-sscs-chipathon/             # Upstream Chipathon reference snapshot
 ```
 
