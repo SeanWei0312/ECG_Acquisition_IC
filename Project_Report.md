@@ -27,7 +27,7 @@ Key verified results include:
 
 ## 2. System architecture
 
-![ECG analog front end](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
+![ECG analog front end](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
 
 | Stage | Block | Implementation | Nominal behavior |
 | :--- | :--- | :--- | :---: |
@@ -44,13 +44,13 @@ The verified programmable signal-path gain spans $480$ to $3840\text{ V/V}$, or 
 
 The principal design schematics are:
 
-- [AFE top level](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
-- [Bias generator](Design_Files/IC%20Design/Schematic/BIAS/BIAS.png) and [mirror tree](Design_Files/IC%20Design/Schematic/MIRROR/MIRROR.png)
-- [Single-ended OTA](Design_Files/IC%20Design/Schematic/SE_OTA/SE_OTA.png)
-- [Fully differential OTA](Design_Files/IC%20Design/Schematic/FD_OTA/FDOTA/FD_OTA.png), including the [differential core](Design_Files/IC%20Design/Schematic/FD_OTA/FDC/FDC.png) and [CMFB loop](Design_Files/IC%20Design/Schematic/FD_OTA/CMFB/CMFB.png)
-- [Instrumentation amplifier](Design_Files/IC%20Design/Schematic/INA/INA.png) and [right-leg drive](Design_Files/IC%20Design/Schematic/RLD/RLD.png)
-- [Low-pass filter](Design_Files/IC%20Design/Schematic/LPF/LPF.png), [programmable gain amplifier](Design_Files/IC%20Design/Schematic/PGA/PGA.png), and [output buffer](Design_Files/IC%20Design/Schematic/BUFFER/BUFFER.png)
-- [Selector](Design_Files/IC%20Design/Schematic/SEL/SEL.png), [transmission gate](Design_Files/IC%20Design/Schematic/TG/TG.png), and [inverter](Design_Files/IC%20Design/Schematic/INV/INV.png)
+- [AFE top level](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
+- [Bias generator](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BIAS/BIAS.png) and [mirror tree](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/MIRROR/MIRROR.png)
+- [Single-ended OTA](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/SE_OTA/SE_OTA.png)
+- [Fully differential OTA](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FD_OTA/FDOTA/FD_OTA.png), including the [differential core](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FD_OTA/FDC/FDC.png) and [CMFB loop](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FD_OTA/CMFB/CMFB.png)
+- [Instrumentation amplifier](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/INA/INA.png) and [right-leg drive](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/RLD.png)
+- [Low-pass filter](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/LPF.png), [programmable gain amplifier](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/PGA.png), and [output buffer](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BUFFER/BUFFER.png)
+- [Selector](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/SEL/SEL.png), [transmission gate](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/TG/TG.png), and [inverter](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/INV/INV.png)
 
 ## 3. Circuit-design methodology
 
@@ -742,7 +742,278 @@ The BUFFER directory contains nominal PVT raw exports for operating point, offse
 
 The complete AFE schematic and an `AFE_Analyze.m` scaffold are present. Formal full-chain results are not yet reported. The remaining integration campaign must verify cascaded gain, passband response, integrated input-referred noise, output swing, selector behavior, and ADC-load settling across PVT before the AFE can be marked complete.
 
-## 6. Monte Carlo summary
+## 6. Complete 45-corner deterministic results
+
+The following tables expose every simulated PVT corner instead of showing only nominal and worst-case entries. They use a compact set of the most important signoff quantities; the preceding block tables retain the complete parameter list and specification limits. Every corner passed all formal specifications, including metrics not repeated in these compact tables.
+
+For exhaustive long-form data, see the [INA+RLD](Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_full_pvt_report.csv), [LPF](Measurement_Results/IC_Simulation/LPF/Reports/LPF_full_pvt_report.csv), and [PGA](Measurement_Results/IC_Simulation/PGA/Reports/PGA_full_pvt_report.csv) full-PVT CSV reports.
+
+<details>
+<summary>SE OTA: all 45 PVT corners</summary>
+
+| Corner | Current (mA) | Gain (dB) | UGF (MHz) | PM (°) | Offset (µV) | Noise (µVrms) | Status |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
+| `NOMNOMNOM` | 0.825 | 96.522 | 12.835 | 67.767 | 3.193 | 1.873 | Pass |
+| `NOMVLNOM` | 0.806 | 95.934 | 12.566 | 67.337 | 3.235 | 1.874 | Pass |
+| `NOMVHNOM` | 0.839 | 97.023 | 13.041 | 68.117 | 3.169 | 1.874 | Pass |
+| `NOMNOMTL` | 0.680 | 96.599 | 14.448 | 72.157 | -1.045 | 1.774 | Pass |
+| `NOMNOMTH` | 0.948 | 95.678 | 10.616 | 62.054 | 6.918 | 2.074 | Pass |
+| `NOMVLTL` | 0.664 | 96.080 | 14.105 | 71.686 | -1.168 | 1.772 | Pass |
+| `NOMVLTH` | 0.930 | 94.944 | 10.424 | 61.718 | 7.126 | 2.077 | Pass |
+| `NOMVHTL` | 0.694 | 97.034 | 14.720 | 72.545 | -0.914 | 1.776 | Pass |
+| `NOMVHTH` | 0.962 | 96.294 | 10.761 | 62.330 | 6.735 | 2.072 | Pass |
+| `FFNOMNOM` | 0.942 | 96.345 | 15.068 | 61.737 | 7.450 | 1.780 | Pass |
+| `FFVLNOM` | 0.923 | 95.698 | 14.807 | 61.377 | 7.602 | 1.780 | Pass |
+| `FFVHNOM` | 0.958 | 96.874 | 15.279 | 62.044 | 7.344 | 1.781 | Pass |
+| `FFNOMTL` | 0.775 | 96.746 | 16.631 | 65.770 | 3.471 | 1.689 | Pass |
+| `FFNOMTH` | 1.090 | 95.026 | 12.727 | 56.643 | 11.054 | 1.967 | Pass |
+| `FFVLTL` | 0.758 | 96.227 | 16.314 | 65.370 | 3.456 | 1.687 | Pass |
+| `FFVLTH` | 1.071 | 94.151 | 12.527 | 56.368 | 11.377 | 1.969 | Pass |
+| `FFVHTL` | 0.790 | 97.180 | 16.895 | 66.113 | 3.517 | 1.691 | Pass |
+| `FFVHTH` | 1.106 | 95.725 | 12.885 | 56.883 | 10.793 | 1.966 | Pass |
+| `SSNOMNOM` | 0.730 | 96.324 | 11.066 | 72.737 | -1.468 | 1.969 | Pass |
+| `SSVLNOM` | 0.710 | 95.741 | 10.755 | 72.191 | -1.551 | 1.971 | Pass |
+| `SSVHNOM` | 0.743 | 96.822 | 11.277 | 73.144 | -1.407 | 1.969 | Pass |
+| `SSNOMTL` | 0.603 | 96.114 | 12.698 | 77.260 | -5.903 | 1.861 | Pass |
+| `SSNOMTH` | 0.834 | 95.818 | 8.970 | 66.582 | 2.333 | 2.185 | Pass |
+| `SSVLTL` | 0.586 | 95.572 | 12.289 | 76.687 | -6.134 | 1.859 | Pass |
+| `SSVLTH` | 0.814 | 95.150 | 8.762 | 66.160 | 2.404 | 2.189 | Pass |
+| `SSVHTL` | 0.616 | 96.543 | 12.994 | 77.712 | -5.684 | 1.863 | Pass |
+| `SSVHTH` | 0.847 | 96.397 | 9.110 | 66.901 | 2.232 | 2.182 | Pass |
+| `FSNOMNOM` | 0.841 | 96.190 | 13.115 | 67.661 | 6.456 | 1.849 | Pass |
+| `FSVLNOM` | 0.821 | 95.552 | 12.816 | 67.205 | 6.464 | 1.850 | Pass |
+| `FSVHNOM` | 0.855 | 96.757 | 13.330 | 68.019 | 6.424 | 1.849 | Pass |
+| `FSNOMTL` | 0.696 | 96.379 | 14.808 | 72.036 | 0.735 | 1.753 | Pass |
+| `FSNOMTH` | 0.963 | 94.878 | 10.804 | 61.900 | 11.876 | 2.047 | Pass |
+| `FSVLTL` | 0.679 | 95.837 | 14.441 | 71.553 | 0.538 | 1.751 | Pass |
+| `FSVLTH` | 0.941 | 93.988 | 10.577 | 61.536 | 12.092 | 2.050 | Pass |
+| `FSVHTL` | 0.709 | 96.863 | 15.093 | 72.428 | 0.926 | 1.755 | Pass |
+| `FSVHTH` | 0.977 | 95.646 | 10.958 | 62.185 | 11.612 | 2.045 | Pass |
+| `SFNOMNOM` | 0.808 | 96.634 | 12.548 | 67.832 | -0.088 | 1.898 | Pass |
+| `SFVLNOM` | 0.789 | 96.100 | 12.281 | 67.404 | -0.006 | 1.899 | Pass |
+| `SFVHNOM` | 0.822 | 97.026 | 12.750 | 68.180 | -0.153 | 1.899 | Pass |
+| `SFNOMTL` | 0.664 | 96.715 | 14.085 | 72.234 | -2.796 | 1.796 | Pass |
+| `SFNOMTH` | 0.932 | 95.905 | 10.415 | 62.169 | 1.806 | 2.103 | Pass |
+| `SFVLTL` | 0.647 | 96.237 | 13.741 | 71.758 | -2.825 | 1.794 | Pass |
+| `SFVLTH` | 0.914 | 95.285 | 10.230 | 61.842 | 1.999 | 2.105 | Pass |
+| `SFVHTL` | 0.677 | 97.052 | 14.350 | 72.621 | -2.766 | 1.799 | Pass |
+| `SFVHTH` | 0.946 | 96.369 | 10.556 | 62.440 | 1.645 | 2.101 | Pass |
+
+</details>
+
+<details>
+<summary>FD OTA: all 45 PVT corners</summary>
+
+| Corner | Current (mA) | Gain (dB) | UGF (MHz) | PM (°) | CM error (mV) | Noise (µVrms) | Status |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
+| `NOMNOMNOM` | 1.604 | 88.699 | 12.447 | 72.649 | 0.395 | 3.086 | Pass |
+| `NOMVLNOM` | 1.568 | 88.122 | 12.170 | 72.365 | 0.365 | 3.080 | Pass |
+| `NOMVHNOM` | 1.633 | 89.195 | 12.662 | 72.892 | 0.415 | 3.091 | Pass |
+| `NOMNOMTL` | 1.302 | 89.168 | 13.933 | 75.290 | -6.733 | 2.945 | Pass |
+| `NOMNOMTH` | 1.861 | 87.741 | 10.253 | 69.080 | 10.536 | 3.356 | Pass |
+| `NOMVLTL` | 1.269 | 88.659 | 13.588 | 74.999 | -6.769 | 2.935 | Pass |
+| `NOMVLTH` | 1.825 | 87.088 | 10.059 | 68.858 | 10.504 | 3.354 | Pass |
+| `NOMVHTL` | 1.329 | 89.601 | 14.211 | 75.543 | -6.702 | 2.954 | Pass |
+| `NOMVHTH` | 1.890 | 88.308 | 10.402 | 69.273 | 10.555 | 3.358 | Pass |
+| `FFNOMNOM` | 1.857 | 88.550 | 14.528 | 66.886 | -1.839 | 2.950 | Pass |
+| `FFVLNOM` | 1.819 | 87.973 | 14.261 | 66.636 | -1.875 | 2.945 | Pass |
+| `FFVHNOM` | 1.889 | 89.041 | 14.747 | 67.108 | -1.813 | 2.956 | Pass |
+| `FFNOMTL` | 1.509 | 89.047 | 15.922 | 69.709 | -9.068 | 2.824 | Pass |
+| `FFNOMTH` | 2.163 | 87.531 | 12.277 | 63.557 | 8.577 | 3.200 | Pass |
+| `FFVLTL` | 1.474 | 88.537 | 15.600 | 69.419 | -9.112 | 2.815 | Pass |
+| `FFVLTH` | 2.124 | 86.877 | 12.079 | 63.377 | 8.536 | 3.198 | Pass |
+| `FFVHTL` | 1.539 | 89.474 | 16.195 | 69.968 | -9.030 | 2.832 | Pass |
+| `FFVHTH` | 2.194 | 88.094 | 12.437 | 63.721 | 8.601 | 3.203 | Pass |
+| `SSNOMNOM` | 1.400 | 88.731 | 10.764 | 77.375 | 2.748 | 3.222 | Pass |
+| `SSVLNOM` | 1.362 | 88.152 | 10.448 | 77.055 | 2.724 | 3.215 | Pass |
+| `SSVHNOM` | 1.427 | 89.234 | 10.983 | 77.633 | 2.762 | 3.228 | Pass |
+| `SSNOMTL` | 1.136 | 89.203 | 12.319 | 79.673 | -4.287 | 3.066 | Pass |
+| `SSNOMTH` | 1.619 | 87.784 | 8.645 | 73.673 | 12.633 | 3.512 | Pass |
+| `SSVLTL` | 1.103 | 88.692 | 11.920 | 79.407 | -4.313 | 3.055 | Pass |
+| `SSVLTH` | 1.581 | 87.126 | 8.435 | 73.396 | 12.610 | 3.511 | Pass |
+| `SSVHTL` | 1.161 | 89.643 | 12.610 | 79.898 | -4.265 | 3.076 | Pass |
+| `SSVHTH` | 1.645 | 88.358 | 8.788 | 73.895 | 12.643 | 3.514 | Pass |
+| `FSNOMNOM` | 1.652 | 88.379 | 12.619 | 71.851 | 1.747 | 3.035 | Pass |
+| `FSVLNOM` | 1.611 | 87.775 | 12.319 | 71.548 | 1.692 | 3.031 | Pass |
+| `FSVHNOM` | 1.682 | 88.917 | 12.840 | 72.104 | 1.781 | 3.041 | Pass |
+| `FSNOMTL` | 1.341 | 88.829 | 14.122 | 74.463 | -5.139 | 2.901 | Pass |
+| `FSNOMTH` | 1.914 | 87.441 | 10.390 | 68.299 | 11.505 | 3.299 | Pass |
+| `FSVLTL` | 1.306 | 88.295 | 13.765 | 74.159 | -5.189 | 2.892 | Pass |
+| `FSVLTH` | 1.870 | 86.753 | 10.166 | 68.053 | 11.426 | 3.299 | Pass |
+| `FSVHTL` | 1.369 | 89.304 | 14.405 | 74.723 | -5.100 | 2.909 | Pass |
+| `FSVHTH` | 1.944 | 88.050 | 10.544 | 68.501 | 11.544 | 3.302 | Pass |
+| `SFNOMNOM` | 1.556 | 88.952 | 12.257 | 73.436 | -1.017 | 3.135 | Pass |
+| `SFVLNOM` | 1.520 | 88.413 | 11.978 | 73.161 | -1.018 | 3.128 | Pass |
+| `SFVHNOM` | 1.583 | 89.369 | 12.471 | 73.672 | -1.017 | 3.141 | Pass |
+| `SFNOMTL` | 1.263 | 89.453 | 13.722 | 76.111 | -8.393 | 2.989 | Pass |
+| `SFNOMTH` | 1.808 | 87.953 | 10.106 | 69.853 | 9.515 | 3.411 | Pass |
+| `SFVLTL` | 1.230 | 88.981 | 13.369 | 75.826 | -8.411 | 2.978 | Pass |
+| `SFVLTH` | 1.773 | 87.337 | 9.916 | 69.642 | 9.530 | 3.409 | Pass |
+| `SFVHTL` | 1.289 | 89.804 | 14.000 | 76.358 | -8.373 | 2.999 | Pass |
+| `SFVHTH` | 1.835 | 88.443 | 10.254 | 70.037 | 9.502 | 3.414 | Pass |
+
+</details>
+
+<details>
+<summary>INA+RLD: all 45 PVT corners</summary>
+
+| Corner | Current (mA) | Gain error (%) | BW (kHz) | Noise (µVrms) | RLD UGF (kHz) | PM (°) | Supp. 60 (dB) | Supp. 150 (dB) | Status |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
+| `NOMNOMNOM` | 3.860 | 0.011 | 259.286 | 2.667 | 0.946 | 100.672 | 55.072 | 53.257 | Pass |
+| `NOMVLNOM` | 3.771 | -0.004 | 254.746 | 2.668 | 0.946 | 100.644 | 55.068 | 53.237 | Pass |
+| `NOMVHNOM` | 3.930 | 0.023 | 262.678 | 2.668 | 0.946 | 100.697 | 55.075 | 53.275 | Pass |
+| `NOMNOMTL` | 3.123 | -0.045 | 271.141 | 2.524 | 0.839 | 100.779 | 54.973 | 52.853 | Pass |
+| `NOMNOMTH` | 4.491 | 0.047 | 225.472 | 2.954 | 1.082 | 100.540 | 55.160 | 53.651 | Pass |
+| `NOMVLTL` | 3.044 | -0.058 | 266.533 | 2.521 | 0.839 | 100.753 | 54.970 | 52.832 | Pass |
+| `NOMVLTH` | 4.402 | 0.029 | 221.640 | 2.958 | 1.082 | 100.509 | 55.157 | 53.633 | Pass |
+| `NOMVHTL` | 3.189 | -0.035 | 274.684 | 2.527 | 0.839 | 100.803 | 54.976 | 52.872 | Pass |
+| `NOMVHTH` | 4.559 | 0.062 | 228.340 | 2.952 | 1.082 | 100.568 | 55.163 | 53.668 | Pass |
+| `FFNOMNOM` | 4.474 | -0.130 | 327.841 | 2.536 | 1.313 | 100.310 | 55.254 | 54.098 | Pass |
+| `FFVLNOM` | 4.381 | -0.145 | 322.783 | 2.536 | 1.313 | 100.273 | 55.251 | 54.079 | Pass |
+| `FFVHNOM` | 4.553 | -0.118 | 331.864 | 2.537 | 1.313 | 100.345 | 55.257 | 54.114 | Pass |
+| `FFNOMTL` | 3.624 | -0.202 | 342.319 | 2.405 | 1.166 | 100.455 | 55.200 | 53.833 | Pass |
+| `FFNOMTH` | 5.222 | -0.080 | 286.575 | 2.804 | 1.502 | 100.133 | 55.302 | 54.348 | Pass |
+| `FFVLTL` | 3.540 | -0.215 | 337.116 | 2.402 | 1.166 | 100.420 | 55.196 | 53.813 | Pass |
+| `FFVLTH` | 5.128 | -0.099 | 282.254 | 2.807 | 1.502 | 100.092 | 55.299 | 54.330 | Pass |
+| `FFVHTL` | 3.698 | -0.191 | 346.567 | 2.408 | 1.166 | 100.486 | 55.203 | 53.850 | Pass |
+| `FFVHTH` | 5.300 | -0.065 | 289.995 | 2.802 | 1.502 | 100.170 | 55.305 | 54.363 | Pass |
+| `SSNOMNOM` | 3.366 | 0.101 | 209.004 | 2.803 | 0.717 | 100.899 | 54.807 | 52.233 | Pass |
+| `SSVLNOM` | 3.273 | 0.086 | 204.410 | 2.804 | 0.717 | 100.877 | 54.803 | 52.211 | Pass |
+| `SSVHNOM` | 3.431 | 0.113 | 212.017 | 2.803 | 0.717 | 100.919 | 54.810 | 52.252 | Pass |
+| `SSNOMTL` | 2.722 | 0.056 | 218.975 | 2.646 | 0.636 | 100.983 | 54.648 | 51.699 | Pass |
+| `SSNOMTH` | 3.903 | 0.125 | 180.833 | 3.110 | 0.820 | 100.796 | 54.952 | 52.770 | Pass |
+| `SSVLTL` | 2.642 | 0.043 | 214.418 | 2.644 | 0.636 | 100.963 | 54.644 | 51.676 | Pass |
+| `SSVLTH` | 3.810 | 0.106 | 176.996 | 3.117 | 0.820 | 100.772 | 54.948 | 52.750 | Pass |
+| `SSVHTL` | 2.783 | 0.067 | 222.089 | 2.650 | 0.636 | 101.002 | 54.652 | 51.719 | Pass |
+| `SSVHTH` | 3.966 | 0.140 | 183.369 | 3.107 | 0.820 | 100.818 | 54.955 | 52.788 | Pass |
+| `FSNOMNOM` | 3.977 | 0.009 | 265.524 | 2.633 | 0.946 | 100.689 | 55.074 | 53.269 | Pass |
+| `FSVLNOM` | 3.878 | -0.008 | 260.510 | 2.634 | 0.946 | 100.661 | 55.070 | 53.250 | Pass |
+| `FSVHNOM` | 4.051 | 0.022 | 269.039 | 2.633 | 0.946 | 100.714 | 55.077 | 53.286 | Pass |
+| `FSNOMTL` | 3.218 | -0.049 | 277.561 | 2.494 | 0.839 | 100.794 | 54.975 | 52.865 | Pass |
+| `FSNOMTH` | 4.620 | 0.046 | 230.758 | 2.916 | 1.082 | 100.558 | 55.162 | 53.662 | Pass |
+| `FSVLTL` | 3.134 | -0.063 | 272.717 | 2.492 | 0.839 | 100.769 | 54.972 | 52.845 | Pass |
+| `FSVLTH` | 4.513 | 0.026 | 226.239 | 2.921 | 1.082 | 100.529 | 55.159 | 53.644 | Pass |
+| `FSVHTL` | 3.287 | -0.036 | 281.210 | 2.497 | 0.839 | 100.817 | 54.978 | 52.883 | Pass |
+| `FSVHTH` | 4.693 | 0.063 | 233.744 | 2.913 | 1.082 | 100.586 | 55.165 | 53.678 | Pass |
+| `SFNOMNOM` | 3.742 | 0.011 | 252.978 | 2.703 | 0.946 | 100.655 | 55.070 | 53.245 | Pass |
+| `SFVLNOM` | 3.655 | -0.003 | 248.429 | 2.703 | 0.946 | 100.626 | 55.066 | 53.225 | Pass |
+| `SFVHNOM` | 3.809 | 0.020 | 256.334 | 2.703 | 0.946 | 100.681 | 55.073 | 53.264 | Pass |
+| `SFNOMTL` | 3.028 | -0.044 | 264.634 | 2.555 | 0.839 | 100.764 | 54.971 | 52.841 | Pass |
+| `SFNOMTH` | 4.359 | 0.044 | 220.153 | 2.995 | 1.082 | 100.520 | 55.158 | 53.640 | Pass |
+| `SFVLTL` | 2.949 | -0.056 | 259.932 | 2.552 | 0.839 | 100.737 | 54.967 | 52.819 | Pass |
+| `SFVLTH` | 4.275 | 0.027 | 216.428 | 2.999 | 1.082 | 100.489 | 55.155 | 53.620 | Pass |
+| `SFVHTL` | 3.091 | -0.036 | 268.148 | 2.559 | 0.839 | 100.788 | 54.974 | 52.860 | Pass |
+| `SFVHTH` | 4.425 | 0.055 | 222.982 | 2.992 | 1.082 | 100.549 | 55.161 | 53.657 | Pass |
+
+</details>
+
+<details>
+<summary>LPF: all 45 PVT corners</summary>
+
+| Corner | Current (mA) | Offset (mV) | Gain error (%) | Loss 150 (dB) | −1 dB (Hz) | −3 dB (Hz) | Noise (µVrms) | Status |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
+| `NOMNOMNOM` | 1.604 | 0.000 | -0.027 | 0.361 | 258.691 | 506.912 | 6.176 | Pass |
+| `NOMVLNOM` | 1.568 | 0.000 | -0.027 | 0.361 | 258.691 | 506.913 | 6.164 | Pass |
+| `NOMVHNOM` | 1.633 | -0.000 | -0.026 | 0.361 | 258.690 | 506.912 | 6.187 | Pass |
+| `NOMNOMTL` | 1.302 | 0.000 | -0.032 | 0.454 | 229.654 | 449.936 | 5.895 | Pass |
+| `NOMNOMTH` | 1.861 | 0.000 | -0.023 | 0.279 | 295.879 | 579.847 | 6.715 | Pass |
+| `NOMVLTL` | 1.269 | 0.000 | -0.032 | 0.454 | 229.654 | 449.937 | 5.875 | Pass |
+| `NOMVLTH` | 1.825 | 0.000 | -0.024 | 0.279 | 295.880 | 579.848 | 6.711 | Pass |
+| `NOMVHTL` | 1.329 | 0.000 | -0.031 | 0.454 | 229.653 | 449.936 | 5.913 | Pass |
+| `NOMVHTH` | 1.890 | 0.000 | -0.023 | 0.279 | 295.879 | 579.847 | 6.719 | Pass |
+| `FFNOMNOM` | 1.857 | 0.000 | -0.018 | 0.191 | 359.135 | 703.898 | 5.903 | Pass |
+| `FFVLNOM` | 1.819 | 0.000 | -0.018 | 0.191 | 359.136 | 703.899 | 5.892 | Pass |
+| `FFVHNOM` | 1.889 | 0.000 | -0.017 | 0.191 | 359.135 | 703.898 | 5.913 | Pass |
+| `FFNOMTL` | 1.509 | -0.000 | -0.020 | 0.241 | 318.777 | 624.764 | 5.650 | Pass |
+| `FFNOMTH` | 2.163 | 0.000 | -0.016 | 0.147 | 410.798 | 805.228 | 6.403 | Pass |
+| `FFVLTL` | 1.474 | -0.000 | -0.020 | 0.241 | 318.777 | 624.764 | 5.632 | Pass |
+| `FFVLTH` | 2.124 | -0.000 | -0.017 | 0.147 | 410.798 | 805.229 | 6.399 | Pass |
+| `FFVHTL` | 1.539 | -0.000 | -0.020 | 0.241 | 318.776 | 624.763 | 5.666 | Pass |
+| `FFVHTH` | 2.194 | 0.000 | -0.016 | 0.147 | 410.797 | 805.227 | 6.408 | Pass |
+| `SSNOMNOM` | 1.400 | 0.000 | -0.041 | 0.611 | 196.115 | 384.135 | 6.452 | Pass |
+| `SSVLNOM` | 1.362 | 0.000 | -0.042 | 0.611 | 196.115 | 384.135 | 6.439 | Pass |
+| `SSVHNOM` | 1.427 | 0.000 | -0.041 | 0.611 | 196.115 | 384.134 | 6.464 | Pass |
+| `SSNOMTL` | 1.136 | 0.000 | -0.050 | 0.762 | 174.135 | 340.986 | 6.142 | Pass |
+| `SSNOMTH` | 1.619 | -0.000 | -0.034 | 0.475 | 224.272 | 439.376 | 7.032 | Pass |
+| `SSVLTL` | 1.103 | 0.000 | -0.050 | 0.762 | 174.135 | 340.987 | 6.120 | Pass |
+| `SSVLTH` | 1.581 | -0.000 | -0.035 | 0.475 | 224.273 | 439.377 | 7.029 | Pass |
+| `SSVHTL` | 1.161 | 0.000 | -0.049 | 0.762 | 174.135 | 340.986 | 6.162 | Pass |
+| `SSVHTH` | 1.645 | -0.000 | -0.033 | 0.475 | 224.272 | 439.376 | 7.036 | Pass |
+| `FSNOMNOM` | 1.652 | -0.000 | -0.027 | 0.361 | 258.691 | 506.914 | 6.077 | Pass |
+| `FSVLNOM` | 1.611 | -0.000 | -0.028 | 0.361 | 258.692 | 506.914 | 6.067 | Pass |
+| `FSVHNOM` | 1.682 | -0.000 | -0.027 | 0.361 | 258.691 | 506.913 | 6.087 | Pass |
+| `FSNOMTL` | 1.341 | 0.000 | -0.032 | 0.454 | 229.654 | 449.937 | 5.808 | Pass |
+| `FSNOMTH` | 1.914 | 0.000 | -0.023 | 0.279 | 295.880 | 579.849 | 6.605 | Pass |
+| `FSVLTL` | 1.306 | 0.000 | -0.032 | 0.454 | 229.654 | 449.938 | 5.790 | Pass |
+| `FSVLTH` | 1.870 | 0.000 | -0.024 | 0.279 | 295.880 | 579.850 | 6.602 | Pass |
+| `FSVHTL` | 1.369 | 0.000 | -0.031 | 0.454 | 229.654 | 449.937 | 5.824 | Pass |
+| `FSVHTH` | 1.944 | -0.000 | -0.023 | 0.279 | 295.880 | 579.848 | 6.608 | Pass |
+| `SFNOMNOM` | 1.556 | -0.000 | -0.027 | 0.361 | 258.690 | 506.911 | 6.274 | Pass |
+| `SFVLNOM` | 1.520 | -0.000 | -0.027 | 0.361 | 258.690 | 506.912 | 6.261 | Pass |
+| `SFVHNOM` | 1.583 | 0.000 | -0.026 | 0.361 | 258.690 | 506.911 | 6.287 | Pass |
+| `SFNOMTL` | 1.263 | 0.000 | -0.031 | 0.454 | 229.653 | 449.935 | 5.983 | Pass |
+| `SFNOMTH` | 1.808 | -0.000 | -0.023 | 0.279 | 295.878 | 579.846 | 6.827 | Pass |
+| `SFVLTL` | 1.230 | 0.000 | -0.032 | 0.454 | 229.653 | 449.936 | 5.961 | Pass |
+| `SFVLTH` | 1.773 | -0.000 | -0.023 | 0.279 | 295.879 | 579.847 | 6.822 | Pass |
+| `SFVHTL` | 1.289 | 0.000 | -0.031 | 0.454 | 229.653 | 449.935 | 6.002 | Pass |
+| `SFVHTH` | 1.835 | -0.000 | -0.022 | 0.279 | 295.878 | 579.846 | 6.831 | Pass |
+
+</details>
+
+<details>
+<summary>PGA: all 45 PVT corners</summary>
+
+| Corner | Current (mA) | CM error (mV) | Max abs. gain error (%) | Min BW (MHz) | Min CMRR 60 (dB) | Max noise (µVrms) | Status |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
+| `NOMNOMNOM` | 1.604 | 0.395 | 0.878 | 0.907 | 188.992 | 4.617 | Pass |
+| `NOMVLNOM` | 1.568 | 0.365 | 1.152 | 0.891 | 194.854 | 4.602 | Pass |
+| `NOMVHNOM` | 1.633 | 0.415 | 0.874 | 0.918 | 184.741 | 4.629 | Pass |
+| `NOMNOMTL` | 1.302 | -6.738 | 0.892 | 0.969 | 197.365 | 4.412 | Pass |
+| `NOMNOMTH` | 1.862 | 10.545 | 1.317 | 0.765 | 199.520 | 5.012 | Pass |
+| `NOMVLTL` | 1.269 | -6.774 | 0.896 | 0.953 | 205.888 | 4.392 | Pass |
+| `NOMVLTH` | 1.825 | 10.513 | 1.773 | 0.751 | 201.550 | 5.002 | Pass |
+| `NOMVHTL` | 1.329 | -6.707 | 0.889 | 0.981 | 205.046 | 4.428 | Pass |
+| `NOMVHTH` | 1.890 | 10.563 | 1.022 | 0.774 | 201.325 | 5.020 | Pass |
+| `FFNOMNOM` | 1.857 | -1.840 | 0.910 | 1.153 | 207.973 | 4.417 | Pass |
+| `FFVLNOM` | 1.819 | -1.877 | 0.914 | 1.136 | 209.892 | 4.405 | Pass |
+| `FFVHNOM` | 1.889 | -1.814 | 0.906 | 1.167 | 216.064 | 4.427 | Pass |
+| `FFNOMTL` | 1.509 | -9.074 | 0.928 | 1.230 | 196.994 | 4.232 | Pass |
+| `FFNOMTH` | 2.163 | 8.583 | 1.169 | 0.978 | 196.898 | 4.782 | Pass |
+| `FFVLTL` | 1.474 | -9.119 | 0.932 | 1.212 | 196.991 | 4.216 | Pass |
+| `FFVLTH` | 2.125 | 8.543 | 1.479 | 0.964 | 205.398 | 4.774 | Pass |
+| `FFVHTL` | 1.539 | -9.035 | 0.925 | 1.245 | 231.532 | 4.246 | Pass |
+| `FFVHTH` | 2.195 | 8.607 | 0.951 | 0.990 | 202.390 | 4.789 | Pass |
+| `SSNOMNOM` | 1.400 | 2.750 | 1.115 | 0.725 | 193.428 | 4.815 | Pass |
+| `SSVLNOM` | 1.362 | 2.727 | 1.945 | 0.708 | 204.271 | 4.793 | Pass |
+| `SSVHNOM` | 1.427 | 2.764 | 0.854 | 0.735 | 195.031 | 4.830 | Pass |
+| `SSNOMTL` | 1.136 | -4.291 | 0.869 | 0.776 | 193.893 | 4.588 | Pass |
+| `SSNOMTH` | 1.620 | 12.644 | 1.695 | 0.609 | 202.718 | 5.240 | Pass |
+| `SSVLTL` | 1.103 | -4.317 | 1.494 | 0.760 | 201.516 | 4.560 | Pass |
+| `SSVLTH` | 1.581 | 12.623 | 2.502 | 0.595 | 202.761 | 5.224 | Pass |
+| `SSVHTL` | 1.161 | -4.268 | 0.866 | 0.787 | 198.684 | 4.609 | Pass |
+| `SSVHTH` | 1.646 | 12.654 | 1.236 | 0.617 | 201.287 | 5.250 | Pass |
+| `FSNOMNOM` | 1.652 | 1.748 | 0.880 | 0.933 | 188.992 | 4.545 | Pass |
+| `FSVLNOM` | 1.611 | 1.694 | 0.989 | 0.915 | 194.853 | 4.532 | Pass |
+| `FSVHNOM` | 1.682 | 1.782 | 0.876 | 0.945 | 188.991 | 4.555 | Pass |
+| `FSNOMTL` | 1.341 | -5.143 | 0.895 | 0.998 | 193.103 | 4.347 | Pass |
+| `FSNOMTH` | 1.915 | 11.514 | 1.220 | 0.786 | 206.731 | 4.931 | Pass |
+| `FSVLTL` | 1.306 | -5.192 | 0.899 | 0.981 | 207.012 | 4.330 | Pass |
+| `FSVLTH` | 1.871 | 11.436 | 1.621 | 0.770 | 200.998 | 4.922 | Pass |
+| `FSVHTL` | 1.369 | -5.104 | 0.891 | 1.010 | 207.034 | 4.362 | Pass |
+| `FSVHTH` | 1.944 | 11.553 | 0.954 | 0.796 | 202.490 | 4.938 | Pass |
+| `SFNOMNOM` | 1.556 | -1.018 | 0.876 | 0.880 | 188.993 | 4.689 | Pass |
+| `SFVLNOM` | 1.520 | -1.019 | 1.296 | 0.864 | 194.855 | 4.672 | Pass |
+| `SFVHNOM` | 1.583 | -1.018 | 0.873 | 0.891 | 188.993 | 4.703 | Pass |
+| `SFNOMTL` | 1.263 | -8.399 | 0.891 | 0.940 | 202.057 | 4.476 | Pass |
+| `SFNOMTH` | 1.808 | 9.524 | 1.392 | 0.743 | 194.217 | 5.094 | Pass |
+| `SFVLTL` | 1.230 | -8.417 | 0.894 | 0.923 | 204.391 | 4.453 | Pass |
+| `SFVLTH` | 1.774 | 9.540 | 1.889 | 0.731 | 194.896 | 5.082 | Pass |
+| `SFVHTL` | 1.289 | -8.379 | 0.888 | 0.952 | 195.119 | 4.494 | Pass |
+| `SFVHTH` | 1.835 | 9.510 | 1.075 | 0.753 | 197.996 | 5.102 | Pass |
+
+</details>
+
+## 7. Monte Carlo summary
 
 | Block | MM | GL | FULL | Runs per mode | Failed runs |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -754,18 +1025,18 @@ The complete AFE schematic and an `AFE_Analyze.m` scaffold are present. Formal f
 
 Every generated Monte Carlo figure is included in its corresponding block section above.
 
-## 7. Generated artifacts
+## 8. Generated artifacts
 
 | Block | Analyzer | Deterministic reports | Monte Carlo reports |
 | :--- | :--- | :--- | :--- |
 | BIAS / SEL | [`BIAS_Analyze.m`](Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m) | [`BIAS_table_report.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_table_report.csv), [`BIAS_global_worst_case.csv`](Measurement_Results/IC_Simulation/BIAS/BIAS_global_worst_case.csv) | — |
-| SE OTA | [`SEOTA_Analyze.m`](Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m) | [`SEOTA_worst_case_report.csv`](Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_worst_case_report.csv) | [`SEOTA_MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_MC_Run_Summary.csv) |
-| FD OTA | [`FDOTA_Analyze.m`](Measurement_Results/IC_Simulation/FD_OTA/FDOTA_Analyze.m) | [`FDOTA_worst_case_report.csv`](Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_worst_case_report.csv) | [`FDOTA_MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_MC_Run_Summary.csv) |
-| INA + RLD | [`INA_RLD_Analyze.m`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_Analyze.m) | [`INA_RLD_worst_case_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_worst_case_report.csv) | [`MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/INA_RLD/Reports/MC_Run_Summary.csv) |
-| LPF | [`LPF_Analyze.m`](Measurement_Results/IC_Simulation/LPF/LPF_Analyze.m) | [`LPF_worst_case_report.csv`](Measurement_Results/IC_Simulation/LPF/Reports/LPF_worst_case_report.csv) | [`MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/LPF/Reports/MC_Run_Summary.csv) |
-| PGA | [`PGA_Analyze.m`](Measurement_Results/IC_Simulation/PGA/PGA_Analyze.m) | [`PGA_worst_case_report.csv`](Measurement_Results/IC_Simulation/PGA/Reports/PGA_worst_case_report.csv) | [`MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/PGA/Reports/MC_Run_Summary.csv) |
+| SE OTA | [`SEOTA_Analyze.m`](Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m) | [`SEOTA_table_report.csv`](Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_table_report.csv), [`SEOTA_worst_case_report.csv`](Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_worst_case_report.csv) | [`SEOTA_MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_MC_Run_Summary.csv) |
+| FD OTA | [`FDOTA_Analyze.m`](Measurement_Results/IC_Simulation/FD_OTA/FDOTA_Analyze.m) | [`FDOTA_table_report.csv`](Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_table_report.csv), [`FDOTA_worst_case_report.csv`](Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_worst_case_report.csv) | [`FDOTA_MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_MC_Run_Summary.csv) |
+| INA + RLD | [`INA_RLD_Analyze.m`](Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_Analyze.m) | [`INA_RLD_table_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_table_report.csv), [`INA_RLD_full_pvt_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_full_pvt_report.csv), [`INA_RLD_worst_case_report.csv`](Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_worst_case_report.csv) | [`MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/INA_RLD/Reports/MC_Run_Summary.csv) |
+| LPF | [`LPF_Analyze.m`](Measurement_Results/IC_Simulation/LPF/LPF_Analyze.m) | [`LPF_table_report.csv`](Measurement_Results/IC_Simulation/LPF/Reports/LPF_table_report.csv), [`LPF_full_pvt_report.csv`](Measurement_Results/IC_Simulation/LPF/Reports/LPF_full_pvt_report.csv), [`LPF_worst_case_report.csv`](Measurement_Results/IC_Simulation/LPF/Reports/LPF_worst_case_report.csv) | [`MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/LPF/Reports/MC_Run_Summary.csv) |
+| PGA | [`PGA_Analyze.m`](Measurement_Results/IC_Simulation/PGA/PGA_Analyze.m) | [`PGA_table_report.csv`](Measurement_Results/IC_Simulation/PGA/Reports/PGA_table_report.csv), [`PGA_full_pvt_report.csv`](Measurement_Results/IC_Simulation/PGA/Reports/PGA_full_pvt_report.csv), [`PGA_worst_case_report.csv`](Measurement_Results/IC_Simulation/PGA/Reports/PGA_worst_case_report.csv) | [`MC_Run_Summary.csv`](Measurement_Results/IC_Simulation/PGA/Reports/MC_Run_Summary.csv) |
 
-## 8. Reproducing the analysis
+## 9. Reproducing the analysis
 
 Run from the repository root after the ngspice source files have been generated:
 
@@ -784,7 +1055,7 @@ The analyzers follow a numeric-first workflow:
 ngspice TXT → double-precision calculations → PVT/MC selection → unit scaling → CSV and plots
 ```
 
-## 9. Limitations and next steps
+## 10. Limitations and next steps
 
 | Priority | Work item | Completion criterion |
 | :---: | :--- | :--- |

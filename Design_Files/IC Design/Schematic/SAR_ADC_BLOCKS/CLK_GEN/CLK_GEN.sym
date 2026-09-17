@@ -1,0 +1,46 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=xCLKGEN1"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 -150 -60 -130 -60 {}
+L 4 0 -100 0 -80 {}
+L 4 -20 -100 -20 -80 {}
+L 4 -150 60 -130 60 {}
+L 4 -150 0 -130 0 {}
+L 4 150 40 170 40 {}
+L 4 150 0 170 0 {}
+L 4 150 -60 170 -60 {}
+L 4 150 -40 170 -40 {}
+L 4 150 20 170 20 {}
+L 4 -130 -80 150 -80 {}
+L 4 -130 -80 -130 80 {}
+L 4 -130 80 150 80 {}
+L 4 150 -80 150 80 {}
+B 5 -152.5 -62.5 -147.5 -57.5 {name=clk dir=in}
+B 5 -2.5 -102.5 2.5 -97.5 {name=VDD dir=in}
+B 5 -22.5 -102.5 -17.5 -97.5 {name=VCM dir=in}
+B 5 -152.5 57.5 -147.5 62.5 {name=EOC dir=in}
+B 5 -152.5 -2.5 -147.5 2.5 {name=Ready dir=in}
+B 5 167.5 37.5 172.5 42.5 {name=clk_sample_b dir=out}
+B 5 167.5 -2.5 172.5 2.5 {name=clk_sample dir=out}
+B 5 167.5 -62.5 172.5 -57.5 {name=clk_SAR dir=out}
+B 5 167.5 -42.5 172.5 -37.5 {name=clk_SAR_b dir=out}
+B 5 167.5 17.5 172.5 22.5 {name=clk_sample_pre dir=out}
+T {CLK_GEN} -35 -6 0 0 0.3 0.3 {}
+T {clk} -125 -64 0 0 0.2 0.2 {}
+T {VDD} 4 -75 1 0 0.2 0.2 {}
+T {VCM} -16 -75 1 0 0.2 0.2 {}
+T {EOC} -125 56 0 0 0.2 0.2 {}
+T {Ready} -125 -4 0 0 0.2 0.2 {}
+T {clk_sample_b} 145 36 0 1 0.2 0.2 {}
+T {clk_sample} 145 -4 0 1 0.2 0.2 {}
+T {clk_SAR} 145 -64 0 1 0.2 0.2 {}
+T {clk_SAR_b} 145 -44 0 1 0.2 0.2 {}
+T {clk_sample_pre} 145 16 0 1 0.2 0.2 {}

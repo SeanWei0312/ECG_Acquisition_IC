@@ -9,16 +9,16 @@ The repository contains transistor-level Xschem designs, ngspice verification te
 
 ## Architecture
 
-![ECG analog front end](Design_Files/IC%20Design/Schematic/AFE/AFE.png)
+![ECG analog front end](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
 
 | Stage | Block | Function | Nominal transfer |
 | :--- | :--- | :--- | :---: |
-| 1 | [`INA`](Design_Files/IC%20Design/Schematic/INA/) | Three-amplifier instrumentation front end | $240\text{ V/V}$ |
-| 2 | [`LPF`](Design_Files/IC%20Design/Schematic/LPF/) | Fully differential, unity-gain active low-pass filter | $1\text{ V/V}$; $f_{-1\mathrm{dB}} \ge 150\text{ Hz}$ |
-| 3 | [`PGA`](Design_Files/IC%20Design/Schematic/PGA/) | Digitally programmable differential gain | $2/4/8/16\text{ V/V}$ |
-| 4 | [`BUFFER`](Design_Files/IC%20Design/Schematic/BUFFER/) | Differential output driver | $1\text{ V/V}$ |
-| Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/RLD/) | Input common-mode suppression | $55.1\text{ dB}$ at 60 Hz nominal |
-| Support | [`BIAS`](Design_Files/IC%20Design/Schematic/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
+| 1 | [`INA`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/INA/) | Three-amplifier instrumentation front end | $240\text{ V/V}$ |
+| 2 | [`LPF`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/) | Fully differential, unity-gain active low-pass filter | $1\text{ V/V}$; $f_{-1\mathrm{dB}} \ge 150\text{ Hz}$ |
+| 3 | [`PGA`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/) | Digitally programmable differential gain | $2/4/8/16\text{ V/V}$ |
+| 4 | [`BUFFER`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BUFFER/) | Differential output driver | $1\text{ V/V}$ |
+| Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/) | Input common-mode suppression | $55.1\text{ dB}$ at 60 Hz nominal |
+| Support | [`BIAS`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
 
 The verified signal-path gain range is $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$), before ADC integration.
 
@@ -41,26 +41,28 @@ All completed MM, GL, and FULL analyses contain 200 valid runs, zero failed runs
 
 ## Headline results
 
-| Block | Metric | Nominal | Full-PVT worst case | Specification |
+| Block | Metric | Nominal | Full 45-corner range | Specification |
 | :--- | :--- | ---: | ---: | ---: |
-| SE OTA | DC gain | 96.522 dB | 93.988 dB | $\ge 88\text{ dB}$ |
-|  | UGF | 12.835 MHz | 8.762 MHz | $\ge 8\text{ MHz}$ |
-|  | Phase margin | 67.767° | 56.368° | $\ge 55°$ |
-|  | Input noise, 0.05–150 Hz | 1.873 µVrms | 2.189 µVrms | $\le 2.5\text{ µVrms}$ |
-| FD OTA | Differential gain | 88.699 dB | 86.753 dB | $\ge 85\text{ dB}$ |
-|  | Differential UGF | 12.447 MHz | 8.435 MHz | $\ge 8\text{ MHz}$ |
-|  | Differential phase margin | 72.649° | 63.377° | $\ge 60°$ |
-|  | Input noise, 0.05–150 Hz | 3.086 µVrms | 3.514 µVrms | $\le 4\text{ µVrms}$ |
-| INA + RLD | INA gain error | 0.011% | −0.215% | ±0.5% |
-|  | INA bandwidth | 259.286 kHz | 176.996 kHz | $\ge 150\text{ kHz}$ |
-|  | Input noise, 0.05–150 Hz | 2.667 µVrms | 3.117 µVrms | $\le 4\text{ µVrms}$ |
-|  | CM suppression, 60 / 150 Hz | 55.072 / 53.257 dB | 54.644 / 51.676 dB | $\ge 50/45\text{ dB}$ |
-| LPF | Passband gain error | −0.027% | −0.050% | ±0.5% |
-|  | −1 dB frequency | 258.691 Hz | 174.135 Hz | $\ge 150\text{ Hz}$ |
-|  | Input noise, 0.05–150 Hz | 6.176 µVrms | 7.036 µVrms | $\le 10\text{ µVrms}$ |
-| PGA | Maximum gain error | — | 2.502% (G2) | ±5% |
-|  | Minimum bandwidth | — | 0.595 MHz (G16) | $\ge 0.15\text{ MHz}$ |
-|  | Maximum input noise | — | 5.250 µVrms (G2) | $\le 10\text{ µVrms}$ |
+| SE OTA | DC gain | 96.522 dB | 93.988–97.180 dB | $\ge 88\text{ dB}$ |
+|  | UGF | 12.835 MHz | 8.762–16.895 MHz | $\ge 8\text{ MHz}$ |
+|  | Phase margin | 67.767° | 56.368–77.712° | $\ge 55°$ |
+|  | Input noise, 0.05–150 Hz | 1.873 µVrms | 1.687–2.189 µVrms | $\le 2.5\text{ µVrms}$ |
+| FD OTA | Differential gain | 88.699 dB | 86.753–89.804 dB | $\ge 85\text{ dB}$ |
+|  | Differential UGF | 12.447 MHz | 8.435–16.195 MHz | $\ge 8\text{ MHz}$ |
+|  | Differential phase margin | 72.649° | 63.377–79.898° | $\ge 60°$ |
+|  | Input noise, 0.05–150 Hz | 3.086 µVrms | 2.815–3.514 µVrms | $\le 4\text{ µVrms}$ |
+| INA + RLD | INA gain error | 0.011% | −0.215% to +0.140% | ±0.5% |
+|  | INA bandwidth | 259.286 kHz | 176.996–346.567 kHz | $\ge 150\text{ kHz}$ |
+|  | Input noise, 0.05–150 Hz | 2.667 µVrms | 2.402–3.117 µVrms | $\le 4\text{ µVrms}$ |
+|  | CM suppression, 60 / 150 Hz | 55.072 / 53.257 dB | 54.644–55.305 / 51.676–54.363 dB | $\ge 50/45\text{ dB}$ |
+| LPF | Passband gain error | −0.027% | −0.050% to −0.016% | ±0.5% |
+|  | −1 dB frequency | 258.691 Hz | 174.135–410.798 Hz | $\ge 150\text{ Hz}$ |
+|  | Input noise, 0.05–150 Hz | 6.176 µVrms | 5.632–7.036 µVrms | $\le 10\text{ µVrms}$ |
+| PGA | Gain error, all codes | 0.751 / −0.236 / −0.522 / −0.878% | −0.932% to +2.502% | ±5% |
+|  | Bandwidth, all codes | 0.907–5.053 MHz | 0.595–6.988 MHz | $\ge 0.15\text{ MHz}$ |
+|  | Input noise, all codes | 3.280–4.617 µVrms | 2.992–5.250 µVrms | $\le 10\text{ µVrms}$ |
+
+The detailed report lists selected results for every one of the 45 PVT corners. The long-form block CSV files remain the authoritative source for every reported parameter.
 
 See [Project_Report.md](Project_Report.md) for the verification methodology, detailed block results, plots, artifact links, and limitations.
 

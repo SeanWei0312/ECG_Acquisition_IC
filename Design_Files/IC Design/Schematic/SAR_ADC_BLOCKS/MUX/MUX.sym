@@ -1,0 +1,31 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=xMUX1"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 -10 70 -10 90 {}
+L 4 -10 -90 -10 -70 {}
+L 4 -80 -40 -60 -40 {}
+L 4 40 0 60 0 {}
+L 4 -80 40 -60 40 {}
+L 4 -60 -100 -60 100 {}
+L 4 -60 -100 40 -40 {}
+L 4 -60 100 40 40 {}
+L 4 40 -40 40 40 {}
+B 5 -12.5 87.5 -7.5 92.5 {name=Select dir=in}
+B 5 -12.5 -92.5 -7.5 -87.5 {name=VDD dir=in}
+B 5 -82.5 -42.5 -77.5 -37.5 {name=in1 dir=in}
+B 5 57.5 -2.5 62.5 2.5 {name=OUT dir=out}
+B 5 -82.5 37.5 -77.5 42.5 {name=in0 dir=in}
+T {MUX} -31.5 -6 0 0 0.3 0.3 {}
+T {Select} -14 65 3 0 0.2 0.2 {}
+T {VDD} -6 -65 1 0 0.2 0.2 {}
+T {in1} -55 -44 0 0 0.2 0.2 {}
+T {OUT} 35 -4 0 1 0.2 0.2 {}
+T {in0} -55 36 0 0 0.2 0.2 {}

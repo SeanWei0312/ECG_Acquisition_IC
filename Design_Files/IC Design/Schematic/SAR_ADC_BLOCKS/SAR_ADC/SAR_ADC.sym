@@ -1,0 +1,58 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=xSARADC1"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 130 -140 150 -140 {}
+L 4 130 -120 150 -120 {}
+L 4 130 -100 150 -100 {}
+L 4 130 -70 150 -70 {}
+L 4 130 -50 150 -50 {}
+L 4 130 -20 150 -20 {}
+L 4 130 0 150 0 {}
+L 4 130 20 150 20 {}
+L 4 130 40 150 40 {}
+L 4 130 60 150 60 {}
+L 4 130 80 150 80 {}
+L 4 130 100 150 100 {}
+L 4 130 120 150 120 {}
+L 4 130 140 150 140 {}
+L 4 130 160 150 160 {}
+B 5 147.5 -142.5 152.5 -137.5 {name=clk_sample_b dir=out}
+B 5 147.5 -122.5 152.5 -117.5 {name=clk_SAR_b dir=out}
+B 5 147.5 -102.5 152.5 -97.5 {name=clk_sample_pre dir=out}
+B 5 147.5 -72.5 152.5 -67.5 {name=outp dir=out}
+B 5 147.5 -52.5 152.5 -47.5 {name=outn dir=out}
+B 5 147.5 -22.5 152.5 -17.5 {name=dout9 dir=out}
+B 5 147.5 -2.5 152.5 2.5 {name=dout8 dir=out}
+B 5 147.5 17.5 152.5 22.5 {name=dout7 dir=out}
+B 5 147.5 37.5 152.5 42.5 {name=dout6 dir=out}
+B 5 147.5 57.5 152.5 62.5 {name=dout5 dir=out}
+B 5 147.5 77.5 152.5 82.5 {name=dout4 dir=out}
+B 5 147.5 97.5 152.5 102.5 {name=dout3 dir=out}
+B 5 147.5 117.5 152.5 122.5 {name=dout2 dir=out}
+B 5 147.5 137.5 152.5 142.5 {name=dout1 dir=out}
+B 5 147.5 157.5 152.5 162.5 {name=dout0 dir=out}
+P 4 5 130 -170 -130 -170 -130 170 130 170 130 -170 {}
+T {SAR_ADC} -36 -6 0 0 0.3 0.3 {}
+T {clk_sample_b} 125 -144 0 1 0.2 0.2 {}
+T {clk_SAR_b} 125 -124 0 1 0.2 0.2 {}
+T {clk_sample_pre} 125 -104 0 1 0.2 0.2 {}
+T {outp} 125 -74 0 1 0.2 0.2 {}
+T {outn} 125 -54 0 1 0.2 0.2 {}
+T {dout9} 125 -24 0 1 0.2 0.2 {}
+T {dout8} 125 -4 0 1 0.2 0.2 {}
+T {dout7} 125 16 0 1 0.2 0.2 {}
+T {dout6} 125 36 0 1 0.2 0.2 {}
+T {dout5} 125 56 0 1 0.2 0.2 {}
+T {dout4} 125 76 0 1 0.2 0.2 {}
+T {dout3} 125 96 0 1 0.2 0.2 {}
+T {dout2} 125 116 0 1 0.2 0.2 {}
+T {dout1} 125 136 0 1 0.2 0.2 {}
+T {dout0} 125 156 0 1 0.2 0.2 {}
