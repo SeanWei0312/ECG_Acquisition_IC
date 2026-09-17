@@ -21,7 +21,7 @@ The repository contains transistor-level Xschem designs, ngspice verification te
 | Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/) | Input common-mode suppression | $55.1\text{ dB}$ at 60 Hz nominal |
 | Support | [`BIAS`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
 
-The verified signal-path gain range is $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$), before ADC integration.
+The verified block-level gain plan gives nominal signal-path gains from $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$) before ADC integration.
 
 ## Verification status
 
@@ -29,15 +29,15 @@ Deterministic verification uses 45 corners: five process models (`NOM`, `FF`, `S
 
 | Block | Deterministic verification | Monte Carlo | Status |
 | :--- | :--- | :--- | :---: |
-| [BIAS / SEL](Report/BIAS_Report.md) | PVT, voltage/temperature surface, startup, selector transient | — | Complete |
-| [SE OTA](Report/SEOTA_Report.md) | 45-corner PVT | MM / GL / FULL | Pass |
-| [FD OTA](Report/FDOTA_Report.md) | 45-corner PVT | MM / GL / FULL | Pass |
-| [INA + RLD](Report/INA_RLD_Report.md) | 45-corner balanced PVT, mismatch stress, selector transient | MM / GL / FULL | Pass |
-| [LPF](Report/LPF_Report.md) | 45-corner PVT, selector transient | MM / GL / FULL | Pass |
-| [PGA](Report/PGA_Report.md) | 45-corner PVT, selector and gain-code transients | MM / GL / FULL | Pass |
-| [BUFFER](Report/BUFFER_Report.md) | Raw simulation exports available | MM export available | Analysis pending |
-| [Integrated AFE](Report/AFE_Report.md) | Top-level schematic and analyzer scaffold | — | Integration pending |
-| [SAR ADC](Report/SAR_ADC_Report.md) | Complete schematic hierarchy | — | Verification pending |
+| [BIAS / SEL](Report/AFE_BLOCKS/BIAS_Report.md) | PVT, voltage/temperature surface, startup, selector transient | — | Complete |
+| [SE OTA](Report/AFE_BLOCKS/SEOTA_Report.md) | 45-corner PVT | MM / GL / FULL | Pass |
+| [FD OTA](Report/AFE_BLOCKS/FDOTA_Report.md) | 45-corner PVT | MM / GL / FULL | Pass |
+| [INA + RLD](Report/AFE_BLOCKS/INA_RLD_Report.md) | 45-corner balanced PVT, mismatch stress, selector transient | MM / GL / FULL | Pass |
+| [LPF](Report/AFE_BLOCKS/LPF_Report.md) | 45-corner PVT, selector transient | MM / GL / FULL | Pass |
+| [PGA](Report/AFE_BLOCKS/PGA_Report.md) | 45-corner PVT, selector and gain-code transients | MM / GL / FULL | Pass |
+| [BUFFER](Report/AFE_BLOCKS/BUFFER_Report.md) | Raw simulation exports available | MM export available | Analysis pending |
+| [Integrated AFE](Report/AFE_BLOCKS/AFE_Report.md) | Top-level schematic and analyzer scaffold | — | Integration pending |
+| [SAR ADC](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md) | Complete schematic hierarchy | — | Verification pending |
 
 All completed MM, GL, and FULL analyses contain 200 valid runs, zero failed runs, and 100% joint yield against the current pre-layout specifications.
 
@@ -64,11 +64,7 @@ All completed MM, GL, and FULL analyses contain 200 valid runs, zero failed runs
 |  | Bandwidth, all codes | 0.907–5.053 MHz | 0.595–6.988 MHz | $\ge 0.15\text{ MHz}$ |
 |  | Input noise, all codes | 3.280–4.617 µVrms | 2.992–5.250 µVrms | $\le 10\text{ µVrms}$ |
 
-The detailed report lists selected results for every one of the 45 PVT corners. The long-form block CSV files remain the authoritative source for every reported parameter.
-
-See [Project_Report.md](Report/Project_Report.md) for the system architecture, verification methodology, AFE–ADC integration status, headline results, and detailed-report index.
-
-The system report now focuses on AFE/ADC architecture, integration status, and headline performance. Full tables and plots are maintained in the linked block reports above.
+The block reports include selected results for all 45 PVT corners; their long-form CSV files remain the authoritative source for every reported parameter. See the [system report](Project_Report.md) for architecture, verification methodology, AFE–ADC integration status, and the complete report index.
 
 ## Repository layout
 
@@ -76,18 +72,21 @@ The system report now focuses on AFE/ADC architecture, integration status, and h
 ECG_Acquisition_IC/
 ├── README.md
 ├── Docker_Instructions.md
-├── Report/                              # System and detailed block reports
-│   ├── Project_Report.md
-│   ├── AFE_Report.md
-│   ├── BIAS_Report.md
-│   ├── BUFFER_Report.md
-│   ├── FDOTA_Report.md
-│   ├── Gm_Id_Report.md
-│   ├── INA_RLD_Report.md
-│   ├── LPF_Report.md
-│   ├── PGA_Report.md
-│   ├── SAR_ADC_Report.md
-│   └── SEOTA_Report.md
+├── Project_Report.md                    # System-level AFE and ADC report
+├── Report/                              # Detailed block reports
+│   ├── AFE_BLOCKS/
+│   │   ├── AFE_Report.md
+│   │   ├── BIAS_Report.md
+│   │   ├── BUFFER_Report.md
+│   │   ├── FDOTA_Report.md
+│   │   ├── INA_RLD_Report.md
+│   │   ├── LPF_Report.md
+│   │   ├── PGA_Report.md
+│   │   └── SEOTA_Report.md
+│   ├── SAR_ADC_BLOCKS/
+│   │   └── SAR_ADC_Report.md
+│   └── SIZING/
+│       └── Gm_Id_Report.md
 ├── Design_Files/
 │   └── IC Design/
 │       ├── Layout/                         # Physical-design workspace

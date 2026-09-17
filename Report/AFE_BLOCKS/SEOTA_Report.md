@@ -1,6 +1,6 @@
 # SE OTA Detailed Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 | Item | Value |
 | :--- | :--- |
@@ -90,29 +90,29 @@ The 200-run FULL Monte Carlo set also passes every formal limit. Observed input 
 <details>
 <summary>All generated SE OTA plots</summary>
 
-![SE OTA open-loop gain and phase](../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png)
+![SE OTA open-loop gain and phase](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png)
 
-![SE OTA open-loop transfer curve](../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_vtc.png)
+![SE OTA open-loop transfer curve](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_vtc.png)
 
-![SE OTA CMRR](../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.cmrr.png)
+![SE OTA CMRR](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.cmrr.png)
 
-![SE OTA PSRR](../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.psrr.png)
+![SE OTA PSRR](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.psrr.png)
 
-![SE OTA input-referred noise](../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.input_referred_noise_density.png)
+![SE OTA input-referred noise](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.input_referred_noise_density.png)
 
-![SE OTA closed-loop usable range](../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_usable_range.png)
+![SE OTA closed-loop usable range](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_usable_range.png)
 
-![SE OTA closed-loop step response](../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_step_response.png)
+![SE OTA closed-loop step response](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.closed_loop_step_response.png)
 
-![SE OTA MC input offset](../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_01_Vos_Histogram.png)
+![SE OTA MC input offset](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_01_Vos_Histogram.png)
 
-![SE OTA MC DC gain](../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_02_DC_Gain_Histogram.png)
+![SE OTA MC DC gain](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_02_DC_Gain_Histogram.png)
 
-![SE OTA MC UGF](../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_03_UGF_Histogram.png)
+![SE OTA MC UGF](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_03_UGF_Histogram.png)
 
-![SE OTA MC phase margin](../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_04_Phase_Margin_Histogram.png)
+![SE OTA MC phase margin](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_04_Phase_Margin_Histogram.png)
 
-![SE OTA MC gain error](../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_05_Gain_Error_Histogram.png)
+![SE OTA MC gain error](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_05_Gain_Error_Histogram.png)
 
 </details>
 
@@ -173,14 +173,14 @@ The 200-run FULL Monte Carlo set also passes every formal limit. Observed input 
 
 ## Generated artifacts
 
-- [Analyzer](../Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m)
-- [Comparison table](../Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_table_report.csv)
-- [Nominal summary](../Measurement_Results/IC_Simulation/SE_OTA/Reports/NOM.SEOTA_summary.csv)
-- [Worst-case table](../Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_worst_case_report.csv)
-- [MC run summary](../Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_MC_Run_Summary.csv)
-- [MM summary](../Measurement_Results/IC_Simulation/SE_OTA/Reports/MM_SEOTA_MC_Summary.csv)
-- [GL summary](../Measurement_Results/IC_Simulation/SE_OTA/Reports/GL_SEOTA_MC_Summary.csv)
-- [FULL summary](../Measurement_Results/IC_Simulation/SE_OTA/Reports/FULL_SEOTA_MC_Summary.csv)
+- [Analyzer](../../Measurement_Results/IC_Simulation/SE_OTA/SEOTA_Analyze.m)
+- [Comparison table](../../Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_table_report.csv)
+- [Nominal summary](../../Measurement_Results/IC_Simulation/SE_OTA/Reports/NOM.SEOTA_summary.csv)
+- [Worst-case table](../../Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_worst_case_report.csv)
+- [MC run summary](../../Measurement_Results/IC_Simulation/SE_OTA/Reports/SEOTA_MC_Run_Summary.csv)
+- [MM summary](../../Measurement_Results/IC_Simulation/SE_OTA/Reports/MM_SEOTA_MC_Summary.csv)
+- [GL summary](../../Measurement_Results/IC_Simulation/SE_OTA/Reports/GL_SEOTA_MC_Summary.csv)
+- [FULL summary](../../Measurement_Results/IC_Simulation/SE_OTA/Reports/FULL_SEOTA_MC_Summary.csv)
 
 ## Scope limitation
 

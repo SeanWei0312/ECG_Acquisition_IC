@@ -1,10 +1,10 @@
 # Integrated AFE Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 ## Architecture
 
-![Integrated analog front end](../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
+![Integrated analog front end](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
 
 The integrated analog signal path is:
 
@@ -32,7 +32,7 @@ The programmed signal-path gain is nominally 480, 960, 1920, or 3840 V/V before 
 | Generated tables and plots | Pending |
 | ADC-load settling verification | Pending |
 
-The analyzer scaffold is [`AFE_Analyze.m`](../Measurement_Results/IC_Simulation/AFE/AFE_Analyze.m). No formal integrated result is reported until full-chain simulations are available.
+The analyzer scaffold is [`AFE_Analyze.m`](../../Measurement_Results/IC_Simulation/AFE/AFE_Analyze.m). No formal integrated result is reported until full-chain simulations are available.
 
 ## Required system-level measurements
 
@@ -47,7 +47,7 @@ The analyzer scaffold is [`AFE_Analyze.m`](../Measurement_Results/IC_Simulation/
 
 ## Design files
 
-- [AFE schematic](../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.sch)
-- [AFE schematic image](../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
+- [AFE schematic](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.sch)
+- [AFE schematic image](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
 
 This report intentionally contains no fabricated tables or plots; integrated verification remains pending.

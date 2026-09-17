@@ -1,5 +1,7 @@
 # ECG Acquisition IC System Report
 
+[← Repository overview](README.md)
+
 | Item | Description |
 | :--- | :--- |
 | Project stage | Pre-layout schematic design and block-level verification |
@@ -21,7 +23,7 @@ Block-level schematic verification is complete for the bias network, SE OTA, FD 
 
 ### 2.1 Analog front end
 
-![ECG analog front end](../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
+![ECG analog front end](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
 
 ```text
 Electrode input → INA + RLD → LPF → PGA → BUFFER → SAR ADC
@@ -29,20 +31,20 @@ Electrode input → INA + RLD → LPF → PGA → BUFFER → SAR ADC
 
 | Stage | Nominal behavior | Verification | Detailed report |
 | :--- | :---: | :---: | :--- |
-| BIAS / SEL | 40 µA master bias and analog selection | Complete | [BIAS / SEL](BIAS_Report.md) |
-| SE OTA | Single-ended gain stage | Pass | [SE OTA](SEOTA_Report.md) |
-| FD OTA | Fully differential gain stage with CMFB | Pass | [FD OTA](FDOTA_Report.md) |
-| INA + RLD | 240 V/V instrumentation gain and input common-mode feedback | Pass | [INA + RLD](INA_RLD_Report.md) |
-| LPF | Unity gain; −1 dB frequency ≥150 Hz | Pass | [LPF](LPF_Report.md) |
-| PGA | 2/4/8/16 V/V programmable gain | Pass | [PGA](PGA_Report.md) |
-| BUFFER | Unity-gain differential ADC driver | Analysis pending | [BUFFER](BUFFER_Report.md) |
-| Integrated AFE | 480–3840 V/V programmed signal-path gain | Verification pending | [AFE](AFE_Report.md) |
+| BIAS / SEL | 40 µA master bias and analog selection | Complete | [BIAS / SEL](Report/AFE_BLOCKS/BIAS_Report.md) |
+| SE OTA | Single-ended gain stage | Pass | [SE OTA](Report/AFE_BLOCKS/SEOTA_Report.md) |
+| FD OTA | Fully differential gain stage with CMFB | Pass | [FD OTA](Report/AFE_BLOCKS/FDOTA_Report.md) |
+| INA + RLD | 240 V/V instrumentation gain and input common-mode feedback | Pass | [INA + RLD](Report/AFE_BLOCKS/INA_RLD_Report.md) |
+| LPF | Unity gain; −1 dB frequency ≥150 Hz | Pass | [LPF](Report/AFE_BLOCKS/LPF_Report.md) |
+| PGA | 2/4/8/16 V/V programmable gain | Pass | [PGA](Report/AFE_BLOCKS/PGA_Report.md) |
+| BUFFER | Unity-gain differential ADC driver | Analysis pending | [BUFFER](Report/AFE_BLOCKS/BUFFER_Report.md) |
+| Integrated AFE | 480–3840 V/V programmed signal-path gain | Verification pending | [AFE](Report/AFE_BLOCKS/AFE_Report.md) |
 
 The verified block-level gain plan gives nominal overall gains of 480, 960, 1920, and 3840 V/V before the buffer and ADC interface.
 
 ### 2.2 SAR ADC
 
-The [SAR ADC top level](../Design_Files/IC%20Design/Schematic/SAR_ADC_BLOCKS/SAR_ADC/SAR_ADC.sch) directly instantiates two bootstrapped sampling switches, the differential CDAC, clock generator, comparator, SAR logic, and output register.
+The [SAR ADC top level](Design_Files/IC%20Design/Schematic/SAR_ADC_BLOCKS/SAR_ADC/SAR_ADC.sch) directly instantiates two bootstrapped sampling switches, the differential CDAC, clock generator, comparator, SAR logic, and output register.
 
 ```text
 Differential input → BSW → CDAC ↔ COMP → SAR_LOGIC → OUT_REG
@@ -50,7 +52,7 @@ Differential input → BSW → CDAC ↔ COMP → SAR_LOGIC → OUT_REG
                            CLK_GEN
 ```
 
-All 18 blocks stored under `SAR_ADC_BLOCKS` are reachable from the top level. Schematic and symbol paths have been audited, but formal ADC simulation results are not yet available. The complete hierarchy and required signoff campaign are documented in the [SAR ADC report](SAR_ADC_Report.md).
+All 18 blocks stored under `SAR_ADC_BLOCKS` are reachable from the top level. Schematic and symbol paths have been audited, but formal ADC simulation results are not yet available. The complete hierarchy and required signoff campaign are documented in the [SAR ADC report](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md).
 
 ## 3. AFE block-level performance
 
@@ -123,16 +125,16 @@ No complete-system performance claim is made until the integrated AFE drives the
 
 | Area | Report | Contents |
 | :--- | :--- | :--- |
-| Device characterization | [$g_m/I_D$ report](Gm_Id_Report.md) | NMOS and PMOS characterization plots |
-| Bias and selector | [BIAS / SEL report](BIAS_Report.md) | Bias sweeps, startup, selector, tables, and plots |
-| OTA | [SE OTA report](SEOTA_Report.md) | PVT, MC, transient, noise, rejection, and plots |
-| OTA | [FD OTA report](FDOTA_Report.md) | PVT, MC, CMFB, swing, noise, rejection, and plots |
-| Front end | [INA + RLD report](INA_RLD_Report.md) | Gain, bandwidth, offset, noise, rejection, RLD stability, MC, and plots |
-| Filter | [LPF report](LPF_Report.md) | Passband, corner frequencies, offset, noise, rejection, MC, and plots |
-| Gain stage | [PGA report](PGA_Report.md) | Four gain codes, bandwidth, noise, rejection, transients, MC, and plots |
-| Output driver | [BUFFER report](BUFFER_Report.md) | Raw-data inventory and pending signoff work |
-| AFE system | [Integrated AFE report](AFE_Report.md) | Integration scope and pending system measurements |
-| Data converter | [SAR ADC report](SAR_ADC_Report.md) | Complete hierarchy and pending ADC signoff work |
+| Device characterization | [$g_m/I_D$ report](Report/SIZING/Gm_Id_Report.md) | NMOS and PMOS characterization plots |
+| Bias and selector | [BIAS / SEL report](Report/AFE_BLOCKS/BIAS_Report.md) | Bias sweeps, startup, selector, tables, and plots |
+| OTA | [SE OTA report](Report/AFE_BLOCKS/SEOTA_Report.md) | PVT, MC, transient, noise, rejection, and plots |
+| OTA | [FD OTA report](Report/AFE_BLOCKS/FDOTA_Report.md) | PVT, MC, CMFB, swing, noise, rejection, and plots |
+| Front end | [INA + RLD report](Report/AFE_BLOCKS/INA_RLD_Report.md) | Gain, bandwidth, offset, noise, rejection, RLD stability, MC, and plots |
+| Filter | [LPF report](Report/AFE_BLOCKS/LPF_Report.md) | Passband, corner frequencies, offset, noise, rejection, MC, and plots |
+| Gain stage | [PGA report](Report/AFE_BLOCKS/PGA_Report.md) | Four gain codes, bandwidth, noise, rejection, transients, MC, and plots |
+| Output driver | [BUFFER report](Report/AFE_BLOCKS/BUFFER_Report.md) | Raw-data inventory and pending signoff work |
+| AFE system | [Integrated AFE report](Report/AFE_BLOCKS/AFE_Report.md) | Integration scope and pending system measurements |
+| Data converter | [SAR ADC report](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md) | Complete hierarchy and pending ADC signoff work |
 
 ## 7. Reproducing completed analyses
 

@@ -1,6 +1,6 @@
 # PGA Detailed Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 | Item | Value |
 | :--- | :--- |
@@ -156,23 +156,23 @@ The 200-run FULL Monte Carlo set passes every formal limit. The closest rejectio
 <details>
 <summary>All generated PGA plots</summary>
 
-![PGA differential frequency response](../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_differential_ac.png)
+![PGA differential frequency response](../../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_differential_ac.png)
 
-![PGA input-referred noise](../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_noise.png)
+![PGA input-referred noise](../../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_noise.png)
 
-![PGA CMRR and PSRR](../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_rejection.png)
+![PGA CMRR and PSRR](../../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_rejection.png)
 
-![PGA selector functional check](../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_SEL_functional_check.png)
+![PGA selector functional check](../../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_SEL_functional_check.png)
 
-![PGA gain-code switching](../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_gain_switching.png)
+![PGA gain-code switching](../../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_gain_switching.png)
 
-![PGA MC input offset](../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_01_Input_Offset_Histogram.png)
+![PGA MC input offset](../../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_01_Input_Offset_Histogram.png)
 
-![PGA MC gain error](../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_02_Gain_Error_Histogram.png)
+![PGA MC gain error](../../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_02_Gain_Error_Histogram.png)
 
-![PGA MC bandwidth](../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_03_Bandwidth_Histogram.png)
+![PGA MC bandwidth](../../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_03_Bandwidth_Histogram.png)
 
-![PGA MC CMRR at 60 Hz](../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_04_CMRR_60Hz_Histogram.png)
+![PGA MC CMRR at 60 Hz](../../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_04_CMRR_60Hz_Histogram.png)
 
 </details>
 
@@ -233,15 +233,15 @@ The 200-run FULL Monte Carlo set passes every formal limit. The closest rejectio
 
 ## Generated artifacts
 
-- [Analyzer](../Measurement_Results/IC_Simulation/PGA/PGA_Analyze.m)
-- [Comparison table](../Measurement_Results/IC_Simulation/PGA/Reports/PGA_table_report.csv)
-- [Nominal summary](../Measurement_Results/IC_Simulation/PGA/Reports/NOM.PGA_summary.csv)
-- [Full PVT data](../Measurement_Results/IC_Simulation/PGA/Reports/PGA_full_pvt_report.csv)
-- [Worst-case table](../Measurement_Results/IC_Simulation/PGA/Reports/PGA_worst_case_report.csv)
-- [MC run summary](../Measurement_Results/IC_Simulation/PGA/Reports/MC_Run_Summary.csv)
-- [MM summary](../Measurement_Results/IC_Simulation/PGA/Reports/MM_MC_Summary.csv)
-- [GL summary](../Measurement_Results/IC_Simulation/PGA/Reports/GL_MC_Summary.csv)
-- [FULL summary](../Measurement_Results/IC_Simulation/PGA/Reports/FULL_MC_Summary.csv)
+- [Analyzer](../../Measurement_Results/IC_Simulation/PGA/PGA_Analyze.m)
+- [Comparison table](../../Measurement_Results/IC_Simulation/PGA/Reports/PGA_table_report.csv)
+- [Nominal summary](../../Measurement_Results/IC_Simulation/PGA/Reports/NOM.PGA_summary.csv)
+- [Full PVT data](../../Measurement_Results/IC_Simulation/PGA/Reports/PGA_full_pvt_report.csv)
+- [Worst-case table](../../Measurement_Results/IC_Simulation/PGA/Reports/PGA_worst_case_report.csv)
+- [MC run summary](../../Measurement_Results/IC_Simulation/PGA/Reports/MC_Run_Summary.csv)
+- [MM summary](../../Measurement_Results/IC_Simulation/PGA/Reports/MM_MC_Summary.csv)
+- [GL summary](../../Measurement_Results/IC_Simulation/PGA/Reports/GL_MC_Summary.csv)
+- [FULL summary](../../Measurement_Results/IC_Simulation/PGA/Reports/FULL_MC_Summary.csv)
 
 ## Scope limitation
 

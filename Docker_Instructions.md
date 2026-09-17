@@ -1,6 +1,6 @@
 # ECG Acquisition IC Simulation Environment
 
-Use these commands to start, check, stop, and remove the IIC-OSIC-TOOLS Docker containers used by this project.
+Use these commands to start, inspect, stop, and remove the IIC-OSIC-TOOLS Docker containers used by this project. Replace the example host paths with the location of your local checkout.
 
 The `DESIGNS` folder is shared into Docker as:
 
@@ -8,25 +8,25 @@ The `DESIGNS` folder is shared into Docker as:
 /foss/designs
 ```
 
-## 1. Start
+## 1. Start the environment
 
 ### Windows PowerShell
 
 ```powershell
-cd "D:\Documents\GitHub\ECG_Acquisition_IC\Simulation_Environment\IIC-OSIC-TOOLS"
-$env:DESIGNS="D:\Documents\GitHub"
+cd "D:\path\to\GitHub\ECG_Acquisition_IC\Simulation_Environment\IIC-OSIC-TOOLS"
+$env:DESIGNS="D:\path\to\GitHub"
 .\start_chipathon_vnc.bat
 ```
 
 ### Mac Terminal
 
 ```bash
-cd /Users/sean/Documents/GitHub/ECG_Acquisition_IC/Simulation_Environment/IIC-OSIC-TOOLS
-export DESIGNS="/Users/sean/Documents/GitHub"
+cd "/path/to/GitHub/ECG_Acquisition_IC/Simulation_Environment/IIC-OSIC-TOOLS"
+export DESIGNS="/path/to/GitHub"
 ./start_chipathon_vnc.sh
 ```
 
-### Open the Docker Desktop
+### Access the desktop
 
 TigerVNC Viewer:
 
@@ -46,9 +46,7 @@ Web browser / noVNC:
 http://localhost:80/?password=abc123
 ```
 
-## 2. Check All
-
-### Windows or Mac
+## 2. Inspect containers
 
 ```bash
 docker ps -a
@@ -56,9 +54,10 @@ docker ps -a
 
 This shows all Docker containers, including running and stopped containers.
 
-## 3. Stop All
+## 3. Stop running containers
 
-### Windows or Mac
+> [!CAUTION]
+> This command stops every running Docker container on the host, not only this project's containers.
 
 ```bash
 docker stop $(docker ps -q)
@@ -66,12 +65,13 @@ docker stop $(docker ps -q)
 
 This stops all running Docker containers.
 
-## 4. Delete All Containers
+## 4. Remove containers
 
-### Windows or Mac
+> [!CAUTION]
+> This command removes every Docker container on the host. It does not delete files in the repository or other bind-mounted host directories.
 
 ```bash
 docker rm -f $(docker ps -aq)
 ```
 
-This deletes all Docker containers. It does not delete files saved in your GitHub project folder.
+Use this only when a complete container reset is intended.

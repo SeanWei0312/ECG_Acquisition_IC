@@ -1,6 +1,6 @@
 # Output Buffer Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 ## Status
 
@@ -31,13 +31,13 @@ The `nom.Result_txt/` directory contains the nine environmental cases `nom`, `vl
 
 ## Available statistical data
 
-The mismatch export [`mm.buffer_mc_summary.txt`](../Measurement_Results/IC_Simulation/BUFFER/mm.Result_txt/mm.buffer_mc_summary.txt) is present. Global-only and combined FULL Monte Carlo reports have not been generated.
+The mismatch export [`mm.buffer_mc_summary.txt`](../../Measurement_Results/IC_Simulation/BUFFER/mm.Result_txt/mm.buffer_mc_summary.txt) is present. Global-only and combined FULL Monte Carlo reports have not been generated.
 
 ## Design files
 
-- [Buffer schematic image](../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BUFFER/BUFFER.png)
-- [Buffer schematic](../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BUFFER/BUFFER.sch)
-- [Nominal-process raw exports](../Measurement_Results/IC_Simulation/BUFFER/nom.Result_txt/)
+- [Buffer schematic image](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BUFFER/BUFFER.png)
+- [Buffer schematic](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BUFFER/BUFFER.sch)
+- [Nominal-process raw exports](../../Measurement_Results/IC_Simulation/BUFFER/nom.Result_txt/)
 
 ## Required completion work
 

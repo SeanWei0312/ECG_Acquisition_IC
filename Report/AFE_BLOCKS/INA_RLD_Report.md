@@ -1,6 +1,6 @@
 # INA + RLD Detailed Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 | Item | Value |
 | :--- | :--- |
@@ -112,31 +112,31 @@ The 200-run FULL Monte Carlo set passes every formal limit. Observed input-refer
 <details>
 <summary>All generated INA+RLD plots</summary>
 
-![INA differential frequency response](../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_differential_ac.png)
+![INA differential frequency response](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_differential_ac.png)
 
-![RLD loop gain and phase](../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_loop_gain.png)
+![RLD loop gain and phase](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_loop_gain.png)
 
-![INA CMRR and PSRR](../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_rejection_response.png)
+![INA CMRR and PSRR](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_rejection_response.png)
 
-![INA and RLD common-mode rejection](../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_cm_rejection.png)
+![INA and RLD common-mode rejection](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_cm_rejection.png)
 
-![INA common-mode interference transient](../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_transient.png)
+![INA common-mode interference transient](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_transient.png)
 
-![INA input-referred noise](../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_noise.png)
+![INA input-referred noise](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_noise.png)
 
-![INA selector functional check](../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_sel_functional_check.png)
+![INA selector functional check](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_sel_functional_check.png)
 
-![INA MC input-referred offset](../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_01_Vos_Histogram.png)
+![INA MC input-referred offset](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_01_Vos_Histogram.png)
 
-![INA MC gain error](../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_02_INA_Gain_Error_Histogram.png)
+![INA MC gain error](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_02_INA_Gain_Error_Histogram.png)
 
-![INA MC RLD UGF](../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_03_RLD_UGF_Histogram.png)
+![INA MC RLD UGF](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_03_RLD_UGF_Histogram.png)
 
-![INA MC RLD phase margin](../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_04_RLD_PM_Histogram.png)
+![INA MC RLD phase margin](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_04_RLD_PM_Histogram.png)
 
-![INA MC CMRR](../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_05_INA_CMRR_Histogram.png)
+![INA MC CMRR](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_05_INA_CMRR_Histogram.png)
 
-![INA MC input common-mode suppression](../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_06_Input_CM_Suppression_Histogram.png)
+![INA MC input common-mode suppression](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_06_Input_CM_Suppression_Histogram.png)
 
 </details>
 
@@ -197,15 +197,15 @@ The 200-run FULL Monte Carlo set passes every formal limit. Observed input-refer
 
 ## Generated artifacts
 
-- [Analyzer](../Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_Analyze.m)
-- [Comparison table](../Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_table_report.csv)
-- [Nominal summary](../Measurement_Results/IC_Simulation/INA_RLD/Reports/NOM.INA_RLD_summary.csv)
-- [Full PVT data](../Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_full_pvt_report.csv)
-- [Worst-case table](../Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_worst_case_report.csv)
-- [MC run summary](../Measurement_Results/IC_Simulation/INA_RLD/Reports/MC_Run_Summary.csv)
-- [MM summary](../Measurement_Results/IC_Simulation/INA_RLD/Reports/MM_MC_Summary.csv)
-- [GL summary](../Measurement_Results/IC_Simulation/INA_RLD/Reports/GL_MC_Summary.csv)
-- [FULL summary](../Measurement_Results/IC_Simulation/INA_RLD/Reports/FULL_MC_Summary.csv)
+- [Analyzer](../../Measurement_Results/IC_Simulation/INA_RLD/INA_RLD_Analyze.m)
+- [Comparison table](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_table_report.csv)
+- [Nominal summary](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/NOM.INA_RLD_summary.csv)
+- [Full PVT data](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_full_pvt_report.csv)
+- [Worst-case table](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/INA_RLD_worst_case_report.csv)
+- [MC run summary](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/MC_Run_Summary.csv)
+- [MM summary](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/MM_MC_Summary.csv)
+- [GL summary](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/GL_MC_Summary.csv)
+- [FULL summary](../../Measurement_Results/IC_Simulation/INA_RLD/Reports/FULL_MC_Summary.csv)
 
 ## Scope limitation
 

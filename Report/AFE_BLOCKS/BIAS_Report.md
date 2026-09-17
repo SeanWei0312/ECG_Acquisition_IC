@@ -1,6 +1,6 @@
 # BIAS / SEL Detailed Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 | Item | Value |
 | :--- | :--- |
@@ -74,30 +74,30 @@ The master bias network targets 40 µA and has been characterized over process, 
 <details>
 <summary>All generated BIAS/SEL plots</summary>
 
-![BIAS 2D voltage-temperature surface](../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png)
+![BIAS 2D voltage-temperature surface](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png)
 
-![BIAS selector verification](../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_SEL.png)
+![BIAS selector verification](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_SEL.png)
 
-![BIAS startup current](../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png)
+![BIAS startup current](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png)
 
-![BIAS startup voltage](../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP_VOLTAGE.png)
+![BIAS startup voltage](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP_VOLTAGE.png)
 
-![BIAS temperature sweep](../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_TEMP.png)
+![BIAS temperature sweep](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_TEMP.png)
 
-![BIAS supply sweep](../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_VDD.png)
+![BIAS supply sweep](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_VDD.png)
 
 </details>
 
 ## Generated artifacts
 
-- [Analyzer](../Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m)
-- [Comparison table](../Measurement_Results/IC_Simulation/BIAS/BIAS_table_report.csv)
-- [Two-dimensional voltage/temperature report](../Measurement_Results/IC_Simulation/BIAS/BIAS_dc2d_report.csv)
-- [Worst-case table](../Measurement_Results/IC_Simulation/BIAS/BIAS_global_worst_case.csv)
-- [Reference report](../Measurement_Results/IC_Simulation/BIAS/BIAS_reference_report.csv)
-- [Startup report](../Measurement_Results/IC_Simulation/BIAS/BIAS_startup_report.csv)
-- [Startup summary](../Measurement_Results/IC_Simulation/BIAS/BIAS_startup_summary.csv)
-- [Selector report](../Measurement_Results/IC_Simulation/BIAS/BIAS_sel_report.csv)
+- [Analyzer](../../Measurement_Results/IC_Simulation/BIAS/BIAS_Analyze.m)
+- [Comparison table](../../Measurement_Results/IC_Simulation/BIAS/BIAS_table_report.csv)
+- [Two-dimensional voltage/temperature report](../../Measurement_Results/IC_Simulation/BIAS/BIAS_dc2d_report.csv)
+- [Worst-case table](../../Measurement_Results/IC_Simulation/BIAS/BIAS_global_worst_case.csv)
+- [Reference report](../../Measurement_Results/IC_Simulation/BIAS/BIAS_reference_report.csv)
+- [Startup report](../../Measurement_Results/IC_Simulation/BIAS/BIAS_startup_report.csv)
+- [Startup summary](../../Measurement_Results/IC_Simulation/BIAS/BIAS_startup_summary.csv)
+- [Selector report](../../Measurement_Results/IC_Simulation/BIAS/BIAS_sel_report.csv)
 
 ## Scope limitation
 

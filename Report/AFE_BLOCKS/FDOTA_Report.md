@@ -1,6 +1,6 @@
 # FD OTA Detailed Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 | Item | Value |
 | :--- | :--- |
@@ -103,62 +103,62 @@ Nominal internal checks place the standalone differential core at 90.090 dB gain
 <details>
 <summary>All generated FD OTA plots</summary>
 
-![FD OTA open-loop gain and phase](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.open_loop_gain_phase.png)
+![FD OTA open-loop gain and phase](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.open_loop_gain_phase.png)
 
-![FD OTA open-loop transfer curve](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.open_loop_vtc.png)
+![FD OTA open-loop transfer curve](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.open_loop_vtc.png)
 
-![FD OTA CMRR](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.cmrr.png)
+![FD OTA CMRR](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.cmrr.png)
 
-![FD OTA PSRR](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.psrr.png)
+![FD OTA PSRR](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.psrr.png)
 
-![FD OTA input-referred noise](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.input_referred_noise_density.png)
+![FD OTA input-referred noise](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.input_referred_noise_density.png)
 
-![FD OTA input common-mode range](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.input_common_mode_range.png)
+![FD OTA input common-mode range](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.input_common_mode_range.png)
 
-![FD OTA output swing and closed-loop transfer](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
+![FD OTA output swing and closed-loop transfer](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
 
-![FD OTA closed-loop step response](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.closed_loop_step_response.png)
+![FD OTA closed-loop step response](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.closed_loop_step_response.png)
 
-![FD OTA differential-step common-mode disturbance](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.diff_step_cm_disturbance.png)
+![FD OTA differential-step common-mode disturbance](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.diff_step_cm_disturbance.png)
 
-![FD OTA output common-mode transient](../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.output_cm_transient.png)
+![FD OTA output common-mode transient](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.output_cm_transient.png)
 
-![FD OTA MC input offset](../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_01_Input_Offset_Histogram.png)
+![FD OTA MC input offset](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_01_Input_Offset_Histogram.png)
 
-![FD OTA MC output common-mode error](../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_02_Output_CM_Error_Histogram.png)
+![FD OTA MC output common-mode error](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_02_Output_CM_Error_Histogram.png)
 
-![FD OTA MC DC gain](../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_03_DC_Gain_Histogram.png)
+![FD OTA MC DC gain](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_03_DC_Gain_Histogram.png)
 
-![FD OTA MC UGF](../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_04_UGF_Histogram.png)
+![FD OTA MC UGF](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_04_UGF_Histogram.png)
 
-![FD OTA MC phase margin](../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_05_Phase_Margin_Histogram.png)
+![FD OTA MC phase margin](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_05_Phase_Margin_Histogram.png)
 
-![FD OTA MC gain error](../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_06_Gain_Error_Histogram.png)
+![FD OTA MC gain error](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_06_Gain_Error_Histogram.png)
 
 </details>
 
 <details>
 <summary>All generated FDC and CMFB internal-testbench plots</summary>
 
-![FDC differential AC response](../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.diff_ac.png)
+![FDC differential AC response](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.diff_ac.png)
 
-![FDC differential-step common-mode disturbance](../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.diff_step_cm_disturbance.png)
+![FDC differential-step common-mode disturbance](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.diff_step_cm_disturbance.png)
 
-![FDC input-referred noise](../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.noise.png)
+![FDC input-referred noise](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.noise.png)
 
-![FDC input offset](../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.offset.png)
+![FDC input offset](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.offset.png)
 
-![FDC plant AC response](../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.plant_ac.png)
+![FDC plant AC response](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.plant_ac.png)
 
-![FDC plant DC response](../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.plant_dc.png)
+![FDC plant DC response](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.plant_dc.png)
 
-![FDC CMFB-control sweep](../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.vcmfb_sweep.png)
+![FDC CMFB-control sweep](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.vcmfb_sweep.png)
 
-![CMFB closed-loop DC response](../Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.cl_dc.png)
+![CMFB closed-loop DC response](../../Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.cl_dc.png)
 
-![CMFB closed-loop transient](../Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.cl_tran.png)
+![CMFB closed-loop transient](../../Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.cl_tran.png)
 
-![CMFB open-loop AC response](../Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.ol_ac.png)
+![CMFB open-loop AC response](../../Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.ol_ac.png)
 
 </details>
 
@@ -219,16 +219,16 @@ Nominal internal checks place the standalone differential core at 90.090 dB gain
 
 ## Generated artifacts
 
-- [Analyzer](../Measurement_Results/IC_Simulation/FD_OTA/FDOTA_Analyze.m)
-- [Comparison table](../Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_table_report.csv)
-- [Nominal summary](../Measurement_Results/IC_Simulation/FD_OTA/Results/NOM.FDOTA_summary.csv)
-- [Worst-case table](../Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_worst_case_report.csv)
-- [MC run summary](../Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_MC_Run_Summary.csv)
-- [MM summary](../Measurement_Results/IC_Simulation/FD_OTA/Results/MM_FDOTA_MC_Summary.csv)
-- [GL summary](../Measurement_Results/IC_Simulation/FD_OTA/Results/GL_FDOTA_MC_Summary.csv)
-- [FULL summary](../Measurement_Results/IC_Simulation/FD_OTA/Results/FULL_FDOTA_MC_Summary.csv)
-- [FDC nominal summary](../Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.FDC_summary.csv)
-- [CMFB nominal summary](../Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.CMFB_summary.csv)
+- [Analyzer](../../Measurement_Results/IC_Simulation/FD_OTA/FDOTA_Analyze.m)
+- [Comparison table](../../Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_table_report.csv)
+- [Nominal summary](../../Measurement_Results/IC_Simulation/FD_OTA/Results/NOM.FDOTA_summary.csv)
+- [Worst-case table](../../Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_worst_case_report.csv)
+- [MC run summary](../../Measurement_Results/IC_Simulation/FD_OTA/Results/FDOTA_MC_Run_Summary.csv)
+- [MM summary](../../Measurement_Results/IC_Simulation/FD_OTA/Results/MM_FDOTA_MC_Summary.csv)
+- [GL summary](../../Measurement_Results/IC_Simulation/FD_OTA/Results/GL_FDOTA_MC_Summary.csv)
+- [FULL summary](../../Measurement_Results/IC_Simulation/FD_OTA/Results/FULL_FDOTA_MC_Summary.csv)
+- [FDC nominal summary](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.FDC_summary.csv)
+- [CMFB nominal summary](../../Measurement_Results/IC_Simulation/FD_OTA/CMFB/NOM.CMFB_summary.csv)
 
 ## Scope limitation
 

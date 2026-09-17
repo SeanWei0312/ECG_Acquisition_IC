@@ -1,6 +1,6 @@
 # LPF Detailed Verification Report
 
-[← System-level project report](Project_Report.md)
+[← System-level project report](../../Project_Report.md)
 
 | Item | Value |
 | :--- | :--- |
@@ -87,19 +87,19 @@ The 200-run FULL Monte Carlo set passes every formal limit. Observed LPF input o
 <details>
 <summary>All generated LPF plots</summary>
 
-![LPF differential frequency response](../Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_differential_ac.png)
+![LPF differential frequency response](../../Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_differential_ac.png)
 
-![LPF input-referred noise](../Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_noise.png)
+![LPF input-referred noise](../../Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_noise.png)
 
-![LPF PVT CMRR response](../Measurement_Results/IC_Simulation/LPF/Plots/LPF_PVT_CMRR_AC.png)
+![LPF PVT CMRR response](../../Measurement_Results/IC_Simulation/LPF/Plots/LPF_PVT_CMRR_AC.png)
 
-![LPF selector functional check](../Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_SEL_functional_check.png)
+![LPF selector functional check](../../Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_SEL_functional_check.png)
 
-![LPF MC −1 dB frequency](../Measurement_Results/IC_Simulation/LPF/Plots/Fig_MC_01_LPF_1dB_Frequency_Histogram.png)
+![LPF MC −1 dB frequency](../../Measurement_Results/IC_Simulation/LPF/Plots/Fig_MC_01_LPF_1dB_Frequency_Histogram.png)
 
-![LPF MC input offset](../Measurement_Results/IC_Simulation/LPF/Plots/Fig_MC_02_Input_Offset_Histogram.png)
+![LPF MC input offset](../../Measurement_Results/IC_Simulation/LPF/Plots/Fig_MC_02_Input_Offset_Histogram.png)
 
-![LPF MC CMRR](../Measurement_Results/IC_Simulation/LPF/Plots/Fig_MC_03_CMRR_Histogram.png)
+![LPF MC CMRR](../../Measurement_Results/IC_Simulation/LPF/Plots/Fig_MC_03_CMRR_Histogram.png)
 
 </details>
 
@@ -160,15 +160,15 @@ The 200-run FULL Monte Carlo set passes every formal limit. Observed LPF input o
 
 ## Generated artifacts
 
-- [Analyzer](../Measurement_Results/IC_Simulation/LPF/LPF_Analyze.m)
-- [Comparison table](../Measurement_Results/IC_Simulation/LPF/Reports/LPF_table_report.csv)
-- [Nominal summary](../Measurement_Results/IC_Simulation/LPF/Reports/NOM.LPF_summary.csv)
-- [Full PVT data](../Measurement_Results/IC_Simulation/LPF/Reports/LPF_full_pvt_report.csv)
-- [Worst-case table](../Measurement_Results/IC_Simulation/LPF/Reports/LPF_worst_case_report.csv)
-- [MC run summary](../Measurement_Results/IC_Simulation/LPF/Reports/MC_Run_Summary.csv)
-- [MM summary](../Measurement_Results/IC_Simulation/LPF/Reports/MM_MC_Summary.csv)
-- [GL summary](../Measurement_Results/IC_Simulation/LPF/Reports/GL_MC_Summary.csv)
-- [FULL summary](../Measurement_Results/IC_Simulation/LPF/Reports/FULL_MC_Summary.csv)
+- [Analyzer](../../Measurement_Results/IC_Simulation/LPF/LPF_Analyze.m)
+- [Comparison table](../../Measurement_Results/IC_Simulation/LPF/Reports/LPF_table_report.csv)
+- [Nominal summary](../../Measurement_Results/IC_Simulation/LPF/Reports/NOM.LPF_summary.csv)
+- [Full PVT data](../../Measurement_Results/IC_Simulation/LPF/Reports/LPF_full_pvt_report.csv)
+- [Worst-case table](../../Measurement_Results/IC_Simulation/LPF/Reports/LPF_worst_case_report.csv)
+- [MC run summary](../../Measurement_Results/IC_Simulation/LPF/Reports/MC_Run_Summary.csv)
+- [MM summary](../../Measurement_Results/IC_Simulation/LPF/Reports/MM_MC_Summary.csv)
+- [GL summary](../../Measurement_Results/IC_Simulation/LPF/Reports/GL_MC_Summary.csv)
+- [FULL summary](../../Measurement_Results/IC_Simulation/LPF/Reports/FULL_MC_Summary.csv)
 
 ## Scope limitation
 
