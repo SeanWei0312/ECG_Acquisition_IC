@@ -35,29 +35,83 @@ The balanced INA+RLD report contains formal limits for operating point, offset, 
 
 The 200-run FULL Monte Carlo set passes every formal limit. Observed input-referred offset spans −1.448 to +1.849 mV, INA gain error spans −0.378% to +0.324%, and the minimum sampled CMRR is 95.303 dB. RLD UGF spans 0.820–1.086 kHz, phase margin remains above 100.504°, and common-mode suppression remains above 54.959 dB at 60 Hz and 52.789 dB at 150 Hz.
 
-<details>
-<summary>Complete INA+RLD FULL Monte Carlo results</summary>
+## Monte Carlo results
 
-| Parameter | Unit | Spec | Minimum | Mean | Maximum | Yield |
-| :--- | :---: | :---: | ---: | ---: | ---: | ---: |
-| Total current | mA | ≤6.2 | 3.701 | 3.870 | 4.109 | 100% |
-| Total power | mW | ≤22 | 12.212 | 12.769 | 13.558 | 100% |
-| Output CM error | mV | ±40 | −9.988 | 0.095 | 13.891 | 100% |
-| Input-referred offset | µV | ±2000 | −1447.910 | −2.212 | 1848.980 | 100% |
-| S1 gain | V/V | Report | 59.829 | 60.003 | 60.146 | — |
-| S1 gain error | % | ±0.5 | −0.285 | 0.005 | 0.244 | 100% |
-| S2 gain | V/V | Report | 3.996 | 4.000 | 4.003 | — |
-| S2 gain error | % | ±0.25 | −0.094 | 0.001 | 0.080 | 100% |
-| INA gain | V/V | Report | 239.092 | 240.014 | 240.777 | — |
-| INA gain error | % | ±0.5 | −0.378 | 0.006 | 0.324 | 100% |
-| INA CMRR @ 60 Hz | dB | ≥80 | 95.303 | 110.832 | 163.076 | 100% |
-| INA CMRR @ 150 Hz | dB | ≥80 | 95.302 | 110.717 | 162.638 | 100% |
-| RLD loop UGF | kHz | 0.5–1.6 | 0.820 | 0.948 | 1.086 | 100% |
-| RLD phase margin | deg | ≥60 | 100.504 | 100.669 | 100.817 | 100% |
-| Input CM suppression @ 60 Hz | dB | ≥50 | 54.959 | 55.075 | 55.164 | 100% |
-| Input CM suppression @ 150 Hz | dB | ≥45 | 52.789 | 53.259 | 53.646 | 100% |
+MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
+
+<details>
+<summary>MM Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Total current | mA | ≤6.2 | 3.724 | 3.688 | 3.805 | 3.863 | 3.921 | 4.037 | 4.029 | 100% |
+| Total power | mW | ≤22 | 12.288 | 12.172 | 12.555 | 12.747 | 12.938 | 13.321 | 13.296 | 100% |
+| Output CM error | mV | ±40 | −9.674 | −11.823 | −3.871 | 0.1057 | 4.082 | 12.034 | 11.863 | 100% |
+| Input-referred offset | µV | ±2000 | −1455.890 | −1855.375 | −619.931 | −2.209 | 615.512 | 1850.956 | 1850.290 | 100% |
+| S1 gain | V/V | Report | 60.004 | 60.003 | 60.005 | 60.006 | 60.006 | 60.008 | 60.008 | — |
+| S1 gain error | % | ±0.5 | 0.006333 | 0.005494 | 0.008064 | 0.009348 | 0.0106 | 0.0132 | 0.0127 | 100% |
+| S2 gain | V/V | Report | 4.000 | 4.000 | 4.000 | 4.000 | 4.000 | 4.000 | 4.000 | — |
+| S2 gain error | % | ±0.25 | 0.001750 | 0.001750 | 0.001750 | 0.001750 | 0.001750 | 0.001750 | 0.001750 | 100% |
+| INA gain | V/V | Report | 240.019 | 240.017 | 240.024 | 240.027 | 240.030 | 240.036 | 240.035 | — |
+| INA gain error | % | ±0.5 | 0.008000 | 0.007199 | 0.009803 | 0.0111 | 0.0124 | 0.0150 | 0.0145 | 100% |
+| INA CMRR @ 60 Hz | dB | ≥80 | 95.392 | 81.231 | 100.892 | 110.722 | 120.552 | 140.213 | 153.651 | 100% |
+| INA CMRR @ 150 Hz | dB | ≥80 | 95.391 | 81.950 | 101.052 | 110.603 | 120.153 | 139.255 | 153.130 | 100% |
+| RLD loop UGF | kHz | 1.05±0.55 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 100% |
+| RLD phase margin | ° | ≥60 | 100.671 | 100.671 | 100.671 | 100.672 | 100.672 | 100.673 | 100.672 | 100% |
+| Input CM suppression @ 60 Hz | dB | ≥50 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 100% |
+| Input CM suppression @ 150 Hz | dB | ≥45 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 100% |
 
 </details>
+
+<details>
+<summary>GL Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Total current | mA | ≤6.2 | 3.721 | 3.687 | 3.807 | 3.867 | 3.927 | 4.047 | 4.048 | 100% |
+| Total power | mW | ≤22 | 12.279 | 12.168 | 12.564 | 12.761 | 12.959 | 13.355 | 13.359 | 100% |
+| Output CM error | mV | ±40 | −3.513 | −4.596 | −1.279 | 0.3793 | 2.038 | 5.355 | 5.377 | 100% |
+| Input-referred offset | µV | ±2000 | −0.002142 | −0.001231 | −0.000402 | 0.000012 | 0.000426 | 0.001255 | 0.001290 | 100% |
+| S1 gain | V/V | Report | 59.829 | 59.850 | 59.952 | 60.003 | 60.054 | 60.157 | 60.146 | — |
+| S1 gain error | % | ±0.5 | −0.2847 | −0.2508 | −0.0801 | 0.005253 | 0.0906 | 0.2613 | 0.2435 | 100% |
+| S2 gain | V/V | Report | 3.996 | 3.997 | 3.999 | 4.000 | 4.001 | 4.003 | 4.003 | — |
+| S2 gain error | % | ±0.25 | −0.0940 | −0.0797 | −0.0262 | 0.000549 | 0.0273 | 0.0808 | 0.0798 | 100% |
+| INA gain | V/V | Report | 239.092 | 239.207 | 239.745 | 240.014 | 240.283 | 240.821 | 240.777 | — |
+| INA gain error | % | ±0.5 | −0.3783 | −0.3302 | −0.1062 | 0.005840 | 0.1179 | 0.3419 | 0.3236 | 100% |
+| INA CMRR @ 60 Hz | dB | ≥80 | 208.736 | 189.434 | 215.594 | 228.674 | 241.755 | 267.915 | 341.896 | 100% |
+| INA CMRR @ 150 Hz | dB | ≥80 | 208.744 | 191.052 | 216.019 | 228.502 | 240.985 | 265.952 | 335.670 | 100% |
+| RLD loop UGF | kHz | 1.05±0.55 | 0.8200 | 0.7861 | 0.8941 | 0.9482 | 1.002 | 1.110 | 1.086 | 100% |
+| RLD phase margin | ° | ≥60 | 100.505 | 100.490 | 100.609 | 100.669 | 100.729 | 100.849 | 100.817 | 100% |
+| Input CM suppression @ 60 Hz | dB | ≥50 | 54.959 | 54.951 | 55.034 | 55.075 | 55.116 | 55.199 | 55.164 | 100% |
+| Input CM suppression @ 150 Hz | dB | ≥45 | 52.789 | 52.731 | 53.082 | 53.257 | 53.432 | 53.782 | 53.646 | 100% |
+
+</details>
+
+<details>
+<summary>FULL Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Total current | mA | ≤6.2 | 3.701 | 3.622 | 3.787 | 3.870 | 3.952 | 4.117 | 4.109 | 100% |
+| Total power | mW | ≤22 | 12.212 | 11.952 | 12.497 | 12.769 | 13.042 | 13.587 | 13.558 | 100% |
+| Output CM error | mV | ±40 | −9.988 | −13.768 | −4.526 | 0.0948 | 4.716 | 13.957 | 13.891 | 100% |
+| Input-referred offset | µV | ±2000 | −1447.910 | −1854.290 | −619.571 | −2.212 | 615.148 | 1849.866 | 1848.980 | 100% |
+| S1 gain | V/V | Report | 59.829 | 59.849 | 59.952 | 60.003 | 60.054 | 60.157 | 60.146 | — |
+| S1 gain error | % | ±0.5 | −0.2845 | −0.2510 | −0.0801 | 0.005299 | 0.0907 | 0.2616 | 0.2437 | 100% |
+| S2 gain | V/V | Report | 3.996 | 3.997 | 3.999 | 4.000 | 4.001 | 4.003 | 4.003 | — |
+| S2 gain error | % | ±0.25 | −0.0940 | −0.0797 | −0.0262 | 0.000547 | 0.0273 | 0.0808 | 0.0798 | 100% |
+| INA gain | V/V | Report | 239.092 | 239.207 | 239.745 | 240.014 | 240.283 | 240.821 | 240.777 | — |
+| INA gain error | % | ±0.5 | −0.3782 | −0.3304 | −0.1062 | 0.005881 | 0.1180 | 0.3422 | 0.3237 | 100% |
+| INA CMRR @ 60 Hz | dB | ≥80 | 95.303 | 79.992 | 100.552 | 110.832 | 121.112 | 141.671 | 163.076 | 100% |
+| INA CMRR @ 150 Hz | dB | ≥80 | 95.302 | 80.656 | 100.696 | 110.717 | 120.737 | 140.777 | 162.638 | 100% |
+| RLD loop UGF | kHz | 1.05±0.55 | 0.8200 | 0.7861 | 0.8941 | 0.9482 | 1.002 | 1.110 | 1.086 | 100% |
+| RLD phase margin | ° | ≥60 | 100.504 | 100.490 | 100.609 | 100.669 | 100.729 | 100.849 | 100.817 | 100% |
+| Input CM suppression @ 60 Hz | dB | ≥50 | 54.959 | 54.951 | 55.034 | 55.075 | 55.117 | 55.199 | 55.164 | 100% |
+| Input CM suppression @ 150 Hz | dB | ≥45 | 52.789 | 52.735 | 53.084 | 53.259 | 53.434 | 53.783 | 53.646 | 100% |
+
+</details>
+
+## Corner comparison
 
 <details>
 <summary>INA+RLD comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>

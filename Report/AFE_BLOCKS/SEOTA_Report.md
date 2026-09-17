@@ -26,21 +26,59 @@
 
 The 200-run FULL Monte Carlo set also passes every formal limit. Observed input offset spans −970.439 to +1177.630 µV, DC gain remains above 95.488 dB, UGF remains above 11.764 MHz, and phase margin remains above 64.231°. The fitted input-offset interval is approximately −1.234 to +1.243 mV at $\mu\pm3\sigma$, within the ±2 mV requirement.
 
-<details>
-<summary>Complete SE OTA FULL Monte Carlo results</summary>
+## Monte Carlo results
 
-| Parameter | Unit | Spec | Minimum | Mean | Maximum | Yield |
-| :--- | :---: | :---: | ---: | ---: | ---: | ---: |
-| Bias current | µA | 40±10 | 38.595 | 40.056 | 41.411 | 100% |
-| Total current | mA | ≤1.25 | 0.789 | 0.833 | 0.895 | 100% |
-| Total power | mW | ≤4.5 | 2.603 | 2.749 | 2.954 | 100% |
-| DC gain | dB | ≥88 | 95.488 | 96.416 | 97.396 | 100% |
-| UGF | MHz | ≥8 | 11.764 | 12.835 | 13.961 | 100% |
-| Phase margin | deg | ≥55 | 64.231 | 67.829 | 73.006 | 100% |
-| Input offset | µV | ±2000 | −970.439 | 4.135 | 1177.630 | 100% |
-| Gain error | % | ±0.01 | −0.0025 | −0.0012 | 0.0000 | 100% |
+MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
+
+<details>
+<summary>MM Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Bias current | µA | 40±10 | 38.591 | 38.553 | 39.545 | 40.042 | 40.538 | 41.531 | 41.511 | 100% |
+| Total current | mA | ≤1.25 | 0.7987 | 0.7923 | 0.8184 | 0.8315 | 0.8446 | 0.8707 | 0.8689 | 100% |
+| Total power | mW | ≤4.5 | 2.636 | 2.615 | 2.701 | 2.744 | 2.787 | 2.873 | 2.868 | 100% |
+| DC gain | dB | ≥88 | 96.382 | 96.380 | 96.427 | 96.450 | 96.474 | 96.521 | 96.508 | 100% |
+| UGF | MHz | ≥8 | 12.285 | 12.173 | 12.603 | 12.818 | 13.033 | 13.463 | 13.388 | 100% |
+| Phase margin | ° | ≥55 | 67.374 | 67.313 | 67.643 | 67.808 | 67.973 | 68.303 | 68.232 | 100% |
+| Input offset | µV | ±2000 | −976.478 | −1234.498 | −408.750 | 4.124 | 416.997 | 1242.745 | 1182.960 | 100% |
+| Gain error | % | ±0.01 | −0.002200 | −0.002410 | −0.001619 | −0.001223 | −0.000828 | −0.000037 | −0.000100 | 100% |
 
 </details>
+
+<details>
+<summary>GL Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Bias current | µA | 40±10 | 39.253 | 39.101 | 39.771 | 40.107 | 40.442 | 41.112 | 40.929 | 100% |
+| Total current | mA | ≤1.25 | 0.8033 | 0.7964 | 0.8211 | 0.8335 | 0.8458 | 0.8705 | 0.8706 | 100% |
+| Total power | mW | ≤4.5 | 2.651 | 2.628 | 2.710 | 2.750 | 2.791 | 2.873 | 2.873 | 100% |
+| DC gain | dB | ≥88 | 95.477 | 95.257 | 96.029 | 96.415 | 96.801 | 97.573 | 97.404 | 100% |
+| UGF | MHz | ≥8 | 11.947 | 11.715 | 12.470 | 12.847 | 13.225 | 13.979 | 13.847 | 100% |
+| Phase margin | ° | ≥55 | 64.251 | 63.402 | 66.358 | 67.836 | 69.314 | 72.270 | 72.639 | 100% |
+| Input offset | µV | ±2000 | −11.636 | −10.904 | −1.399 | 3.354 | 8.107 | 17.613 | 15.683 | 100% |
+| Gain error | % | ±0.01 | −0.001500 | −0.001548 | −0.001325 | −0.001214 | −0.001103 | −0.000880 | −0.001000 | 100% |
+
+</details>
+
+<details>
+<summary>FULL Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Bias current | µA | 40±10 | 38.594 | 38.318 | 39.477 | 40.056 | 40.636 | 41.794 | 41.411 | 100% |
+| Total current | mA | ≤1.25 | 0.7889 | 0.7805 | 0.8155 | 0.8329 | 0.8504 | 0.8853 | 0.8952 | 100% |
+| Total power | mW | ≤4.5 | 2.603 | 2.576 | 2.691 | 2.749 | 2.806 | 2.921 | 2.954 | 100% |
+| DC gain | dB | ≥88 | 95.488 | 95.256 | 96.029 | 96.416 | 96.802 | 97.576 | 97.396 | 100% |
+| UGF | MHz | ≥8 | 11.764 | 11.613 | 12.428 | 12.835 | 13.243 | 14.057 | 13.961 | 100% |
+| Phase margin | ° | ≥55 | 64.231 | 63.334 | 66.331 | 67.829 | 69.327 | 72.324 | 73.006 | 100% |
+| Input offset | µV | ±2000 | −970.439 | −1234.433 | −408.721 | 4.135 | 416.991 | 1242.702 | 1177.630 | 100% |
+| Gain error | % | ±0.01 | −0.002500 | −0.002436 | −0.001632 | −0.001229 | −0.000827 | −0.000023 | 0.000 | 100% |
+
+</details>
+
+## Corner comparison
 
 <details>
 <summary>SE OTA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>

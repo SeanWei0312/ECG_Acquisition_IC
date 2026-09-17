@@ -24,6 +24,8 @@ The master bias network targets 40 µA and has been characterized over process, 
 | Mirror tracking error | −0.0028% | 0.149% maximum absolute error |
 | Selector transmission error | — | 25.466 nV maximum |
 
+## Worst-case results
+
 <details>
 <summary>Complete BIAS/SEL worst-case results</summary>
 
@@ -48,6 +50,8 @@ The master bias network targets 40 µA and has been characterized over process, 
 
 </details>
 
+## Corner comparison
+
 <details>
 <summary>BIAS comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
 
@@ -68,6 +72,9 @@ The master bias network targets 40 µA and has been characterized over process, 
 
 </details>
 
+## Monte Carlo results
+
+MM, GL, and FULL Monte Carlo campaigns have not been generated for BIAS/SEL, so no statistical values or yields are reported.
 
 ## Plots
 

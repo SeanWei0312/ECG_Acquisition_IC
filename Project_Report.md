@@ -54,30 +54,34 @@ Differential input → BSW → CDAC ↔ COMP → SAR_LOGIC → OUT_REG
 
 All 18 blocks stored under `SAR_ADC_BLOCKS` are reachable from the top level. Schematic and symbol paths have been audited, but formal ADC simulation results are not yet available. The complete hierarchy and required signoff campaign are documented in the [SAR ADC report](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md).
 
-## 3. AFE block-level performance
+## 3. Nominal and worst-case block results
 
-The following values summarize the complete 45-corner data. The detailed block reports contain the formal specifications, nominal/worst-case tables, `NOM/FF/SS/FS/SF/VL/VH/TL/TH` comparisons, every combined PVT corner, Monte Carlo statistics, and all generated plots.
+This system report intentionally retains only nominal and limiting full-PVT results. Complete corner tables, all 45 combined PVT cases, MM/GL/FULL Monte Carlo statistics, and plots remain in the linked block reports.
 
-| Block | Metric | Nominal | Full 45-corner range | Specification |
-| :--- | :--- | ---: | ---: | ---: |
-| SE OTA | DC gain | 96.522 dB | 93.988–97.180 dB | ≥88 dB |
-|  | UGF | 12.835 MHz | 8.762–16.895 MHz | ≥8 MHz |
-|  | Phase margin | 67.767° | 56.368–77.712° | ≥55° |
-|  | Input noise, 0.05–150 Hz | 1.873 µVrms | 1.687–2.189 µVrms | ≤2.5 µVrms |
-| FD OTA | Differential gain | 88.699 dB | 86.753–89.804 dB | ≥85 dB |
-|  | Differential UGF | 12.447 MHz | 8.435–16.195 MHz | ≥8 MHz |
-|  | Differential phase margin | 72.649° | 63.377–79.898° | ≥60° |
-|  | Input noise, 0.05–150 Hz | 3.086 µVrms | 2.815–3.514 µVrms | ≤4 µVrms |
-| INA + RLD | INA gain error | 0.011% | −0.215% to +0.140% | ±0.5% |
-|  | INA bandwidth | 259.286 kHz | 176.996–346.567 kHz | ≥150 kHz |
-|  | Input noise, 0.05–150 Hz | 2.667 µVrms | 2.402–3.117 µVrms | ≤4 µVrms |
-|  | CM suppression, 60 / 150 Hz | 55.072 / 53.257 dB | 54.644–55.305 / 51.676–54.363 dB | ≥50 / 45 dB |
-| LPF | Passband gain error | −0.027% | −0.050% to −0.016% | ±0.5% |
-|  | −1 dB frequency | 258.691 Hz | 174.135–410.798 Hz | ≥150 Hz |
-|  | Input noise, 0.05–150 Hz | 6.176 µVrms | 5.632–7.036 µVrms | ≤10 µVrms |
-| PGA | Gain error, all codes | 0.751 / −0.236 / −0.522 / −0.878% | −0.932% to +2.502% | ±5% |
-|  | Bandwidth, all codes | 0.907–5.053 MHz | 0.595–6.988 MHz | ≥0.15 MHz |
-|  | Input noise, all codes | 3.280–4.617 µVrms | 2.992–5.250 µVrms | ≤10 µVrms |
+| Block | Metric | Specification | NOM | Worst case | Corner |
+| :--- | :--- | :---: | ---: | ---: | :---: |
+| BIAS / SEL | Reference current | 40 µA target | 39.997 µA | 49.441 µA (+23.603%) | `FF`, +125°C, 3.6 V |
+|  | Startup settling | Report | 807.362 µs | 1180.281 µs | `SS`, −40°C, 3.0 V |
+| SE OTA | DC gain | ≥88 dB | 96.522 dB | 93.988 dB | `FSVLTH` |
+|  | UGF | ≥8 MHz | 12.835 MHz | 8.762 MHz | `SSVLTH` |
+|  | Phase margin | ≥55° | 67.767° | 56.368° | `FFVLTH` |
+|  | Input noise, 0.05–150 Hz | ≤2.5 µVrms | 1.873 µVrms | 2.189 µVrms | `SSVLTH` |
+| FD OTA | Differential gain | ≥85 dB | 88.699 dB | 86.753 dB | `FSVLTH` |
+|  | Differential UGF | ≥8 MHz | 12.447 MHz | 8.435 MHz | `SSVLTH` |
+|  | Differential phase margin | ≥60° | 72.649° | 63.377° | `FFVLTH` |
+|  | Input noise, 0.05–150 Hz | ≤4 µVrms | 3.086 µVrms | 3.514 µVrms | `SSVHTH` |
+| INA + RLD | INA gain error | ±0.5% | 0.011% | −0.215% | `FFVLTL` |
+|  | INA bandwidth | ≥150 kHz | 259.286 kHz | 176.996 kHz | `SSVLTH` |
+|  | Input noise, 0.05–150 Hz | ≤4 µVrms | 2.667 µVrms | 3.117 µVrms | `SSVLTH` |
+|  | CM suppression, 60 / 150 Hz | ≥50 / 45 dB | 55.072 / 53.257 dB | 54.644 / 51.676 dB | `SSVLTL` |
+| LPF | Passband gain error | ±0.5% | −0.027% | −0.050% | `SSVLTL` |
+|  | −1 dB frequency | ≥150 Hz | 258.691 Hz | 174.135 Hz | `SSVHTL` |
+|  | Input noise, 0.05–150 Hz | ≤10 µVrms | 6.176 µVrms | 7.036 µVrms | `SSVHTH` |
+| PGA | Gain error | ±5% | +0.751% (G2) | +2.502% (G2) | `SSVLTH` |
+|  | −3 dB bandwidth | ≥0.15 MHz | 0.907 MHz (G16) | 0.595 MHz (G16) | `SSVLTH` |
+|  | Input noise, 0.05–150 Hz | ≤10 µVrms | 4.617 µVrms (G2) | 5.250 µVrms (G2) | `SSVHTH` |
+
+The buffer, integrated AFE, and SAR ADC are excluded from this result table because formal signoff results are not yet available.
 
 ## 4. Verification coverage
 
@@ -96,15 +100,7 @@ The compact comparison columns have these meanings:
 
 ### 4.2 Statistical analysis
 
-| Block | MM | GL | FULL | Runs per mode | Failed runs |
-| :--- | ---: | ---: | ---: | ---: | ---: |
-| SE OTA | 100% | 100% | 100% | 200 | 0 |
-| FD OTA | 100% | 100% | 100% | 200 | 0 |
-| INA + RLD | 100% | 100% | 100% | 200 | 0 |
-| LPF | 100% | 100% | 100% | 200 | 0 |
-| PGA | 100% | 100% | 100% | 200 | 0 |
-
-MM applies local mismatch, GL applies global process variation, and FULL combines both. Runs are joined by run number where a block uses multiple summary exports. Formal yield is based only on required signoff metrics; missing report-only quantities do not invalidate a run.
+MM applies local mismatch, GL applies global process variation, and FULL combines both. Complete MM, GL, and FULL statistics are reported only in the detailed block reports, including requested, valid, and failed run counts; minimum, mean, maximum, ±1σ, and ±3σ values; and per-metric yield. Formal yield is based only on required signoff metrics, so missing report-only quantities do not invalidate a run.
 
 ## 5. AFE–ADC integration status
 

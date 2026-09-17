@@ -32,23 +32,65 @@ The 200-run FULL Monte Carlo set passes every formal limit. Observed differentia
 
 Nominal internal checks place the standalone differential core at 90.090 dB gain, 12.489 MHz UGF, and 72.529° phase margin. The CMFB amplifier has 45.128 dB gain, 966.924 MHz UGF, 71.906° phase margin, and 4.8–5.2 ns closed-loop settling in its dedicated testbench.
 
-<details>
-<summary>Complete FD OTA FULL Monte Carlo results</summary>
+## Monte Carlo results
 
-| Parameter | Unit | Spec | Minimum | Mean | Maximum | Yield |
-| :--- | :---: | :---: | ---: | ---: | ---: | ---: |
-| FDC bias current | µA | 40±10 | 38.723 | 40.080 | 41.716 | 100% |
-| CMFB bias current | µA | 40±10 | 38.712 | 40.088 | 41.605 | 100% |
-| Total current | mA | ≤2.5 | 1.519 | 1.606 | 1.745 | 100% |
-| Total power | mW | ≤9 | 5.013 | 5.299 | 5.758 | 100% |
-| Differential DC gain | dB | ≥85 | 87.784 | 88.667 | 89.622 | 100% |
-| Differential UGF | MHz | ≥8 | 11.307 | 12.469 | 13.686 | 100% |
-| Differential phase margin | deg | ≥60 | 68.996 | 72.665 | 77.849 | 100% |
-| Input differential offset | µV | ±3000 | −2096.150 | 30.711 | 2354.430 | 100% |
-| Gain error | % | ±0.01 | −0.0041 | −0.0037 | −0.0033 | 100% |
-| Output CM error | mV | ±25 | −9.947 | 0.073 | 13.681 | 100% |
+MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
+
+<details>
+<summary>MM Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| FDC bias current | µA | 40±10 | 38.852 | 38.414 | 39.515 | 40.065 | 40.615 | 41.716 | 41.496 | 100% |
+| CMFB bias current | µA | 40±10 | 38.907 | 38.439 | 39.528 | 40.073 | 40.617 | 41.707 | 41.524 | 100% |
+| Total current | mA | ≤2.5 | 1.541 | 1.524 | 1.577 | 1.603 | 1.629 | 1.681 | 1.682 | 100% |
+| Total power | mW | ≤9 | 5.085 | 5.031 | 5.203 | 5.290 | 5.376 | 5.549 | 5.550 | 100% |
+| Differential DC gain | dB | ≥85 | 88.639 | 88.647 | 88.683 | 88.700 | 88.718 | 88.753 | 88.739 | 100% |
+| Differential UGF | MHz | ≥8 | 11.905 | 11.782 | 12.223 | 12.443 | 12.664 | 13.105 | 13.294 | 100% |
+| Differential phase margin | ° | ≥60 | 72.273 | 72.259 | 72.514 | 72.641 | 72.769 | 73.023 | 73.059 | 100% |
+| Input differential offset | µV | ±3000 | −2097.010 | −2276.450 | −738.365 | 30.677 | 799.720 | 2337.805 | 2355.490 | 100% |
+| Gain error | % | ±0.01 | −0.003700 | −0.003697 | −0.003681 | −0.003673 | −0.003665 | −0.003648 | −0.003660 | 100% |
+| Output CM error | mV | ±25 | −9.632 | −11.905 | −3.912 | 0.0842 | 4.081 | 12.073 | 11.463 | 100% |
 
 </details>
+
+<details>
+<summary>GL Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| FDC bias current | µA | 40±10 | 39.253 | 39.101 | 39.771 | 40.107 | 40.442 | 41.112 | 40.929 | 100% |
+| CMFB bias current | µA | 40±10 | 39.253 | 39.101 | 39.771 | 40.107 | 40.442 | 41.112 | 40.929 | 100% |
+| Total current | mA | ≤2.5 | 1.547 | 1.534 | 1.582 | 1.607 | 1.631 | 1.680 | 1.680 | 100% |
+| Total power | mW | ≤9 | 5.106 | 5.062 | 5.222 | 5.302 | 5.383 | 5.543 | 5.544 | 100% |
+| Differential DC gain | dB | ≥85 | 87.799 | 87.629 | 88.320 | 88.666 | 89.011 | 89.702 | 89.613 | 100% |
+| Differential UGF | MHz | ≥8 | 11.411 | 11.263 | 12.071 | 12.475 | 12.878 | 13.686 | 13.603 | 100% |
+| Differential phase margin | ° | ≥60 | 69.206 | 68.362 | 71.234 | 72.670 | 74.105 | 76.977 | 77.492 | 100% |
+| Input differential offset | µV | ±3000 | −0.000482 | −0.000238 | −0.000080 | −0.000001 | 0.000078 | 0.000236 | 0.000445 | 100% |
+| Gain error | % | ±0.01 | −0.004070 | −0.004131 | −0.003837 | −0.003690 | −0.003543 | −0.003249 | −0.003310 | 100% |
+| Output CM error | mV | ±25 | −3.511 | −4.594 | −1.279 | 0.3791 | 2.037 | 5.353 | 5.374 | 100% |
+
+</details>
+
+<details>
+<summary>FULL Monte Carlo — complete statistics</summary>
+
+| Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| FDC bias current | µA | 40±10 | 38.723 | 38.176 | 39.445 | 40.080 | 40.715 | 41.984 | 41.716 | 100% |
+| CMFB bias current | µA | 40±10 | 38.712 | 38.201 | 39.459 | 40.088 | 40.717 | 41.974 | 41.605 | 100% |
+| Total current | mA | ≤2.5 | 1.519 | 1.497 | 1.570 | 1.606 | 1.642 | 1.715 | 1.745 | 100% |
+| Total power | mW | ≤9 | 5.013 | 4.940 | 5.179 | 5.299 | 5.419 | 5.658 | 5.758 | 100% |
+| Differential DC gain | dB | ≥85 | 87.784 | 87.623 | 88.319 | 88.667 | 89.015 | 89.710 | 89.621 | 100% |
+| Differential UGF | MHz | ≥8 | 11.307 | 11.183 | 12.040 | 12.469 | 12.898 | 13.755 | 13.686 | 100% |
+| Differential phase margin | ° | ≥60 | 68.996 | 68.280 | 71.203 | 72.665 | 74.127 | 77.051 | 77.849 | 100% |
+| Input differential offset | µV | ±3000 | −2096.150 | −2276.341 | −738.306 | 30.711 | 799.728 | 2337.763 | 2354.430 | 100% |
+| Gain error | % | ±0.01 | −0.004080 | −0.004133 | −0.003838 | −0.003690 | −0.003542 | −0.003246 | −0.003300 | 100% |
+| Output CM error | mV | ±25 | −9.947 | −13.783 | −4.546 | 0.0726 | 4.691 | 13.928 | 13.681 | 100% |
+
+</details>
+
+## Corner comparison
 
 <details>
 <summary>FD OTA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
