@@ -39,8 +39,7 @@ The 200-run FULL Monte Carlo set passes every formal limit. The closest rejectio
 
 MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
 
-<details>
-<summary>MM Monte Carlo — complete statistics</summary>
+### MM Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -78,10 +77,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | G16 CMRR @ 60 Hz | dB | ≥80 | 91.099 | 74.278 | 96.758 | 107.997 | 119.237 | 141.717 | 158.718 | 100% |
 | G16 CMRR @ 150 Hz | dB | ≥80 | 91.099 | 74.279 | 96.758 | 107.997 | 119.237 | 141.716 | 158.698 | 100% |
 
-</details>
-
-<details>
-<summary>GL Monte Carlo — complete statistics</summary>
+### GL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -119,10 +115,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | G16 CMRR @ 60 Hz | dB | ≥80 | 187.779 | 166.057 | 193.753 | 207.601 | 221.448 | 249.144 | 258.396 | 100% |
 | G16 CMRR @ 150 Hz | dB | ≥80 | 187.448 | 167.920 | 194.091 | 207.176 | 220.262 | 246.433 | 245.927 | 100% |
 
-</details>
-
-<details>
-<summary>FULL Monte Carlo — complete statistics</summary>
+### FULL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -160,12 +153,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | G16 CMRR @ 60 Hz | dB | ≥80 | 91.226 | 75.252 | 97.024 | 107.909 | 118.795 | 140.566 | 154.493 | 100% |
 | G16 CMRR @ 150 Hz | dB | ≥80 | 91.226 | 75.253 | 97.024 | 107.909 | 118.795 | 140.566 | 154.483 | 100% |
 
-</details>
-
 ## Corner comparison
 
-<details>
-<summary>PGA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
+### PGA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH
 
 | Parameter | Unit | Spec | NOM | FF | SS | FS | SF | VL | VH | TL | TH |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -236,13 +226,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | G16 PSRR- @ 150 Hz | dB | ≥80 | 185.643 | 208.856 | 219.476 | 185.639 | 185.646 | 191.214 | 185.637 | 203.294 | 201.982 |
 | G16 input-referred noise 0.05-150 Hz | uVrms | ≤10 | 3.280 | 3.136 | 3.425 | 3.228 | 3.332 | 3.274 | 3.286 | 3.131 | 3.567 |
 
-</details>
-
-
 ## Plots
 
-<details>
-<summary>All generated PGA plots</summary>
+### All generated PGA plots
 
 ![PGA differential frequency response](../../Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_differential_ac.png)
 
@@ -262,12 +248,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ![PGA MC CMRR at 60 Hz](../../Measurement_Results/IC_Simulation/PGA/Plots/Fig_MC_04_CMRR_60Hz_Histogram.png)
 
-</details>
-
 ## All 45 PVT corners
 
-<details>
-<summary>PGA: all 45 PVT corners</summary>
+### PGA: all 45 PVT corners
 
 | Corner | Current (mA) | CM error (mV) | Max abs. gain error (%) | Min BW (MHz) | Min CMRR 60 (dB) | Max noise (µVrms) | Status |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
@@ -316,8 +299,6 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | `SFVLTH` | 1.774 | 9.540 | 1.889 | 0.731 | 194.896 | 5.082 | Pass |
 | `SFVHTL` | 1.289 | -8.379 | 0.888 | 0.952 | 195.119 | 4.494 | Pass |
 | `SFVHTH` | 1.835 | 9.510 | 1.075 | 0.753 | 197.996 | 5.102 | Pass |
-
-</details>
 
 ## Generated artifacts
 

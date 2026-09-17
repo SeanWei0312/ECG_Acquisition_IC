@@ -33,8 +33,7 @@ The 200-run FULL Monte Carlo set passes every formal limit. Observed LPF input o
 
 MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
 
-<details>
-<summary>MM Monte Carlo — complete statistics</summary>
+### MM Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -51,10 +50,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | CMRR @ 60 Hz | dB | ≥80 | 91.088 | 75.084 | 96.970 | 107.913 | 118.856 | 140.741 | 154.374 | 100% |
 | CMRR @ 150 Hz | dB | ≥80 | 91.078 | 75.990 | 97.200 | 107.806 | 118.411 | 139.622 | 154.272 | 100% |
 
-</details>
-
-<details>
-<summary>GL Monte Carlo — complete statistics</summary>
+### GL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -71,10 +67,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | CMRR @ 60 Hz | dB | ≥80 | 220.589 | 155.429 | 213.558 | 242.623 | 271.688 | 329.817 | 331.629 | 100% |
 | CMRR @ 150 Hz | dB | ≥80 | 220.474 | 157.048 | 213.851 | 242.253 | 270.654 | 327.457 | 315.168 | 100% |
 
-</details>
-
-<details>
-<summary>FULL Monte Carlo — complete statistics</summary>
+### FULL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -91,12 +84,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | CMRR @ 60 Hz | dB | ≥80 | 91.218 | 75.607 | 97.110 | 107.861 | 118.612 | 140.115 | 151.259 | 100% |
 | CMRR @ 150 Hz | dB | ≥80 | 91.208 | 76.266 | 97.272 | 107.775 | 118.279 | 139.285 | 147.169 | 100% |
 
-</details>
-
 ## Corner comparison
 
-<details>
-<summary>LPF comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
+### LPF comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH
 
 | Parameter | Unit | Spec | NOM | FF | SS | FS | SF | VL | VH | TL | TH |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -125,13 +115,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | PSRR- @ 150 Hz | dB | ≥80 | 236.558 | 215.346 | 210.355 | 237.874 | 236.146 | 233.752 | 237.079 | 214.256 | 236.197 |
 | Input-referred noise 0.05-150 Hz | uVrms | ≤10 | 6.176 | 5.903 | 6.452 | 6.077 | 6.274 | 6.164 | 6.187 | 5.895 | 6.715 |
 
-</details>
-
-
 ## Plots
 
-<details>
-<summary>All generated LPF plots</summary>
+### All generated LPF plots
 
 ![LPF differential frequency response](../../Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_differential_ac.png)
 
@@ -147,12 +133,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ![LPF MC CMRR](../../Measurement_Results/IC_Simulation/LPF/Plots/Fig_MC_03_CMRR_Histogram.png)
 
-</details>
-
 ## All 45 PVT corners
 
-<details>
-<summary>LPF: all 45 PVT corners</summary>
+### LPF: all 45 PVT corners
 
 | Corner | Current (mA) | Offset (mV) | Gain error (%) | Loss 150 (dB) | −1 dB (Hz) | −3 dB (Hz) | Noise (µVrms) | Status |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
@@ -201,8 +184,6 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | `SFVLTH` | 1.773 | -0.000 | -0.023 | 0.279 | 295.879 | 579.847 | 6.822 | Pass |
 | `SFVHTL` | 1.289 | 0.000 | -0.031 | 0.454 | 229.653 | 449.935 | 6.002 | Pass |
 | `SFVHTH` | 1.835 | -0.000 | -0.022 | 0.279 | 295.878 | 579.846 | 6.831 | Pass |
-
-</details>
 
 ## Generated artifacts
 

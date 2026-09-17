@@ -30,8 +30,7 @@ The 200-run FULL Monte Carlo set also passes every formal limit. Observed input 
 
 MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
 
-<details>
-<summary>MM Monte Carlo — complete statistics</summary>
+### MM Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -44,10 +43,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Input offset | µV | ±2000 | −976.478 | −1234.498 | −408.750 | 4.124 | 416.997 | 1242.745 | 1182.960 | 100% |
 | Gain error | % | ±0.01 | −0.002200 | −0.002410 | −0.001619 | −0.001223 | −0.000828 | −0.000037 | −0.000100 | 100% |
 
-</details>
-
-<details>
-<summary>GL Monte Carlo — complete statistics</summary>
+### GL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -60,10 +56,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Input offset | µV | ±2000 | −11.636 | −10.904 | −1.399 | 3.354 | 8.107 | 17.613 | 15.683 | 100% |
 | Gain error | % | ±0.01 | −0.001500 | −0.001548 | −0.001325 | −0.001214 | −0.001103 | −0.000880 | −0.001000 | 100% |
 
-</details>
-
-<details>
-<summary>FULL Monte Carlo — complete statistics</summary>
+### FULL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -76,12 +69,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Input offset | µV | ±2000 | −970.439 | −1234.433 | −408.721 | 4.135 | 416.991 | 1242.702 | 1177.630 | 100% |
 | Gain error | % | ±0.01 | −0.002500 | −0.002436 | −0.001632 | −0.001229 | −0.000827 | −0.000023 | 0.000 | 100% |
 
-</details>
-
 ## Corner comparison
 
-<details>
-<summary>SE OTA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
+### SE OTA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH
 
 | Parameter | Unit | Spec | NOM | FF | SS | FS | SF | VL | VH | TL | TH |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -120,13 +110,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | SR fall | V/us | ≥5.0 | 7.966 | 9.902 | 6.533 | 8.093 | 7.834 | 7.803 | 8.091 | 7.040 | 8.628 |
 | Settling time | ns | ≤225 | 163.400 | 129.900 | 199.900 | 160.900 | 165.900 | 165.400 | 161.400 | 171.400 | 163.900 |
 
-</details>
-
-
 ## Plots
 
-<details>
-<summary>All generated SE OTA plots</summary>
+### All generated SE OTA plots
 
 ![SE OTA open-loop gain and phase](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png)
 
@@ -152,12 +138,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ![SE OTA MC gain error](../../Measurement_Results/IC_Simulation/SE_OTA/Plots/Fig_MC_05_Gain_Error_Histogram.png)
 
-</details>
-
 ## All 45 PVT corners
 
-<details>
-<summary>SE OTA: all 45 PVT corners</summary>
+### SE OTA: all 45 PVT corners
 
 | Corner | Current (mA) | Gain (dB) | UGF (MHz) | PM (°) | Offset (µV) | Noise (µVrms) | Status |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
@@ -206,8 +189,6 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | `SFVLTH` | 0.914 | 95.285 | 10.230 | 61.842 | 1.999 | 2.105 | Pass |
 | `SFVHTL` | 0.677 | 97.052 | 14.350 | 72.621 | -2.766 | 1.799 | Pass |
 | `SFVHTH` | 0.946 | 96.369 | 10.556 | 62.440 | 1.645 | 2.101 | Pass |
-
-</details>
 
 ## Generated artifacts
 

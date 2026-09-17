@@ -26,8 +26,7 @@ The master bias network targets 40 µA and has been characterized over process, 
 
 ## Worst-case results
 
-<details>
-<summary>Complete BIAS/SEL worst-case results</summary>
+### Complete BIAS/SEL worst-case results
 
 | Parameter | Value | Corner / condition |
 | :--- | ---: | :---: |
@@ -48,12 +47,9 @@ The master bias network targets 40 µA and has been characterized over process, 
 | Maximum VREF internal-selector error | 18.749 nV | `SSVL` |
 | Maximum VREF external-selector error | 10.951 nV | `SSVL` |
 
-</details>
-
 ## Corner comparison
 
-<details>
-<summary>BIAS comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
+### BIAS comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH
 
 | Parameter | Unit | NOM | FF | SS | FS | SF | VL | VH | TL | TH |
 | :--- | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -70,16 +66,13 @@ The master bias network targets 40 µA and has been characterized over process, 
 | Power | uW | 274.532 | 311.359 | 245.001 | 278.773 | 270.131 | 244.924 | 303.680 | 242.575 | 297.202 |
 | Startup time | us | 807.362 | 777.960 | 839.330 | 838.091 | 804.620 | 882.469 | 743.647 | 896.695 | 807.833 |
 
-</details>
-
 ## Monte Carlo results
 
 MM, GL, and FULL Monte Carlo campaigns have not been generated for BIAS/SEL, so no statistical values or yields are reported.
 
 ## Plots
 
-<details>
-<summary>All generated BIAS/SEL plots</summary>
+### All generated BIAS/SEL plots
 
 ![BIAS 2D voltage-temperature surface](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_2D.png)
 
@@ -92,8 +85,6 @@ MM, GL, and FULL Monte Carlo campaigns have not been generated for BIAS/SEL, so 
 ![BIAS temperature sweep](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_TEMP.png)
 
 ![BIAS supply sweep](../../Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_VDD.png)
-
-</details>
 
 ## Generated artifacts
 

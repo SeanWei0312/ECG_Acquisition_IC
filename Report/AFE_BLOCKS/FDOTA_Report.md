@@ -36,8 +36,7 @@ Nominal internal checks place the standalone differential core at 90.090 dB gain
 
 MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
 
-<details>
-<summary>MM Monte Carlo — complete statistics</summary>
+### MM Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -52,10 +51,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Gain error | % | ±0.01 | −0.003700 | −0.003697 | −0.003681 | −0.003673 | −0.003665 | −0.003648 | −0.003660 | 100% |
 | Output CM error | mV | ±25 | −9.632 | −11.905 | −3.912 | 0.0842 | 4.081 | 12.073 | 11.463 | 100% |
 
-</details>
-
-<details>
-<summary>GL Monte Carlo — complete statistics</summary>
+### GL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -70,10 +66,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Gain error | % | ±0.01 | −0.004070 | −0.004131 | −0.003837 | −0.003690 | −0.003543 | −0.003249 | −0.003310 | 100% |
 | Output CM error | mV | ±25 | −3.511 | −4.594 | −1.279 | 0.3791 | 2.037 | 5.353 | 5.374 | 100% |
 
-</details>
-
-<details>
-<summary>FULL Monte Carlo — complete statistics</summary>
+### FULL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -88,12 +81,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Gain error | % | ±0.01 | −0.004080 | −0.004133 | −0.003838 | −0.003690 | −0.003542 | −0.003246 | −0.003300 | 100% |
 | Output CM error | mV | ±25 | −9.947 | −13.783 | −4.546 | 0.0726 | 4.691 | 13.928 | 13.681 | 100% |
 
-</details>
-
 ## Corner comparison
 
-<details>
-<summary>FD OTA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
+### FD OTA comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH
 
 | Parameter | Unit | Spec | NOM | FF | SS | FS | SF | VL | VH | TL | TH |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -137,13 +127,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | CMFB SR fall | V/us | ≥2 | 3.526 | 4.541 | 2.785 | 3.541 | 3.509 | 3.468 | 3.569 | 3.474 | 3.379 |
 | CMFB settling time | ns | ≤1000 | 329.729 | 275.711 | 373.846 | 325.534 | 333.998 | 334.052 | 325.742 | 340.681 | 333.963 |
 
-</details>
-
-
 ## Plots
 
-<details>
-<summary>All generated FD OTA plots</summary>
+### All generated FD OTA plots
 
 ![FD OTA open-loop gain and phase](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.open_loop_gain_phase.png)
 
@@ -177,10 +163,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ![FD OTA MC gain error](../../Measurement_Results/IC_Simulation/FD_OTA/Plots/Fig_MC_06_Gain_Error_Histogram.png)
 
-</details>
-
-<details>
-<summary>All generated FDC and CMFB internal-testbench plots</summary>
+### All generated FDC and CMFB internal-testbench plots
 
 ![FDC differential AC response](../../Measurement_Results/IC_Simulation/FD_OTA/FDC/Plots/NOM.diff_ac.png)
 
@@ -202,12 +185,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ![CMFB open-loop AC response](../../Measurement_Results/IC_Simulation/FD_OTA/CMFB/Plots/NOM.ol_ac.png)
 
-</details>
-
 ## All 45 PVT corners
 
-<details>
-<summary>FD OTA: all 45 PVT corners</summary>
+### FD OTA: all 45 PVT corners
 
 | Corner | Current (mA) | Gain (dB) | UGF (MHz) | PM (°) | CM error (mV) | Noise (µVrms) | Status |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
@@ -256,8 +236,6 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | `SFVLTH` | 1.773 | 87.337 | 9.916 | 69.642 | 9.530 | 3.409 | Pass |
 | `SFVHTL` | 1.289 | 89.804 | 14.000 | 76.358 | -8.373 | 2.999 | Pass |
 | `SFVHTH` | 1.835 | 88.443 | 10.254 | 70.037 | 9.502 | 3.414 | Pass |
-
-</details>
 
 ## Generated artifacts
 

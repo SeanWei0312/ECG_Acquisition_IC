@@ -39,8 +39,7 @@ The 200-run FULL Monte Carlo set passes every formal limit. Observed input-refer
 
 MM applies local mismatch, GL applies global process variation, and FULL combines both. Each campaign requested 200 runs, produced 200 valid runs with zero failed runs, and achieved 100% joint yield. The tables include every metric exported in the corresponding MC summary CSV.
 
-<details>
-<summary>MM Monte Carlo — complete statistics</summary>
+### MM Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -61,10 +60,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Input CM suppression @ 60 Hz | dB | ≥50 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 100% |
 | Input CM suppression @ 150 Hz | dB | ≥45 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 100% |
 
-</details>
-
-<details>
-<summary>GL Monte Carlo — complete statistics</summary>
+### GL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -85,10 +81,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Input CM suppression @ 60 Hz | dB | ≥50 | 54.959 | 54.951 | 55.034 | 55.075 | 55.116 | 55.199 | 55.164 | 100% |
 | Input CM suppression @ 150 Hz | dB | ≥45 | 52.789 | 52.731 | 53.082 | 53.257 | 53.432 | 53.782 | 53.646 | 100% |
 
-</details>
-
-<details>
-<summary>FULL Monte Carlo — complete statistics</summary>
+### FULL Monte Carlo — complete statistics
 
 | Parameter | Unit | Spec | Min | μ−3σ | μ−σ | Mean | μ+σ | μ+3σ | Max | Yield |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -109,12 +102,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Input CM suppression @ 60 Hz | dB | ≥50 | 54.959 | 54.951 | 55.034 | 55.075 | 55.117 | 55.199 | 55.164 | 100% |
 | Input CM suppression @ 150 Hz | dB | ≥45 | 52.789 | 52.735 | 53.084 | 53.259 | 53.434 | 53.783 | 53.646 | 100% |
 
-</details>
-
 ## Corner comparison
 
-<details>
-<summary>INA+RLD comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH</summary>
+### INA+RLD comparison: NOM, FF, SS, FS, SF, VL, VH, TL, TH
 
 | Parameter | Unit | Spec | NOM | FF | SS | FS | SF | VL | VH | TL | TH |
 | :--- | :---: | :---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -158,13 +148,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | RLD output rail headroom | V | ≥0.1 | 1.647 | 1.647 | 1.647 | 1.647 | 1.647 | 1.497 | 1.797 | 1.647 | 1.647 |
 | CM Interference Gain Change | % | ±0.1 | -3.724e-05 | -5.156e-04 | -3.258e-04 | -2.836e-04 | -2.270e-04 | -5.445e-04 | -3.291e-04 | -1.896e-04 | -4.596e-04 |
 
-</details>
-
-
 ## Plots
 
-<details>
-<summary>All generated INA+RLD plots</summary>
+### All generated INA+RLD plots
 
 ![INA differential frequency response](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_differential_ac.png)
 
@@ -192,12 +178,9 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ![INA MC input common-mode suppression](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_06_Input_CM_Suppression_Histogram.png)
 
-</details>
-
 ## All 45 PVT corners
 
-<details>
-<summary>INA+RLD: all 45 PVT corners</summary>
+### INA+RLD: all 45 PVT corners
 
 | Corner | Current (mA) | Gain error (%) | BW (kHz) | Noise (µVrms) | RLD UGF (kHz) | PM (°) | Supp. 60 (dB) | Supp. 150 (dB) | Status |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
@@ -246,8 +229,6 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | `SFVLTH` | 4.275 | 0.027 | 216.428 | 2.999 | 1.082 | 100.489 | 55.155 | 53.620 | Pass |
 | `SFVHTL` | 3.091 | -0.036 | 268.148 | 2.559 | 0.839 | 100.788 | 54.974 | 52.860 | Pass |
 | `SFVHTH` | 4.425 | 0.055 | 222.982 | 2.992 | 1.082 | 100.549 | 55.161 | 53.657 | Pass |
-
-</details>
 
 ## Generated artifacts
 
