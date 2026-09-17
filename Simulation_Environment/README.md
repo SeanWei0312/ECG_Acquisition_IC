@@ -1,6 +1,6 @@
 # Simulation Environment
 
-This directory contains the minimal IIC-OSIC-TOOLS launcher environment used to run the ECG Acquisition IC simulations. The unrelated Chipathon tutorials, examples, schedules, and reference projects have been removed from this repository.
+This directory contains the minimal IIC-OSIC-TOOLS launcher environment used to run the ECG Acquisition IC simulations. Unrelated upstream tutorials, examples, schedules, and reference projects have been removed from this repository.
 
 ## Contents
 
@@ -12,7 +12,7 @@ Simulation_Environment/
 └── README.md
 ```
 
-The launchers use the IEEE SSCS Chipathon 2026 IIC-OSIC-TOOLS image and mount the host design directory at `/foss/designs` inside the container.
+The launchers use the project's configured IIC-OSIC-TOOLS image and mount the host design directory at `/foss/designs` inside the container.
 
 ## Launchers
 
@@ -26,4 +26,4 @@ See [Docker_Instructions.md](../Docker_Instructions.md) for the project-specific
 
 ## Attribution
 
-These launcher scripts were retained from the IEEE SSCS Chipathon 2026 repository. The corresponding upstream license and notice are preserved in this directory.
+These launcher scripts were retained from the upstream simulation environment. The corresponding license and notice are preserved in this directory.

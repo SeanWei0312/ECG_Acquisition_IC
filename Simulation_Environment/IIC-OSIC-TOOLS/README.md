@@ -4,12 +4,12 @@ In this folder you can find the startup scripts for the IIC-OSIC-TOOLS. These sc
 
 ## Overview
 
-Per default, all the start scripts use the IEEE Chipathon specific Docker image tag "chipathon26". It should be noted that these start scripts are only compatible with that specific tag. This means that no additional configuration is required.
+By default, all start scripts use the preconfigured Docker image required by this project. No additional image configuration is required.
 X86_64 (Classic Intel or AMD based PCs) and arm64 (e.g. Raspberry Pi or Apple Silion Macs) are supported natively.
 
 ### Types of operating modes
 
-The IIC-OSIC-TOOLS for the Chipathon support three different operating modes:
+The IIC-OSIC-TOOLS environment supports three different operating modes:
 
 | Operating Mode|  Graphical Interface                                                     | Upsides                                                                                   | Downsides                                                                               |
 |---------------|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|

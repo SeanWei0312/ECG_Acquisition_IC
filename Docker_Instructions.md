@@ -1,6 +1,6 @@
 # ECG Acquisition IC Simulation Environment
 
-Use these commands to start, check, stop, and remove the IIC-OSIC-TOOLS `chipathon26` Docker containers used by this project.
+Use these commands to start, check, stop, and remove the IIC-OSIC-TOOLS Docker containers used by this project.
 
 The `DESIGNS` folder is shared into Docker as:
 
