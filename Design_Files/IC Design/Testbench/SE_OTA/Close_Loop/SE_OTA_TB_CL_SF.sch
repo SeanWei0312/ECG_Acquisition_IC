@@ -27,7 +27,6 @@ N 200 -1260 280 -1260 {lab=BP}
 N 320 -1260 340 -1260 {lab=AVDD}
 N 340 -1300 340 -1260 {lab=AVDD}
 N 320 -1300 340 -1300 {lab=AVDD}
-N 200 -1220 240 -1220 {lab=VREF}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {capa.sym} 700 -1210 0 0 {name=CL
 m=1
@@ -289,7 +288,5 @@ model=pfet_03v3
 spiceprefix=X
 }
 C {lab_wire.sym} 320 -1340 0 0 {name=p22 sig_type=std_logic lab=AVDD}
-C {noconn.sym} 240 -1220 0 1 {name=l3}
 C {lab_wire.sym} 320 -1180 2 1 {name=p23 sig_type=std_logic lab=B}
-C {lab_wire.sym} 240 -1220 0 1 {name=p24 sig_type=std_logic lab=VREF}
 C {lab_wire.sym} 240 -1260 0 1 {name=p27 sig_type=std_logic lab=BP}

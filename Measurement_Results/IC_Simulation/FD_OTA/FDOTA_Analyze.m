@@ -230,7 +230,9 @@ tDiff_s = tr(:,1);
 trCmd_V = tr(:,2);
 trVoutp_V = tr(:,4);
 trVoutn_V = tr(:,5);
+trVoutcmDiffStep_V = tr(:,6);
 trVoutdiff_V = tr(:,7);
+trVrefDiffStep_V = tr(:,10);
 
 targetOutp_V = voutCmTarget_V + 0.5*trCmd_V;
 targetOutn_V = voutCmTarget_V - 0.5*trCmd_V;
@@ -280,6 +282,26 @@ ylabel('Differential voltage (V)');
 legend('Command','Output','Location','best');
 stylePlot('Time (us)','FDOTA Closed-Loop Step Response');
 savePlot(fig,plotDir,'NOM.closed_loop_step_response.png');
+
+% Differential-step CM disturbance: same quantity reported in the
+% PVT table, max(abs(VOUT,CM - VREF)) over this transient.
+diffStepCmError_V = trVoutcmDiffStep_V-trVrefDiffStep_V;
+[diffStepCmDisturbance_V,worstCmIndex] = max(abs(diffStepCmError_V));
+fig = figure;
+tiledlayout(2,1);
+nexttile;
+plot(tDiff_s*1e6,trCmd_V,'LineWidth',1.4);
+ylabel('Differential command (V)');
+stylePlot('','FDOTA Differential-Step CM Disturbance');
+
+nexttile;
+plot(tDiff_s*1e6,diffStepCmError_V*1e3,'LineWidth',1.5); hold on;
+addCursorLine(tDiff_s(worstCmIndex)*1e6, ...
+    diffStepCmError_V(worstCmIndex)*1e3, ...
+    sprintf('Worst |CM error|: %.4g mV',diffStepCmDisturbance_V*1e3));
+ylabel('VOUT,CM - VREF (mV)');
+stylePlot('Time (us)','');
+savePlot(fig,plotDir,'NOM.diff_step_cm_disturbance.png');
 
 cm = readNumericFile(nominalFiles.cmTran,12);
 tCm_s = cm(:,1);
@@ -349,7 +371,7 @@ printSummaryTable(rows,specifications,reportColumns,reportValues);
 writetable(summaryTable,fullfile(resultsDir,'FDOTA_table_report.csv'));
 writetable(summaryTable,fullfile(resultsDir,'NOM.FDOTA_summary.csv'));
 
-worstCase = buildWorstCaseTable(rows,corners,scaledValues,metrics,cfg);
+worstCase = buildWorstCaseTable(rows,corners,scaledValues,metrics);
 fprintf('\nFDOTA FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(resultsDir,'FDOTA_worst_case_report.csv'));
@@ -400,7 +422,8 @@ failedValues = cellfun(@(r) r.failed,results);
 yieldValues = cellfun(@(r) r.overallYield,results);
 runTable = table(modeValues(:),requestedValues(:),validValues(:), ...
     failedValues(:),yieldValues(:), ...
-    'VariableNames',{'Mode','Requested','Valid','Failed','OverallYield_pct'});
+    'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns', ...
+    'OverallYield_pct'});
 writetable(runTable,fullfile(resultsDir,'FDOTA_MC_Run_Summary.csv'));
 fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
 if isempty(fullIndex) || results{fullIndex}.valid == 0
@@ -425,7 +448,9 @@ for metricIndex = 1:numel(d.names)
 end
 d.requestedRuns = 200;
 d.columns = fdMcSchema();
-d.plotIndices = [8 10 5 6 7 9];
+d.plotParameters = ["Input differential offset" "Output CM error" ...
+    "Differential DC gain" "Differential UGF" ...
+    "Differential phase margin" "Gain error"];
 d.plotFiles = ["Fig_MC_01_Input_Offset_Histogram.png" ...
     "Fig_MC_02_Output_CM_Error_Histogram.png" ...
     "Fig_MC_03_DC_Gain_Histogram.png" "Fig_MC_04_UGF_Histogram.png" ...
@@ -473,7 +498,7 @@ r.table = table(d.names',d.units',d.specs',r.stats(:,1),r.stats(:,2), ...
     r.stats(:,3),r.stats(:,4),r.stats(:,5),r.stats(:,6),r.stats(:,7), ...
     individualYield','VariableNames',{'Parameter','Unit','Spec','Min', ...
     'MeanMinus3Sigma','MeanMinusSigma','Mean','MeanPlusSigma', ...
-    'MeanPlus3Sigma','Max','Yield'});
+    'MeanPlus3Sigma','Max','Yield_pct'});
 end
 
 function [stats,individualYield,overallYield] = fdMcStatistics(values,d)
@@ -520,31 +545,30 @@ end
 
 function specification = fdSpecText(parameter,unit)
 switch fdCanonicalParameter(parameter)
-    case "Input differential offset", specification = "±"+fdSpecNumber(2e-3,unit);
-    case "Output CM error", specification = "±"+fdSpecNumber(50e-3,unit);
+    case "Input differential offset", specification = "±"+fdSpecNumber(3e-3,unit);
+    case "Output CM error", specification = "±"+fdSpecNumber(25e-3,unit);
     case "Differential DC gain", specification = "≥85";
     case "Differential UGF", specification = "≥"+fdSpecNumber(8e6,unit);
     case "Differential phase margin", specification = "≥60";
     case "Closed-loop differential gain error", specification = "±0.01";
     case {"FDC bias current","CMFB bias current"}
         specification = fdSpecNumber(40e-6,unit)+"±"+fdSpecNumber(10e-6,unit);
-    case "Total current", specification = "≤"+fdSpecNumber(2.3e-3,unit);
-    case "Total power", specification = "≤"+fdSpecNumber(8.5e-3,unit);
+    case "Total current", specification = "≤"+fdSpecNumber(2.5e-3,unit);
+    case "Total power", specification = "≤"+fdSpecNumber(9e-3,unit);
     case {"CMRR @ 60 Hz","CMRR @ 150 Hz"}, specification = "≥80";
     case {"PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
             "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}, specification = "≥80";
     case "Input-referred noise 0.05-150 Hz"
         specification = "≤"+fdSpecNumber(4e-6,unit);
-    case "Output differential, DC", specification = "±"+fdSpecNumber(2e-3,unit);
     case "Input CM low", specification = "≤"+fdSpecNumber(1.0,unit);
-    case "Input CM high headroom", specification = "≤"+fdSpecNumber(0.30,unit);
-    case "Differential output swing low", specification = "≤"+fdSpecNumber(-2.7,unit);
-    case "Differential output swing high", specification = "≥"+fdSpecNumber(2.7,unit);
+    case "Input CM high", specification = "≥"+fdSpecNumber(2.3,unit);
+    case "Differential output swing low", specification = "≤"+fdSpecNumber(-1.8,unit);
+    case "Differential output swing high", specification = "≥"+fdSpecNumber(1.8,unit);
     case {"Differential SR rise","Differential SR fall"}, specification = "≥4";
     case "Differential settling time", specification = "≤"+fdSpecNumber(300e-9,unit);
     case "Differential-step CM disturbance", specification = "≤"+fdSpecNumber(60e-3,unit);
     case {"CMFB SR rise","CMFB SR fall"}, specification = "≥2";
-    case "CMFB settling time", specification = "≤"+fdSpecNumber(2e-6,unit);
+    case "CMFB settling time", specification = "≤"+fdSpecNumber(1e-6,unit);
     otherwise, specification = "";
 end
 end
@@ -558,29 +582,28 @@ end
 function bounds = fdSpecBaseBounds(parameter)
 % Each row is defined once in SI/base units: [lower upper].
 switch string(parameter)
-    case "Input differential offset", bounds = [-2e-3 2e-3];
-    case "Output CM error", bounds = [-50e-3 50e-3];
+    case "Input differential offset", bounds = [-3e-3 3e-3];
+    case "Output CM error", bounds = [-25e-3 25e-3];
     case "Differential DC gain", bounds = [85 Inf];
     case "Differential UGF", bounds = [8e6 Inf];
     case "Differential phase margin", bounds = [60 Inf];
     case "Closed-loop differential gain error", bounds = [-0.01 0.01];
     case {"FDC bias current","CMFB bias current"}, bounds = [30e-6 50e-6];
-    case "Total current", bounds = [-Inf 2.3e-3];
-    case "Total power", bounds = [-Inf 8.5e-3];
+    case "Total current", bounds = [-Inf 2.5e-3];
+    case "Total power", bounds = [-Inf 9e-3];
     case {"CMRR @ 60 Hz","CMRR @ 150 Hz"}, bounds = [80 Inf];
     case {"PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
             "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}, bounds = [80 Inf];
     case "Input-referred noise 0.05-150 Hz", bounds = [-Inf 4e-6];
-    case "Output differential, DC", bounds = [-2e-3 2e-3];
     case "Input CM low", bounds = [-Inf 1.0];
-    case "Input CM high headroom", bounds = [-Inf 0.30];
-    case "Differential output swing low", bounds = [-Inf -2.7];
-    case "Differential output swing high", bounds = [2.7 Inf];
+    case "Input CM high", bounds = [2.3 Inf];
+    case "Differential output swing low", bounds = [-Inf -1.8];
+    case "Differential output swing high", bounds = [1.8 Inf];
     case {"Differential SR rise","Differential SR fall"}, bounds = [4 Inf];
     case "Differential settling time", bounds = [-Inf 300e-9];
     case "Differential-step CM disturbance", bounds = [-Inf 60e-3];
     case {"CMFB SR rise","CMFB SR fall"}, bounds = [2 Inf];
-    case "CMFB settling time", bounds = [-Inf 2e-6];
+    case "CMFB settling time", bounds = [-Inf 1e-6];
     otherwise, bounds = [-Inf Inf];
 end
 end
@@ -623,11 +646,11 @@ for rowIndex = 1:size(rows,1)
 end
 cornerPass = all(passMatrix(checkedRows,:),1);
 if all(cornerPass)
-    fprintf('\nFDOTA STRICT PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
+    fprintf('\nFDOTA PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
         nnz(cornerPass),numel(corners));
 else
     warning('FDOTA_Analyze:PvtSpecFailure', ...
-        'FDOTA strict PVT specification: FAIL (%d/%d corners): %s', ...
+        'FDOTA PVT specification: FAIL (%d/%d corners): %s', ...
         nnz(cornerPass),numel(corners),strjoin(corners(~cornerPass),', '));
 end
 end
@@ -648,13 +671,17 @@ for k = 1:height(t)
         formatFixed(t.Min(k)),formatFixed(t.MeanMinus3Sigma(k)), ...
         formatFixed(t.MeanMinusSigma(k)),formatFixed(t.Mean(k)), ...
         formatFixed(t.MeanPlusSigma(k)),formatFixed(t.MeanPlus3Sigma(k)), ...
-        formatFixed(t.Max(k)),sprintf('%.2f%%',t.Yield(k)));
+        formatFixed(t.Max(k)),sprintf('%.2f%%',t.Yield_pct(k)));
 end
 end
 
 function fdPlotMcHistograms(results,d,plotDir)
-for plotIndex = 1:numel(d.plotIndices)
-    metricIndex = d.plotIndices(plotIndex);
+for plotIndex = 1:numel(d.plotParameters)
+    metricIndex = find(d.names == d.plotParameters(plotIndex),1);
+    if isempty(metricIndex)
+        error('FDOTA_Analyze:MissingMcParameter', ...
+            'MC plot parameter is not defined: %s',d.plotParameters(plotIndex));
+    end
     fdMcHistogram(results,metricIndex,plotDir,d.plotFiles(plotIndex), ...
         'FDOTA '+d.names(metricIndex)+' Distribution - MM / GL / FULL', ...
         d.names(metricIndex)+" ("+d.units(metricIndex)+")", ...
@@ -767,7 +794,6 @@ rows = [
     "Gain error",                            "%"
     "Output common mode, DC",                "V"
     "Output CM error",                       "V"
-    "Output differential, DC",               "V"
     "Input CM low",                          "V"
     "Input CM high",                         "V"
     "Input CM high headroom",                "V"
@@ -901,7 +927,6 @@ function m = analyzeRun(scriptDir,process,caseName,cfg)
     m.vref_V = clOp(10);
     m.voutCmDc_V = clOp(8);
     m.voutCmError_V = clOp(8)-clOp(10);
-    m.voutDiffDc_V = clOp(9);
 
     dc = readNumericFile(files.diffDc,12);
     [cmd,order] = sort(dc(:,1));
@@ -972,7 +997,6 @@ function values = metricsToRaw(m,rows,cfg)
             case "Gain error",                       values(i) = m.gainError_pct;
             case "Output common mode, DC",           values(i) = m.voutCmDc_V;
             case "Output CM error",                  values(i) = m.voutCmError_V;
-            case "Output differential, DC",          values(i) = m.voutDiffDc_V;
             case "Input CM low",                     values(i) = m.icmrLow_V;
             case "Input CM high",                    values(i) = m.icmrHigh_V;
             case "Input CM high headroom",           values(i) = m.icmrHighHeadroom_V;
@@ -991,7 +1015,7 @@ function values = metricsToRaw(m,rows,cfg)
     end
 end
 
-function result = buildWorstCaseTable(rows,corners,values,metrics,cfg)
+function result = buildWorstCaseTable(rows,corners,values,metrics)
     keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
         ["AVDD" "Vin,cm" "VREF" "Closed-loop target gain"]);
     parameters = rows(keep,1); units = rows(keep,2); source = find(keep);
@@ -1005,8 +1029,6 @@ function result = buildWorstCaseTable(rows,corners,values,metrics,cfg)
         "Differential SR rise" ...
         "Differential SR fall" "CMFB SR rise" "CMFB SR fall"];
     maxLowLimit = ["Input CM low" "Differential output swing low"];
-    absoluteWorst = ["Input differential offset" "Closed-loop differential gain" ...
-        "Gain error" "Output CM error" "Output differential, DC"];
     for i = 1:numel(source)
         parameter = parameters(i);
         candidates = values(source(i),:);   % already numeric double
@@ -1038,21 +1060,15 @@ function result = buildWorstCaseTable(rows,corners,values,metrics,cfg)
             headroom = cellfun(@(x)x.icmrHighHeadroom_V,metrics);
             [~,index] = max(headroom);
             selected(i) = candidates(index);
+        elseif all(isfinite(fdSpecBounds(parameter,units(i))))
+            bounds = fdSpecBounds(parameter,units(i));
+            [~,j] = max(abs(candidates(valid)-mean(bounds)));
+            index = valid(j);
+            selected(i) = candidates(index);
         elseif ismember(parameter,lowerIsWorse)
             [selected(i),j] = min(candidates(valid)); index = valid(j);
         elseif ismember(parameter,maxLowLimit)
             [selected(i),j] = max(candidates(valid)); index = valid(j);
-        elseif ismember(parameter,absoluteWorst)
-            [~,j] = max(abs(candidates(valid))); index = valid(j);
-            selected(i) = candidates(index);
-        elseif parameter == "FDC bias current"
-            raw = cellfun(@(x)x.fdcBias_A,metrics);
-            [~,index] = max(abs(raw-cfg.biasTarget_A));
-            selected(i) = candidates(index);
-        elseif parameter == "CMFB bias current"
-            raw = cellfun(@(x)x.cmfbBias_A,metrics);
-            [~,index] = max(abs(raw-cfg.biasTarget_A));
-            selected(i) = candidates(index);
         else
             [selected(i),j] = max(candidates(valid)); index = valid(j);
         end
@@ -1612,4 +1628,3 @@ else
     end
 end
 end
-

@@ -340,7 +340,7 @@ writetable(summaryTable,fullfile(reportDir,'SEOTA_table_report.csv'));
 writetable(summaryTable,fullfile(reportDir,'NOM.SEOTA_summary.csv'));
 
 worstCase = buildWorstCaseTable( ...
-    rows,pvtCorners,pvtScaledValues,pvtMetrics,cfg);
+    rows,pvtCorners,pvtScaledValues,pvtMetrics);
 fprintf('\nSEOTA FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(reportDir,'SEOTA_worst_case_report.csv'));
@@ -394,7 +394,8 @@ failedValues = cellfun(@(r) r.failed,results);
 yieldValues = cellfun(@(r) r.overallYield,results);
 runTable = table(modeValues(:),requestedValues(:),validValues(:), ...
     failedValues(:),yieldValues(:), ...
-    'VariableNames',{'Mode','Requested','Valid','Failed','OverallYield_pct'});
+    'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns', ...
+    'OverallYield_pct'});
 writetable(runTable,fullfile(reportDir,'SEOTA_MC_Run_Summary.csv'));
 fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
 if isempty(fullIndex) || results{fullIndex}.valid == 0
@@ -419,7 +420,8 @@ for metricIndex = 1:numel(definitions.names)
 end
 definitions.requestedRuns = 200;
 definitions.columns = seotaMcSchema();
-definitions.plotIndices = [7 4 5 6 8];
+definitions.plotParameters = ["Input offset" "DC gain" "UGF" ...
+    "Phase margin" "Gain error"];
 definitions.plotFiles = ["Fig_MC_01_Vos_Histogram.png" ...
     "Fig_MC_02_DC_Gain_Histogram.png" "Fig_MC_03_UGF_Histogram.png" ...
     "Fig_MC_04_Phase_Margin_Histogram.png" "Fig_MC_05_Gain_Error_Histogram.png"];
@@ -471,7 +473,7 @@ result.table = table(definitions.names',definitions.units',definitions.specs', .
     result.stats(:,1),result.stats(:,2),result.stats(:,3),result.stats(:,4), ...
     result.stats(:,5),result.stats(:,6),result.stats(:,7),result.yield', ...
     'VariableNames',{'Parameter','Unit','Spec','Min','MeanMinus3Sigma', ...
-    'MeanMinusSigma','Mean','MeanPlusSigma','MeanPlus3Sigma','Max','Yield'});
+    'MeanMinusSigma','Mean','MeanPlusSigma','MeanPlus3Sigma','Max','Yield_pct'});
 end
 
 function count = heightOrLength(values)
@@ -517,8 +519,12 @@ end
 end
 
 function plotSeotaMcHistograms(results,definitions,plotDir)
-for plotIndex = 1:numel(definitions.plotIndices)
-    metricIndex = definitions.plotIndices(plotIndex);
+for plotIndex = 1:numel(definitions.plotParameters)
+    metricIndex = find(definitions.names == definitions.plotParameters(plotIndex),1);
+    if isempty(metricIndex)
+        error('SEOTA_Analyze:MissingMcParameter', ...
+            'MC plot parameter is not defined: %s',definitions.plotParameters(plotIndex));
+    end
     seotaMcHistogram(results,metricIndex,plotDir,definitions.plotFiles(plotIndex), ...
         'SEOTA '+definitions.names(metricIndex)+' Distribution - MM / GL / FULL', ...
         mcXAxisLabel(definitions.names(metricIndex),definitions.units(metricIndex)), ...
@@ -598,7 +604,7 @@ for rowIndex = 1:height(resultTable)
         formatFixed(resultTable.MeanMinusSigma(rowIndex)),formatFixed(resultTable.Mean(rowIndex)), ...
         formatFixed(resultTable.MeanPlusSigma(rowIndex)), ...
         formatFixed(resultTable.MeanPlus3Sigma(rowIndex)),formatFixed(resultTable.Max(rowIndex)), ...
-        sprintf('%.2f%%',resultTable.Yield(rowIndex)));
+        sprintf('%.2f%%',resultTable.Yield_pct(rowIndex)));
 end
 end
 
@@ -756,11 +762,11 @@ for rowIndex = 1:size(rows,1)
 end
 cornerPass = all(passMatrix(checkedRows,:),1);
 if all(cornerPass)
-    fprintf('\nSEOTA STRICT PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
+    fprintf('\nSEOTA PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
         nnz(cornerPass),numel(corners));
 else
     warning('SEOTA_Analyze:PvtSpecFailure', ...
-        'SEOTA strict PVT specification: FAIL (%d/%d corners): %s', ...
+        'SEOTA PVT specification: FAIL (%d/%d corners): %s', ...
         nnz(cornerPass),numel(corners),strjoin(corners(~cornerPass),', '));
 end
 end
@@ -961,7 +967,7 @@ function values = metricsToRaw(m,rows,cfg)
     end
 end
 
-function results = buildWorstCaseTable(rows,columns,values,metrics,cfg)
+function results = buildWorstCaseTable(rows,columns,values,metrics)
     % values is numeric double (pvtScaledValues), already unit-adapted.
     keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
         ["AVDD" "CLoad" "Vin,cm" "Closed-loop target gain"]);
@@ -995,22 +1001,17 @@ function results = buildWorstCaseTable(rows,columns,values,metrics,cfg)
         elseif ismember(parameter,["Output high" "Output high headroom"])
             selectedColumn = worstOutputHighCol;
             selectedValue = candidates(selectedColumn);
+        elseif all(isfinite(seotaSpecBounds(parameter,rows(rowIndex,2))))
+            bounds = seotaSpecBounds(parameter,rows(rowIndex,2));
+            [~,localIndex] = max(abs(candidates(valid)-mean(bounds)));
+            selectedColumn = validIndices(localIndex);
+            selectedValue = candidates(selectedColumn);
         elseif ismember(parameter,["DC gain" "UGF" "Phase margin" ...
                 "CMRR @ 60 Hz" "CMRR @ 150 Hz" "PSRR+ @ 60 Hz" ...
                 "PSRR+ @ 150 Hz" "PSRR- @ 60 Hz" "PSRR- @ 150 Hz" ...
                 "SR rise" "SR fall"])
             [selectedValue,localIndex] = min(candidates(valid));
             selectedColumn = validIndices(localIndex);
-        elseif parameter == "Bias current"
-            rawCandidates = cellfun(@(m) m.ibias_A,metrics);
-            [~,selectedColumn] = max(abs( ...
-                rawCandidates-cfg.biasTarget_A));
-            selectedValue = candidates(selectedColumn);
-        elseif ismember(parameter,["Input offset" "Vout,DC error" ...
-                "Closed-loop gain" "Gain error" "CM Interference Gain Change"])
-            [~,localIndex] = max(abs(candidates(valid)));
-            selectedColumn = validIndices(localIndex);
-            selectedValue = candidates(selectedColumn);
         else
             [selectedValue,localIndex] = max(candidates(valid));
             selectedColumn = validIndices(localIndex);

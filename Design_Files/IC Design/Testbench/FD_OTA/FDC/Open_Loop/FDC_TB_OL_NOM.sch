@@ -87,14 +87,20 @@ value="
 
 .csparam PROC_ID=0
 "}
-C {devices/code_shown.sym} 1120 -2650 0 0 {name=NGSPICE only_toplevel=true
+C {devices/code_shown.sym} 1120 -2650 0 0 {name=NGSPICE
+only_toplevel=true
 value="
+
 .control
+
 destroy all
 save all
+
 set wr_vecnames
 set wr_singlescale
+
 option numdgt=15
+
 
 shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt
 
@@ -103,12 +109,17 @@ shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/F
 shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_offset.txt
 shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_noise.txt
 shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_noise_integrated.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_diff_tran.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_diff_cm_disturbance.txt
+
 
 let avdd_run = 3.3
 let vcm_run  = avdd_run/2
 let vos_run  = 0
 
+
 * OP
+
 alter @VAVDD[DC] = $&avdd_run
 alter @VVCM[DC]  = $&vcm_run
 alter @VDIFF[DC] = $&vos_run
@@ -139,6 +150,7 @@ wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA
 
 
 * Differential AC
+
 alter @VVCM[DC]  = $&vcm_run
 alter @VDIFF[DC] = $&vos_run
 
@@ -162,6 +174,7 @@ wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA
 
 
 * Offset
+
 alter @VVCM[DC] = $&vcm_run
 
 alter @VVCM[ACMAG]  = 0
@@ -189,6 +202,7 @@ wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA
 
 
 * Integrated noise
+
 alter @VVCM[DC]  = $&vcm_run
 alter @VDIFF[DC] = $&vos_run
 
@@ -210,6 +224,7 @@ echo 0.05 150 $&input_noise_Vrms $&output_noise_Vrms >> /foss/designs/ECG_Acquis
 
 
 * Noise density
+
 noise v(outp,outn) VDIFF dec 100 0.01 10Meg
 
 setplot noise3
@@ -221,7 +236,48 @@ setscale frequency
 
 wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_noise.txt input_noise_VrtHz output_noise_VrtHz
 
+
+* Differential-step CM disturbance
+
+alter @VAVDD[DC] = $&avdd_run
+alter @VVCM[DC]  = $&vcm_run
+
+alter @VDIFF[PWL]=[ 0 0 1u 0 1.001u 50u 11u 50u 11.001u 0 21u 0 21.001u -50u 31u -50u 31.001u 0 40u 0 ]
+
+tran 5n 40u
+
+let tr_vdiff  = v(vdiff)-v(agnd)
+
+let tr_vinp   = v(inp)-v(agnd)
+let tr_vinn   = v(inn)-v(agnd)
+let tr_vid    = tr_vinp-tr_vinn
+
+let tr_voutp  = v(outp)-v(agnd)
+let tr_voutn  = v(outn)-v(agnd)
+
+let tr_voutcm = (tr_voutp+tr_voutn)/2
+let tr_vod    = tr_voutp-tr_voutn
+
+let tr_cmfb   = v(cmfb)-v(agnd)
+let tr_idd    = -vavdd#branch
+
+meas tran cm_base AVG tr_voutcm FROM=0.2u TO=0.9u
+
+let tr_cm_base = 0*tr_voutcm+cm_base
+let tr_cm_delta = abs(tr_voutcm-cm_base)
+
+meas tran cm_disturbance MAX tr_cm_delta FROM=1u TO=31.1u
+
+setscale time
+
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_diff_tran.txt tr_vdiff tr_vid tr_voutp tr_voutn tr_voutcm tr_vod tr_cm_base tr_cm_delta tr_idd tr_cmfb
+
+echo cm_base_V cm_disturbance_V > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_diff_cm_disturbance.txt
+echo $&cm_base $&cm_disturbance >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/FDC/NOM.Result_txt/NOM.ol_diff_cm_disturbance.txt
+
+
 quit
+
 .endc
 "}
 C {devices/code_shown.sym} 80 -440 0 0 {name=SETUP only_toplevel=true

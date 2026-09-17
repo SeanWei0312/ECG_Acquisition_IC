@@ -133,6 +133,66 @@ plantFreq_Hz = D(:,1);
 Aplant = D(:,2) + 1j*D(:,3);
 plantGain1Hz_VV = abs(interpAtFreq(plantFreq_Hz,Aplant,1));
 
+%% Common-mode disturbance during a differential step
+% For the standalone, open-loop FDC, use the pre-step output CM as the
+% reference: max(abs(VOUT,CM(t) - VOUT,CM,pre-step)).  This is distinct
+% from the closed-loop FDOTA metric, which compares VOUT,CM with VREF.
+% NOM.ol_diff_tran.txt columns are time, VDIFF, Vin,diff, VOUTP, VOUTN,
+% VOUT,CM, VOUT,diff, VOUT,CM baseline, |CM delta|, IDD, and CMFB.
+fdcDiffTranFile = fullfile(baseDir,'NOM.ol_diff_tran.txt');
+D = numdata(fdcDiffTranFile);
+if size(D,2) ~= 11
+    error('FDC_Analyze:DiffTranColumnCount', ...
+        '%s must contain 11 columns; found %d.',fdcDiffTranFile,size(D,2));
+end
+
+diffStepTime_s = D(:,1);
+diffStepCommand_V = D(:,2);
+diffStepVoutCm_V = D(:,6);
+initialCommand_V = diffStepCommand_V(1);
+commandSpan_V = max(abs(diffStepCommand_V-initialCommand_V));
+commandThreshold_V = max(1e-12,0.01*commandSpan_V);
+firstStepIndex = find(abs(diffStepCommand_V-initialCommand_V) > ...
+    commandThreshold_V,1,'first');
+baselineWindow_s = [0.2 0.9]*1e-6;
+disturbanceEnd_s = 31.1e-6;
+baselineMask = diffStepTime_s >= baselineWindow_s(1) & ...
+    diffStepTime_s <= baselineWindow_s(2);
+if isempty(firstStepIndex) || ~any(baselineMask) || ...
+        baselineWindow_s(2) >= diffStepTime_s(firstStepIndex)
+    error('FDC_Analyze:MissingPreStepSamples', ...
+        'The FDC transient needs the 0.2-0.9 us baseline before its first step.');
+end
+diffStepCmBaseline_V = mean(diffStepVoutCm_V(baselineMask));
+diffStepCmError_V = diffStepVoutCm_V-diffStepCmBaseline_V;
+disturbanceWindow = find(diffStepTime_s >= diffStepTime_s(firstStepIndex) & ...
+    diffStepTime_s <= disturbanceEnd_s);
+if isempty(disturbanceWindow)
+    error('FDC_Analyze:MissingDisturbanceWindow', ...
+        'The FDC transient must cover the differential-step disturbance window.');
+end
+[diffStepCmDisturbance_V,worstCmLocalIndex] = max( ...
+    abs(diffStepCmError_V(disturbanceWindow)));
+worstCmIndex = disturbanceWindow(worstCmLocalIndex);
+
+figure;
+tiledlayout(2,1);
+nexttile;
+plot(diffStepTime_s(disturbanceWindow)*1e6, ...
+    diffStepCommand_V(disturbanceWindow),'LineWidth',1.4);
+ylabel('Differential command (V)');
+stylePlot('','FDC Differential-Step Common-Mode Disturbance');
+
+nexttile;
+plot(diffStepTime_s(disturbanceWindow)*1e6, ...
+    diffStepCmError_V(disturbanceWindow)*1e3,'LineWidth',1.5); hold on;
+addCursor(diffStepTime_s(worstCmIndex)*1e6, ...
+    diffStepCmError_V(worstCmIndex)*1e3, ...
+    sprintf('Worst |CM error|: %.4g mV',diffStepCmDisturbance_V*1e3));
+ylabel('VOUT,CM - pre-step VOUT,CM (mV)');
+stylePlot('Time (us)','');
+saveFig(plotDir,'NOM.diff_step_cm_disturbance.png');
+
 %% Summary table
 rows = [
     "Set conditions",        "",      ""
@@ -156,6 +216,7 @@ rows = [
     "Differential UGF",      "MHz",   fmt(ugf_Hz/1e6)
     "Differential PM",       "deg",   fmt(pm_deg)
     "Plant gain",            "V/V",   fmt(plantGain1Hz_VV)
+    "Differential-step CM disturbance", "mV", fmt(diffStepCmDisturbance_V*1e3)
     "",                      "",      ""
     "Noise/Offset",          "",      ""
     "Input offset",          "mV",    fmt(offset_V*1e3)

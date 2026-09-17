@@ -1,0 +1,19 @@
+Parameter,Unit,Spec,Value,Corner
+FDC bias current,uA,40±10,49.581,FFVHTH
+CMFB bias current,uA,40±10,49.581,FFVHTH
+Total current,mA,≤2.5,2.194,FFVHTH
+Total power,mW,≤9,7.900,FFVHTH
+Output CM error,mV,±25,12.659,SSVHTH
+LPF input offset,mV,±6,-0.000,SFVLTH
+Passband gain,V/V,,0.999,SSVLTL
+Passband gain error,%,±0.5,-0.050,SSVLTL
+Loss @ 150 Hz,dB,,0.762,SSVHTL
+LPF -1 dB frequency,Hz,≥150,174.135,SSVHTL
+LPF -3 dB frequency,Hz,,340.986,SSVHTL
+CMRR @ 60 Hz,dB,≥80,218.616,SSVHNOM
+CMRR @ 150 Hz,dB,≥80,218.582,SSVLNOM
+PSRR+ @ 60 Hz,dB,≥80,190.541,SSVHNOM
+PSRR+ @ 150 Hz,dB,≥80,189.146,SSVLTH
+PSRR- @ 60 Hz,dB,≥80,204.439,SSVLNOM
+PSRR- @ 150 Hz,dB,≥80,204.885,SSVLNOM
+Input-referred noise 0.05-150 Hz,uVrms,≤10,7.036,SSVHTH

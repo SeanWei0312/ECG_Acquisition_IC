@@ -98,6 +98,16 @@ N 460 -680 840 -680 {lab=#net2}
 N 460 -600 840 -600 {lab=#net8}
 N 1000 -680 1400 -680 {lab=PGA_OUTN}
 N 1000 -600 1400 -600 {lab=PGA_OUTP}
+N 400 -660 430 -660 {lab=PGA_SS}
+N 400 -620 430 -620 {lab=PGA_SS}
+N 540 -820 570 -820 {lab=PGA_SS}
+N 540 -460 570 -460 {lab=PGA_SS}
+N 720 -820 740 -820 {lab=PGA_SS}
+N 720 -460 740 -460 {lab=PGA_SS}
+N 1000 -820 1020 -820 {lab=PGA_SS}
+N 1200 -820 1220 -820 {lab=PGA_SS}
+N 1000 -460 1020 -460 {lab=PGA_SS}
+N 1200 -460 1220 -460 {lab=PGA_SS}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {iopin.sym} 140 -920 0 1 {name=p8 lab=PGA_DD}
 C {iopin.sym} 140 -880 0 1 {name=p9 lab=PGA_SS}
@@ -117,11 +127,6 @@ C {iopin.sym} 140 -560 0 1 {name=p25 lab=PGA_BCMFB}
 C {lab_wire.sym} 160 -560 0 1 {name=p26 sig_type=std_logic lab=PGA_BCMFB}
 C {iopin.sym} 140 -520 0 1 {name=p29 lab=PGA_REF}
 C {lab_wire.sym} 160 -520 0 1 {name=p30 sig_type=std_logic lab=PGA_REF}
-C {res.sym} 570 -800 3 0 {name=RFBP1
-value=40k
-footprint=1206
-device=resistor
-m=1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDOTA/FD_OTA.sym} 760 -500 0 0 {name=xFDOTA1}
 C {lab_wire.sym} 890 -520 2 1 {name=p10 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 890 -760 0 0 {name=p20 sig_type=std_logic lab=PGA_DD}
@@ -135,31 +140,6 @@ C {ipin.sym} 140 -680 0 0 {name=p2 lab=PGA_S0}
 C {ipin.sym} 140 -640 0 0 {name=p3 lab=PGA_S1}
 C {lab_wire.sym} 160 -680 0 1 {name=p4 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 160 -640 0 1 {name=p5 sig_type=std_logic lab=PGA_S1}
-C {res.sym} 740 -800 3 0 {name=RFBP2
-value=40k
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 1020 -800 3 0 {name=RFBP3
-value=120k
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 1220 -800 3 0 {name=RFBP4
-value=120k
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 430 -600 3 1 {name=RINN
-value=20k
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 430 -680 3 0 {name=RINP
-value=20k
-footprint=1206
-device=resistor
-m=1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/TG/TG.sym} 600 -860 0 0 {name=xTG1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/TG/TG.sym} 1080 -980 0 0 {name=xTG3}
 C {lab_wire.sym} 1200 -1160 0 0 {name=p6 sig_type=std_logic lab=PGA_DD}
@@ -182,26 +162,6 @@ C {lab_wire.sym} 1000 -1040 0 0 {name=p57 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 1000 -880 2 1 {name=p58 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 1040 -880 2 0 {name=p59 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 1040 -1040 0 1 {name=p60 sig_type=std_logic lab=S0B}
-C {res.sym} 570 -480 3 1 {name=RFBN1
-value=40k
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 740 -480 3 1 {name=RFBN2
-value=40k
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 1020 -480 3 1 {name=RFBN3
-value=120k
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 1220 -480 3 1 {name=RFBN4
-value=120k
-footprint=1206
-device=resistor
-m=1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/TG/TG.sym} 600 -420 2 1 {name=xTG4}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/TG/TG.sym} 880 -420 2 1 {name=xTG5}
 C {lab_wire.sym} 1200 -120 2 1 {name=p34 sig_type=std_logic lab=PGA_DD}
@@ -222,3 +182,73 @@ C {lab_wire.sym} 1000 -240 2 1 {name=p61 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 1000 -400 0 0 {name=p62 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 1040 -400 0 1 {name=p63 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 1040 -240 2 0 {name=p64 sig_type=std_logic lab=S0B}
+C {symbols/ppolyf_u_2k.sym} 430 -680 3 0 {name=RINP
+W=2e-6
+L=20e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {symbols/ppolyf_u_2k.sym} 430 -600 3 1 {name=RINN
+W=2e-6
+L=20e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 400 -660 2 1 {name=p65 sig_type=std_logic lab=PGA_SS}
+C {lab_wire.sym} 400 -620 0 0 {name=p66 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 570 -800 3 1 {name=RFBP1
+W=2e-6
+L=40e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 540 -820 0 0 {name=p67 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 570 -480 3 0 {name=RFBN1
+W=2e-6
+L=40e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 540 -460 2 1 {name=RFBN5 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 740 -800 3 1 {name=RFBP2
+W=2e-6
+L=40e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 720 -820 0 0 {name=p68 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 740 -480 3 0 {name=RFBN2
+W=2e-6
+L=40e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 720 -460 2 1 {name=RFBN6 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 1020 -800 3 1 {name=RFBP3
+W=2e-6
+L=120e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 1000 -820 0 0 {name=p69 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 1220 -800 3 1 {name=RFBP4
+W=2e-6
+L=120e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 1200 -820 0 0 {name=p70 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 1020 -480 3 0 {name=RFBN3
+W=2e-6
+L=120e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 1000 -460 2 1 {name=RFBN7 sig_type=std_logic lab=PGA_SS}
+C {symbols/ppolyf_u_2k.sym} 1220 -480 3 0 {name=RFBN4
+W=2e-6
+L=120e-6
+model=ppolyf_u_2k
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 1200 -460 2 1 {name=RFBN8 sig_type=std_logic lab=PGA_SS}

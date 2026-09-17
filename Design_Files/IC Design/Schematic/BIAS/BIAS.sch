@@ -8,7 +8,6 @@ E {}
 N 140 -520 160 -520 {lab=BIAS_DD}
 N 140 -480 160 -480 {lab=BIAS_SS}
 N 140 -440 160 -440 {lab=BIAS_BP}
-N 140 -400 160 -400 {lab=BIAS_VREF}
 N 680 -450 680 -400 {lab=#net1}
 N 600 -530 600 -480 {lab=#net2}
 N 520 -640 520 -560 {lab=BIAS_BP}
@@ -33,22 +32,14 @@ N 380 -680 400 -680 {lab=BIAS_DD}
 N 380 -720 380 -680 {lab=BIAS_DD}
 N 380 -720 400 -720 {lab=BIAS_DD}
 N 380 -480 400 -480 {lab=BIAS_SS}
-N 840 -760 840 -540 {lab=BIAS_DD}
-N 840 -480 840 -400 {lab=BIAS_VREF}
-N 840 -440 1040 -440 {lab=BIAS_VREF}
-N 1000 -440 1000 -400 {lab=BIAS_VREF}
-N 680 -600 1040 -600 {lab=BIAS_BP}
-N 400 -760 840 -760 {lab=BIAS_DD}
-N 820 -510 820 -370 {lab=BIAS_SS}
+N 680 -600 720 -600 {lab=BIAS_BP}
+N 400 -760 680 -760 {lab=BIAS_DD}
 N 700 -480 700 -370 {lab=BIAS_SS}
 N 400 -450 400 -290 {lab=#net3}
 N 680 -340 680 -290 {lab=#net4}
 N 400 -230 400 -180 {lab=BIAS_SS}
 N 680 -230 680 -180 {lab=BIAS_SS}
-N 380 -180 1000 -180 {lab=BIAS_SS}
-N 1000 -340 1000 -180 {lab=BIAS_SS}
-N 840 -340 840 -180 {lab=BIAS_SS}
-N 820 -370 820 -180 {lab=BIAS_SS}
+N 380 -180 700 -180 {lab=BIAS_SS}
 N 700 -370 700 -180 {lab=BIAS_SS}
 N 600 -260 640 -260 {lab=BIAS_SS}
 N 600 -260 600 -180 {lab=BIAS_SS}
@@ -63,8 +54,6 @@ C {lab_wire.sym} 160 -520 0 1 {name=p11 sig_type=std_logic lab=BIAS_DD}
 C {lab_wire.sym} 160 -480 0 1 {name=p12 sig_type=std_logic lab=BIAS_SS}
 C {opin.sym} 140 -440 0 1 {name=p17 lab=BIAS_BP}
 C {lab_wire.sym} 160 -440 0 1 {name=p18 sig_type=std_logic lab=BIAS_BP}
-C {opin.sym} 140 -400 0 1 {name=p23 lab=BIAS_VREF}
-C {lab_wire.sym} 160 -400 0 1 {name=p24 sig_type=std_logic lab=BIAS_VREF}
 C {symbols/nfet_03v3.sym} 660 -480 0 0 {name=MN2
 L=4u
 W=16u
@@ -137,20 +126,7 @@ spiceprefix=X
 }
 C {lab_wire.sym} 600 -760 0 1 {name=p2 sig_type=std_logic lab=BIAS_DD}
 C {lab_wire.sym} 600 -180 2 0 {name=p3 sig_type=std_logic lab=BIAS_SS}
-C {lab_wire.sym} 1040 -600 0 1 {name=p10 sig_type=std_logic lab=BIAS_BP}
-C {lab_wire.sym} 1040 -440 0 1 {name=p20 sig_type=std_logic lab=BIAS_VREF}
-C {symbols/ppolyf_u_2k.sym} 840 -510 0 0 {name=RP
-W=4e-6
-L=1000e-6
-model=ppolyf_u_2k
-spiceprefix=X
-m=1}
-C {symbols/ppolyf_u_2k.sym} 840 -370 0 0 {name=RN
-W=4e-6
-L=1000e-6
-model=ppolyf_u_2k
-spiceprefix=X
-m=1}
+C {lab_wire.sym} 720 -600 0 1 {name=p10 sig_type=std_logic lab=BIAS_BP}
 C {symbols/pnp_05p00x00p42.sym} 420 -260 0 1 {name=Q1
 model=pnp_05p00x00p42
 spiceprefix=X
@@ -163,11 +139,5 @@ C {symbols/nwell.sym} 680 -370 0 1 {name=RS
 W=3e-6
 L=1.522e-6
 model=nwell
-spiceprefix=X
-m=1}
-C {symbols/cap_mim_2f0fF.sym} 1000 -370 0 0 {name=CN
-W=70.7e-6
-L=70.7e-6
-model=cap_mim_2f0fF
 spiceprefix=X
 m=1}

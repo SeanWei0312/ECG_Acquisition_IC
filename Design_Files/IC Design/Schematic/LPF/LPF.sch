@@ -14,30 +14,34 @@ N 140 -400 160 -400 {lab=LPF_BFDC}
 N 140 -440 160 -440 {lab=LPF_OUTN}
 N 140 -360 160 -360 {lab=LPF_BCMFB}
 N 140 -320 160 -320 {lab=LPF_REF}
-N 500 -400 540 -400 {lab=LPF_REF}
-N 590 -520 590 -480 {lab=LPF_DD}
-N 620 -520 620 -480 {lab=LPF_BFDC}
-N 590 -320 590 -280 {lab=LPF_SS}
-N 620 -320 620 -280 {lab=LPF_BCMFB}
-N 700 -400 740 -400 {lab=LPF_VOCM}
-N 360 -360 400 -360 {lab=LPF_INN}
-N 360 -440 400 -440 {lab=LPF_INP}
-N 500 -560 580 -560 {lab=#net1}
-N 640 -560 740 -560 {lab=LPF_OUTN}
-N 640 -240 740 -240 {lab=LPF_OUTP}
-N 640 -160 740 -160 {lab=LPF_OUTP}
-N 500 -240 580 -240 {lab=#net2}
-N 500 -160 580 -160 {lab=#net2}
-N 460 -360 540 -360 {lab=#net2}
-N 700 -360 780 -360 {lab=LPF_OUTP}
-N 700 -440 780 -440 {lab=LPF_OUTN}
+N 500 -480 540 -480 {lab=LPF_REF}
+N 590 -600 590 -560 {lab=LPF_DD}
+N 620 -600 620 -560 {lab=LPF_BFDC}
+N 590 -400 590 -360 {lab=LPF_SS}
+N 620 -400 620 -360 {lab=LPF_BCMFB}
+N 700 -480 740 -480 {lab=LPF_VOCM}
+N 360 -440 400 -440 {lab=LPF_INN}
+N 360 -520 400 -520 {lab=LPF_INP}
 N 460 -440 540 -440 {lab=#net1}
-N 500 -640 580 -640 {lab=#net1}
-N 640 -640 740 -640 {lab=LPF_OUTN}
-N 500 -640 500 -440 {lab=#net1}
-N 740 -640 740 -440 {lab=LPF_OUTN}
-N 500 -360 500 -160 {lab=#net2}
-N 740 -360 740 -160 {lab=LPF_OUTP}
+N 700 -440 780 -440 {lab=LPF_OUTP}
+N 700 -520 780 -520 {lab=LPF_OUTN}
+N 460 -520 540 -520 {lab=#net2}
+N 500 -800 500 -520 {lab=#net2}
+N 740 -800 740 -520 {lab=LPF_OUTN}
+N 500 -440 500 -160 {lab=#net1}
+N 740 -440 740 -160 {lab=LPF_OUTP}
+N 500 -800 580 -800 {lab=#net2}
+N 640 -800 740 -800 {lab=LPF_OUTN}
+N 500 -680 580 -680 {lab=#net2}
+N 640 -680 740 -680 {lab=LPF_OUTN}
+N 400 -500 430 -500 {lab=LPF_SS}
+N 580 -660 610 -660 {lab=LPF_SS}
+N 400 -460 430 -460 {lab=LPF_SS}
+N 500 -160 580 -160 {lab=#net1}
+N 640 -160 740 -160 {lab=LPF_OUTP}
+N 500 -280 580 -280 {lab=#net1}
+N 640 -280 740 -280 {lab=LPF_OUTP}
+N 580 -300 610 -300 {lab=LPF_SS}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {iopin.sym} 140 -640 0 1 {name=p8 lab=LPF_DD}
 C {iopin.sym} 140 -600 0 1 {name=p9 lab=LPF_SS}
@@ -57,44 +61,54 @@ C {iopin.sym} 140 -360 0 1 {name=p25 lab=LPF_BCMFB}
 C {lab_wire.sym} 160 -360 0 1 {name=p26 sig_type=std_logic lab=LPF_BCMFB}
 C {iopin.sym} 140 -320 0 1 {name=p29 lab=LPF_REF}
 C {lab_wire.sym} 160 -320 0 1 {name=p30 sig_type=std_logic lab=LPF_REF}
-C {res.sym} 610 -560 3 0 {name=RFBP
-value=3.7Meg
-footprint=1206
-device=resistor
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDOTA/FD_OTA.sym} 460 -340 0 0 {name=xFDOTA1}
+C {lab_wire.sym} 590 -360 2 1 {name=p10 sig_type=std_logic lab=LPF_SS}
+C {lab_wire.sym} 590 -600 0 0 {name=p20 sig_type=std_logic lab=LPF_DD}
+C {lab_wire.sym} 500 -480 0 0 {name=p33 sig_type=std_logic lab=LPF_REF}
+C {lab_wire.sym} 740 -480 0 1 {name=p36 sig_type=std_logic lab=LPF_VOCM}
+C {lab_wire.sym} 620 -360 2 0 {name=p39 sig_type=std_logic lab=LPF_BCMFB}
+C {lab_wire.sym} 620 -600 0 1 {name=p40 sig_type=std_logic lab=LPF_BFDC}
+C {lab_wire.sym} 780 -520 0 1 {name=p43 sig_type=std_logic lab=LPF_OUTN}
+C {lab_wire.sym} 780 -440 2 0 {name=p44 sig_type=std_logic lab=LPF_OUTP}
+C {lab_wire.sym} 360 -520 0 0 {name=p55 sig_type=std_logic lab=LPF_INP}
+C {lab_wire.sym} 360 -440 2 1 {name=p56 sig_type=std_logic lab=LPF_INN}
+C {symbols/ppolyf_u_2k.sym} 610 -680 3 0 {name=RFBP
+W=1e-6
+L=2500e-6
+model=ppolyf_u_2k
+spiceprefix=X
 m=1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/FD_OTA/FDOTA/FD_OTA.sym} 460 -260 0 0 {name=xFDOTA1}
-C {lab_wire.sym} 590 -280 2 1 {name=p10 sig_type=std_logic lab=LPF_SS}
-C {lab_wire.sym} 590 -520 0 0 {name=p20 sig_type=std_logic lab=LPF_DD}
-C {lab_wire.sym} 500 -400 0 0 {name=p33 sig_type=std_logic lab=LPF_REF}
-C {lab_wire.sym} 740 -400 0 1 {name=p36 sig_type=std_logic lab=LPF_VOCM}
-C {lab_wire.sym} 620 -280 2 0 {name=p39 sig_type=std_logic lab=LPF_BCMFB}
-C {lab_wire.sym} 620 -520 0 1 {name=p40 sig_type=std_logic lab=LPF_BFDC}
-C {lab_wire.sym} 780 -440 0 1 {name=p43 sig_type=std_logic lab=LPF_OUTN}
-C {lab_wire.sym} 780 -360 2 0 {name=p44 sig_type=std_logic lab=LPF_OUTP}
-C {res.sym} 430 -360 3 1 {name=RINN
-value=3.7Meg
-footprint=1206
-device=resistor
+C {symbols/cap_mim_2f0fF.sym} 610 -800 3 0 {name=CLPFP
+W=75e-6
+L=100e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=4}
+C {lab_wire.sym} 580 -660 2 1 {name=p2 sig_type=std_logic lab=LPF_SS}
+C {symbols/ppolyf_u_2k.sym} 430 -520 3 0 {name=RINP
+W=1e-6
+L=2500e-6
+model=ppolyf_u_2k
+spiceprefix=X
 m=1}
-C {res.sym} 430 -440 3 0 {name=RINP
-value=3.7Meg
-footprint=1206
-device=resistor
+C {lab_wire.sym} 400 -500 2 1 {name=p3 sig_type=std_logic lab=LPF_SS}
+C {symbols/ppolyf_u_2k.sym} 430 -440 3 1 {name=RINN
+W=1e-6
+L=2500e-6
+model=ppolyf_u_2k
+spiceprefix=X
 m=1}
-C {lab_wire.sym} 360 -440 0 0 {name=p55 sig_type=std_logic lab=LPF_INP}
-C {lab_wire.sym} 360 -360 2 1 {name=p56 sig_type=std_logic lab=LPF_INN}
-C {res.sym} 610 -240 3 1 {name=RFBN
-value=3.7Meg
-footprint=1206
-device=resistor
+C {lab_wire.sym} 400 -460 0 0 {name=RINN1 sig_type=std_logic lab=LPF_SS}
+C {symbols/ppolyf_u_2k.sym} 610 -280 3 1 {name=RFBN
+W=1e-6
+L=2500e-6
+model=ppolyf_u_2k
+spiceprefix=X
 m=1}
-C {capa.sym} 610 -640 3 0 {name=CLPFP
-m=5
-value=20p
-footprint=1206
-device="ceramic capacitor"}
-C {capa.sym} 610 -160 3 1 {name=CLPFN
-m=5
-value=20p
-footprint=1206
-device="ceramic capacitor"}
+C {symbols/cap_mim_2f0fF.sym} 610 -160 3 1 {name=CLPFN
+W=75e-6
+L=100e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=4}
+C {lab_wire.sym} 580 -300 0 0 {name=p4 sig_type=std_logic lab=LPF_SS}

@@ -27,7 +27,6 @@ N 200 -1300 280 -1300 {lab=BP}
 N 320 -1300 340 -1300 {lab=AVDD}
 N 340 -1340 340 -1300 {lab=AVDD}
 N 320 -1340 340 -1340 {lab=AVDD}
-N 200 -1260 240 -1260 {lab=VREF}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {capa.sym} 700 -1250 0 0 {name=CL
 m=1
@@ -51,10 +50,10 @@ value="
 .param cap_mc_skew=3
 
 .lib $::180MCU_MODELS/sm141064.ngspice statistical
-.lib $::180MCU_MODELS/sm141064.ngspice res_typical
-.lib $::180MCU_MODELS/sm141064.ngspice mimcap_typical
+.lib $::180MCU_MODELS/sm141064.ngspice res_statistical
+.lib $::180MCU_MODELS/sm141064.ngspice mimcap_statistical
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
-.lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
+.lib $::180MCU_MODELS/sm141064.ngspice bjt_statistical
 
 .csparam PROC_ID=5
 "}
@@ -250,7 +249,5 @@ model=pfet_03v3
 spiceprefix=X
 }
 C {lab_wire.sym} 320 -1380 0 0 {name=p22 sig_type=std_logic lab=AVDD}
-C {noconn.sym} 240 -1260 0 1 {name=l3}
 C {lab_wire.sym} 320 -1220 2 1 {name=p23 sig_type=std_logic lab=B}
-C {lab_wire.sym} 240 -1260 0 1 {name=p24 sig_type=std_logic lab=VREF}
 C {lab_wire.sym} 240 -1300 0 1 {name=p27 sig_type=std_logic lab=BP}

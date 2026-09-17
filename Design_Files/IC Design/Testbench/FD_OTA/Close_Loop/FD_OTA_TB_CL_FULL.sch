@@ -9,7 +9,6 @@ N 240 -1040 240 -1020 {lab=VINCM}
 N 400 -1040 400 -1020 {lab=REF}
 N 80 -900 80 -880 {lab=AGND}
 N 240 -960 240 -940 {lab=AGND}
-N 400 -960 400 -940 {lab=VREFBIAS}
 N 240 -900 240 -880 {lab=DIFFCMD}
 N 240 -820 240 -800 {lab=AGND}
 N 1120 -1220 1120 -1200 {lab=AGND}
@@ -41,7 +40,6 @@ N 200 -1280 280 -1280 {lab=BP}
 N 320 -1280 340 -1280 {lab=AVDD}
 N 340 -1320 340 -1280 {lab=AVDD}
 N 320 -1320 340 -1320 {lab=AVDD}
-N 200 -1240 240 -1240 {lab=VREFBIAS}
 N 480 -1250 480 -1200 {lab=BCMFB}
 N 480 -1360 480 -1310 {lab=AVDD}
 N 480 -1280 500 -1280 {lab=AVDD}
@@ -58,6 +56,7 @@ N 820 -870 840 -870 {lab=DERR}
 N 820 -830 840 -830 {lab=AGND}
 N 760 -1300 780 -1300 {lab=INP}
 N 760 -1220 780 -1220 {lab=INN}
+N 400 -960 400 -940 {lab=AGND}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {devices/code_shown.sym} 80 -710 0 0 {name=MODELS
 only_toplevel=true
@@ -73,10 +72,10 @@ value="
 .param cap_mc_skew=3
 
 .lib $::180MCU_MODELS/sm141064.ngspice statistical
-.lib $::180MCU_MODELS/sm141064.ngspice res_typical
-.lib $::180MCU_MODELS/sm141064.ngspice mimcap_typical
+.lib $::180MCU_MODELS/sm141064.ngspice res_statistical
+.lib $::180MCU_MODELS/sm141064.ngspice mimcap_statistical
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
-.lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
+.lib $::180MCU_MODELS/sm141064.ngspice bjt_statistical
 
 .csparam PROC_ID=7
 "}
@@ -97,6 +96,8 @@ option numdgt=15
 option method=gear
 option maxord=2
 option plotwinsize=0
+option rshunt=1e12
+
 
 if $&PROC_ID = 5
 set proc=MM
@@ -108,10 +109,12 @@ set proc=FULL
 end
 end
 
+
 shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt
 
 shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_mc_summary.txt
 shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_mc_debug_op.txt
+
 
 echo run out_cm_error_V cl_gain_10 gain_error_pct ibias_fdc_A ibias_cmfb_A idd_A power_W > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_mc_summary.txt
 
@@ -121,6 +124,7 @@ echo run vin_diff_V vos_cl_V outp_V outn_V outcm_V outdiff_V ref_V vocm_V bfdc_V
 let run=1
 let mc_runs=$&MC_RUNS
 
+
 dowhile run <= mc_runs
 
 set runnum=$&run
@@ -128,33 +132,40 @@ set runnum=$&run
 setseed $runnum
 mc_source
 
+
 option klu
 option numdgt=15
 option method=gear
 option maxord=2
 option plotwinsize=0
+option rshunt=1e12
 
 
 * SOURCES
 
+alter @VAVDD[DC]=3.3
+alter @VAVSS[DC]=0
+
 alter @VCM[DC]=1.65
 alter @VDIFFCMD[DC]=0
-alter @VREFSTEP[DC]=0
+alter @VREFSTEP[DC]=1.65
 
+alter @VAVDD[ACMAG]=0
+alter @VAVSS[ACMAG]=0
 alter @VCM[ACMAG]=0
 alter @VDIFFCMD[ACMAG]=0
 alter @VREFSTEP[ACMAG]=0
-alter @VAVDD[ACMAG]=0
-alter @VAVSS[ACMAG]=0
 
 
 * OP
 
-save all
+save AVDD AGND INP INN OUTP OUTN REF VOCM BFDC BCMFB
+save vavdd#branch
 save @m.xmbfdc.m0[id]
 save @m.xmbcmfb.m0[id]
 
 op
+
 
 let vin_diff=v(INP)-v(INN)
 
@@ -206,21 +217,25 @@ set power_val=$&power_total
 
 echo $runnum $vin_diff_val $vos_cl_val $outp_val $outn_val $outcm_val $outdiff_val $ref_val $vocm_val $bfdc_val $bcmfb_val $ibias_fdc_val $ibias_cmfb_val $idd_val $power_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_mc_debug_op.txt
 
+
 destroy all
 
 
 * DIFF AC
 
-alter @VDIFFCMD[DC]=0
-
-alter @VCM[ACMAG]=0
-alter @VDIFFCMD[ACMAG]=1
-alter @VDIFFCMD[ACPHASE]=0
-alter @VREFSTEP[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
+alter @VCM[ACMAG]=0
+alter @VREFSTEP[ACMAG]=0
+
+alter @VDIFFCMD[DC]=0
+alter @VDIFFCMD[ACMAG]=1
+alter @VDIFFCMD[ACPHASE]=0
+
+save AGND OUTP OUTN DIFFCMD
 
 ac dec 100 0.1 100Meg
+
 
 let cmd_ac=v(DIFFCMD)-v(AGND)
 let outdiff_ac=v(OUTP)-v(OUTN)
@@ -238,43 +253,26 @@ set gain_error_val=$&gain_error_pct
 
 echo $runnum $out_cm_error_val $cl_gain_val $gain_error_val $ibias_fdc_val $ibias_cmfb_val $idd_val $power_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/FD_OTA/\{$proc\}.Result_txt/\{$proc\}.cl_mc_summary.txt
 
+
 destroy all
 
 let run=run+1
 
 end
 
+
 quit
 
 .endc
 "}
-C {devices/code_shown.sym} 80 -330 0 0 {name=SETUP
-only_toplevel=true
-value="
-.param VDD_SET=3.3
-.param TEMP_SET=27
-
-.param VCM_SET=\{VDD_SET/2\}
-.param CL_SET=40p
-
-.csparam MC_RUNS=200
-
-.temp \{TEMP_SET\}
-
-.options gmin=1e-12
-.options rshunt=1e12
-.options method=gear
-"}
 C {vsource.sym} 80 -990 0 0 {name=VAVDD value="dc \{VDD_SET\} ac 0" savecurrent=true}
 C {gnd.sym} 80 -960 0 0 {name=l5 lab=0}
 C {vsource.sym} 240 -990 0 0 {name=VCM value="dc \{VCM_SET\} ac 0" savecurrent=false}
-C {vsource.sym} 400 -990 0 0 {name=VREFSTEP value="dc 0 ac 0" savecurrent=false}
 C {lab_wire.sym} 240 -1040 0 0 {name=p3 sig_type=std_logic lab=VINCM}
 C {lab_wire.sym} 400 -1040 0 0 {name=p5 sig_type=std_logic lab=REF}
 C {vsource.sym} 80 -850 0 0 {name=VAVSS value="dc 0 ac 0" savecurrent=false}
 C {gnd.sym} 80 -820 0 0 {name=l11 lab=0}
 C {lab_wire.sym} 80 -900 0 0 {name=p8 sig_type=std_logic lab=AGND}
-C {lab_wire.sym} 400 -940 2 0 {name=p10 sig_type=std_logic lab=VREFBIAS}
 C {lab_wire.sym} 240 -940 2 0 {name=p11 sig_type=std_logic lab=AGND}
 C {vsource.sym} 240 -850 0 0 {name=VDIFFCMD value="dc 0 ac 0" savecurrent=false}
 C {lab_wire.sym} 240 -900 0 0 {name=p22 sig_type=std_logic lab=DIFFCMD}
@@ -334,7 +332,6 @@ spiceprefix=X
 }
 C {lab_wire.sym} 320 -1360 0 0 {name=p34 sig_type=std_logic lab=AVDD}
 C {lab_wire.sym} 320 -1200 2 1 {name=p35 sig_type=std_logic lab=BFDC}
-C {lab_wire.sym} 240 -1240 0 1 {name=p36 sig_type=std_logic lab=VREFBIAS}
 C {lab_wire.sym} 240 -1280 0 1 {name=p37 sig_type=std_logic lab=BP}
 C {symbols/pfet_03v3.sym} 460 -1280 0 0 {name=MBCMFB
 L=4u
@@ -366,3 +363,24 @@ C {lab_wire.sym} 880 -800 2 0 {name=p47 sig_type=std_logic lab=VINCM}
 C {lab_wire.sym} 880 -900 0 0 {name=p48 sig_type=std_logic lab=INN}
 C {lab_wire.sym} 760 -1300 0 0 {name=p4 sig_type=std_logic lab=INP}
 C {lab_wire.sym} 760 -1220 0 0 {name=p6 sig_type=std_logic lab=INN}
+C {devices/code_shown.sym} 80 -350 0 0 {name=SETUP
+only_toplevel=true
+value="
+.param VDD_SET=3.3
+.param TEMP_SET=27
+
+.param VCM_SET=\{VDD_SET/2\}
+.param VREF_SET=\{VDD_SET/2\}
+
+.param CL_SET=40p
+
+.csparam MC_RUNS=200
+
+.temp \{TEMP_SET\}
+
+.options gmin=1e-12
+.options rshunt=1e12
+.options method=gear
+"}
+C {vsource.sym} 400 -990 0 0 {name=VREFSTEP value="dc \{VREF_SET\} ac 0" savecurrent=false}
+C {lab_wire.sym} 400 -940 2 0 {name=p7 sig_type=std_logic lab=AGND}

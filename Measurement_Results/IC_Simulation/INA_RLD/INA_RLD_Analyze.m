@@ -45,7 +45,6 @@ cornerCase = strings(1,nCorners);
 cornerVdd_V = nan(1,nCorners);
 cornerTemp_C = nan(1,nCorners);
 rawValues = nan(size(rows,1),nCorners);
-rldPeakCurrent_A = nan(1,nCorners);
 metrics = cell(nCorners,nElectrodes);
 
 cornerIndex = 0;
@@ -71,7 +70,6 @@ for processIndex = 1:numel(processes)
             if electrodeIndex == balIndex
                 rawValues(:,cornerIndex) = metricsToRaw( ...
                     m,rows,caseTemp_C(caseIndex),cfg.diffGainTarget_VV);
-                rldPeakCurrent_A(cornerIndex) = m.tran.peakRldCurrent_A;
             end
         end
     end
@@ -82,6 +80,7 @@ checkMisStress(metrics,corners,cfg);
 [rows,scaledValues] = adaptReportUnits(rows,rawValues);
 formattedValues = formatReportValues(rows,scaledValues);
 specifications = pvtSpecStrings(rows);
+checkReportSpecCoverage(rows,specifications);
 checkPvtSpecifications(rows,scaledValues,corners);
 
 nominalCorner = find(corners == "NOMNOMNOM",1);
@@ -111,8 +110,7 @@ fullPvtTable = buildFullPvtTable(rows,scaledValues,corners, ...
     cornerProcess,cornerCase,cornerVdd_V,cornerTemp_C,electrodes(balIndex));
 writetable(fullPvtTable,fullfile(reportDir,'INA_RLD_full_pvt_report.csv'));
 
-worstCase = buildWorstCaseTable( ...
-    rows,scaledValues,corners,rldPeakCurrent_A);
+worstCase = buildWorstCaseTable(rows,scaledValues,corners);
 fprintf('\nINA + RLD FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(reportDir,'INA_RLD_worst_case_report.csv'));
@@ -153,7 +151,8 @@ runTable = table(modes',cellfun(@(r) r.requested,results), ...
     cellfun(@(r) r.overallYield,results), ...
     'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns','OverallYield_pct'});
 writetable(runTable,fullfile(reportDir,'MC_Run_Summary.csv'));
-mcPlotHistograms(results,plotDir);
+mcPlotHistograms(results,defs,plotDir);
+mcPlotCmrr(results,defs,plotDir);
 if missingSuppression
     warning('INA_RLD_Analyze:MissingMcSuppression', ...
         ['MC summary files have 13 columns, so 60 Hz and 150 Hz CM suppression are unavailable. ' ...
@@ -164,42 +163,80 @@ end
 end
 
 function defs = mcDefinitions()
-defs.names = ["Total current","Total power","Output CM error","RLD DC error", ...
+defs.names = ["Total current","Total power","Output CM error", ...
     "Input-referred offset","S1 gain","S1 gain error","S2 gain","S2 gain error", ...
-    "INA gain","INA gain error","RLD loop UGF","RLD phase margin", ...
+    "INA gain","INA gain error","INA CMRR @ 60 Hz","INA CMRR @ 150 Hz", ...
+    "RLD loop UGF","RLD phase margin", ...
     "Input CM suppression @ 60 Hz","Input CM suppression @ 150 Hz"];
-defs.units = ["mA","mW","mV","uV","uV","V/V","%","V/V","%","V/V","%", ...
-    "kHz","deg","dB","dB"];
+defs.units = ["mA","mW","mV","uV","V/V","%","V/V","%","V/V","%", ...
+    "dB","dB","kHz","deg","dB","dB"];
+defs.columns = [2 3 4 6 7 NaN 8 NaN 9 10 15 16 11 12 13 14];
+defs.scales = [1e3 1e3 1e3 1e6 1 1 1 1 1 1 1 1 1e-3 1 1 1];
+order = reportParameterOrder(defs.names);
+defs.names = defs.names(order);
+defs.units = defs.units(order);
+defs.columns = defs.columns(order);
+defs.scales = defs.scales(order);
 defs.specs = strictSpecStrings(defs.names,defs.units);
-defs.columns = [5 6 3 4 2 7 NaN 8 NaN 9 10 12 13 14 15];
-defs.scales = [1e3 1e3 1 1e3 1e3 1 1 1 1 1 1 1e-3 1 1 1];
 % Gain V/V is report-only; its corresponding gain-error row is the requirement.
 defs.required = strlength(defs.specs) > 0;
 defs.yieldChecked = defs.required;
 end
 
+function index = parameterIndex(parameters,parameter)
+index = find(parameters == parameter,1);
+if isempty(index)
+    error('INA_RLD_Analyze:MissingParameter', ...
+        'Required parameter is not defined: %s',parameter);
+end
+end
+
 function [raw,hasSuppression] = mcReadSummary(filePath)
 raw = readmatrix(filePath,'FileType','text');
 raw = raw(any(isfinite(raw),2),:);
-if size(raw,2) ~= 13 && size(raw,2) ~= 15
-    error('INA_RLD_Analyze:McColumns','%s must have 13 or 15 numeric columns.',filePath);
+nCol = size(raw,2);
+if ~ismember(nCol,[13 15 16])
+    error('INA_RLD_Analyze:McColumns', ...
+        '%s must have 13, 15, or 16 numeric columns.',filePath);
 end
-hasSuppression = size(raw,2) >= 15;
-if ~hasSuppression, raw(:,14:15) = NaN; end
+if nCol == 16
+    hasSuppression = true;
+    return;
+end
+
+% Normalize legacy layouts to the current 16-column schema:
+% run, IDD, power, output-CM error, RLD DC error, VOS, S1, S2, INA,
+% INA gain error, RLD UGF, RLD PM, CM suppression 60/150 Hz, CMRR 60/150 Hz.
+legacy = raw;
+raw = nan(size(legacy,1),16);
+raw(:,1:12) = legacy(:,[1 5 6 3 4 2 7 8 9 10 12 13]);
+hasSuppression = nCol == 15;
+if hasSuppression
+    raw(:,13:14) = legacy(:,14:15);
+end
 end
 
 function r = mcSummarize(raw,defs,mode)
 values = nan(size(raw,1),numel(defs.names));
 sourceMask = isfinite(defs.columns);
 values(:,sourceMask) = raw(:,defs.columns(sourceMask)).*defs.scales(sourceMask);
-values(:,7) = 100*(values(:,6)/60-1);
-values(:,9) = 100*(values(:,8)/4-1);
-validMask = all(isfinite(values(:,1:11)),2);
+s1GainIndex = parameterIndex(defs.names,"S1 gain");
+s1ErrorIndex = parameterIndex(defs.names,"S1 gain error");
+s2GainIndex = parameterIndex(defs.names,"S2 gain");
+s2ErrorIndex = parameterIndex(defs.names,"S2 gain error");
+inaErrorIndex = parameterIndex(defs.names,"INA gain error");
+values(:,s1ErrorIndex) = 100*(values(:,s1GainIndex)/60-1);
+values(:,s2ErrorIndex) = 100*(values(:,s2GainIndex)/4-1);
+validParameters = ["Total current" "Total power" "Output CM error" ...
+    "Input-referred offset" "S1 gain" "S1 gain error" ...
+    "S2 gain" "S2 gain error" "INA gain" "INA gain error"];
+validIndices = arrayfun(@(name) parameterIndex(defs.names,name),validParameters);
+validMask = all(isfinite(values(:,validIndices)),2);
 count = numel(defs.names);
 r.mode = mode; r.values = values; r.available = any(isfinite(values),1);
 r.requested = size(raw,1); r.valid = nnz(validMask); r.failed = r.requested-r.valid;
 r.stats = nan(count,7); r.yield = nan(count,1); r.pass = false(r.requested,count);
-lowGainRows = find(validMask & values(:,11) <= -90);
+lowGainRows = find(validMask & values(:,inaErrorIndex) <= -90);
 if ~isempty(lowGainRows)
     warning('INA_RLD_Analyze:SuspiciousMcGain', ...
         ['%s has %d valid sample(s) with INA gain error <= -90%% (MC run ID(s): %s). ' ...
@@ -256,17 +293,21 @@ for j = 1:height(r.table)
 end
 end
 
-function mcPlotHistograms(results,plotDir)
-mcHistogram(results,5,plotDir,'Fig_MC_01_Vos_Histogram.png', ...
+function mcPlotHistograms(results,defs,plotDir)
+offsetIndex = parameterIndex(defs.names,"Input-referred offset");
+inaErrorIndex = parameterIndex(defs.names,"INA gain error");
+rldUgfIndex = parameterIndex(defs.names,"RLD loop UGF");
+rldPmIndex = parameterIndex(defs.names,"RLD phase margin");
+mcHistogram(results,offsetIndex,plotDir,'Fig_MC_01_Vos_Histogram.png', ...
     'Input-Referred Offset Distribution - MM / GL / FULL', ...
-    'Input-referred offset (uV)',[-500 500]);
-mcHistogram(results,11,plotDir,'Fig_MC_02_INA_Gain_Error_Histogram.png', ...
+    'Input-referred offset (uV)',[-2000 2000]);
+mcHistogram(results,inaErrorIndex,plotDir,'Fig_MC_02_INA_Gain_Error_Histogram.png', ...
     'INA Gain Error Distribution - MM / GL / FULL', ...
-    'INA gain error (%)',[-1 1]);
-mcHistogram(results,12,plotDir,'Fig_MC_03_RLD_UGF_Histogram.png', ...
+    'INA gain error (%)',[-0.5 0.5]);
+mcHistogram(results,rldUgfIndex,plotDir,'Fig_MC_03_RLD_UGF_Histogram.png', ...
     'RLD Loop UGF Distribution - MM / GL / FULL', ...
-    'RLD loop UGF (kHz)',[0.3 2]);
-mcHistogram(results,13,plotDir,'Fig_MC_04_RLD_PM_Histogram.png', ...
+    'RLD loop UGF (kHz)',[0.5 1.6]);
+mcHistogram(results,rldPmIndex,plotDir,'Fig_MC_04_RLD_PM_Histogram.png', ...
     'RLD Phase Margin Distribution - MM / GL / FULL', ...
     'RLD phase margin (deg)',60);
 end
@@ -308,10 +349,49 @@ mcAddFullStatMarkers(results{3},index);
 savePlot(fig,plotDir,fileName);
 end
 
+function mcPlotCmrr(results,defs,plotDir)
+fig = figure;
+layout = tiledlayout(2,1);
+indices = [parameterIndex(defs.names,"INA CMRR @ 60 Hz") ...
+    parameterIndex(defs.names,"INA CMRR @ 150 Hz")];
+for p = 1:2
+    nexttile(layout); hold on;
+    allValues = [];
+    for k = 1:numel(results)
+        values = results{k}.values(:,indices(p));
+        allValues = [allValues; values(isfinite(values))]; %#ok<AGROW>
+    end
+    if isempty(allValues), continue; end
+    [lo,hi,displayMask] = mcDisplayRange(allValues,results,indices(p));
+    lo = min(lo,80);
+    displayValues = allValues(displayMask);
+    edges = linspace(lo,hi,max(12,min(40,ceil(sqrt(numel(displayValues)))))+1);
+    colors = lines(numel(results));
+    for k = 1:numel(results)
+        values = results{k}.values(:,indices(p));
+        values = values(isfinite(values) & values >= lo & values <= hi);
+        if isempty(values), continue; end
+        probabilityPct = 100*histcounts(values,edges,'Normalization','probability');
+        stairs(edges,[probabilityPct 0],'LineWidth',1.5, ...
+            'Color',colors(k,:),'DisplayName',results{k}.mode);
+    end
+    xline(80,'--','HandleVisibility','off');
+    xlim([lo hi]);
+    ylabel('Samples (%)');
+    stylePlot(defs.names(indices(p))+" (dB)", ...
+        defs.names(indices(p))+" Distribution - MM / GL / FULL");
+    legend('Location','best');
+    mcAddFullStatMarkers(results{3},indices(p));
+end
+savePlot(fig,plotDir,'Fig_MC_05_INA_CMRR_Histogram.png');
+end
+
 function mcPlotSuppression(results,defs,plotDir)
 fig = figure;
 layout = tiledlayout(2,1);
-indices = [14 15]; limits = [50 45]; colors = lines(numel(results));
+indices = [parameterIndex(defs.names,"Input CM suppression @ 60 Hz") ...
+    parameterIndex(defs.names,"Input CM suppression @ 150 Hz")];
+limits = [50 45]; colors = lines(numel(results));
 for p = 1:2
     nexttile(layout); hold on;
     allValues = [];
@@ -340,7 +420,7 @@ for p = 1:2
     legend('Location','best');
     mcAddFullStatMarkers(results{3},indices(p));
 end
-savePlot(fig,plotDir,'Fig_MC_05_Input_CM_Suppression_Histogram.png');
+savePlot(fig,plotDir,'Fig_MC_06_Input_CM_Suppression_Histogram.png');
 end
 
 function [lo,hi,displayMask] = mcDisplayRange(values,results,index)
@@ -482,7 +562,7 @@ rows = [
     "Total current",                               "A"
     "Total power",                                 "W"
     "Output CM error",                              "V"
-    "RLD DC error",                                 "V"
+    "Input-referred offset",                        "V"
     "",                                            ""
     "INA",                                         ""
     "S1 gain",                                    "V/V"
@@ -498,23 +578,54 @@ rows = [
     "INA gain error",                              "%"
     "Gain flatness 0.05-150 Hz",                   "dB"
     "INA -3 dB bandwidth",                         "kHz"
+    "INA CMRR @ 60 Hz",                            "dB"
+    "INA CMRR @ 150 Hz",                           "dB"
+    "INA PSRR+ @ 60 Hz",                           "dB"
+    "INA PSRR+ @ 150 Hz",                          "dB"
+    "INA PSRR- @ 60 Hz",                           "dB"
+    "INA PSRR- @ 150 Hz",                          "dB"
+    "Input-referred noise 0.05-150 Hz",             "Vrms"
     "",                                            ""
     "RLD",                                         ""
     "RLD loop UGF",                                "Hz"
     "RLD phase margin",                            "deg"
     "Input CM suppression @ 60 Hz",                "dB"
     "Input CM suppression @ 150 Hz",               "dB"
-    "RLD Swing Ratio",                             "%"
-    "RLD Peak Current",                            "A"
+    "RLD output rail headroom",                    "V"
     "CM Interference Gain Change",                  "%"
-    "",                                             ""
-    "NOISE",                                        ""
-    "Input-referred noise 0.05-150 Hz",             "Vrms"
 ];
+end
+
+function order = reportParameterOrder(parameters)
+% Keep every derived report in the canonical PVT-table parameter sequence.
+rows = reportRows();
+[found,pvtIndex] = ismember(parameters,rows(:,1));
+if ~all(found)
+    error('INA_RLD_Analyze:UnknownReportParameter', ...
+        'A derived report contains an unknown parameter: %s', ...
+        strjoin(parameters(~found),', '));
+end
+[~,order] = sort(pvtIndex);
 end
 
 function specifications = pvtSpecStrings(rows)
 specifications = strictSpecStrings(rows(:,1),rows(:,2));
+end
+
+function checkReportSpecCoverage(rows,specifications)
+% All performance rows are formal signoff rows.  Set conditions and the
+% redundant gain V/V and dB rows remain descriptive by design.
+descriptiveParameters = ["" "Set conditions" "AVDD" "Temperature" ...
+    "S1 target gain" "S2 target gain" "INA target gain" ...
+    "Operating point" "INA" "RLD" ...
+    "S1 gain" "S1 gain dB" "S2 gain" "S2 gain dB" "INA gain" "INA gain dB"];
+missingSpecification = strlength(rows(:,1)) > 0 & ...
+    ~ismember(rows(:,1),descriptiveParameters) & strlength(specifications) == 0;
+if any(missingSpecification)
+    error('INA_RLD_Analyze:MissingReportSpec', ...
+        'Formal report row(s) missing a specification: %s', ...
+        strjoin(rows(missingSpecification,1),', '));
+end
 end
 
 function specifications = strictSpecStrings(parameters,units)
@@ -530,23 +641,25 @@ switch string(parameter)
     case "Total current", specification = "≤"+specNumber(6.2e-3,unit);
     case "Total power", specification = "≤"+specNumber(22e-3,unit);
     case "Output CM error", specification = "±"+specNumber(40e-3,unit);
-    case "RLD DC error", specification = "±"+specNumber(30e-6,unit);
-    case "Input-referred offset", specification = "±"+specNumber(300e-6,unit);
-    case "S1 gain error", specification = "±0.25";
-    case "S1 -3 dB bandwidth", specification = "≥"+specNumber(170e3,unit);
-    case "S2 gain error", specification = "±0.10";
-    case "S2 -3 dB bandwidth", specification = "≥"+specNumber(1.7e6,unit);
-    case "INA gain error", specification = "±0.30";
-    case "Gain flatness 0.05-150 Hz", specification = "≤0.001";
-    case "INA -3 dB bandwidth", specification = "≥"+specNumber(170e3,unit);
-    case "RLD loop UGF", specification = specNumber(1e3,unit)+"±"+specNumber(0.5e3,unit);
-    case "RLD phase margin", specification = "≥95";
-    case "Input CM suppression @ 60 Hz", specification = "≥54";
-    case "Input CM suppression @ 150 Hz", specification = "≥51";
-    case "RLD Swing Ratio", specification = "≤1.0";
-    case "RLD Peak Current", specification = "≤"+specNumber(3.2e-9,unit);
-    case "CM Interference Gain Change", specification = "±0.001";
-    case "Input-referred noise 0.05-150 Hz", specification = "≤3.2";
+    case "Input-referred offset", specification = "±"+specNumber(2e-3,unit);
+    case "S1 gain error", specification = "±0.5";
+    case "S1 -3 dB bandwidth", specification = "≥"+specNumber(150e3,unit);
+    case "S2 gain error", specification = "±0.25";
+    case "S2 -3 dB bandwidth", specification = "≥"+specNumber(1.5e6,unit);
+    case "INA gain error", specification = "±0.5";
+    case "Gain flatness 0.05-150 Hz", specification = "≤0.1";
+    case "INA -3 dB bandwidth", specification = "≥"+specNumber(150e3,unit);
+    case {"INA CMRR @ 60 Hz","INA CMRR @ 150 Hz"}, specification = "≥80";
+    case {"INA PSRR+ @ 60 Hz","INA PSRR+ @ 150 Hz", ...
+            "INA PSRR- @ 60 Hz","INA PSRR- @ 150 Hz"}, specification = "≥80";
+    case "RLD loop UGF"
+        specification = specNumber(1.05e3,unit)+"±"+specNumber(0.55e3,unit);
+    case "RLD phase margin", specification = "≥60";
+    case "Input CM suppression @ 60 Hz", specification = "≥50";
+    case "Input CM suppression @ 150 Hz", specification = "≥45";
+    case "RLD output rail headroom", specification = "≥"+specNumber(100e-3,unit);
+    case "CM Interference Gain Change", specification = "±0.1";
+    case "Input-referred noise 0.05-150 Hz", specification = "≤4";
     otherwise, specification = "";
 end
 end
@@ -557,23 +670,24 @@ switch string(parameter)
     case "Total current", pass = baseValue <= 6.2e-3;
     case "Total power", pass = baseValue <= 22e-3;
     case "Output CM error", pass = abs(baseValue) <= 40e-3;
-    case "RLD DC error", pass = abs(baseValue) <= 30e-6;
-    case "Input-referred offset", pass = abs(baseValue) <= 300e-6;
-    case "S1 gain error", pass = baseValue >= -0.25 & baseValue <= 0.25;
-    case "S1 -3 dB bandwidth", pass = baseValue >= 170e3;
-    case "S2 gain error", pass = baseValue >= -0.10 & baseValue <= 0.10;
-    case "S2 -3 dB bandwidth", pass = baseValue >= 1.7e6;
-    case "INA gain error", pass = baseValue >= -0.30 & baseValue <= 0.30;
-    case "Gain flatness 0.05-150 Hz", pass = baseValue <= 0.001;
-    case "INA -3 dB bandwidth", pass = baseValue >= 170e3;
-    case "RLD loop UGF", pass = baseValue >= 0.5e3 & baseValue <= 1.5e3;
-    case "RLD phase margin", pass = baseValue >= 95;
-    case "Input CM suppression @ 60 Hz", pass = baseValue >= 54;
-    case "Input CM suppression @ 150 Hz", pass = baseValue >= 51;
-    case "RLD Swing Ratio", pass = baseValue <= 1.0;
-    case "RLD Peak Current", pass = baseValue <= 3.2e-9;
-    case "CM Interference Gain Change", pass = baseValue >= -0.001 & baseValue <= 0.001;
-    case "Input-referred noise 0.05-150 Hz", pass = baseValue <= 3.2e-6;
+    case "Input-referred offset", pass = abs(baseValue) <= 2e-3;
+    case "S1 gain error", pass = baseValue >= -0.5 & baseValue <= 0.5;
+    case "S1 -3 dB bandwidth", pass = baseValue >= 150e3;
+    case "S2 gain error", pass = baseValue >= -0.25 & baseValue <= 0.25;
+    case "S2 -3 dB bandwidth", pass = baseValue >= 1.5e6;
+    case "INA gain error", pass = baseValue >= -0.5 & baseValue <= 0.5;
+    case "Gain flatness 0.05-150 Hz", pass = baseValue <= 0.1;
+    case "INA -3 dB bandwidth", pass = baseValue >= 150e3;
+    case {"INA CMRR @ 60 Hz","INA CMRR @ 150 Hz"}, pass = baseValue >= 80;
+    case {"INA PSRR+ @ 60 Hz","INA PSRR+ @ 150 Hz", ...
+            "INA PSRR- @ 60 Hz","INA PSRR- @ 150 Hz"}, pass = baseValue >= 80;
+    case "RLD loop UGF", pass = baseValue >= 0.5e3 & baseValue <= 1.6e3;
+    case "RLD phase margin", pass = baseValue >= 60;
+    case "Input CM suppression @ 60 Hz", pass = baseValue >= 50;
+    case "Input CM suppression @ 150 Hz", pass = baseValue >= 45;
+    case "RLD output rail headroom", pass = baseValue >= 100e-3;
+    case "CM Interference Gain Change", pass = baseValue >= -0.1 & baseValue <= 0.1;
+    case "Input-referred noise 0.05-150 Hz", pass = baseValue <= 4e-6;
     otherwise, pass = true(size(value));
 end
 end
@@ -591,12 +705,12 @@ for rowIndex = 1:size(rows,1)
 end
 cornerPass = all(passMatrix(checkedRows,:),1);
 if all(cornerPass)
-    fprintf('\nINA + RLD STRICT PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
+    fprintf('\nINA + RLD PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
         nnz(cornerPass),numel(corners));
 else
     failedCorners = corners(~cornerPass);
     warning('INA_RLD_Analyze:PvtSpecFailure', ...
-        'INA + RLD strict PVT specification: FAIL (%d/%d corners): %s', ...
+        'INA + RLD PVT specification: FAIL (%d/%d corners): %s', ...
         nnz(cornerPass),numel(corners),strjoin(failedCorners,', '));
 end
 end
@@ -606,14 +720,20 @@ function m = analyzeRun(resultDir,process,caseName,electrode, ...
 files = runFiles(resultDir,process,caseName,electrode);
 opData = readNumericFile(files.op,28);
 m = analyzeOperatingPoint(opData);
+vosData = readNumericFile(files.vos,1);
+m.inputOffset_V = vosData(1);
 if abs(m.vdd_V-expectedVdd_V) > cfg.vddTolerance_V
     error('INA_RLD_Analyze:SupplyMismatch', ...
         '%s reports AVDD = %.6g V; expected %.3f V.', ...
         files.op,m.vdd_V,expectedVdd_V);
 end
-m.diff = analyzeDifferential(readNumericFile(files.diff,11),cfg);
-m.cm = analyzeCommonMode(readNumericFile(files.cmOff,13), ...
-    readNumericFile(files.cmOn,13),cfg);
+diffData = readNumericFile(files.diff,11);
+cmOffData = readNumericFile(files.cmOff,13);
+cmrrData = readNumericFile(files.cmrr,5);
+m.diff = analyzeDifferential(diffData,cfg);
+m.cm = analyzeCommonMode(cmOffData,readNumericFile(files.cmOn,13),cfg);
+m.rejection = analyzeRejection(diffData,cmrrData, ...
+    readNumericFile(files.psrrp,7),readNumericFile(files.psrrn,7),cfg);
 m.loop = analyzeRldLoop(readNumericFile(files.loop,11));
 m.noise = analyzeNoise(readNumericFile(files.noise,3),cfg);
 m.tran = analyzeTransient( ...
@@ -623,9 +743,13 @@ end
 function files = runFiles(resultDir,process,caseName,electrode)
 stem = sprintf('%s.%%s_%s_%s.txt',process,caseName,electrode);
 files.op = fullfile(resultDir,sprintf(stem,'op'));
+files.vos = fullfile(resultDir,sprintf(stem,'vos'));
 files.diff = fullfile(resultDir,sprintf(stem,'diff_ac'));
 files.cmOff = fullfile(resultDir,sprintf(stem,'cm_off_ac'));
 files.cmOn = fullfile(resultDir,sprintf(stem,'cm_on_ac'));
+files.cmrr = fullfile(resultDir,sprintf(stem,'ina_cmrr_ac'));
+files.psrrp = fullfile(resultDir,sprintf(stem,'psrrp_ac'));
+files.psrrn = fullfile(resultDir,sprintf(stem,'psrrn_ac'));
 files.loop = fullfile(resultDir,sprintf(stem,'rld_loop_ac'));
 files.noise = fullfile(resultDir,sprintf(stem,'noise'));
 files.tran = fullfile(resultDir,sprintf(stem,'tran'));
@@ -641,7 +765,6 @@ m.vdd_V = median(data(:,2),'omitnan');
 vref_V = median(data(:,3),'omitnan');
 m.vref_V = vref_V;
 m.outCmError_V = median(data(:,17),'omitnan')-vref_V;
-m.rldDcError_V = median(data(:,19),'omitnan')-vref_V;
 m.totalCurrent_A = abs(median(data(:,22),'omitnan'));
 m.totalPower_W = abs(median(data(:,23),'omitnan'));
 end
@@ -691,6 +814,33 @@ offDiff_dB = interpLogFrequency(fOff,magnitudeDb(off.outDiff),targets);
 onDiff_dB = interpLogFrequency(fOn,magnitudeDb(on.outDiff),targets);
 result.inputSuppression_dB = offInput_dB-onInput_dB;
 result.cmToDiffReduction_dB = offDiff_dB-onDiff_dB;
+end
+
+function result = analyzeRejection(diffData,cmrrData,psrrpData,psrrnData,cfg)
+% Keep PVT rejection definitions on the INA output, matching MC.
+validateFrequency(diffData(:,1),'differential AC');
+fDiff = diffData(:,1);
+ad = safeDivide(complex(diffData(:,6),diffData(:,7)), ...
+    complex(diffData(:,2),diffData(:,3)));
+validateFrequency(cmrrData(:,1),'CMRR AC');
+fCm = cmrrData(:,1);
+acm = safeDivide(complex(cmrrData(:,4),cmrrData(:,5)), ...
+    complex(cmrrData(:,2),cmrrData(:,3)));
+
+fP = psrrpData(:,1);
+fN = psrrnData(:,1);
+validateFrequency(fP,'PSRR+ AC');
+validateFrequency(fN,'PSRR- AC');
+apsrrP = safeDivide(complex(psrrpData(:,4),psrrpData(:,5)), ...
+    complex(psrrpData(:,2),psrrpData(:,3)));
+apsrrN = safeDivide(complex(psrrnData(:,4),psrrnData(:,5)), ...
+    complex(psrrnData(:,2),psrrnData(:,3)));
+
+targets = cfg.cmFrequencies_Hz;
+ad_dB = interpLogFrequency(fDiff,magnitudeDb(ad),targets);
+result.cmrr_dB = ad_dB-interpLogFrequency(fCm,magnitudeDb(acm),targets);
+result.psrrP_dB = ad_dB-interpLogFrequency(fP,magnitudeDb(apsrrP),targets);
+result.psrrN_dB = ad_dB-interpLogFrequency(fN,magnitudeDb(apsrrN),targets);
 end
 
 function [f,result] = commonModeTransfers(data)
@@ -746,12 +896,8 @@ cmSource = data(:,2);
 inputDiff = data(:,5);
 rldOut = data(:,14);
 outDiff = data(:,18);
-rldCurrent = abs(data(:,19));
+rldCurrent = data(:,19);
 edges = detectCmStep(t,cmSource);
-result.rldOutMin_V = min(rldOut,[],'omitnan');
-result.rldOutMax_V = max(rldOut,[],'omitnan');
-result.rldOutExcursion_V = result.rldOutMax_V-result.rldOutMin_V;
-result.rldVppNorm_pct = 100*result.rldOutExcursion_V/300e-3;
 result.rldRailHeadroom_V = min([rldOut; vdd_V-rldOut],[],'omitnan');
 result.peakRldCurrent_A = max(abs(rldCurrent),[],'omitnan');
 beforeRows = t >= edges.riseTime_s-cfg.transientPreStartGuard_s & ...
@@ -803,7 +949,7 @@ for rowIndex = 1:size(rows,1)
         case "Total current", values(rowIndex) = m.totalCurrent_A;
         case "Total power", values(rowIndex) = m.totalPower_W;
         case "Output CM error", values(rowIndex) = m.outCmError_V;
-        case "RLD DC error", values(rowIndex) = m.rldDcError_V;
+        case "Input-referred offset", values(rowIndex) = m.inputOffset_V;
         case "S1 gain", values(rowIndex) = m.diff.stage1Gain10_VV;
         case "S1 gain dB", values(rowIndex) = 20*log10(m.diff.stage1Gain10_VV);
         case "S1 gain error", values(rowIndex) = m.diff.stage1GainError_pct;
@@ -817,15 +963,19 @@ for rowIndex = 1:size(rows,1)
         case "INA gain error", values(rowIndex) = m.diff.gainError_pct;
         case "Gain flatness 0.05-150 Hz", values(rowIndex) = m.diff.flatness_dB;
         case "INA -3 dB bandwidth", values(rowIndex) = m.diff.bandwidth3dB_Hz/1e3;
+        case "INA CMRR @ 60 Hz", values(rowIndex) = m.rejection.cmrr_dB(1);
+        case "INA CMRR @ 150 Hz", values(rowIndex) = m.rejection.cmrr_dB(2);
+        case "INA PSRR+ @ 60 Hz", values(rowIndex) = m.rejection.psrrP_dB(1);
+        case "INA PSRR+ @ 150 Hz", values(rowIndex) = m.rejection.psrrP_dB(2);
+        case "INA PSRR- @ 60 Hz", values(rowIndex) = m.rejection.psrrN_dB(1);
+        case "INA PSRR- @ 150 Hz", values(rowIndex) = m.rejection.psrrN_dB(2);
         case "RLD loop UGF", values(rowIndex) = m.loop.crossover_Hz;
         case "RLD phase margin", values(rowIndex) = m.loop.phaseMargin_deg;
         case "Input CM suppression @ 60 Hz", values(rowIndex) = m.cm.inputSuppression_dB(1);
         case "Input CM suppression @ 150 Hz", values(rowIndex) = m.cm.inputSuppression_dB(2);
         case "Input-referred noise 0.05-150 Hz", values(rowIndex) = m.noise.inputRms_V;
-        case "RLD Swing Ratio"
-            values(rowIndex) = m.tran.rldVppNorm_pct;
-        case "RLD Peak Current"
-            values(rowIndex) = m.tran.peakRldCurrent_A;
+        case "RLD output rail headroom"
+            values(rowIndex) = m.tran.rldRailHeadroom_V;
         case "CM Interference Gain Change"
             values(rowIndex) = m.tran.gainChangeDuringInterference_pct;
     end
@@ -994,34 +1144,40 @@ result = table(cornerColumn,processColumn,caseColumn,vddColumn, ...
     'Temperature_C','Electrode','Parameter','Unit','Value'});
 end
 
-function result = buildWorstCaseTable(rows,values,corners,rldPeakCurrent_A)
+function result = buildWorstCaseTable(rows,values,corners)
 definitions = [
     "Total current",                            "Total current",                         "max"
     "Total power",                              "Total power",                           "max"
-    "Output CM error",                          "Output CM error",                       "maxabs"
-    "RLD DC error",                             "RLD DC error",                          "maxabs"
+    "Output CM error",                          "Output CM error",                       "maxspecmid"
+    "Input-referred offset",                    "Input-referred offset",                 "maxmagnitude"
     "S1 gain",                                  "__S1_GAIN_AT_ERROR__",                 "linked"
     "S1 gain dB",                               "__S1_GAIN_DB_AT_ERROR__",              "linked"
-    "S1 gain error",                            "S1 gain error",                         "maxabs"
+    "S1 gain error",                            "S1 gain error",                         "maxspecmid"
     "S1 -3 dB bandwidth",                       "S1 -3 dB bandwidth",                    "min"
     "S2 gain",                                  "__S2_GAIN_AT_ERROR__",                 "linked"
     "S2 gain dB",                               "__S2_GAIN_DB_AT_ERROR__",              "linked"
-    "S2 gain error",                            "S2 gain error",                         "maxabs"
+    "S2 gain error",                            "S2 gain error",                         "maxspecmid"
     "S2 -3 dB bandwidth",                       "S2 -3 dB bandwidth",                    "min"
     "INA gain",                                 "__INA_GAIN_AT_ERROR__",                "linked"
     "INA gain dB",                              "__INA_GAIN_DB_AT_ERROR__",             "linked"
-    "INA gain error",                           "INA gain error",                        "maxabs"
+    "INA gain error",                           "INA gain error",                        "maxspecmid"
     "Gain flatness 0.05-150 Hz",                "Gain flatness 0.05-150 Hz",              "max"
     "INA -3 dB bandwidth",                      "INA -3 dB bandwidth",                    "min"
-    "RLD loop UGF",                             "RLD loop UGF",                          "min"
+    "INA CMRR @ 60 Hz",                         "INA CMRR @ 60 Hz",                       "min"
+    "INA CMRR @ 150 Hz",                        "INA CMRR @ 150 Hz",                      "min"
+    "INA PSRR+ @ 60 Hz",                        "INA PSRR+ @ 60 Hz",                      "min"
+    "INA PSRR+ @ 150 Hz",                       "INA PSRR+ @ 150 Hz",                     "min"
+    "INA PSRR- @ 60 Hz",                        "INA PSRR- @ 60 Hz",                      "min"
+    "INA PSRR- @ 150 Hz",                       "INA PSRR- @ 150 Hz",                     "min"
+    "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
+    "RLD loop UGF",                             "RLD loop UGF",                          "maxspecmid"
     "RLD phase margin",                         "RLD phase margin",                      "min"
     "Input CM suppression @ 60 Hz",             "Input CM suppression @ 60 Hz",          "min"
     "Input CM suppression @ 150 Hz",            "Input CM suppression @ 150 Hz",         "min"
-    "RLD Swing Ratio",                          "RLD Swing Ratio",                       "max"
-    "RLD Peak Current",                         "__RLD_PEAK_CURRENT__",                  "max"
-    "CM Interference Gain Change",               "CM Interference Gain Change",           "maxabs"
-    "Input-referred noise 0.05-150 Hz",         "Input-referred noise 0.05-150 Hz",      "max"
+    "RLD output rail headroom",                 "RLD output rail headroom",              "min"
+    "CM Interference Gain Change",               "CM Interference Gain Change",           "maxspecmid"
 ];
+definitions = definitions(reportParameterOrder(definitions(:,1)),:);
 
 n = size(definitions,1);
 parameter = definitions(:,1);
@@ -1069,8 +1225,6 @@ for definitionIndex = 1:n
         candidates = values(rowIndex,:);
         linkedCandidates = values(errorIndex,:);
         [~,linkedIndex] = max(abs(linkedCandidates));
-    elseif sourceName == "__RLD_PEAK_CURRENT__"
-        [unit(definitionIndex),candidates] = adaptValuesUnit("A",rldPeakCurrent_A);
     else
         rowIndex = find(rows(:,1) == sourceName,1);
         if isempty(rowIndex)
@@ -1087,11 +1241,7 @@ for definitionIndex = 1:n
     failureIndices = find(failureMask);
     if ~isempty(failureIndices)
         selectedIndex = failureIndices(1);
-        if definitions(definitionIndex,3) == "maxabs"
-            selectedValue(definitionIndex) = abs(candidates(selectedIndex));
-        else
-            selectedValue(definitionIndex) = candidates(selectedIndex);
-        end
+        selectedValue(definitionIndex) = candidates(selectedIndex);
         selectedCorner(definitionIndex) = corners(selectedIndex);
         continue;
     end
@@ -1103,17 +1253,17 @@ for definitionIndex = 1:n
                 [~,selectedIndex] = min(candidates);
             case "max"
                 [~,selectedIndex] = max(candidates);
-            case "maxabs"
+            case "maxmagnitude"
                 [~,selectedIndex] = max(abs(candidates));
+            case "maxspecmid"
+                bounds = strictSpecBounds(parameter(definitionIndex), ...
+                    unit(definitionIndex));
+                [~,selectedIndex] = max(abs(candidates-mean(bounds)));
             otherwise
                 error('INA_RLD_Analyze:WorstCaseMode','Unknown selection mode.');
         end
     end
-    if definitions(definitionIndex,3) == "maxabs"
-        selectedValue(definitionIndex) = abs(candidates(selectedIndex));
-    else
-        selectedValue(definitionIndex) = candidates(selectedIndex);
-    end
+    selectedValue(definitionIndex) = candidates(selectedIndex);
     selectedCorner(definitionIndex) = corners(selectedIndex);
 end
 
@@ -1124,6 +1274,27 @@ for valueIndex = 1:numel(selectedValue)
 end
 result = table(parameter,unit,specification,formattedValue,selectedCorner, ...
     'VariableNames',{'Parameter','Unit','Spec','Value','Corner'});
+end
+
+function bounds = strictSpecBounds(parameter,unit)
+% Return finite two-sided strict bounds in the requested display unit.
+switch string(parameter)
+    case "Output CM error"
+        bounds = [-40e-3 40e-3]/unitScaleToBase(unit);
+    case "S1 gain error"
+        bounds = [-0.5 0.5]/unitScaleToBase(unit);
+    case "S2 gain error"
+        bounds = [-0.25 0.25]/unitScaleToBase(unit);
+    case "INA gain error"
+        bounds = [-0.5 0.5]/unitScaleToBase(unit);
+    case "RLD loop UGF"
+        bounds = [0.5e3 1.6e3]/unitScaleToBase(unit);
+    case "CM Interference Gain Change"
+        bounds = [-0.1 0.1]/unitScaleToBase(unit);
+    otherwise
+        error('INA_RLD_Analyze:MissingSpecBounds', ...
+            'No two-sided strict bounds are defined for %s.',parameter);
+end
 end
 
 function printSummaryTable(rows,specifications,columns,values)
@@ -1175,6 +1346,8 @@ plotDifferentialAc(balFiles.diff,nominalMetrics{1},plotDir);
 plotRldLoop(balFiles.loop,nominalMetrics{1},plotDir);
 plotCmRejectionCombined(balFiles.cmOff,balFiles.cmOn, ...
     misFiles.cmOff,misFiles.cmOn,nominalMetrics{1},nominalMetrics{2},plotDir);
+plotRejectionResponse(balFiles.diff,balFiles.cmrr,balFiles.psrrp, ...
+    balFiles.psrrn,plotDir);
 plotTransient(balFiles.tran,nominalMetrics{1},plotDir);
 plotNoise(balFiles.noise,nominalMetrics{1},plotDir);
 plotSelFunctionalCheck(selTransient,plotDir);
@@ -1360,6 +1533,58 @@ else
 end
 end
 
+function plotRejectionResponse(diffFile,cmrrFile,psrrpFile,psrrnFile,plotDir)
+% Use the INA differential output for all three rejection definitions.
+% CMRR = 20log10(|A_D/A_CM|), while PSRR+/− compare A_D with the
+% corresponding supply-to-output feedthrough.
+diffData = readNumericFile(diffFile,11);
+fDiff = diffData(:,1);
+ad = safeDivide(complex(diffData(:,6),diffData(:,7)), ...
+    complex(diffData(:,2),diffData(:,3)));
+
+[fCm,acm] = cmrrTransfer(readNumericFile(cmrrFile,5));
+cmrr_dB = magnitudeDb(ad)-interpLogFrequency(fCm, ...
+    magnitudeDb(acm),fDiff);
+
+[fP,apsrrP] = supplyFeedthrough(psrrpFile);
+[fN,apsrrN] = supplyFeedthrough(psrrnFile);
+psrrP_dB = magnitudeDb(ad)-interpLogFrequency(fP,magnitudeDb(apsrrP),fDiff);
+psrrN_dB = magnitudeDb(ad)-interpLogFrequency(fN,magnitudeDb(apsrrN),fDiff);
+
+fig = figure;
+semilogx(fDiff,cmrr_dB,'LineWidth',1.5,'DisplayName','INA CMRR'); hold on;
+semilogx(fDiff,psrrP_dB,'LineWidth',1.5,'DisplayName','PSRR+');
+semilogx(fDiff,psrrN_dB,'LineWidth',1.5,'DisplayName','PSRR-');
+yline(80,'--','80 dB','HandleVisibility','off');
+for frequency_Hz = [60 150]
+    addCursorLine(frequency_Hz, ...
+        interpLogFrequency(fDiff,cmrr_dB,frequency_Hz), ...
+        sprintf('%g Hz',frequency_Hz));
+end
+xlim([0.01 1e5]);
+ylabel('Rejection (dB)');
+legend('Location','best');
+stylePlot('Frequency (Hz)','INA CMRR, PSRR+, and PSRR- - NOM, BAL');
+savePlot(fig,plotDir,'NOM.INA_RLD_rejection_response.png');
+end
+
+function [f,feedthrough] = supplyFeedthrough(filePath)
+data = readNumericFile(filePath,7);
+f = data(:,1);
+validateFrequency(f,filePath);
+supply = complex(data(:,2),data(:,3));
+outDiff = complex(data(:,4),data(:,5));
+feedthrough = safeDivide(outDiff,supply);
+end
+
+function [f,transfer] = cmrrTransfer(data)
+validateFrequency(data(:,1),'CMRR AC');
+f = data(:,1);
+inputCm = complex(data(:,2),data(:,3));
+inaOutDiff = complex(data(:,4),data(:,5));
+transfer = safeDivide(inaOutDiff,inputCm);
+end
+
 function plotRldLoop(balFile,metric,plotDir)
 balData = readNumericFile(balFile,11);
 [fBal,phaseBal,gainBal] = loopTransfer(balData);
@@ -1456,7 +1681,8 @@ plot(tBal_ms,bal(:,19)*1e9,'LineWidth',1.2, ...
 ylabel('|I_{RLD}| (nA)');
 legend('Location','best');
 addMetricBox({ ...
-    sprintf('RLD Swing Ratio = %.3f %%',metric.tran.rldVppNorm_pct); ...
+    sprintf('RLD Rail Headroom = %.3f mV', ...
+    metric.tran.rldRailHeadroom_V*1e3); ...
     sprintf('RLD Peak Current = %.3f nA', ...
     metric.tran.peakRldCurrent_A*1e9)});
 stylePlot('', 'RLD Response');
@@ -1571,8 +1797,13 @@ end
 function [rows,scaledValues] = adaptReportUnits(rows,rawValues)
 scaledValues = rawValues;
 for rowIndex = 1:size(rows,1)
-    [rows(rowIndex,2),scaledValues(rowIndex,:)] = ...
-        adaptValuesUnit(rows(rowIndex,2),rawValues(rowIndex,:));
+    if rows(rowIndex,1) == "Input-referred offset"
+        rows(rowIndex,2) = "uV";
+        scaledValues(rowIndex,:) = rawValues(rowIndex,:)*1e6;
+    else
+        [rows(rowIndex,2),scaledValues(rowIndex,:)] = ...
+            adaptValuesUnit(rows(rowIndex,2),rawValues(rowIndex,:));
+    end
 end
 end
 

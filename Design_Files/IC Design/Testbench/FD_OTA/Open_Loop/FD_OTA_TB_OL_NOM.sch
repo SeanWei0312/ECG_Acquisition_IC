@@ -16,7 +16,7 @@ N 690 -1180 690 -1160 {lab=AGND}
 N 240 -960 240 -940 {lab=AGND}
 N 240 -820 240 -800 {lab=AGND}
 N 400 -1040 400 -1020 {lab=REF}
-N 400 -960 400 -940 {lab=VREFBIAS}
+N 400 -960 400 -940 {lab=AGND}
 N 640 -1040 640 -1020 {lab=INP}
 N 640 -960 640 -940 {lab=VINCM}
 N 640 -900 640 -880 {lab=INN}
@@ -42,7 +42,6 @@ N 200 -1280 280 -1280 {lab=BP}
 N 320 -1280 340 -1280 {lab=AVDD}
 N 340 -1320 340 -1280 {lab=AVDD}
 N 320 -1320 340 -1320 {lab=AVDD}
-N 200 -1240 240 -1240 {lab=VREFBIAS}
 N 80 -1040 80 -1020 {lab=AVDD}
 N 690 -1360 690 -1340 {lab=AVDD}
 N 480 -1250 480 -1200 {lab=BCMFB}
@@ -338,6 +337,8 @@ value="
 .param TEMP_SET=27
 
 .param VCM_SET=\{VDD_SET/2\}
+.param VREF_SET=\{VDD_SET/2\}
+
 .param CL_SET=40p
 
 .csparam MC_RUNS=200
@@ -354,9 +355,9 @@ C {lab_wire.sym} 80 -900 0 0 {name=p8 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 690 -1160 2 1 {name=p9 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 240 -800 2 0 {name=p10 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 240 -940 2 0 {name=p11 sig_type=std_logic lab=AGND}
-C {vsource.sym} 400 -990 0 0 {name=VREFSTEP value="dc 0 ac 0" savecurrent=false}
+C {vsource.sym} 400 -990 0 0 {name=VREFSTEP value="dc \{VREF_SET\} ac 0" savecurrent=false}
 C {lab_wire.sym} 400 -1040 0 0 {name=p22 sig_type=std_logic lab=REF}
-C {lab_wire.sym} 400 -940 2 0 {name=p25 sig_type=std_logic lab=VREFBIAS}
+C {lab_wire.sym} 400 -940 2 0 {name=p25 sig_type=std_logic lab=AGND}
 C {vcvs.sym} 640 -990 0 0 {name=EINP value=0.5}
 C {vcvs.sym} 640 -850 0 0 {name=EINN value=-0.5}
 C {lab_wire.sym} 640 -1040 0 0 {name=p14 sig_type=std_logic lab=INP}
@@ -408,7 +409,6 @@ spiceprefix=X
 }
 C {lab_wire.sym} 320 -1360 0 0 {name=p34 sig_type=std_logic lab=AVDD}
 C {lab_wire.sym} 320 -1200 2 1 {name=p35 sig_type=std_logic lab=BFDC}
-C {lab_wire.sym} 240 -1240 0 1 {name=p36 sig_type=std_logic lab=VREFBIAS}
 C {lab_wire.sym} 240 -1280 0 1 {name=p37 sig_type=std_logic lab=BP}
 C {lab_wire.sym} 80 -1040 0 0 {name=p38 sig_type=std_logic lab=AVDD}
 C {lab_wire.sym} 690 -1360 0 0 {name=p39 sig_type=std_logic lab=AVDD}
