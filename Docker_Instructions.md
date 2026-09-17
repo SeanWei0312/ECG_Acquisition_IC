@@ -1,6 +1,6 @@
-# SSCS Chipathon 2026 Docker Instructions
+# ECG Acquisition IC Simulation Environment
 
-Use these commands to start, check, stop, and delete the SSCS Chipathon 2026 Docker containers.
+Use these commands to start, check, stop, and remove the IIC-OSIC-TOOLS `chipathon26` Docker containers used by this project.
 
 The `DESIGNS` folder is shared into Docker as:
 
@@ -13,7 +13,7 @@ The `DESIGNS` folder is shared into Docker as:
 ### Windows PowerShell
 
 ```powershell
-cd "D:\Documents\GitHub\ECG_Acquisition_IC\2026-sscs-chipathon\resources\IIC-OSIC-TOOLS"
+cd "D:\Documents\GitHub\ECG_Acquisition_IC\Simulation_Environment\IIC-OSIC-TOOLS"
 $env:DESIGNS="D:\Documents\GitHub"
 .\start_chipathon_vnc.bat
 ```
@@ -21,7 +21,7 @@ $env:DESIGNS="D:\Documents\GitHub"
 ### Mac Terminal
 
 ```bash
-cd /Users/sean/Documents/GitHub/ECG_Acquisition_IC/2026-sscs-chipathon/resources/IIC-OSIC-TOOLS
+cd /Users/sean/Documents/GitHub/ECG_Acquisition_IC/Simulation_Environment/IIC-OSIC-TOOLS
 export DESIGNS="/Users/sean/Documents/GitHub"
 ./start_chipathon_vnc.sh
 ```

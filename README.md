@@ -132,7 +132,11 @@ ECG_Acquisition_IC/
 │       ├── LPF/
 │       ├── PGA/
 │       └── SE_OTA/
-└── 2026-sscs-chipathon/             # Upstream Chipathon reference snapshot
+└── Simulation_Environment/                  # Minimal IIC-OSIC-TOOLS launch environment
+    ├── IIC-OSIC-TOOLS/
+    ├── LICENSE
+    ├── NOTICE
+    └── README.md
 ```
 
 ## Reproducing the reports
