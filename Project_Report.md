@@ -56,32 +56,230 @@ All 18 blocks stored under `SAR_ADC_BLOCKS` are reachable from the top level. Sc
 
 ## 3. Nominal and worst-case block results
 
-This system report intentionally retains only nominal and limiting full-PVT results. Complete corner tables, all 45 combined PVT cases, MM/GL/FULL Monte Carlo statistics, and plots remain in the linked block reports.
+Each completed block has one table containing every parameter exported by its analyzer. NOM is the nominal-process, nominal-supply, 27°C result. Worst case is the limiting value selected across all 45 combined PVT corners; descriptive rows retain the analyzer-selected extremum without a pass/fail limit.
 
-| Block | Metric | Specification | NOM | Worst case | Corner |
-| :--- | :--- | :---: | ---: | ---: | :---: |
-| BIAS / SEL | Reference current | 40 µA target | 39.997 µA | 49.441 µA (+23.603%) | `FF`, +125°C, 3.6 V |
-|  | Startup settling | Report | 807.362 µs | 1180.281 µs | `SS`, −40°C, 3.0 V |
-| SE OTA | DC gain | ≥88 dB | 96.522 dB | 93.988 dB | `FSVLTH` |
-|  | UGF | ≥8 MHz | 12.835 MHz | 8.762 MHz | `SSVLTH` |
-|  | Phase margin | ≥55° | 67.767° | 56.368° | `FFVLTH` |
-|  | Input noise, 0.05–150 Hz | ≤2.5 µVrms | 1.873 µVrms | 2.189 µVrms | `SSVLTH` |
-| FD OTA | Differential gain | ≥85 dB | 88.699 dB | 86.753 dB | `FSVLTH` |
-|  | Differential UGF | ≥8 MHz | 12.447 MHz | 8.435 MHz | `SSVLTH` |
-|  | Differential phase margin | ≥60° | 72.649° | 63.377° | `FFVLTH` |
-|  | Input noise, 0.05–150 Hz | ≤4 µVrms | 3.086 µVrms | 3.514 µVrms | `SSVHTH` |
-| INA + RLD | INA gain error | ±0.5% | 0.011% | −0.215% | `FFVLTL` |
-|  | INA bandwidth | ≥150 kHz | 259.286 kHz | 176.996 kHz | `SSVLTH` |
-|  | Input noise, 0.05–150 Hz | ≤4 µVrms | 2.667 µVrms | 3.117 µVrms | `SSVLTH` |
-|  | CM suppression, 60 / 150 Hz | ≥50 / 45 dB | 55.072 / 53.257 dB | 54.644 / 51.676 dB | `SSVLTL` |
-| LPF | Passband gain error | ±0.5% | −0.027% | −0.050% | `SSVLTL` |
-|  | −1 dB frequency | ≥150 Hz | 258.691 Hz | 174.135 Hz | `SSVHTL` |
-|  | Input noise, 0.05–150 Hz | ≤10 µVrms | 6.176 µVrms | 7.036 µVrms | `SSVHTH` |
-| PGA | Gain error | ±5% | +0.751% (G2) | +2.502% (G2) | `SSVLTH` |
-|  | −3 dB bandwidth | ≥0.15 MHz | 0.907 MHz (G16) | 0.595 MHz (G16) | `SSVLTH` |
-|  | Input noise, 0.05–150 Hz | ≤10 µVrms | 4.617 µVrms (G2) | 5.250 µVrms (G2) | `SSVHTH` |
+### 3.1 BIAS / SEL
 
-The buffer, integrated AFE, and SAR ADC are excluded from this result table because formal signoff results are not yet available.
+[Detailed BIAS / SEL report](Report/AFE_BLOCKS/BIAS_Report.md)
+
+| Parameter | Unit | Specification | NOM | Worst case | Corner / condition |
+| :--- | :---: | :---: | ---: | ---: | :--- |
+| Reference current, $I_{bias}$ | µA | 40 target | 39.997 | 31.054–49.441 | SS, −40°C, 3.0 V / FF, +125°C, 3.6 V |
+| Reference-current error | % | Report | −0.007499 | 23.603 maximum absolute | FF, +125°C, 3.6 V |
+| Mirror current, $I_{RS}$ | µA | Report | 39.998 | 31.076–49.413 | SS, −40°C, 3.0 V / FF, +125°C, 3.6 V |
+| Mirror tracking error | % | Report | −0.002826 | 0.149 maximum absolute | FS, +125°C, 3.0 V |
+| BP voltage | V | Report | 1.643 | 1.138–2.146 | FS, +125°C, 3.0 V / SF, −40°C, 3.6 V |
+| VREF | V | Report | 1.650 | 1.500–1.800 | VL / VH |
+| VREF error | µV | Report | −4.170 | 6.154 maximum absolute | SS, −40°C, 3.6 V |
+| Startup-device current, $I_{MST}$ | fA | Report | 2.083e−08 | 0.7394 maximum | FF, +125°C, 3.6 V |
+| Startup-device margin | V | Report | 1.541 | 0.7415 minimum | FF, +125°C, 3.6 V |
+| Supply current | µA | Report | 83.192 | 103.971 maximum | FF, +125°C, 3.6 V |
+| Power | µW | Report | 274.532 | 374.297 maximum | FF, +125°C, 3.6 V |
+| Startup time | µs | Report | 807.362 | 1180.281 maximum | SS, −40°C, 3.0 V |
+| Startup failures | count | 0 | 0 | 0 of 35 | All startup cases |
+| Temperature coefficient | ppm/°C | Report | 1184.627 | 1223.228 maximum | FF |
+| Temperature variation | % | Report | 19.546 | 20.183 maximum | FF |
+| Line regulation | %/V | Report | 4.290 | 5.185 maximum | SS |
+| Supply variation | % | Report | 2.574 | 3.111 maximum | SS |
+| BP internal-selector error | nV | Report | — | 12.495 maximum absolute | SF, VH |
+| BP external-selector error | nV | Report | — | 25.466 maximum absolute | SS, TH |
+| VREF internal-selector error | nV | Report | — | 18.749 maximum absolute | SS, VL |
+| VREF external-selector error | nV | Report | — | 10.951 maximum absolute | SS, VL |
+
+### 3.2 SE OTA
+
+[Detailed SE OTA report](Report/AFE_BLOCKS/SEOTA_Report.md)
+
+| Parameter | Unit | Specification | NOM | Worst case | Corner |
+| :--- | :---: | :---: | ---: | ---: | :---: |
+| Bias current | µA | 40±10 | 40.092 | 49.581 | `FFVHTH` |
+| Total current | mA | ≤1.25 | 0.825 | 1.106 | `FFVHTH` |
+| Total power | mW | ≤4.5 | 2.721 | 3.982 | `FFVHTH` |
+| DC gain | dB | ≥88 | 96.522 | 93.988 | `FSVLTH` |
+| UGF | MHz | ≥8 | 12.835 | 8.762 | `SSVLTH` |
+| Phase margin | ° | ≥55 | 67.767 | 56.368 | `FFVLTH` |
+| Input offset | µV | ±2000 | 3.193 | 12.092 | `FSVLTH` |
+| CMRR @ 60 Hz | dB | ≥105 | 111.957 | 109.711 | `SSVLTH` |
+| CMRR @ 150 Hz | dB | ≥105 | 111.957 | 109.711 | `SSVLTH` |
+| PSRR+ @ 60 Hz | dB | ≥100 | 103.379 | 101.385 | `SSVLTL` |
+| PSRR+ @ 150 Hz | dB | ≥95 | 99.232 | 96.565 | `SSVLTH` |
+| PSRR- @ 60 Hz | dB | ≥100 | 103.379 | 101.385 | `SSVLTL` |
+| PSRR- @ 150 Hz | dB | ≥95 | 99.232 | 96.565 | `SSVLTH` |
+| Input-referred noise 0.05-150 Hz | µVrms | ≤2.5 | 1.873 | 2.189 | `SSVLTH` |
+| Closed-loop gain | dB | Report | −1.042e−04 | −9.346e−05 | `FFVHNOM` |
+| Gain error | % | ±0.01 | −0.001 | −0.001 | `FSVLTH` |
+| Vout,DC error | µV | ±2000 | −3.192 | −12.092 | `FSVLTH` |
+| Input low | mV | ≤600 | 106.000 | 429.000 | `SSVHTL` |
+| Input high | V | ≥2.75 | 3.237 | 2.815 | `FSVLTH` |
+| Input high headroom | mV | ≤250 | 63.000 | 185.000 | `FSVLTH` |
+| Output low | mV | ≤600 | 107.816 | 430.970 | `SSVHTL` |
+| Output high | V | ≥2.75 | 3.235 | 2.813 | `FSVLTH` |
+| Output high headroom | mV | ≤250 | 64.870 | 187.000 | `FSVLTH` |
+| SR rise | V/µs | ≥6.5 | 9.814 | 6.927 | `SSVLTL` |
+| SR fall | V/µs | ≥5.0 | 7.966 | 5.636 | `SSVLTL` |
+| Settling time | ns | ≤225 | 163.400 | 213.400 | `SSVLTL` |
+
+### 3.3 FD OTA
+
+[Detailed FD OTA report](Report/AFE_BLOCKS/FDOTA_Report.md)
+
+| Parameter | Unit | Specification | NOM | Worst case | Corner |
+| :--- | :---: | :---: | ---: | ---: | :---: |
+| FDC bias current | µA | 40±10 | 40.092 | 49.581 | `FFVHTH` |
+| CMFB bias current | µA | 40±10 | 40.092 | 49.581 | `FFVHTH` |
+| Total current | mA | ≤2.5 | 1.604 | 2.194 | `FFVHTH` |
+| Total power | mW | ≤9 | 5.293 | 7.900 | `FFVHTH` |
+| Differential DC gain | dB | ≥85 | 88.699 | 86.753 | `FSVLTH` |
+| Differential UGF | MHz | ≥8 | 12.447 | 8.435 | `SSVLTH` |
+| Differential phase margin | ° | ≥60 | 72.649 | 63.377 | `FFVLTH` |
+| Input differential offset | µV | ±3000 | −0.000 | 0.000 | `SFVHNOM` |
+| CMRR @ 60 Hz | dB | ≥80 | 285.310 | 206.691 | `SFNOMTL` |
+| CMRR @ 150 Hz | dB | ≥80 | 285.322 | 206.691 | `SFNOMTL` |
+| PSRR+ @ 60 Hz | dB | ≥80 | 266.685 | 193.356 | `SFNOMTL` |
+| PSRR+ @ 150 Hz | dB | ≥80 | 258.182 | 193.357 | `SFNOMTL` |
+| PSRR- @ 60 Hz | dB | ≥80 | 282.569 | 204.631 | `SFNOMTL` |
+| PSRR- @ 150 Hz | dB | ≥80 | 277.076 | 204.630 | `SFNOMTL` |
+| Input-referred noise 0.05-150 Hz | µVrms | ≤4 | 3.086 | 3.514 | `SSVHTH` |
+| Closed-loop differential gain | dB | Report | −3.190e−04 | −2.802e−04 | `SFVHTL` |
+| Gain error | % | ±0.01 | −0.004 | −0.005 | `FSVLTH` |
+| Output common mode, DC | V | Report | 1.650 | 1.813 | `SSVHTH` |
+| Output CM error | mV | ±25 | 0.395 | 12.643 | `SSVHTH` |
+| Input CM low | mV | ≤1000 | 870.000 | 975.000 | `SSVHNOM` |
+| Input CM high | V | ≥2.3 | 3.300 | 2.740 | `FSVLTH` |
+| Input CM high headroom | mV | Report | 0.000 | 260.000 | `FSVLTH` |
+| Differential output swing low | V | ≤-1.8 | −3.188 | −2.803 | `FSVLTH` |
+| Differential output swing high | V | ≥1.8 | 3.188 | 2.803 | `FSVLTH` |
+| Differential SR rise | V/µs | ≥4 | 7.232 | 5.135 | `SSVLTL` |
+| Differential SR fall | V/µs | ≥4 | 7.232 | 5.135 | `SSVLTL` |
+| Differential settling time | ns | ≤300 | 149.698 | 234.856 | `SSVLTL` |
+| Differential-step CM disturbance | mV | ≤60 | 30.247 | 40.985 | `SSVLTH` |
+| CMFB SR rise | V/µs | ≥2 | 3.589 | 2.499 | `SSVLTL` |
+| CMFB SR fall | V/µs | ≥2 | 3.526 | 2.613 | `SSVLTH` |
+| CMFB settling time | ns | ≤1000 | 329.729 | 404.130 | `SSVLTL` |
+
+### 3.4 INA + RLD
+
+[Detailed INA + RLD report](Report/AFE_BLOCKS/INA_RLD_Report.md)
+
+| Parameter | Unit | Specification | NOM | Worst case | Corner |
+| :--- | :---: | :---: | ---: | ---: | :---: |
+| Total current | mA | ≤6.2 | 3.860 | 5.300 | `FFVHTH` |
+| Total power | mW | ≤22 | 12.738 | 19.079 | `FFVHTH` |
+| Output CM error | mV | ±40 | 0.395 | 12.649 | `SSVHTH` |
+| Input-referred offset | µV | ±2000 | 0.000 | 0.002 | `SSVLTH` |
+| S1 gain | V/V | Report | 60.006 | 59.902 | `FFVLTL` |
+| S1 gain dB | dB | Report | 35.564 | 35.549 | `FFVLTL` |
+| S1 gain error | % | ±0.5 | 0.009 | −0.163 | `FFVLTL` |
+| S1 -3 dB bandwidth | kHz | ≥150 | 261.757 | 178.688 | `SSVLTH` |
+| S2 gain | V/V | Report | 4.000 | 3.998 | `FFVLTL` |
+| S2 gain dB | dB | Report | 12.041 | 12.037 | `FFVLTL` |
+| S2 gain error | % | ±0.25 | 0.002 | −0.052 | `FFVLTL` |
+| S2 -3 dB bandwidth | MHz | ≥1.5 | 2.647 | 1.793 | `SSVLTH` |
+| INA gain | V/V | Report | 240.027 | 239.484 | `FFVLTL` |
+| INA gain dB | dB | Report | 47.605 | 47.586 | `FFVLTL` |
+| INA gain error | % | ±0.5 | 0.011 | −0.215 | `FFVLTL` |
+| Gain flatness 0.05-150 Hz | dB | ≤0.1 | 1.432e−06 | 3.079e−06 | `SSVLTH` |
+| INA -3 dB bandwidth | kHz | ≥150 | 259.286 | 176.996 | `SSVLTH` |
+| INA CMRR @ 60 Hz | dB | ≥80 | 225.384 | 204.344 | `SSNOMTH` |
+| INA CMRR @ 150 Hz | dB | ≥80 | 225.265 | 203.835 | `SSNOMTH` |
+| INA PSRR+ @ 60 Hz | dB | ≥80 | 200.677 | 185.924 | `NOMVHTL` |
+| INA PSRR+ @ 150 Hz | dB | ≥80 | 200.748 | 182.098 | `SSNOMNOM` |
+| INA PSRR- @ 60 Hz | dB | ≥80 | 216.490 | 201.470 | `SSVLTH` |
+| INA PSRR- @ 150 Hz | dB | ≥80 | 216.000 | 201.309 | `SSVLTH` |
+| Input-referred noise 0.05-150 Hz | µVrms | ≤4 | 2.667 | 3.117 | `SSVLTH` |
+| RLD loop UGF | kHz | 1.05±0.55 | 0.946 | 1.502 | `FFVHTH` |
+| RLD phase margin | ° | ≥60 | 100.672 | 100.092 | `FFVLTH` |
+| Input CM suppression @ 60 Hz | dB | ≥50 | 55.072 | 54.644 | `SSVLTL` |
+| Input CM suppression @ 150 Hz | dB | ≥45 | 53.257 | 51.676 | `SSVLTL` |
+| RLD output rail headroom | V | ≥0.1 | 1.647 | 1.497 | `FFVLTH` |
+| CM Interference Gain Change | % | ±0.1 | −3.724e−05 | 6.725e−04 | `SSVHTL` |
+
+### 3.5 LPF
+
+[Detailed LPF report](Report/AFE_BLOCKS/LPF_Report.md)
+
+| Parameter | Unit | Specification | NOM | Worst case | Corner |
+| :--- | :---: | :---: | ---: | ---: | :---: |
+| FDC bias current | µA | 40±10 | 40.092 | 49.581 | `FFVHTH` |
+| CMFB bias current | µA | 40±10 | 40.092 | 49.581 | `FFVHTH` |
+| Total current | mA | ≤2.5 | 1.604 | 2.194 | `FFVHTH` |
+| Total power | mW | ≤9 | 5.293 | 7.900 | `FFVHTH` |
+| Output CM error | mV | ±25 | 0.395 | 12.659 | `SSVHTH` |
+| LPF input offset | mV | ±6 | 0.000 | −0.000 | `SFVLTH` |
+| Passband gain | V/V | Report | 1.000 | 0.999 | `SSVLTL` |
+| Passband gain error | % | ±0.5 | −0.027 | −0.050 | `SSVLTL` |
+| Loss @ 150 Hz | dB | Report | 0.361 | 0.762 | `SSVHTL` |
+| LPF -1 dB frequency | Hz | ≥150 | 258.691 | 174.135 | `SSVHTL` |
+| LPF -3 dB frequency | Hz | Report | 506.912 | 340.986 | `SSVHTL` |
+| CMRR @ 60 Hz | dB | ≥80 | 245.253 | 218.616 | `SSVHNOM` |
+| CMRR @ 150 Hz | dB | ≥80 | 245.225 | 218.582 | `SSVLNOM` |
+| PSRR+ @ 60 Hz | dB | ≥80 | 191.538 | 190.541 | `SSVHNOM` |
+| PSRR+ @ 150 Hz | dB | ≥80 | 257.637 | 189.146 | `SSVLTH` |
+| PSRR- @ 60 Hz | dB | ≥80 | 234.605 | 204.439 | `SSVLNOM` |
+| PSRR- @ 150 Hz | dB | ≥80 | 236.558 | 204.885 | `SSVLNOM` |
+| Input-referred noise 0.05-150 Hz | µVrms | ≤10 | 6.176 | 7.036 | `SSVHTH` |
+
+### 3.6 PGA
+
+[Detailed PGA report](Report/AFE_BLOCKS/PGA_Report.md)
+
+| Parameter | Unit | Specification | NOM | Worst case | Corner |
+| :--- | :---: | :---: | ---: | ---: | :---: |
+| FDC bias current | µA | 40±10 | 40.092 | 49.581 | `FFVHTH` |
+| CMFB bias current | µA | 40±10 | 40.092 | 49.581 | `FFVHTH` |
+| Total current | mA | ≤2.5 | 1.604 | 2.195 | `FFVHTH` |
+| Total power | mW | ≤9 | 5.293 | 7.901 | `FFVHTH` |
+| Output CM error | mV | ±20 | 0.395 | 12.654 | `SSVHTH` |
+| G2 input offset | mV | ±5 | 2.329e−08 | −7.953e−07 | `NOMVLTH` |
+| G2 gain @ 10 Hz | V/V | Report | 2.015 | 2.050 | `SSVLTH` |
+| G2 gain @ 150 Hz | V/V | Report | 2.015 | 2.050 | `SSVLTH` |
+| G2 gain error | % | ±5 | 0.751 | 2.502 | `SSVLTH` |
+| G2 -3 dB bandwidth | MHz | ≥0.15 | 5.053 | 3.307 | `SSVLTH` |
+| G2 CMRR @ 60 Hz | dB | ≥80 | 256.698 | 222.787 | `NOMVLTH` |
+| G2 CMRR @ 150 Hz | dB | ≥80 | 256.479 | 222.782 | `NOMVLTH` |
+| G2 PSRR+ @ 60 Hz | dB | ≥80 | 246.395 | 215.788 | `FSVLNOM` |
+| G2 PSRR+ @ 150 Hz | dB | ≥80 | 246.262 | 215.788 | `FSVLNOM` |
+| G2 PSRR- @ 60 Hz | dB | ≥80 | 234.094 | 214.207 | `FSVLNOM` |
+| G2 PSRR- @ 150 Hz | dB | ≥80 | 232.714 | 214.031 | `FSVLNOM` |
+| G2 input-referred noise 0.05-150 Hz | µVrms | ≤10 | 4.617 | 5.250 | `SSVHTH` |
+| G4 input offset | mV | ±5 | −6.921e−08 | −5.292e−07 | `SFNOMTL` |
+| G4 gain @ 10 Hz | V/V | Report | 3.991 | 3.983 | `FFVHTL` |
+| G4 gain @ 150 Hz | V/V | Report | 3.991 | 3.983 | `FFVHTL` |
+| G4 gain error | % | ±5 | −0.236 | −0.419 | `FFVHTL` |
+| G4 -3 dB bandwidth | MHz | ≥0.15 | 3.025 | 1.995 | `SSVLTH` |
+| G4 CMRR @ 60 Hz | dB | ≥80 | 226.805 | 215.757 | `SSNOMTH` |
+| G4 CMRR @ 150 Hz | dB | ≥80 | 220.287 | 218.204 | `SFNOMTL` |
+| G4 PSRR+ @ 60 Hz | dB | ≥80 | 236.682 | 228.453 | `FSVLNOM` |
+| G4 PSRR+ @ 150 Hz | dB | ≥80 | 236.710 | 228.462 | `FSVLNOM` |
+| G4 PSRR- @ 60 Hz | dB | ≥80 | 217.577 | 207.743 | `SSVHTH` |
+| G4 PSRR- @ 150 Hz | dB | ≥80 | 211.726 | 210.543 | `FSVLNOM` |
+| G4 input-referred noise 0.05-150 Hz | µVrms | ≤10 | 3.859 | 4.394 | `SSVHTH` |
+| G8 input offset | mV | ±5 | 9.462e−07 | 9.462e−07 | `NOMNOMNOM` |
+| G8 gain @ 10 Hz | V/V | Report | 7.958 | 7.942 | `FFVHTL` |
+| G8 gain @ 150 Hz | V/V | Report | 7.958 | 7.942 | `FFVHTL` |
+| G8 gain error | % | ±5 | −0.522 | −0.721 | `FFVHTL` |
+| G8 -3 dB bandwidth | MHz | ≥0.15 | 2.070 | 1.281 | `SSVLTH` |
+| G8 CMRR @ 60 Hz | dB | ≥80 | 211.955 | 184.741 | `NOMVHNOM` |
+| G8 CMRR @ 150 Hz | dB | ≥80 | 218.025 | 184.550 | `NOMVHNOM` |
+| G8 PSRR+ @ 60 Hz | dB | ≥80 | 231.664 | 223.246 | `SSVLTH` |
+| G8 PSRR+ @ 150 Hz | dB | ≥80 | 231.658 | 223.229 | `SSVLTH` |
+| G8 PSRR- @ 60 Hz | dB | ≥80 | 207.945 | 181.216 | `NOMVHNOM` |
+| G8 PSRR- @ 150 Hz | dB | ≥80 | 213.545 | 181.026 | `NOMVHNOM` |
+| G8 input-referred noise 0.05-150 Hz | µVrms | ≤10 | 3.473 | 3.955 | `SSVHTH` |
+| G16 input offset | mV | ±5 | 3.383e−07 | −6.475e−07 | `NOMVHTH` |
+| G16 gain @ 10 Hz | V/V | Report | 15.860 | 15.851 | `FFVLTL` |
+| G16 gain @ 150 Hz | V/V | Report | 15.860 | 15.851 | `FFVLTL` |
+| G16 gain error | % | ±5 | −0.878 | −0.932 | `FFVLTL` |
+| G16 -3 dB bandwidth | MHz | ≥0.15 | 0.907 | 0.595 | `SSVLTH` |
+| G16 CMRR @ 60 Hz | dB | ≥80 | 188.992 | 188.991 | `NOMVHNOM` |
+| G16 CMRR @ 150 Hz | dB | ≥80 | 188.555 | 188.546 | `FSVHNOM` |
+| G16 PSRR+ @ 60 Hz | dB | ≥80 | 269.035 | 248.314 | `FFVLTH` |
+| G16 PSRR+ @ 150 Hz | dB | ≥80 | 267.726 | 248.353 | `FFVLTH` |
+| G16 PSRR- @ 60 Hz | dB | ≥80 | 186.022 | 186.020 | `FSVHNOM` |
+| G16 PSRR- @ 150 Hz | dB | ≥80 | 185.643 | 185.634 | `FSVHNOM` |
+| G16 input-referred noise 0.05-150 Hz | µVrms | ≤10 | 3.280 | 3.736 | `SSVHTH` |
+
+The buffer, integrated AFE, and SAR ADC are not assigned result tables because their formal analyzer outputs are still pending. Their detailed reports list the available design files, raw data, and required completion work.
 
 ## 4. Verification coverage
 
