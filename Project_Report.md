@@ -117,9 +117,13 @@ The master bias network targets 40 µA and has been characterized over process, 
 | Metric | Nominal | Verified range / worst case |
 | :--- | ---: | ---: |
 | Reference current | 39.997 µA | 31.054–49.441 µA |
-| Startup settling | 158.4 µs | 1180.28 µs maximum |
+| Bias-network current | 83.192 µA | 103.971 µA maximum |
+| Bias-network power | 274.532 µW | 374.297 µW maximum |
+| Startup settling | 807.362 µs | 1180.281 µs maximum |
 | Startup failures | 0 | 0 of 35 |
-| Selector transmission error | 0.025 µV | 25.466 nV maximum |
+| Reference error | −4.170 µV | 6.154 µV maximum absolute error |
+| Mirror tracking error | −0.0028% | 0.149% maximum absolute error |
+| Selector transmission error | — | 25.466 nV maximum |
 
 ![Bias startup](Measurement_Results/IC_Simulation/BIAS/Plots/NOM_BIAS_STARTUP.png)
 
@@ -133,10 +137,14 @@ The master bias network targets 40 µA and has been characterized over process, 
 | DC gain | ≥88 dB | 96.522 dB | 93.988 dB | `FSVLTH` |
 | UGF | ≥8 MHz | 12.835 MHz | 8.762 MHz | `SSVLTH` |
 | Phase margin | ≥55° | 67.767° | 56.368° | `FFVLTH` |
+| Input offset | ±2 mV | 3.193 µV | 12.092 µV | `FSVLTH` |
 | CMRR at 60 Hz | ≥105 dB | 111.957 dB | 109.711 dB | `SSVLTH` |
+| PSRR+ at 60 / 150 Hz | ≥100 / 95 dB | 103.379 / 99.232 dB | 101.385 / 96.565 dB | `SSVLTL` / `SSVLTH` |
 | Input noise, 0.05–150 Hz | ≤2.5 µVrms | 1.873 µVrms | 2.189 µVrms | `SSVLTH` |
 | Slew rate, rise / fall | ≥6.5 / 5.0 V/µs | 9.814 / 7.966 V/µs | 6.927 / 5.636 V/µs | `SSVLTL` |
 | Settling time | ≤225 ns | 163.4 ns | 213.4 ns | `SSVLTL` |
+
+The 200-run FULL Monte Carlo set also passes every formal limit. Observed input offset spans −970.439 to +1177.630 µV, DC gain remains above 95.488 dB, UGF remains above 11.764 MHz, and phase margin remains above 64.231°. The fitted input-offset interval is approximately −1.234 to +1.243 mV at $\mu\pm3\sigma$, within the ±2 mV requirement.
 
 ![SE OTA open-loop response](Measurement_Results/IC_Simulation/SE_OTA/Plots/NOM.open_loop_gain_phase.png)
 
@@ -150,11 +158,20 @@ The master bias network targets 40 µA and has been characterized over process, 
 | Differential gain | ≥85 dB | 88.699 dB | 86.753 dB | `FSVLTH` |
 | Differential UGF | ≥8 MHz | 12.447 MHz | 8.435 MHz | `SSVLTH` |
 | Differential phase margin | ≥60° | 72.649° | 63.377° | `FFVLTH` |
+| Differential input offset | ±3 mV | −0.000 µV | 0.000 µV | `SFVHNOM` |
 | Output CM error | ±25 mV | 0.395 mV | 12.643 mV | `SSVHTH` |
+| CMRR at 60 / 150 Hz | ≥80 / 80 dB | 285.310 / 285.322 dB | 206.691 / 206.691 dB | `SFNOMTL` |
+| PSRR+ at 60 / 150 Hz | ≥80 / 80 dB | 266.685 / 258.182 dB | 193.356 / 193.357 dB | `SFNOMTL` |
 | Input noise, 0.05–150 Hz | ≤4 µVrms | 3.086 µVrms | 3.514 µVrms | `SSVHTH` |
 | Differential output swing | ≥±1.8 V | ±3.188 V | ±2.803 V | `FSVLTH` |
+| Differential slew rate | ≥4 V/µs | 7.232 V/µs | 5.135 V/µs | `SSVLTL` |
 | Differential settling | ≤300 ns | 149.7 ns | 234.9 ns | `SSVLTL` |
+| Differential-step CM disturbance | ≤60 mV | 30.247 mV | 40.985 mV | `SSVLTH` |
 | CMFB settling | ≤1000 ns | 329.7 ns | 404.1 ns | `SSVLTL` |
+
+The 200-run FULL Monte Carlo set passes every formal limit. Observed differential input offset spans −2.096 to +2.354 mV against the ±3 mV specification. Differential gain remains above 87.784 dB, UGF above 11.307 MHz, phase margin above 68.996°, and output common-mode error remains between −9.947 and +13.681 mV.
+
+Nominal internal checks place the standalone differential core at 90.090 dB gain, 12.489 MHz UGF, and 72.529° phase margin. The CMFB amplifier has 45.128 dB gain, 966.924 MHz UGF, 71.906° phase margin, and 4.8–5.2 ns closed-loop settling in its dedicated testbench.
 
 ![FD OTA open-loop response](Measurement_Results/IC_Simulation/FD_OTA/Plots/NOM.open_loop_gain_phase.png)
 
@@ -167,17 +184,24 @@ The balanced INA+RLD report contains formal limits for operating point, offset, 
 | Metric | Specification | Nominal | Full-PVT worst case | Corner |
 | :--- | :---: | ---: | ---: | :---: |
 | Total current / power | ≤6.2 mA / ≤22 mW | 3.860 mA / 12.738 mW | 5.300 mA / 19.079 mW | `FFVHTH` |
+| Output CM error | ±40 mV | 0.395 mV | 12.649 mV | `SSVHTH` |
 | Input-referred offset | ±2 mV | 0.000 µV | 0.002 µV | `SSVLTH` |
 | S1 gain error | ±0.5% | 0.009% | −0.163% | `FFVLTL` |
 | S2 gain error | ±0.25% | 0.002% | −0.052% | `FFVLTL` |
 | INA gain error | ±0.5% | 0.011% | −0.215% | `FFVLTL` |
+| Gain flatness, 0.05–150 Hz | ≤0.1 dB | $1.432\times10^{-6}$ dB | $3.079\times10^{-6}$ dB | `SSVLTH` |
 | INA bandwidth | ≥150 kHz | 259.286 kHz | 176.996 kHz | `SSVLTH` |
 | INA CMRR, 60 / 150 Hz | ≥80 / 80 dB | 225.384 / 225.265 dB | 204.344 / 203.835 dB | `SSNOMTH` |
+| INA PSRR+, 60 / 150 Hz | ≥80 / 80 dB | 200.677 / 200.748 dB | 185.924 / 182.098 dB | `NOMVHTL` / `SSNOMNOM` |
+| INA PSRR−, 60 / 150 Hz | ≥80 / 80 dB | 216.490 / 216.000 dB | 201.470 / 201.309 dB | `SSVLTH` |
 | Input noise, 0.05–150 Hz | ≤4 µVrms | 2.667 µVrms | 3.117 µVrms | `SSVLTH` |
 | RLD UGF | 0.5–1.6 kHz | 0.946 kHz | 1.502 kHz | `FFVHTH` |
 | RLD phase margin | ≥60° | 100.672° | 100.092° | `FFVLTH` |
 | CM suppression, 60 / 150 Hz | ≥50 / 45 dB | 55.072 / 53.257 dB | 54.644 / 51.676 dB | `SSVLTL` |
 | RLD rail headroom | ≥0.1 V | 1.647 V | 1.497 V | `FFVLTH` |
+| CM-interference gain change | ±0.1% | $-3.724\times10^{-5}$% | $6.725\times10^{-4}$% | `SSVHTL` |
+
+The 200-run FULL Monte Carlo set passes every formal limit. Observed input-referred offset spans −1.448 to +1.849 mV, INA gain error spans −0.378% to +0.324%, and the minimum sampled CMRR is 95.303 dB. RLD UGF spans 0.820–1.086 kHz, phase margin remains above 100.504°, and common-mode suppression remains above 54.959 dB at 60 Hz and 52.789 dB at 150 Hz.
 
 ![INA differential response](Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_differential_ac.png)
 
@@ -198,7 +222,12 @@ The LPF uses the −1 dB frequency as its formal signal-band criterion. Loss at 
 | Loss at 150 Hz | Report only | 0.361 dB | 0.762 dB | `SSVHTL` |
 | −1 dB frequency | ≥150 Hz | 258.691 Hz | 174.135 Hz | `SSVHTL` |
 | −3 dB frequency | Report only | 506.912 Hz | 340.986 Hz | `SSVHTL` |
+| CMRR, 60 / 150 Hz | ≥80 / 80 dB | 245.253 / 245.225 dB | 218.616 / 218.582 dB | `SSVHNOM` / `SSVLNOM` |
+| PSRR+, 60 / 150 Hz | ≥80 / 80 dB | 191.538 / 257.637 dB | 190.541 / 189.146 dB | `SSVHNOM` / `SSVLTH` |
+| PSRR−, 60 / 150 Hz | ≥80 / 80 dB | 234.605 / 236.558 dB | 204.439 / 204.885 dB | `SSVLNOM` |
 | Input noise, 0.05–150 Hz | ≤10 µVrms | 6.176 µVrms | 7.036 µVrms | `SSVHTH` |
+
+The 200-run FULL Monte Carlo set passes every formal limit. Observed LPF input offset spans −4.612 to +5.068 mV against the ±6 mV limit. Passband gain error stays between −0.0335% and −0.0219%, the −1 dB frequency remains above 224.388 Hz, and sampled CMRR remains above 91.208 dB at both 60 Hz and 150 Hz.
 
 ![LPF differential response](Measurement_Results/IC_Simulation/LPF/Plots/NOM.LPF_differential_ac.png)
 
@@ -221,6 +250,17 @@ PGA verification covers G2, G4, G8, and G16. Absolute gain is descriptive; gain 
 | PSRR− at 150 Hz | ≥80 dB | 181.026 dB | G8 / `NOMVHNOM` |
 | Input noise, 0.05–150 Hz | ≤10 µVrms | 5.250 µVrms | G2 / `SSVHTH` |
 
+Nominal gain-code results are:
+
+| Gain code | Gain at 10 Hz | Gain error | −3 dB bandwidth | Input noise, 0.05–150 Hz |
+| :---: | ---: | ---: | ---: | ---: |
+| G2 | 2.015 V/V | +0.751% | 5.053 MHz | 4.617 µVrms |
+| G4 | 3.991 V/V | −0.236% | 3.025 MHz | 3.859 µVrms |
+| G8 | 7.958 V/V | −0.522% | 2.070 MHz | 3.473 µVrms |
+| G16 | 15.860 V/V | −0.878% | 0.907 MHz | 3.280 µVrms |
+
+The 200-run FULL Monte Carlo set passes every formal limit. The closest rejection margin occurs at G2, where sampled CMRR remains above 85.634 dB. G2 input offset spans −3.450 to +3.790 mV, while the other gain codes have smaller extrema. Across gain codes, sampled bandwidth minima are 4.588 MHz (G2), 2.754 MHz (G4), 1.854 MHz (G8), and 0.826 MHz (G16), all comfortably above 0.15 MHz.
+
 ![PGA differential responses](Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_differential_ac.png)
 
 ![PGA input-referred noise](Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_noise.png)
@@ -228,6 +268,14 @@ PGA verification covers G2, G4, G8, and G16. Absolute gain is descriptive; gain 
 ![PGA CMRR and PSRR](Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_rejection.png)
 
 ![PGA gain switching](Measurement_Results/IC_Simulation/PGA/Plots/NOM.PGA_gain_switching.png)
+
+### 5.7 Output buffer
+
+The BUFFER directory contains nominal PVT raw exports for operating point, offset, differential response, CMRR, PSRR, noise, and selector transient, together with an MM summary export. A block-level MATLAB analyzer, formal worst-case table, and MM/GL/FULL signoff reports have not yet been completed. Buffer performance is therefore intentionally excluded from the verified-result and yield tables rather than inferred from unprocessed raw files.
+
+### 5.8 Integrated AFE
+
+The complete AFE schematic and an `AFE_Analyze.m` scaffold are present. Formal full-chain results are not yet reported. The remaining integration campaign must verify cascaded gain, passband response, integrated input-referred noise, output swing, selector behavior, and ADC-load settling across PVT before the AFE can be marked complete.
 
 ## 6. Monte Carlo summary
 
