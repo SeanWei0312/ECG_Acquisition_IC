@@ -178,11 +178,11 @@ C {lab_wire.sym} 3300 -540 0 1 {name=p20 sig_type=std_logic lab=OUTP}
 C {lab_wire.sym} 3300 -420 0 1 {name=p21 sig_type=std_logic lab=OUTN}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/LPF/LPF.sym} 1120 -320 0 0 {name=xLFP1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/PGA/PGA.sym} 1820 -320 0 0 {name=xPGA1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 900 -320 0 0 {name=xSEL1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 900 -320 0 0 {name=xMUXD1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/INA/INA.sym} 420 -320 0 0 {name=xINA1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 1600 -320 0 0 {name=xSEL2}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 2300 -320 0 0 {name=xSEL3}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 3000 -320 0 0 {name=xSEL4}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 1600 -320 0 0 {name=xMUXD2}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 2300 -320 0 0 {name=xMUXD3}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 3000 -320 0 0 {name=xMUXD4}
 C {lab_wire.sym} 360 -240 0 0 {name=p94 sig_type=std_logic lab=SEOP}
 C {lab_wire.sym} 360 -200 0 0 {name=p95 sig_type=std_logic lab=SEON}
 C {lab_wire.sym} 760 -240 0 0 {name=p38 sig_type=std_logic lab=INA_OUTP}
@@ -295,5 +295,5 @@ C {lab_wire.sym} 1220 -1000 0 1 {name=p50 sig_type=std_logic lab=OUTN}
 C {opin.sym} 1480 -960 0 1 {name=p52 lab=IB}
 C {lab_wire.sym} 1500 -960 0 1 {name=p54 sig_type=std_logic lab=IB}
 C {lab_wire.sym} 520 -920 0 0 {name=p55 sig_type=std_logic lab=IB}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SW/SW.sym} 240 -640 0 0 {name=xSW1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUX/MUX.sym} 240 -640 0 0 {name=xMUX1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/BUFFER/BUFFER.sym} 2520 -320 0 0 {name=xBUFFER1}

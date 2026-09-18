@@ -127,7 +127,7 @@ C {iopin.sym} 140 -560 0 1 {name=p25 lab=PGA_BCMFB}
 C {lab_wire.sym} 160 -560 0 1 {name=p26 sig_type=std_logic lab=PGA_BCMFB}
 C {iopin.sym} 140 -520 0 1 {name=p29 lab=PGA_REF}
 C {lab_wire.sym} 160 -520 0 1 {name=p30 sig_type=std_logic lab=PGA_REF}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/FD_OTA/FDOTA/FD_OTA.sym} 760 -500 0 0 {name=xFDOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FD_OTA/FDOTA/FD_OTA.sym} 760 -500 0 0 {name=xFDOTA1}
 C {lab_wire.sym} 890 -520 2 1 {name=p10 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 890 -760 0 0 {name=p20 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 800 -640 0 0 {name=p33 sig_type=std_logic lab=PGA_REF}
@@ -140,8 +140,8 @@ C {ipin.sym} 140 -680 0 0 {name=p2 lab=PGA_S0}
 C {ipin.sym} 140 -640 0 0 {name=p3 lab=PGA_S1}
 C {lab_wire.sym} 160 -680 0 1 {name=p4 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 160 -640 0 1 {name=p5 sig_type=std_logic lab=PGA_S1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/TG/TG.sym} 600 -860 0 0 {name=xTG1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/TG/TG.sym} 1080 -980 0 0 {name=xTG3}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/TG/TG.sym} 600 -860 0 0 {name=xTG1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/TG/TG.sym} 1080 -980 0 0 {name=xTG3}
 C {lab_wire.sym} 1200 -1160 0 0 {name=p6 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 720 -1040 0 0 {name=p7 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 1200 -1000 2 1 {name=p21 sig_type=std_logic lab=PGA_SS}
@@ -150,20 +150,20 @@ C {lab_wire.sym} 760 -880 2 0 {name=p27 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 1240 -1000 2 0 {name=p28 sig_type=std_logic lab=PGA_S1}
 C {lab_wire.sym} 760 -1040 0 1 {name=p31 sig_type=std_logic lab=S0B}
 C {lab_wire.sym} 1240 -1160 0 1 {name=p32 sig_type=std_logic lab=S1B}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/INV/INV.sym} 340 -900 0 0 {name=xINV1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/INV/INV.sym} 340 -900 0 0 {name=xINV1}
 C {lab_wire.sym} 460 -1080 0 1 {name=p51 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 460 -920 2 0 {name=p52 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 560 -1000 0 1 {name=p53 sig_type=std_logic lab=S0B}
 C {lab_wire.sym} 380 -1000 0 0 {name=p54 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 360 -680 0 0 {name=p55 sig_type=std_logic lab=PGA_INP}
 C {lab_wire.sym} 360 -600 2 1 {name=p56 sig_type=std_logic lab=PGA_INN}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/TG/TG.sym} 880 -860 0 0 {name=xTG2}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/TG/TG.sym} 880 -860 0 0 {name=xTG2}
 C {lab_wire.sym} 1000 -1040 0 0 {name=p57 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 1000 -880 2 1 {name=p58 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 1040 -880 2 0 {name=p59 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 1040 -1040 0 1 {name=p60 sig_type=std_logic lab=S0B}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/TG/TG.sym} 600 -420 2 1 {name=xTG4}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/TG/TG.sym} 880 -420 2 1 {name=xTG5}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/TG/TG.sym} 600 -420 2 1 {name=xTG4}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/TG/TG.sym} 880 -420 2 1 {name=xTG5}
 C {lab_wire.sym} 1200 -120 2 1 {name=p34 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 720 -240 2 1 {name=p35 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 1200 -280 0 0 {name=p37 sig_type=std_logic lab=PGA_SS}
@@ -172,12 +172,12 @@ C {lab_wire.sym} 760 -400 0 1 {name=p41 sig_type=std_logic lab=PGA_S0}
 C {lab_wire.sym} 1240 -280 0 1 {name=p42 sig_type=std_logic lab=PGA_S1}
 C {lab_wire.sym} 760 -240 2 0 {name=p45 sig_type=std_logic lab=S0B}
 C {lab_wire.sym} 1240 -120 2 0 {name=p46 sig_type=std_logic lab=S1B}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/INV/INV.sym} 340 -380 2 1 {name=xINV2}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/INV/INV.sym} 340 -380 2 1 {name=xINV2}
 C {lab_wire.sym} 460 -200 2 0 {name=p47 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 460 -360 0 1 {name=p48 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 560 -280 2 0 {name=p49 sig_type=std_logic lab=S1B}
 C {lab_wire.sym} 380 -280 2 1 {name=p50 sig_type=std_logic lab=PGA_S1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/TG/TG.sym} 1080 -300 2 1 {name=xTG6}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/TG/TG.sym} 1080 -300 2 1 {name=xTG6}
 C {lab_wire.sym} 1000 -240 2 1 {name=p61 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 1000 -400 0 0 {name=p62 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 1040 -400 0 1 {name=p63 sig_type=std_logic lab=PGA_S0}

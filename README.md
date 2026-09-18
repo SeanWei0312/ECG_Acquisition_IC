@@ -1,8 +1,11 @@
 # ECG Acquisition IC
 
-A pre-layout ECG acquisition IC combining an analog front end (AFE) and SAR ADC, implemented in the GlobalFoundries 180 nm MCU process for the IEEE SSCS Chipathon 2026 flow.
+A self-directed, independent pre-layout ECG acquisition IC combining an analog front end (AFE) and SAR ADC, implemented in the GlobalFoundries 180 nm MCU process.
 
 The repository contains transistor-level Xschem designs, ngspice verification testbenches, MATLAB analysis scripts, generated PVT/Monte Carlo reports, and $g_m/I_D$ characterization utilities.
+
+> [!IMPORTANT]
+> This project uses the IEEE SSCS 2026 Chipathon simulation environment and design flow only as a technical reference. It is not an official program submission, is not affiliated with the program, and will not be taped out through it.
 
 > [!NOTE]
 > Results in this repository are schematic-level simulations. Layout, LVS/DRC, parasitic extraction, top-level post-layout verification, and silicon measurements remain future work.

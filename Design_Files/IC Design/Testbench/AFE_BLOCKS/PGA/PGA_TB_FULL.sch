@@ -192,13 +192,13 @@ reset
 
 * Output
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt
 
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt/\{$tag\}.op_mc_summary.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt/\{$tag\}.g2_mc_summary.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt/\{$tag\}.g4_mc_summary.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt/\{$tag\}.g8_mc_summary.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt/\{$tag\}.g16_mc_summary.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt/\{$tag\}.op_mc_summary.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt/\{$tag\}.g2_mc_summary.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt/\{$tag\}.g4_mc_summary.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt/\{$tag\}.g8_mc_summary.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt/\{$tag\}.g16_mc_summary.txt
 
 
 let run=1
@@ -317,7 +317,7 @@ set idd_val=$&idd_total
 set power_val=$&power_total
 set outcmerr_val=$&out_cm_error
 
-echo $&run $ibfdc_val $ibcmfb_val $idd_val $power_val $outcmerr_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt/\{$tag\}.op_mc_summary.txt
+echo $&run $ibfdc_val $ibcmfb_val $idd_val $power_val $outcmerr_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt/\{$tag\}.op_mc_summary.txt
 
 destroy all
 
@@ -413,7 +413,7 @@ destroy all
 
 * Gain output
 
-echo $&run $vos_val $gain10_val $gainerr_val $gain150_val $bw3db_val $cmrr60_val $cmrr150_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$mode\}.Result_txt/\{$tag\}.\{$gtag\}_mc_summary.txt
+echo $&run $vos_val $gain10_val $gainerr_val $gain150_val $bw3db_val $cmrr60_val $cmrr150_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$mode\}.Result_txt/\{$tag\}.\{$gtag\}_mc_summary.txt
 
 end
 
@@ -540,7 +540,7 @@ C {lab_wire.sym} 1140 -1190 0 0 {name=p9 sig_type=std_logic lab=VDIFF
 }
 C {lab_wire.sym} 1140 -1150 0 0 {name=p12 sig_type=std_logic lab=AGND}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/PGA/PGA.sym} 120 -1680 0 0 {name=xPGA1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 600 -1680 0 0 {name=xSEL3}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 600 -1680 0 0 {name=xMUXD3}
 C {lab_wire.sym} 460 -1600 0 0 {name=p62 sig_type=std_logic lab=PGA_OUTP}
 C {lab_wire.sym} 460 -1560 0 0 {name=p67 sig_type=std_logic lab=PGA_OUTN}
 C {lab_wire.sym} 320 -1600 2 1 {name=p83 sig_type=std_logic lab=S1}

@@ -434,7 +434,7 @@ C {lab_wire.sym} 3200 -1580 2 0 {name=p93 sig_type=std_logic lab=BODY}
 C {vsource.sym} 1040 -1630 0 0 {name=VREF value="dc \{VREF_SET\} ac 0" savecurrent=true}
 C {lab_wire.sym} 1040 -1680 0 0 {name=p36 sig_type=std_logic lab=REF}
 C {lab_wire.sym} 1040 -1580 2 0 {name=p96 sig_type=std_logic lab=AGND}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 1020 -2000 0 0 {name=xSEL1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 1020 -2000 0 0 {name=xMUXD1}
 C {lab_wire.sym} 1220 -1920 2 0 {name=p46 sig_type=std_logic lab=INA_SEL}
 C {lab_wire.sym} 1320 -2220 0 1 {name=p3 sig_type=std_logic lab=OUTP}
 C {lab_wire.sym} 1320 -2100 0 1 {name=p4 sig_type=std_logic lab=OUTN}
@@ -475,15 +475,15 @@ end
 end
 
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt
 
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
 
 
-echo run idd_A power_W out_cm_error_V rld_dc_error_V vos_V s1_gain s2_gain ina_gain gain_error_pct rld_ugf_Hz rld_pm_deg cm_supp_60_dB cm_supp_150_dB ina_cmrr_60_dB ina_cmrr_150_dB > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
+echo run idd_A power_W out_cm_error_V rld_dc_error_V vos_V s1_gain s2_gain ina_gain gain_error_pct rld_ugf_Hz rld_pm_deg cm_supp_60_dB cm_supp_150_dB ina_cmrr_60_dB ina_cmrr_150_dB > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
 
-echo run vos_V outp_V outn_V outcm_V outdiff_V ref_V rld_V body_V bp_V idd_A power_W > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
+echo run vos_V outp_V outn_V outcm_V outdiff_V ref_V rld_V body_V bp_V idd_A power_W > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
 
 
 let run=1
@@ -629,7 +629,7 @@ set idd_val=$&idd_total
 set power_val=$&power_total
 
 
-echo $runnum $vos_val $outp_val $outn_val $outcm_val $outdiff_val $ref_val $rld_val $body_val $bp_val $idd_val $power_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
+echo $runnum $vos_val $outp_val $outn_val $outcm_val $outdiff_val $ref_val $rld_val $body_val $bp_val $idd_val $power_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_debug_op.txt
 
 destroy all
 
@@ -799,7 +799,7 @@ destroy all
 
 * SUMMARY
 
-echo $runnum $idd_val $power_val $out_cm_error_val $rld_dc_error_val $vos_val $s1_gain_val $s2_gain_val $ina_gain_val $gain_error_val $rld_ugf_val $rld_pm_val $cm_supp_60_val $cm_supp_150_val $ina_cmrr_60_val $ina_cmrr_150_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
+echo $runnum $idd_val $power_val $out_cm_error_val $rld_dc_error_val $vos_val $s1_gain_val $s2_gain_val $ina_gain_val $gain_error_val $rld_ugf_val $rld_pm_val $cm_supp_60_val $cm_supp_150_val $ina_cmrr_60_val $ina_cmrr_150_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.mc_summary.txt
 
 
 let run=run+1

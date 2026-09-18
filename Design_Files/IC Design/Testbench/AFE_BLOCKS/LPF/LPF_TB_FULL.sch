@@ -173,8 +173,8 @@ alterparam EXT_TRAN_AMP_SET=0
 
 reset
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$mode\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$mode\}.Result_txt/\{$tag\}.mc_summary.txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$mode\}.Result_txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$mode\}.Result_txt/\{$tag\}.mc_summary.txt
 
 let run=1
 
@@ -314,7 +314,7 @@ destroy all
 
 * SUMMARY
 
-echo $&run $ibfdc_val $ibcmfb_val $idd_val $power_val $outcmerr_val $vos_val $gain10_val $gainerr_val $gain150_val $gain150db_val $f1db_val $f3db_val $cmrr60_val $cmrr150_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$mode\}.Result_txt/\{$tag\}.mc_summary.txt
+echo $&run $ibfdc_val $ibcmfb_val $idd_val $power_val $outcmerr_val $vos_val $gain10_val $gainerr_val $gain150_val $gain150db_val $f1db_val $f3db_val $cmrr60_val $cmrr150_val >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$mode\}.Result_txt/\{$tag\}.mc_summary.txt
 
 let run=run+1
 
@@ -392,7 +392,7 @@ C {gnd.sym} 80 -1140 0 0 {name=l11 lab=0}
 C {lab_wire.sym} 80 -1220 0 0 {name=p24 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 80 -1360 0 0 {name=p55 sig_type=std_logic lab=AVDD}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/LPF/LPF.sym} 120 -1680 0 0 {name=xLFP1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 600 -1680 0 0 {name=xSEL2}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 600 -1680 0 0 {name=xMUXD2}
 C {lab_wire.sym} 460 -1600 0 0 {name=p47 sig_type=std_logic lab=LPF_OUTP}
 C {lab_wire.sym} 460 -1560 0 0 {name=p48 sig_type=std_logic lab=LPF_OUTN}
 C {lab_wire.sym} 660 -1600 0 1 {name=p70 sig_type=std_logic lab=LPF_EXTP}

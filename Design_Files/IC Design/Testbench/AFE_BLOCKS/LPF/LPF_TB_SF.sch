@@ -167,8 +167,8 @@ end
 end
 end
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.*.txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.*.txt
 
 foreach vddval 3.3 3.0 3.6
 foreach tval 27 -40 125
@@ -238,7 +238,7 @@ meas dc vos_meas when lpf_diff=0 cross=1
 
 set vos_val=$&vos_meas
 
-echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.vos_\{$env\}.txt
+echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.vos_\{$env\}.txt
 
 destroy all
 
@@ -271,7 +271,7 @@ let ibcmfb=abs(@m.xmbcmfb.m0[id])
 
 setscale op_index
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}.txt vdd vref vin_cm vin_diff lpf_out_cm lpf_out_diff lpf_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}.txt vdd vref vin_cm vin_diff lpf_out_cm lpf_out_diff lpf_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
 
 destroy all
 
@@ -299,7 +299,7 @@ let out_i=imag(out_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}.txt vin_r vin_i lpf_r lpf_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}.txt vin_r vin_i lpf_r lpf_i out_r out_i
 
 destroy all
 
@@ -324,7 +324,7 @@ let out_i=imag(lpf_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$env\}.txt vin_r vin_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$env\}.txt vin_r vin_i out_r out_i
 
 destroy all
 
@@ -350,7 +350,7 @@ let out_i=imag(lpf_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
 
@@ -376,7 +376,7 @@ let out_i=imag(lpf_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
 
@@ -394,7 +394,7 @@ noise v(LPF_OUTP,LPF_OUTN) VDIFF dec 100 0.01 10k
 setplot previous
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}.txt onoise_spectrum inoise_spectrum
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}.txt onoise_spectrum inoise_spectrum
 
 destroy all
 
@@ -427,7 +427,7 @@ let int_diff=v(LPF_OUTP)-v(LPF_OUTN)
 let ext_diff=v(LPF_EXTP)-v(LPF_EXTN)
 let out_diff=v(OUTP)-v(OUTN)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/LPF/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(LPF_SEL) int_diff ext_diff out_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(LPF_SEL) int_diff ext_diff out_diff
 
 destroy all
 
@@ -505,7 +505,7 @@ C {gnd.sym} 80 -1140 0 0 {name=l11 lab=0}
 C {lab_wire.sym} 80 -1220 0 0 {name=p24 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 80 -1360 0 0 {name=p55 sig_type=std_logic lab=AVDD}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/LPF/LPF.sym} 120 -1680 0 0 {name=xLFP1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 600 -1680 0 0 {name=xSEL2}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 600 -1680 0 0 {name=xMUXD2}
 C {lab_wire.sym} 460 -1600 0 0 {name=p47 sig_type=std_logic lab=LPF_OUTP}
 C {lab_wire.sym} 460 -1560 0 0 {name=p48 sig_type=std_logic lab=LPF_OUTN}
 C {lab_wire.sym} 660 -1600 0 1 {name=p70 sig_type=std_logic lab=LPF_EXTP}

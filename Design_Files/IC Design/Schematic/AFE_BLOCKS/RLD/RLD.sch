@@ -41,7 +41,7 @@ C {lab_wire.sym} 160 -440 0 1 {name=p15 sig_type=std_logic lab=RLD_INP}
 C {lab_wire.sym} 160 -400 0 1 {name=p16 sig_type=std_logic lab=RLD_INN}
 C {opin.sym} 140 -360 0 1 {name=p37 lab=RLD_OUT}
 C {lab_wire.sym} 160 -360 0 1 {name=p39 sig_type=std_logic lab=RLD_OUT}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SE_OTA/SE_OTA.sym} 560 -420 0 0 {name=xSEOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/SE_OTA/SE_OTA.sym} 560 -420 0 0 {name=xSEOTA1}
 C {lab_wire.sym} 720 -440 2 1 {name=p1 sig_type=std_logic lab=RLD_SS}
 C {lab_wire.sym} 720 -680 0 0 {name=p2 sig_type=std_logic lab=RLD_DD}
 C {lab_wire.sym} 400 -660 0 0 {name=p3 sig_type=std_logic lab=RLD_INP}

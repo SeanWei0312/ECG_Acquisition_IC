@@ -177,8 +177,8 @@ end
 end
 end
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.*.txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.*.txt
 
 foreach vddval 3.3 3.0 3.6
 foreach tval 27 -40 125
@@ -280,7 +280,7 @@ meas dc vos_meas when pga_diff=0 cross=1
 
 set vos_val=$&vos_meas
 
-echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.vos_\{$gtag\}_\{$env\}.txt
+echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.vos_\{$gtag\}_\{$env\}.txt
 
 destroy all
 
@@ -314,7 +314,7 @@ let ibcmfb=abs(@m.xmbcmfb.m0[id])
 
 setscale op_index
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.op_\{$gtag\}_\{$env\}.txt vdd vref v(S1) v(S0) vin_cm vin_diff pga_out_cm pga_out_diff pga_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.op_\{$gtag\}_\{$env\}.txt vdd vref v(S1) v(S0) vin_cm vin_diff pga_out_cm pga_out_diff pga_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
 
 destroy all
 
@@ -345,7 +345,7 @@ let out_i=imag(out_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$gtag\}_\{$env\}.txt vin_r vin_i pga_r pga_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$gtag\}_\{$env\}.txt vin_r vin_i pga_r pga_i out_r out_i
 
 destroy all
 
@@ -372,7 +372,7 @@ let out_i=imag(pga_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$gtag\}_\{$env\}.txt vin_r vin_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$gtag\}_\{$env\}.txt vin_r vin_i out_r out_i
 
 destroy all
 
@@ -400,7 +400,7 @@ let out_i=imag(pga_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$gtag\}_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$gtag\}_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
 
@@ -428,7 +428,7 @@ let out_i=imag(pga_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$gtag\}_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$gtag\}_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
 
@@ -447,7 +447,7 @@ noise v(PGA_OUTP,PGA_OUTN) VDIFF dec 100 0.01 10k
 setplot previous
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.noise_\{$gtag\}_\{$env\}.txt onoise_spectrum inoise_spectrum
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.noise_\{$gtag\}_\{$env\}.txt onoise_spectrum inoise_spectrum
 
 destroy all
 
@@ -486,7 +486,7 @@ let int_diff=v(PGA_OUTP)-v(PGA_OUTN)
 let ext_diff=v(PGA_EXTP)-v(PGA_EXTN)
 let out_diff=v(OUTP)-v(OUTN)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(PGA_SEL) int_diff ext_diff out_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(PGA_SEL) int_diff ext_diff out_diff
 
 destroy all
 
@@ -528,7 +528,7 @@ let pga_diff=v(PGA_OUTP)-v(PGA_OUTN)
 
 setscale time
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/PGA/\{$proc\}.Result_txt/\{$proc\}.gain_switch_tran_nom.txt v(S1) v(S0) vin_diff pga_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.gain_switch_tran_nom.txt v(S1) v(S0) vin_diff pga_diff
 
 destroy all
 
@@ -652,7 +652,7 @@ C {lab_wire.sym} 1140 -1190 0 0 {name=p9 sig_type=std_logic lab=VDIFF
 }
 C {lab_wire.sym} 1140 -1150 0 0 {name=p12 sig_type=std_logic lab=AGND}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/PGA/PGA.sym} 120 -1680 0 0 {name=xPGA1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 600 -1680 0 0 {name=xSEL3}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 600 -1680 0 0 {name=xMUXD3}
 C {lab_wire.sym} 460 -1600 0 0 {name=p62 sig_type=std_logic lab=PGA_OUTP}
 C {lab_wire.sym} 460 -1560 0 0 {name=p67 sig_type=std_logic lab=PGA_OUTN}
 C {lab_wire.sym} 320 -1600 2 1 {name=p83 sig_type=std_logic lab=S1}

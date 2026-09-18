@@ -86,16 +86,16 @@ option method=gear
 option maxord=2
 option plotwinsize=0
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt
 
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_nom.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_vl.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_vh.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_tl.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_th.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_tlvl.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_thvh.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.dc2d.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_nom.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_vl.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_vh.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_tl.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_th.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_tlvl.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_thvh.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.dc2d.txt
 
 alterparam VDD_SET=3.3
 alterparam TEMP_SET=27
@@ -114,7 +114,7 @@ let vth_mst = @m.xbias1.xmst.m0[vth]
 let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_nom.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_nom.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
 
 alterparam VDD_SET=3.0
 alterparam TEMP_SET=27
@@ -133,7 +133,7 @@ let vth_mst = @m.xbias1.xmst.m0[vth]
 let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_vl.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_vl.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
 
 alterparam VDD_SET=3.6
 alterparam TEMP_SET=27
@@ -152,7 +152,7 @@ let vth_mst = @m.xbias1.xmst.m0[vth]
 let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_vh.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_vh.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
 
 alterparam VDD_SET=3.3
 alterparam TEMP_SET=-40
@@ -171,7 +171,7 @@ let vth_mst = @m.xbias1.xmst.m0[vth]
 let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_tl.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_tl.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
 
 alterparam VDD_SET=3.3
 alterparam TEMP_SET=125
@@ -190,7 +190,7 @@ let vth_mst = @m.xbias1.xmst.m0[vth]
 let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_th.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_th.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
 
 alterparam VDD_SET=3.0
 alterparam TEMP_SET=-40
@@ -209,7 +209,7 @@ let vth_mst = @m.xbias1.xmst.m0[vth]
 let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_tlvl.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_tlvl.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
 
 alterparam VDD_SET=3.6
 alterparam TEMP_SET=125
@@ -228,7 +228,7 @@ let vth_mst = @m.xbias1.xmst.m0[vth]
 let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.tran_thvh.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.tran_thvh.txt v(AVDD) v(SEL) v(BPINT) v(BP) v(BPEXT) v(VREFINT) v(VREF) v(VREFEXT) ibias irs imst vgs_mst vth_mst idd_bias_sel power_bias_sel
 
 alterparam VDD_SET=3.3
 alterparam TEMP_SET=27
@@ -253,7 +253,7 @@ let idd_total = abs(vavdd#branch)
 let idd_bias_sel = idd_total-ibias
 let power_bias_sel = v(AVDD)*idd_bias_sel
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BIAS/SS.Result_txt/SS.dc2d.txt v(AVDD) v(BPINT) v(BP) v(VREFINT) v(VREF) ibias irs mirror_error vref_error imst mst_margin idd_bias_sel power_bias_sel
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BIAS/SS.Result_txt/SS.dc2d.txt v(AVDD) v(BPINT) v(BP) v(VREFINT) v(VREF) ibias irs mirror_error vref_error imst mst_margin idd_bias_sel power_bias_sel
 
 quit
 
@@ -314,7 +314,7 @@ C {lab_wire.sym} 500 -1180 2 0 {name=p11 sig_type=std_logic lab=SEL}
 C {lab_wire.sym} 600 -1400 0 1 {name=p16 sig_type=std_logic lab=BP}
 C {lab_wire.sym} 600 -1280 0 1 {name=p22 sig_type=std_logic lab=VREF}
 C {lab_wire.sym} 320 -1320 0 0 {name=p24 sig_type=std_logic lab=BPEXT}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 300 -1180 0 0 {name=xSEL1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 300 -1180 0 0 {name=xMUXD1}
 C {lab_wire.sym} 420 -1180 2 1 {name=p15 sig_type=std_logic lab=AVDD}
 C {lab_wire.sym} 460 -1180 2 1 {name=p25 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 320 -1280 0 0 {name=p26 sig_type=std_logic lab=VREFEXT}

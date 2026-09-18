@@ -165,8 +165,8 @@ end
 end
 end
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.*.txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.*.txt
 
 foreach vddval 3.3 3.0 3.6
 foreach tval 27 -40 125
@@ -238,7 +238,7 @@ meas dc vos_meas when buffer_diff=0 cross=1
 
 set vos_val=$&vos_meas
 
-echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.vos_\{$env\}.txt
+echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.vos_\{$env\}.txt
 
 destroy all
 
@@ -272,7 +272,7 @@ let ibcmfb=abs(@m.xmbcmfb.m0[id])
 
 setscale op_index
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}.txt vdd vref vin_cm vin_diff buffer_out_cm buffer_out_diff buffer_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}.txt vdd vref vin_cm vin_diff buffer_out_cm buffer_out_diff buffer_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
 
 destroy all
 
@@ -303,7 +303,7 @@ let out_i=imag(out_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}.txt vin_r vin_i buffer_r buffer_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}.txt vin_r vin_i buffer_r buffer_i out_r out_i
 
 destroy all
 
@@ -330,7 +330,7 @@ let out_i=imag(buffer_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$env\}.txt vin_r vin_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$env\}.txt vin_r vin_i out_r out_i
 
 destroy all
 
@@ -358,7 +358,7 @@ let out_i=imag(buffer_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
 
@@ -386,7 +386,7 @@ let out_i=imag(buffer_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
 
@@ -405,7 +405,7 @@ noise v(BUFFER_OUTP,BUFFER_OUTN) VDIFF dec 100 0.01 10k
 setplot previous
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}.txt onoise_spectrum inoise_spectrum
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}.txt onoise_spectrum inoise_spectrum
 
 destroy all
 
@@ -439,7 +439,7 @@ let int_diff=v(BUFFER_OUTP)-v(BUFFER_OUTN)
 let ext_diff=v(BUFFER_EXTP)-v(BUFFER_EXTN)
 let out_diff=v(OUTP)-v(OUTN)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/BUFFER/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(BUFFER_SEL) int_diff ext_diff out_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/BUFFER/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(BUFFER_SEL) int_diff ext_diff out_diff
 
 destroy all
 
@@ -563,7 +563,7 @@ C {lab_wire.sym} 1840 -1120 2 0 {name=p45 sig_type=std_logic lab=EXTVCM}
 C {lab_wire.sym} 1140 -1190 0 0 {name=p9 sig_type=std_logic lab=VDIFF
 }
 C {lab_wire.sym} 1140 -1150 0 0 {name=p12 sig_type=std_logic lab=AGND}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 600 -1680 0 0 {name=xSEL4}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 600 -1680 0 0 {name=xMUXD4}
 C {lab_wire.sym} 800 -1600 2 0 {name=p87 sig_type=std_logic lab=BUFFER_SEL}
 C {lab_wire.sym} 460 -1600 0 0 {name=p92 sig_type=std_logic lab=BUFFER_OUTP}
 C {lab_wire.sym} 460 -1560 0 0 {name=p93 sig_type=std_logic lab=BUFFER_OUTN}

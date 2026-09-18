@@ -230,8 +230,8 @@ end
 end
 end
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.*.txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.*.txt
 
 foreach vddval 3.3 3.0 3.6
 foreach tval 27 -40 125
@@ -321,7 +321,7 @@ meas dc vos_meas when ina_out_diff=0 cross=1
 
 set vos_val=$&vos_meas
 
-echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.vos_\{$env\}_\{$elec\}.txt
+echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.vos_\{$env\}_\{$elec\}.txt
 
 destroy all
 
@@ -362,7 +362,7 @@ let ibse2=abs(@m.xmbse2.m0[id])
 let ibfdc=abs(@m.xmbfdc.m0[id])
 let ibcmfb=abs(@m.xmbcmfb.m0[id])
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}_\{$elec\}.txt v(AVDD) v(REF) v(BP) vin_cm vin_diff v(SEOP) v(SEON) se_cm se_diff v(INA_OUTP) v(INA_OUTN) ina_out_cm ina_out_diff v(OUTP) v(OUTN) out_cm out_diff v(RLD) v(BODY) irld idd_total power_total ibse0 ibse1 ibse2 ibfdc ibcmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}_\{$elec\}.txt v(AVDD) v(REF) v(BP) vin_cm vin_diff v(SEOP) v(SEON) se_cm se_diff v(INA_OUTP) v(INA_OUTN) ina_out_cm ina_out_diff v(OUTP) v(OUTN) out_cm out_diff v(RLD) v(BODY) irld idd_total power_total ibse0 ibse1 ibse2 ibfdc ibcmfb
 
 destroy all
 
@@ -405,7 +405,7 @@ let rld_imag=imag(v(RLD))
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}_\{$elec\}.txt vin_diff_real vin_diff_imag se_diff_real se_diff_imag ina_out_diff_real ina_out_diff_imag out_diff_real out_diff_imag rld_real rld_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}_\{$elec\}.txt vin_diff_real vin_diff_imag se_diff_real se_diff_imag ina_out_diff_real ina_out_diff_imag out_diff_real out_diff_imag rld_real rld_imag
 
 destroy all
 
@@ -456,9 +456,9 @@ let rld_imag=imag(v(RLD))
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.cm_off_ac_\{$env\}_\{$elec\}.txt vcm_src_real vcm_src_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag out_diff_real out_diff_imag rld_real rld_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.cm_off_ac_\{$env\}_\{$elec\}.txt vcm_src_real vcm_src_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag out_diff_real out_diff_imag rld_real rld_imag
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.ina_cmrr_ac_\{$env\}_\{$elec\}.txt vin_cm_real vin_cm_imag ina_out_diff_real ina_out_diff_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.ina_cmrr_ac_\{$env\}_\{$elec\}.txt vin_cm_real vin_cm_imag ina_out_diff_real ina_out_diff_imag
 
 destroy all
 
@@ -505,7 +505,7 @@ let rld_imag=imag(v(RLD))
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.cm_on_ac_\{$env\}_\{$elec\}.txt vcm_src_real vcm_src_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag out_diff_real out_diff_imag rld_real rld_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.cm_on_ac_\{$env\}_\{$elec\}.txt vcm_src_real vcm_src_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag out_diff_real out_diff_imag rld_real rld_imag
 
 destroy all
 
@@ -542,7 +542,7 @@ let out_diff_imag=imag(out_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$env\}_\{$elec\}.txt vsup_real vsup_imag ina_out_diff_real ina_out_diff_imag out_diff_real out_diff_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$env\}_\{$elec\}.txt vsup_real vsup_imag ina_out_diff_real ina_out_diff_imag out_diff_real out_diff_imag
 
 destroy all
 
@@ -579,7 +579,7 @@ let out_diff_imag=imag(out_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$env\}_\{$elec\}.txt vsup_real vsup_imag ina_out_diff_real ina_out_diff_imag out_diff_real out_diff_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$env\}_\{$elec\}.txt vsup_real vsup_imag ina_out_diff_real ina_out_diff_imag out_diff_real out_diff_imag
 
 destroy all
 
@@ -623,7 +623,7 @@ let se_cm_imag=imag(se_cm)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.rld_loop_ac_\{$env\}_\{$elec\}.txt loop_in_real loop_in_imag loop_out_real loop_out_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.rld_loop_ac_\{$env\}_\{$elec\}.txt loop_in_real loop_in_imag loop_out_real loop_out_imag body_real body_imag vin_cm_real vin_cm_imag se_cm_real se_cm_imag
 
 destroy all
 
@@ -649,7 +649,7 @@ noise v(VOUTDIFF) VDIFF dec 100 0.01 1k
 setplot previous
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}_\{$elec\}.txt onoise_spectrum inoise_spectrum
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}_\{$elec\}.txt onoise_spectrum inoise_spectrum
 
 destroy all
 
@@ -684,7 +684,7 @@ let out_diff=v(OUTP)-v(OUTN)
 let irld=abs(vloop#branch)
 let idd_total=abs(vavdd#branch)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.tran_\{$env\}_\{$elec\}.txt v(CMSRC) v(BODY) vin_cm vin_diff v(SEOP) v(SEON) se_cm se_diff v(INA_OUTP) v(INA_OUTN) ina_out_cm ina_out_diff v(RLD) v(OUTP) v(OUTN) out_cm out_diff irld idd_total
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.tran_\{$env\}_\{$elec\}.txt v(CMSRC) v(BODY) vin_cm vin_diff v(SEOP) v(SEON) se_cm se_diff v(INA_OUTP) v(INA_OUTN) ina_out_cm ina_out_diff v(RLD) v(OUTP) v(OUTN) out_cm out_diff irld idd_total
 
 destroy all
 
@@ -729,7 +729,7 @@ let ina_out_diff=v(INA_OUTP)-v(INA_OUTN)
 let ext_in_diff=v(INA_EXTP)-v(INA_EXTN)
 let out_diff=v(OUTP)-v(OUTN)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(INA_SEL) ina_out_diff ext_in_diff out_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(INA_SEL) ina_out_diff ext_in_diff out_diff
 
 destroy all
 
@@ -975,7 +975,7 @@ C {lab_wire.sym} 3200 -1580 2 0 {name=p93 sig_type=std_logic lab=BODY}
 C {vsource.sym} 1040 -1630 0 0 {name=VREF value="dc \{VREF_SET\} ac 0" savecurrent=true}
 C {lab_wire.sym} 1040 -1680 0 0 {name=p36 sig_type=std_logic lab=REF}
 C {lab_wire.sym} 1040 -1580 2 0 {name=p96 sig_type=std_logic lab=AGND}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/SEL/SEL.sym} 1020 -2000 0 0 {name=xSEL1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 1020 -2000 0 0 {name=xMUXD1}
 C {lab_wire.sym} 1220 -1920 2 0 {name=p46 sig_type=std_logic lab=INA_SEL}
 C {lab_wire.sym} 1320 -2220 0 1 {name=p3 sig_type=std_logic lab=OUTP}
 C {lab_wire.sym} 1320 -2100 0 1 {name=p4 sig_type=std_logic lab=OUTN}

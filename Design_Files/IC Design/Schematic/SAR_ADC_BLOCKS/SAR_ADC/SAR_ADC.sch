@@ -72,18 +72,12 @@ N 2060 -1890 2260 -1890 {lab=VDD}
 N 2120 -1740 2120 -1640 {lab=0}
 N 2180 -1740 2180 -1640 {lab=0}
 N 2230 -1740 2230 -1640 {lab=0}
-N 2290 -1580 2290 -1480 {lab=0}
-N 2340 -1580 2340 -1480 {lab=0}
 N 2120 -1870 2470 -1870 {lab=VCM}
 N 2180 -1850 2470 -1850 {lab=Vref_n}
 N 2230 -1830 2470 -1830 {lab=Vref_p}
 N 2120 -1870 2120 -1800 {lab=VCM}
 N 2180 -1850 2180 -1800 {lab=Vref_n}
 N 2230 -1830 2230 -1800 {lab=Vref_p}
-N 2290 -1780 2470 -1780 {lab=VIN_N}
-N 2290 -1780 2290 -1640 {lab=VIN_N}
-N 2340 -1740 2470 -1740 {lab=VIN_P}
-N 2340 -1740 2340 -1640 {lab=VIN_P}
 N 3540 -1730 3560 -1730 {lab=clk_SAR_b}
 N 2720 -1840 2720 -1800 {lab=clk_sample}
 N 2740 -1840 2740 -1800 {lab=clk_sample_b}
@@ -252,41 +246,6 @@ C {lab_pin.sym} 2750 -1250 0 0 {name=p46 sig_type=std_logic lab=clk_SAR_b}
 C {opin.sym} 2870 -1250 0 0 {name=p47 lab=clk_SAR_b}
 C {lab_pin.sym} 2750 -1200 0 0 {name=p54 sig_type=std_logic lab=clk_sample_pre}
 C {opin.sym} 2870 -1200 0 0 {name=p55 lab=clk_sample_pre}
-C {code_shown.sym} 3430 -1325 0 0 {name=NGSPICE only_toplevel=true
-value="
-.param PAR_VDD=3.3
-.param m_nand=0.8
-.param wp_inv=46.24
-.param wn_inv=4
-.param wp_inv2=115.6
-.param wn_inv2=10
-
-.control
-
-save all
-
-tran 100p 110u
-
-setplot tran1
-
-plot v(clk)+17.5 v(clk_sample)+14 v(clk_sample_pre)+10.5 v(clk_sample_b)+7 v(clk_sar)+3.5 v(clk_sar_b)
-plot v(d9)+31.5 v(d8)+28 v(d7)+24.5 v(d6)+21 v(d5)+17.5 v(d4)+14 v(d3)+10.5 v(d2)+7 v(d1)+3.5 v(d0)
-plot v(reg_eoc)+20.5 v(EOC)+17 v(compinp)+13.5 v(compinn)+13.5 v(clk_sar_b)+10.5 v(ready)+7 v(outp)+3.5 v(outn)
-plot v(compinp)+10.5 v(compinn)+10.5 v(compinp)-v(compinn)+7 v(outp)+3.5 v(outn)
-plot v(dout0) v(dout1)+3.5 v(dout2)+7 v(dout3)+10.5 v(dout4)+14 v(dout5)+17.5 v(dout6)+21 v(dout7)+24.5 v(dout8)+28 v(dout9)+31.5 v(reg_eoc)+35
-plot VIN_Nsamp VIN_Psamp
-**plot v(xSARLOGIC1.seq_start)+10.5 v(xSARLOGIC1.seq9)+7 v(xSARLOGIC1.seq8)+3.5 v(xSARLOGIC1.seq7)
-**plot v(xSARLOGIC1.seq6)+10.5 v(xSARLOGIC1.seq5)+7 v(xSARLOGIC1.seq4)+3.5 v(xSARLOGIC1.seq3)
-**plot v(xSARLOGIC1.seq_start)+10.5 v(xSARLOGIC1.seq9)+10.5 v(xSARLOGIC1.seq8)+10.5 v(d9)+7 v(d8)+3.5 v(d7)
-**plot v(xCDAC1.D9_P)+10.5 v(xCDAC1.D8_P)+7 v(xCDAC1.D7_P)+3.5 v(xCDAC1.D6_P)
-**plot v(xCDAC1.D9_N)+10.5 v(xCDAC1.D8_N)+7 v(xCDAC1.D7_N)+3.5 v(xCDAC1.D6_N)
-**plot v(d9)+10.5 v(d9b)+10.5 v(d8)+7 v(d8b)+7 v(d7)+3.5 v(d7b)+3.5 v(d6) v(d6b)
-**plot v(d9) v(d9b) v(clk_sample_pre)+3.5 v(clk_sample_b)+3.5 v(xCDAC1.D9_P)+7 v(Vref_n)+10.5 v(VIN_N)+10.5
-**plot v(clk)+7 v(xCLKGEN1.clkpre)+3.5 v(xCLKGEN1.clk_delay)
-**plot v(xCLKGEN1.Reset)+14 v(xCLKGEN1.Set_pre)+10.5 v(Ready)+7 v(xCLKGEN1.q)+3.5 v(xCLKGEN1.clk_sar_pre)
-plot v(xSARLOGIC1.xTSPCFF2.Q_bar_pre)+24.5 v(xSARLOGIC1.xTSPCFF2.Q_1st)+21 v(xSARLOGIC1.xTSPCFF2.Q_pre)+17.5 v(xSARLOGIC1.seq8)+14 v(xSARLOGIC1.seq_start)+10.5 v(xSARLOGIC1.seq9)+7 v(clk_sample)+3.5 v(clk_sar)
-.endc
-"}
 C {lab_pin.sym} 3770 -1760 0 1 {name=p91 sig_type=std_logic lab=outp}
 C {lab_pin.sym} 3770 -1740 0 1 {name=p92 sig_type=std_logic lab=outn}
 C {lab_pin.sym} 2760 -1150 0 0 {name=p93 sig_type=std_logic lab=outp}
@@ -302,16 +261,10 @@ C {vsource.sym} 2180 -1770 0 0 {name=V8 value=0.1 savecurrent=false}
 C {gnd.sym} 2180 -1640 0 0 {name=l8 lab=0}
 C {vsource.sym} 2230 -1770 0 0 {name=V9 value=3.2 savecurrent=false}
 C {gnd.sym} 2230 -1640 0 0 {name=l9 lab=0}
-C {vsource.sym} 2290 -1610 0 0 {name=V10 value=1.7 savecurrent=false}
-C {gnd.sym} 2290 -1480 0 0 {name=l10 lab=0}
-C {vsource.sym} 2340 -1610 0 0 {name=V11 value=1.6 savecurrent=false}
-C {gnd.sym} 2340 -1480 0 0 {name=l11 lab=0}
 C {lab_pin.sym} 2340 -1890 0 0 {name=p98 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} 2340 -1870 0 0 {name=p99 sig_type=std_logic lab=VCM}
 C {lab_pin.sym} 2340 -1850 0 0 {name=p120 sig_type=std_logic lab=Vref_n}
 C {lab_pin.sym} 2340 -1830 0 0 {name=p121 sig_type=std_logic lab=Vref_p}
-C {lab_pin.sym} 2380 -1780 0 0 {name=p122 sig_type=std_logic lab=VIN_N}
-C {lab_pin.sym} 2420 -1740 0 0 {name=p123 sig_type=std_logic lab=VIN_P}
 C {lab_pin.sym} 3090 -1820 0 0 {name=p29 sig_type=std_logic lab=Vref_n}
 C {lab_pin.sym} 3090 -1800 0 0 {name=p31 sig_type=std_logic lab=Vref_p}
 C {lab_pin.sym} 2940 -1900 0 1 {name=p51 sig_type=std_logic lab=VIN_Nsamp}
@@ -380,13 +333,6 @@ C {opin.sym} 3290 -970 0 0 {name=p131 lab=dout1}
 C {opin.sym} 3290 -930 0 0 {name=p132 lab=dout0}
 C {lab_pin.sym} 3560 -1750 0 0 {name=p41 sig_type=std_logic lab=compinn}
 C {lab_pin.sym} 3560 -1770 0 0 {name=p22 sig_type=std_logic lab=compinp}
-C {code.sym} 3420 -1480 0 0 {name=MODELS only_toplevel=true  
-format="tcleval( @value )" 
-value="
-.include $::180MCU_MODELS/design.ngspice
-.lib $::180MCU_MODELS/sm141064.ngspice ss
-.lib $::180MCU_MODELS/smbb000149.ngspice ss
-"}
 C {lab_pin.sym} 4070 -1360 0 0 {name=p43 sig_type=std_logic lab=EOC}
 C {lab_pin.sym} 4440 -1600 0 0 {name=p45 sig_type=std_logic lab=reg_eoc}
 C {symbols/pfet_03v3.sym} 4240 -1250 0 0 {name=M2

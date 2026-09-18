@@ -58,7 +58,7 @@ value=20k
 footprint=1206
 device=resistor
 m=1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/FD_OTA/FDOTA/FD_OTA.sym} 520 -180 0 0 {name=xFDOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FD_OTA/FDOTA/FD_OTA.sym} 520 -180 0 0 {name=xFDOTA1}
 C {lab_wire.sym} 650 -200 2 1 {name=p10 sig_type=std_logic lab=BUFFER_SS}
 C {lab_wire.sym} 650 -440 0 0 {name=p20 sig_type=std_logic lab=BUFFER_DD}
 C {lab_wire.sym} 560 -320 0 0 {name=p33 sig_type=std_logic lab=BUFFER_REF}
