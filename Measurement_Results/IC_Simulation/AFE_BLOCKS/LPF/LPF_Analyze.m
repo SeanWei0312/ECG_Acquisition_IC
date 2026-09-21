@@ -89,6 +89,7 @@ printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(reportDir,'LPF_worst_case_report.csv'));
 
 plotNominalFrequencyResponse(metrics{nominalCorner},plotDir,cfg);
+plotNominalVtc(metrics{nominalCorner},plotDir,cfg);
 plotNominalCmrr(metrics{nominalCorner},plotDir,cfg);
 plotNominalNoise(metrics{nominalCorner},plotDir,cfg);
 plotSelectorTransient(scriptDir,plotDir);
@@ -100,6 +101,9 @@ cfg.targetGain_VV = 1;
 cfg.referenceFrequency_Hz = 10;
 cfg.band_Hz = [0.05 150];
 cfg.rejectionFrequencies_Hz = [60 150];
+cfg.vtcCompression_pct = 1;
+cfg.vtcCenterFitHalfWidth_V = 0.1;
+cfg.thdFrequency_Hz = 60;
 cfg.mcRequestedRuns = 200;
 end
 
@@ -124,6 +128,10 @@ rows = [
     "Loss @ 150 Hz",                          "dB"
     "LPF -1 dB frequency",                    "Hz"
     "LPF -3 dB frequency",                    "Hz"
+    "Input range low",                        "V"
+    "Input range high",                       "V"
+    "Output range low",                       "V"
+    "Output range high",                      "V"
     "CMRR @ 60 Hz",                           "dB"
     "CMRR @ 150 Hz",                          "dB"
     "PSRR+ @ 60 Hz",                          "dB"
@@ -131,6 +139,7 @@ rows = [
     "PSRR- @ 60 Hz",                          "dB"
     "PSRR- @ 150 Hz",                         "dB"
     "Input-referred noise 0.05-150 Hz",       "uVrms"
+    "THD @ 60 Hz, 1.2 Vpp",                   "%"
 ];
 end
 
@@ -157,12 +166,18 @@ switch string(parameter)
         specification = "±0.5";
     case "LPF -1 dB frequency"
         specification = "≥150";
+    case {"Input range low","Output range low"}
+        specification = "≤-1.2";
+    case {"Input range high","Output range high"}
+        specification = "≥1.2";
     case {"CMRR @ 60 Hz","CMRR @ 150 Hz", ...
             "PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
             "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}
         specification = "≥80";
     case "Input-referred noise 0.05-150 Hz"
         specification = "≤10";
+    case "THD @ 60 Hz, 1.2 Vpp"
+        specification = "≤0.01";
     otherwise
         specification = "";
 end
@@ -202,12 +217,18 @@ switch string(parameter)
         pass = abs(value) <= 0.5;
     case "LPF -1 dB frequency"
         pass = value >= 150;
+    case {"Input range low","Output range low"}
+        pass = value <= -1.2;
+    case {"Input range high","Output range high"}
+        pass = value >= 1.2;
     case {"CMRR @ 60 Hz","CMRR @ 150 Hz", ...
             "PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
             "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}
         pass = value >= 80;
     case "Input-referred noise 0.05-150 Hz"
         pass = value <= 10;
+    case "THD @ 60 Hz, 1.2 Vpp"
+        pass = value <= 0.01;
     otherwise
         pass = true;
 end
@@ -230,11 +251,11 @@ for cornerIndex = 1:numel(corners)
     passedCorners = passedCorners+cornerPass;
 end
 if isempty(failures)
-    fprintf('\nLPF PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
+    fprintf('\nLPF FULL-PVT VERIFICATION: PASS (%d/%d corners)\n', ...
         passedCorners,numel(corners));
 else
     warning('LPF_Analyze:PvtSpecFailure', ...
-        'LPF PVT specification: FAIL (%d/%d corners):\n%s', ...
+        'LPF FULL-PVT VERIFICATION: FAIL (%d/%d corners):\n%s', ...
         passedCorners,numel(corners),strjoin(failures,newline));
 end
 end
@@ -262,6 +283,8 @@ m.rejection = analyzeRejection( ...
     readNumericFile(files.psrrP,5), ...
     readNumericFile(files.psrrN,5),m.diff,cfg);
 m.noise = analyzeNoise(readNumericFile(files.noise,3),cfg);
+m.vtc = analyzeVtc(readNumericFile(files.vtc,6),cfg);
+m.thd = analyzeThd(readNumericFile(files.thd,3),cfg.thdFrequency_Hz);
 end
 
 function files = runFiles(resultDir,processToken,caseToken)
@@ -273,6 +296,8 @@ files.cmrr = fullfile(resultDir,sprintf(stem,'cmrr_ac'));
 files.psrrP = fullfile(resultDir,sprintf(stem,'psrrp_ac'));
 files.psrrN = fullfile(resultDir,sprintf(stem,'psrrn_ac'));
 files.noise = fullfile(resultDir,sprintf(stem,'noise'));
+files.vtc = fullfile(resultDir,sprintf(stem,'vtc'));
+files.thd = fullfile(resultDir,sprintf(stem,'thd'));
 end
 
 function result = analyzeDifferential(data,cfg)
@@ -344,6 +369,87 @@ result.inputDensity_VrtHz = abs(data(:,3));
 result.inputRms_V = integrateDensity(f,result.inputDensity_VrtHz,cfg.band_Hz);
 end
 
+function result = analyzeVtc(data,cfg)
+vinDiff_V = data(:,2);
+lpfOutDiff_V = data(:,6);
+if any(diff(vinDiff_V) <= 0)
+    error('LPF_Analyze:VtcInput', ...
+        'LPF VTC input must be strictly increasing.');
+end
+
+[~,zeroIndex] = min(abs(lpfOutDiff_V));
+fitRows = abs(vinDiff_V-vinDiff_V(zeroIndex)) <= ...
+    cfg.vtcCenterFitHalfWidth_V;
+if nnz(fitRows) < 3
+    error('LPF_Analyze:VtcFit', ...
+        'LPF VTC central gain fit requires at least three samples.');
+end
+centralFit = polyfit(vinDiff_V(fitRows),lpfOutDiff_V(fitRows),1);
+centralGain_VV = centralFit(1);
+if ~isfinite(centralGain_VV) || abs(centralGain_VV) <= eps
+    error('LPF_Analyze:VtcGain', ...
+        'LPF VTC central DC gain must be finite and nonzero.');
+end
+
+localGain_VV = gradient(lpfOutDiff_V)./gradient(vinDiff_V);
+gainError_pct = 100*abs(localGain_VV/centralGain_VV-1);
+
+negativeIndex = zeroIndex;
+while negativeIndex > 1 && ...
+        isfinite(gainError_pct(negativeIndex-1)) && ...
+        gainError_pct(negativeIndex-1) <= cfg.vtcCompression_pct
+    negativeIndex = negativeIndex-1;
+end
+positiveIndex = zeroIndex;
+while positiveIndex < numel(vinDiff_V) && ...
+        isfinite(gainError_pct(positiveIndex+1)) && ...
+        gainError_pct(positiveIndex+1) <= cfg.vtcCompression_pct
+    positiveIndex = positiveIndex+1;
+end
+
+result.input_V = vinDiff_V;
+result.output_V = lpfOutDiff_V;
+result.centralGain_VV = centralGain_VV;
+result.inputNegative_V = vinDiff_V(negativeIndex);
+result.inputPositive_V = vinDiff_V(positiveIndex);
+result.outputNegative_V = lpfOutDiff_V(negativeIndex);
+result.outputPositive_V = lpfOutDiff_V(positiveIndex);
+end
+
+function result = analyzeThd(data,fundamental_Hz)
+t_s = data(:,1);
+lpfOutDiff_V = data(:,3);
+if any(diff(t_s) <= 0)
+    error('LPF_Analyze:ThdTime', ...
+        'THD transient time must be strictly increasing.');
+end
+duration_s = t_s(end)-t_s(1);
+cycleCount = duration_s*fundamental_Hz;
+if abs(cycleCount-round(cycleCount)) > 1e-3
+    error('LPF_Analyze:ThdCycles', ...
+        'THD transient must contain an integer number of cycles; found %.6g.', ...
+        cycleCount);
+end
+lpfOutDiff_V = lpfOutDiff_V-mean(lpfOutDiff_V,'omitnan');
+amplitude_Vpk = zeros(1,5);
+for harmonic = 1:5
+    angle = 2*pi*harmonic*fundamental_Hz*t_s;
+    cosineCoefficient = 2/duration_s*trapz( ...
+        t_s,lpfOutDiff_V.*cos(angle));
+    sineCoefficient = 2/duration_s*trapz( ...
+        t_s,lpfOutDiff_V.*sin(angle));
+    amplitude_Vpk(harmonic) = hypot(cosineCoefficient,sineCoefficient);
+end
+if ~isfinite(amplitude_Vpk(1)) || amplitude_Vpk(1) <= 0
+    error('LPF_Analyze:ThdFundamental', ...
+        'THD fundamental amplitude must be finite and positive.');
+end
+result.amplitude_Vpk = amplitude_Vpk;
+result.ratio = sqrt(sum(amplitude_Vpk(2:5).^2))/amplitude_Vpk(1);
+result.percent = 100*result.ratio;
+result.dB = 20*log10(result.ratio);
+end
+
 function value = integrateDensity(frequency,density,band)
 [f,y] = boundedTrace(frequency,density,band);
 value = sqrt(trapz(f,y.^2));
@@ -399,6 +505,10 @@ for rowIndex = 1:size(rows,1)
         case "Loss @ 150 Hz", values(rowIndex) = m.diff.loss150_dB;
         case "LPF -1 dB frequency", values(rowIndex) = m.diff.frequency1dB_Hz;
         case "LPF -3 dB frequency", values(rowIndex) = m.diff.frequency3dB_Hz;
+        case "Input range low", values(rowIndex) = m.vtc.inputNegative_V;
+        case "Input range high", values(rowIndex) = m.vtc.inputPositive_V;
+        case "Output range low", values(rowIndex) = m.vtc.outputNegative_V;
+        case "Output range high", values(rowIndex) = m.vtc.outputPositive_V;
         case "CMRR @ 60 Hz", values(rowIndex) = m.rejection.cmrr_dB(1);
         case "CMRR @ 150 Hz", values(rowIndex) = m.rejection.cmrr_dB(2);
         case "PSRR+ @ 60 Hz", values(rowIndex) = m.rejection.psrrP_dB(1);
@@ -407,6 +517,7 @@ for rowIndex = 1:size(rows,1)
         case "PSRR- @ 150 Hz", values(rowIndex) = m.rejection.psrrN_dB(2);
         case "Input-referred noise 0.05-150 Hz"
             values(rowIndex) = m.noise.inputRms_V*1e6;
+        case "THD @ 60 Hz, 1.2 Vpp", values(rowIndex) = m.thd.percent;
     end
 end
 end
@@ -458,6 +569,10 @@ definitions = [
     "Loss @ 150 Hz",                          "Loss @ 150 Hz",                          "max"
     "LPF -1 dB frequency",                    "LPF -1 dB frequency",                    "min"
     "LPF -3 dB frequency",                    "LPF -3 dB frequency",                    "min"
+    "Input range low",                        "Input range low",                        "max"
+    "Input range high",                       "Input range high",                       "min"
+    "Output range low",                       "Output range low",                       "max"
+    "Output range high",                      "Output range high",                      "min"
     "CMRR @ 60 Hz",                           "CMRR @ 60 Hz",                           "min"
     "CMRR @ 150 Hz",                          "CMRR @ 150 Hz",                          "min"
     "PSRR+ @ 60 Hz",                          "PSRR+ @ 60 Hz",                          "min"
@@ -465,6 +580,7 @@ definitions = [
     "PSRR- @ 60 Hz",                          "PSRR- @ 60 Hz",                          "min"
     "PSRR- @ 150 Hz",                         "PSRR- @ 150 Hz",                         "min"
     "Input-referred noise 0.05-150 Hz",       "Input-referred noise 0.05-150 Hz",       "max"
+    "THD @ 60 Hz, 1.2 Vpp",                   "THD @ 60 Hz, 1.2 Vpp",                   "max"
 ];
 n = size(definitions,1);
 parameters = definitions(:,1);
@@ -667,7 +783,7 @@ for plotIndex = 1:numel(defs.plotParameters)
     if isempty(allValues), continue; end
     specBounds = mcSpecBounds(defs.names(metricIndex));
     [lower,upper,fullResult] = mcDisplayRange( ...
-        allValues,results,metricIndex,specBounds);
+        allValues,results,metricIndex);
     edges = linspace(lower,upper,21);
     fig = figure;
     hold on;
@@ -691,7 +807,7 @@ for plotIndex = 1:numel(defs.plotParameters)
     end
     stylePlot(defs.names(metricIndex)+" ("+defs.units(metricIndex)+")", ...
         titlePrefix+defs.names(metricIndex)+" Distribution - MM / GL / FULL");
-    legend('Location','best');
+    legend('Location','northeast');
     savePlot(fig,plotDir,defs.plotFiles(plotIndex));
 end
 end
@@ -708,7 +824,7 @@ for plotIndex = 1:numel(parameters)
     if isempty(allValues), continue; end
     specBounds = mcSpecBounds(parameters(plotIndex));
     [lower,upper,fullResult] = mcDisplayRange( ...
-        allValues,results,metricIndex,specBounds);
+        allValues,results,metricIndex);
     edges = linspace(lower,upper,21);
     nexttile(layout); hold on;
     colors = lines(numel(results));
@@ -727,7 +843,7 @@ for plotIndex = 1:numel(parameters)
     ylabel('Samples (%)');
     stylePlot(parameters(plotIndex)+" (dB)", ...
         parameters(plotIndex)+" Distribution - MM / GL / FULL");
-    legend('Location','best');
+    legend('Location','northeast');
 end
 savePlot(fig,plotDir,'Fig_MC_03_CMRR_Histogram.png');
 end
@@ -741,9 +857,22 @@ switch string(parameter)
 end
 end
 
-function [lower,upper,fullResult] = mcDisplayRange(values,results,metricIndex,specBounds)
-fullIndex = find(cellfun(@(r)r.mode == "FULL",results),1);
+function [lower,upper,fullResult] = mcDisplayRange(values,results,metricIndex)
+% Center every MC x-axis on the FULL mean.
+fullIndex = find(cellfun(@(r)strcmpi(string(r.mode),"FULL"),results),1);
+if isempty(fullIndex)
+    fullIndex = numel(results);
+end
 fullResult = results{fullIndex};
+center = fullResult.stats(metricIndex,4);
+if ~isfinite(center)
+    fullValues = fullResult.values(:,metricIndex);
+    center = mean(fullValues(isfinite(fullValues)),'omitnan');
+end
+if ~isfinite(center)
+    center = mean(values,'omitnan');
+end
+
 limits = nan(numel(results),2);
 for resultIndex = 1:numel(results)
     mu = results{resultIndex}.stats(metricIndex,4);
@@ -754,25 +883,16 @@ for resultIndex = 1:numel(results)
 end
 finiteLimits = limits(isfinite(limits));
 if isempty(finiteLimits)
-    lower = min(values);
-    upper = max(values);
+    halfRange = max(abs(values-center),[],'omitnan');
 else
-    lower = min(finiteLimits);
-    upper = max(finiteLimits);
+    halfRange = max(abs(finiteLimits-center),[],'omitnan');
 end
-finiteBounds = specBounds(isfinite(specBounds));
-if ~isempty(finiteBounds)
-    lower = min([lower; finiteBounds(:)]);
-    upper = max([upper; finiteBounds(:)]);
+if ~isfinite(halfRange) || halfRange <= 0
+    halfRange = max(abs(center)*0.05,1);
 end
-if lower == upper
-    padding = max(abs(lower)*0.05,1);
-    lower = lower-padding;
-    upper = upper+padding;
-end
-padding = max(0.05*(upper-lower),eps(max(abs([lower upper]))));
-lower = lower-padding;
-upper = upper+padding;
+halfRange = 1.05*halfRange;
+lower = center-halfRange;
+upper = center+halfRange;
 end
 
 function addMcSpecLines(bounds,lower,upper)
@@ -815,6 +935,48 @@ stylePlot('Frequency (Hz)','LPF Differential Frequency Response - NOM');
 savePlot(fig,plotDir,'NOM.LPF_differential_ac.png');
 end
 
+function plotNominalVtc(metric,plotDir,cfg)
+vin_V = metric.vtc.input_V;
+vout_V = metric.vtc.output_V;
+idealVout_V = cfg.targetGain_VV*vin_V;
+
+fig = figure;
+plot(vin_V,vout_V,'LineWidth',1.5,'DisplayName','Simulated');
+hold on;
+plot(vin_V,idealVout_V,'--','LineWidth',1.2, ...
+    'DisplayName','Ideal G = 1 V/V');
+plot([metric.vtc.inputNegative_V metric.vtc.inputPositive_V], ...
+    [metric.vtc.outputNegative_V metric.vtc.outputPositive_V], ...
+    'o','MarkerSize',7,'LineWidth',1.2, ...
+    'DisplayName','1% compression points');
+
+inputLow_V = metric.vtc.inputNegative_V;
+inputHigh_V = metric.vtc.inputPositive_V;
+outputLow_V = metric.vtc.outputNegative_V;
+outputHigh_V = metric.vtc.outputPositive_V;
+xline(inputLow_V,':',sprintf('Input low: %.3f V',inputLow_V), ...
+    'HandleVisibility','off','LabelVerticalAlignment','middle', ...
+    'LabelHorizontalAlignment','left');
+xline(inputHigh_V,':',sprintf('Input high: %.3f V',inputHigh_V), ...
+    'HandleVisibility','off','LabelVerticalAlignment','middle', ...
+    'LabelHorizontalAlignment','right');
+yline(outputLow_V,':',sprintf('Output low: %.3f V',outputLow_V), ...
+    'HandleVisibility','off','LabelVerticalAlignment','bottom', ...
+    'LabelHorizontalAlignment','right');
+yline(outputHigh_V,':',sprintf('Output high: %.3f V',outputHigh_V), ...
+    'HandleVisibility','off','LabelVerticalAlignment','top', ...
+    'LabelHorizontalAlignment','left');
+xline(-1.2,'--','HandleVisibility','off');
+xline(1.2,'--','HandleVisibility','off');
+yline(-1.2,'--','HandleVisibility','off');
+yline(1.2,'--','HandleVisibility','off');
+ylabel('LPF Differential Output Voltage (V)');
+legend('Location','best');
+stylePlot('Differential Input Voltage (V)', ...
+    'LPF VTC + 1% Compression - NOM');
+savePlot(fig,plotDir,'NOM.LPF_vtc.png');
+end
+
 function plotNominalCmrr(metric,plotDir,cfg)
 nominal = metric.rejection;
 fig = figure;
@@ -838,7 +1000,7 @@ ylim([min(70,min(allValues)-5) max(allValues)+5]);
 xlim([0.01 1e5]);
 ylabel('Rejection (dB)');
 legend([nominalLine psrrPLine psrrNLine], ...
-    {'LPF CMRR','PSRR+','PSRR-'},'Location','best');
+    {'LPF CMRR','PSRR+','PSRR-'},'Location','southwest');
 stylePlot('Frequency (Hz)','LPF CMRR, PSRR+, and PSRR- - NOM');
 savePlot(fig,plotDir,'LPF_PVT_CMRR_AC.png');
 end
@@ -887,19 +1049,30 @@ ylim([-0.15 max(sel_V)+0.15]);
 ylabel('SEL (V)');
 stylePlot('','(a) SEL Control');
 signalAxes = nexttile(layout);
-plot(time_ms,internal_mV,'LineWidth',1.5, ...
-    'DisplayName','LPF internal differential'); hold on;
-plot(time_ms,external_mV,'--','LineWidth',1.5, ...
-    'DisplayName','External differential');
+yyaxis left;
+internalLine = plot(time_ms,internal_mV,'LineWidth',1.5, ...
+    'DisplayName','INT input differential');
+hold on;
+internalLimit_mV = max(abs(internal_mV),[],'omitnan');
+ylim(1.05*[-internalLimit_mV internalLimit_mV]);
+ylabel('INT input differential (mV)');
+yyaxis right;
+externalLine = plot(time_ms,external_mV,'--','LineWidth',1.5, ...
+    'DisplayName','EXT input differential');
+externalLimit_mV = max(abs(external_mV),[],'omitnan');
+ylim(1.05*[-externalLimit_mV externalLimit_mV]);
+ylabel('EXT input differential (mV)');
 addSelectorSwitchGuide(switchTime_ms,false);
-ylabel('Differential voltage (mV)');
-legend('Location','best');
-stylePlot('','(b) Available LPF and External Signals');
+legend([internalLine externalLine],'Location','northeast');
+stylePlot('','(b) Available INT and EXT Input Signals');
 outputAxes = nexttile(layout);
 plot(time_ms,output_mV,'LineWidth',2.0, ...
     'DisplayName','OUT differential');
 addSelectorSwitchGuide(switchTime_ms,false);
-ylabel('Differential voltage (mV)');
+outputLimit_mV = max(abs([internal_mV; external_mV; output_mV]), ...
+    [],'omitnan');
+ylim(1.05*[-outputLimit_mV outputLimit_mV]);
+ylabel('Output differential (mV)');
 stylePlot('Time (ms)','(c) Selected Output');
 linkaxes([controlAxes signalAxes outputAxes],'x');
 xlim([time_ms(1) time_ms(end)]);

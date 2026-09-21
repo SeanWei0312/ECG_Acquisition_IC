@@ -5,29 +5,29 @@ V {}
 S {}
 F {}
 E {}
-N 1860 -540 1900 -540 {lab=#net1}
-N 1860 -420 1900 -420 {lab=#net2}
+N 1880 -540 1920 -540 {lab=#net1}
+N 1880 -420 1920 -420 {lab=#net2}
 N 1160 -420 1200 -420 {lab=#net3}
 N 1160 -540 1200 -540 {lab=#net4}
-N 2560 -420 2600 -420 {lab=#net5}
-N 2560 -540 2600 -540 {lab=#net6}
+N 2600 -420 2640 -420 {lab=#net5}
+N 2600 -540 2640 -540 {lab=#net6}
 N 540 -360 540 -320 {lab=AVDD}
 N 580 -360 580 -280 {lab=AGND}
-N 2900 -540 2900 -240 {lab=BUFFER_OUTP}
-N 2860 -420 2940 -420 {lab=BUFFER_OUTN}
-N 2940 -500 3060 -500 {lab=BUFFER_OUTN}
-N 2940 -500 2940 -200 {lab=BUFFER_OUTN}
-N 2860 -540 3060 -540 {lab=BUFFER_OUTP}
-N 2200 -540 2200 -240 {lab=PGA_OUTP}
-N 2160 -420 2240 -420 {lab=PGA_OUTN}
-N 2240 -500 2360 -500 {lab=PGA_OUTN}
-N 2240 -500 2240 -200 {lab=PGA_OUTN}
-N 2160 -540 2360 -540 {lab=PGA_OUTP}
-N 1500 -540 1500 -240 {lab=LPF_OUTP}
-N 1460 -420 1540 -420 {lab=LPF_OUTN}
-N 1540 -500 1660 -500 {lab=LPF_OUTN}
-N 1540 -500 1540 -200 {lab=LPF_OUTN}
-N 1460 -540 1660 -540 {lab=LPF_OUTP}
+N 2960 -540 2960 -240 {lab=FDBUF_OUTP}
+N 2920 -420 3000 -420 {lab=FDBUF_OUTN}
+N 3000 -500 3120 -500 {lab=FDBUF_OUTN}
+N 3000 -500 3000 -200 {lab=FDBUF_OUTN}
+N 2920 -540 3120 -540 {lab=FDBUF_OUTP}
+N 2240 -540 2240 -240 {lab=PGA_OUTP}
+N 2200 -420 2280 -420 {lab=PGA_OUTN}
+N 2280 -500 2400 -500 {lab=PGA_OUTN}
+N 2280 -500 2280 -200 {lab=PGA_OUTN}
+N 2200 -540 2400 -540 {lab=PGA_OUTP}
+N 1520 -540 1520 -240 {lab=LPF_OUTP}
+N 1480 -420 1560 -420 {lab=LPF_OUTN}
+N 1560 -500 1680 -500 {lab=LPF_OUTN}
+N 1560 -500 1560 -200 {lab=LPF_OUTN}
+N 1480 -540 1680 -540 {lab=LPF_OUTP}
 N 800 -540 800 -240 {lab=INA_OUTP}
 N 760 -420 840 -420 {lab=INA_OUTN}
 N 840 -500 840 -200 {lab=INA_OUTN}
@@ -36,48 +36,48 @@ N 580 -680 580 -600 {lab=#net8}
 N 620 -640 620 -600 {lab=REF}
 N 660 -680 660 -600 {lab=#net9}
 N 700 -680 700 -600 {lab=#net10}
-N 2720 -640 2720 -600 {lab=REF}
-N 1320 -640 1320 -600 {lab=REF}
-N 1360 -680 1360 -600 {lab=#net11}
-N 1400 -680 1400 -600 {lab=#net12}
-N 2060 -680 2060 -600 {lab=#net13}
-N 2100 -680 2100 -600 {lab=#net14}
-N 2020 -640 2020 -600 {lab=REF}
-N 3160 -360 3160 -280 {lab=AGND}
-N 3120 -360 3120 -320 {lab=AVDD}
-N 1280 -360 1280 -280 {lab=AGND}
+N 2780 -640 2780 -600 {lab=REF}
+N 1340 -640 1340 -600 {lab=REF}
+N 1380 -680 1380 -600 {lab=#net11}
+N 1420 -680 1420 -600 {lab=#net12}
+N 2100 -680 2100 -600 {lab=#net13}
+N 2140 -680 2140 -600 {lab=#net14}
+N 2060 -640 2060 -600 {lab=REF}
+N 3220 -360 3220 -280 {lab=AGND}
+N 3180 -360 3180 -320 {lab=AVDD}
+N 1300 -360 1300 -280 {lab=AGND}
 N 1060 -360 1060 -280 {lab=AGND}
 N 1020 -360 1020 -320 {lab=AVDD}
-N 1240 -360 1240 -320 {lab=AVDD}
+N 1260 -360 1260 -320 {lab=AVDD}
 N 1100 -360 1100 -240 {lab=INA_SEL}
-N 1760 -360 1760 -280 {lab=AGND}
-N 1720 -360 1720 -320 {lab=AVDD}
-N 1800 -360 1800 -240 {lab=LPF_SEL}
-N 2460 -360 2460 -280 {lab=AGND}
-N 2420 -360 2420 -320 {lab=AVDD}
-N 2500 -360 2500 -240 {lab=PGA_SEL}
-N 3200 -360 3200 -240 {lab=BUFFER_SEL}
-N 2680 -360 2680 -280 {lab=AGND}
-N 2640 -360 2640 -320 {lab=AVDD}
-N 1980 -360 1980 -280 {lab=AGND}
-N 1940 -360 1940 -320 {lab=AVDD}
-N 2020 -360 2020 -240 {lab=S1}
-N 2060 -360 2060 -240 {lab=S0}
-N 3260 -420 3300 -420 {lab=OUTN}
-N 3260 -540 3300 -540 {lab=OUTP}
-N 80 -280 3160 -280 {lab=AGND}
-N 80 -320 3120 -320 {lab=AVDD}
+N 1780 -360 1780 -280 {lab=AGND}
+N 1740 -360 1740 -320 {lab=AVDD}
+N 1820 -360 1820 -240 {lab=LPF_SEL}
+N 2500 -360 2500 -280 {lab=AGND}
+N 2460 -360 2460 -320 {lab=AVDD}
+N 2540 -360 2540 -240 {lab=PGA_SEL}
+N 3260 -360 3260 -240 {lab=FDBUF_SEL}
+N 2740 -360 2740 -280 {lab=AGND}
+N 2700 -360 2700 -320 {lab=AVDD}
+N 2020 -360 2020 -280 {lab=AGND}
+N 1980 -360 1980 -320 {lab=AVDD}
+N 2060 -360 2060 -240 {lab=S1}
+N 2100 -360 2100 -240 {lab=S0}
+N 3320 -420 3360 -420 {lab=OUTN}
+N 3320 -540 3360 -540 {lab=OUTP}
+N 80 -280 3220 -280 {lab=AGND}
+N 80 -320 3180 -320 {lab=AVDD}
 N 360 -460 480 -460 {lab=SEON}
 N 360 -500 480 -500 {lab=SEOP}
 N 400 -500 400 -240 {lab=SEOP}
 N 280 -640 280 -520 {lab=REF}
-N 80 -640 2720 -640 {lab=REF}
+N 80 -640 2780 -640 {lab=REF}
 N 240 -920 240 -840 {lab=BPINT}
 N 280 -800 320 -800 {lab=BPEXT}
 N 280 -920 280 -800 {lab=BPEXT}
 N 200 -840 320 -840 {lab=BPINT}
-N 2760 -680 2760 -600 {lab=#net15}
-N 2800 -680 2800 -600 {lab=#net16}
+N 2820 -680 2820 -600 {lab=#net15}
+N 2860 -680 2860 -600 {lab=#net16}
 N 360 -760 360 -720 {lab=AVDD}
 N 400 -760 400 -680 {lab=AGND}
 N 480 -920 480 -800 {lab=BP}
@@ -99,10 +99,10 @@ N 2320 -1160 2340 -1160 {lab=PGA_OUTP}
 N 2320 -1120 2340 -1120 {lab=PGA_OUTN}
 N 2320 -1080 2340 -1080 {lab=PGA_EXTP}
 N 2320 -1040 2340 -1040 {lab=PGA_EXTN}
-N 2600 -1160 2620 -1160 {lab=BUFFER_OUTP}
-N 2600 -1120 2620 -1120 {lab=BUFFER_OUTN}
-N 2600 -1080 2620 -1080 {lab=BUFFER_EXTP}
-N 2600 -1040 2620 -1040 {lab=BUFFER_EXTN}
+N 2600 -1160 2620 -1160 {lab=FDBUF_OUTP}
+N 2600 -1120 2620 -1120 {lab=FDBUF_OUTN}
+N 2600 -1080 2620 -1080 {lab=FDBUF_EXTP}
+N 2600 -1040 2620 -1040 {lab=FDBUF_EXTN}
 N 1200 -1200 1220 -1200 {lab=AVDD}
 N 1200 -1160 1220 -1160 {lab=AGND}
 N 1200 -960 1220 -960 {lab=SEOP}
@@ -121,7 +121,7 @@ N 2040 -1200 2060 -1200 {lab=LPF_SEL}
 N 2320 -1200 2340 -1200 {lab=PGA_SEL}
 N 2320 -1000 2340 -1000 {lab=S1}
 N 2320 -960 2340 -960 {lab=S0}
-N 2600 -1200 2620 -1200 {lab=BUFFER_SEL}
+N 2600 -1200 2620 -1200 {lab=FDBUF_SEL}
 N 1200 -1040 1220 -1040 {lab=OUTP}
 N 1200 -1000 1220 -1000 {lab=OUTN}
 N 1480 -960 1500 -960 {lab=IB}
@@ -140,30 +140,30 @@ N 880 -420 960 -420 {lab=INA_EXTN}
 N 920 -460 960 -460 {lab=INA_EXTP}
 N 880 -200 960 -200 {lab=INA_EXTN}
 N 920 -240 960 -240 {lab=INA_EXTP}
-N 1460 -240 1500 -240 {lab=LPF_OUTP}
-N 1460 -200 1540 -200 {lab=LPF_OUTN}
-N 1580 -420 1660 -420 {lab=LPF_EXTN}
-N 1580 -420 1580 -200 {lab=LPF_EXTN}
-N 1580 -200 1660 -200 {lab=LPF_EXTN}
-N 1620 -240 1660 -240 {lab=LPF_EXTP}
-N 1620 -460 1620 -240 {lab=LPF_EXTP}
-N 1620 -460 1660 -460 {lab=LPF_EXTP}
-N 2160 -240 2200 -240 {lab=PGA_OUTP}
-N 2160 -200 2240 -200 {lab=PGA_OUTN}
-N 2320 -460 2360 -460 {lab=PGA_EXTP}
-N 2320 -460 2320 -240 {lab=PGA_EXTP}
-N 2320 -240 2360 -240 {lab=PGA_EXTP}
-N 2280 -200 2360 -200 {lab=PGA_EXTN}
-N 2280 -420 2280 -200 {lab=PGA_EXTN}
-N 2280 -420 2360 -420 {lab=PGA_EXTN}
-N 2860 -240 2900 -240 {lab=BUFFER_OUTP}
-N 2860 -200 2940 -200 {lab=BUFFER_OUTN}
-N 3020 -460 3060 -460 {lab=BUFFER_EXTP}
-N 3020 -460 3020 -240 {lab=BUFFER_EXTP}
-N 3020 -240 3060 -240 {lab=BUFFER_EXTP}
-N 2980 -200 3060 -200 {lab=BUFFER_EXTN}
-N 2980 -420 2980 -200 {lab=BUFFER_EXTN}
-N 2980 -420 3060 -420 {lab=BUFFER_EXTN}
+N 1480 -240 1520 -240 {lab=LPF_OUTP}
+N 1480 -200 1560 -200 {lab=LPF_OUTN}
+N 1600 -420 1680 -420 {lab=LPF_EXTN}
+N 1600 -420 1600 -200 {lab=LPF_EXTN}
+N 1600 -200 1680 -200 {lab=LPF_EXTN}
+N 1640 -240 1680 -240 {lab=LPF_EXTP}
+N 1640 -460 1640 -240 {lab=LPF_EXTP}
+N 1640 -460 1680 -460 {lab=LPF_EXTP}
+N 2200 -240 2240 -240 {lab=PGA_OUTP}
+N 2200 -200 2280 -200 {lab=PGA_OUTN}
+N 2360 -460 2400 -460 {lab=PGA_EXTP}
+N 2360 -460 2360 -240 {lab=PGA_EXTP}
+N 2360 -240 2400 -240 {lab=PGA_EXTP}
+N 2320 -200 2400 -200 {lab=PGA_EXTN}
+N 2320 -420 2320 -200 {lab=PGA_EXTN}
+N 2320 -420 2400 -420 {lab=PGA_EXTN}
+N 2920 -240 2960 -240 {lab=FDBUF_OUTP}
+N 2920 -200 3000 -200 {lab=FDBUF_OUTN}
+N 3080 -460 3120 -460 {lab=FDBUF_EXTP}
+N 3080 -460 3080 -240 {lab=FDBUF_EXTP}
+N 3080 -240 3120 -240 {lab=FDBUF_EXTP}
+N 3040 -200 3120 -200 {lab=FDBUF_EXTN}
+N 3040 -420 3040 -200 {lab=FDBUF_EXTN}
+N 3040 -420 3120 -420 {lab=FDBUF_EXTN}
 N 480 -680 480 -600 {lab=#net17}
 N 240 -600 480 -600 {lab=#net17}
 N 240 -600 240 -520 {lab=#net17}
@@ -174,39 +174,39 @@ N 440 -460 440 -200 {lab=SEON}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {lab_wire.sym} 80 -540 0 0 {name=p6 sig_type=std_logic lab=INP}
 C {lab_wire.sym} 80 -420 0 0 {name=p7 sig_type=std_logic lab=INN}
-C {lab_wire.sym} 3300 -540 0 1 {name=p20 sig_type=std_logic lab=OUTP}
-C {lab_wire.sym} 3300 -420 0 1 {name=p21 sig_type=std_logic lab=OUTN}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/LPF/LPF.sym} 1120 -320 0 0 {name=xLFP1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/PGA/PGA.sym} 1820 -320 0 0 {name=xPGA1}
+C {lab_wire.sym} 3360 -540 0 1 {name=p20 sig_type=std_logic lab=OUTP}
+C {lab_wire.sym} 3360 -420 0 1 {name=p21 sig_type=std_logic lab=OUTN}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/LPF/LPF.sym} 1140 -320 0 0 {name=xLFP1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/PGA/PGA.sym} 1860 -320 0 0 {name=xPGA1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 900 -320 0 0 {name=xMUXD1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/INA/INA.sym} 420 -320 0 0 {name=xINA1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 1600 -320 0 0 {name=xMUXD2}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 2300 -320 0 0 {name=xMUXD3}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 3000 -320 0 0 {name=xMUXD4}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 1620 -320 0 0 {name=xMUXD2}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 2340 -320 0 0 {name=xMUXD3}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 3060 -320 0 0 {name=xMUXD4}
 C {lab_wire.sym} 360 -240 0 0 {name=p94 sig_type=std_logic lab=SEOP}
 C {lab_wire.sym} 360 -200 0 0 {name=p95 sig_type=std_logic lab=SEON}
 C {lab_wire.sym} 760 -240 0 0 {name=p38 sig_type=std_logic lab=INA_OUTP}
 C {lab_wire.sym} 760 -200 0 0 {name=p43 sig_type=std_logic lab=INA_OUTN}
 C {lab_wire.sym} 1100 -240 2 0 {name=p46 sig_type=std_logic lab=INA_SEL}
-C {lab_wire.sym} 1460 -240 0 0 {name=p47 sig_type=std_logic lab=LPF_OUTP}
-C {lab_wire.sym} 1460 -200 0 0 {name=p48 sig_type=std_logic lab=LPF_OUTN}
+C {lab_wire.sym} 1480 -240 0 0 {name=p47 sig_type=std_logic lab=LPF_OUTP}
+C {lab_wire.sym} 1480 -200 0 0 {name=p48 sig_type=std_logic lab=LPF_OUTN}
 C {lab_wire.sym} 960 -240 0 1 {name=p49 sig_type=std_logic lab=INA_EXTP}
 C {lab_wire.sym} 960 -200 0 1 {name=p51 sig_type=std_logic lab=INA_EXTN}
-C {lab_wire.sym} 2160 -240 0 0 {name=p62 sig_type=std_logic lab=PGA_OUTP}
-C {lab_wire.sym} 2160 -200 0 0 {name=p67 sig_type=std_logic lab=PGA_OUTN}
-C {lab_wire.sym} 1660 -240 0 1 {name=p70 sig_type=std_logic lab=LPF_EXTP}
-C {lab_wire.sym} 1660 -200 0 1 {name=p80 sig_type=std_logic lab=LPF_EXTN}
-C {lab_wire.sym} 1800 -240 2 0 {name=p82 sig_type=std_logic lab=LPF_SEL}
-C {lab_wire.sym} 2020 -240 2 1 {name=p83 sig_type=std_logic lab=S1}
-C {lab_wire.sym} 2060 -240 2 1 {name=p84 sig_type=std_logic lab=S0}
-C {lab_wire.sym} 2500 -240 2 0 {name=p85 sig_type=std_logic lab=PGA_SEL}
-C {lab_wire.sym} 3200 -240 2 0 {name=p87 sig_type=std_logic lab=BUFFER_SEL}
-C {lab_wire.sym} 2860 -240 0 0 {name=p92 sig_type=std_logic lab=BUFFER_OUTP}
-C {lab_wire.sym} 2860 -200 0 0 {name=p93 sig_type=std_logic lab=BUFFER_OUTN}
-C {lab_wire.sym} 2360 -240 0 1 {name=p100 sig_type=std_logic lab=PGA_EXTP}
-C {lab_wire.sym} 2360 -200 0 1 {name=p101 sig_type=std_logic lab=PGA_EXTN}
-C {lab_wire.sym} 3060 -240 0 1 {name=p132 sig_type=std_logic lab=BUFFER_EXTP}
-C {lab_wire.sym} 3060 -200 0 1 {name=p133 sig_type=std_logic lab=BUFFER_EXTN}
+C {lab_wire.sym} 2200 -240 0 0 {name=p62 sig_type=std_logic lab=PGA_OUTP}
+C {lab_wire.sym} 2200 -200 0 0 {name=p67 sig_type=std_logic lab=PGA_OUTN}
+C {lab_wire.sym} 1680 -240 0 1 {name=p70 sig_type=std_logic lab=LPF_EXTP}
+C {lab_wire.sym} 1680 -200 0 1 {name=p80 sig_type=std_logic lab=LPF_EXTN}
+C {lab_wire.sym} 1820 -240 2 0 {name=p82 sig_type=std_logic lab=LPF_SEL}
+C {lab_wire.sym} 2060 -240 2 1 {name=p83 sig_type=std_logic lab=S1}
+C {lab_wire.sym} 2100 -240 2 1 {name=p84 sig_type=std_logic lab=S0}
+C {lab_wire.sym} 2540 -240 2 0 {name=p85 sig_type=std_logic lab=PGA_SEL}
+C {lab_wire.sym} 3260 -240 2 0 {name=p87 sig_type=std_logic lab=FDBUF_SEL}
+C {lab_wire.sym} 2920 -240 0 0 {name=p92 sig_type=std_logic lab=FDBUF_OUTP}
+C {lab_wire.sym} 2920 -200 0 0 {name=p93 sig_type=std_logic lab=FDBUF_OUTN}
+C {lab_wire.sym} 2400 -240 0 1 {name=p100 sig_type=std_logic lab=PGA_EXTP}
+C {lab_wire.sym} 2400 -200 0 1 {name=p101 sig_type=std_logic lab=PGA_EXTN}
+C {lab_wire.sym} 3120 -240 0 1 {name=p132 sig_type=std_logic lab=FDBUF_EXTP}
+C {lab_wire.sym} 3120 -200 0 1 {name=p133 sig_type=std_logic lab=FDBUF_EXTN}
 C {lab_wire.sym} 80 -480 0 0 {name=p168 sig_type=std_logic lab=RLD}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/RLD/RLD.sym} 440 -340 0 1 {name=xRLD1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/BIAS/BIAS.sym} 40 -720 0 0 {name=xBIAS1}
@@ -242,14 +242,14 @@ C {ipin.sym} 2320 -1080 0 0 {name=p122 lab=PGA_EXTP}
 C {ipin.sym} 2320 -1040 0 0 {name=p123 lab=PGA_EXTN}
 C {lab_wire.sym} 2340 -1080 0 1 {name=p124 sig_type=std_logic lab=PGA_EXTP}
 C {lab_wire.sym} 2340 -1040 0 1 {name=p125 sig_type=std_logic lab=PGA_EXTN}
-C {opin.sym} 2600 -1160 0 1 {name=p147 lab=BUFFER_OUTP}
-C {opin.sym} 2600 -1120 0 1 {name=p148 lab=BUFFER_OUTN}
-C {lab_wire.sym} 2620 -1160 0 1 {name=p149 sig_type=std_logic lab=BUFFER_OUTP}
-C {lab_wire.sym} 2620 -1120 0 1 {name=p150 sig_type=std_logic lab=BUFFER_OUTN}
-C {ipin.sym} 2600 -1080 0 0 {name=p151 lab=BUFFER_EXTP}
-C {ipin.sym} 2600 -1040 0 0 {name=p152 lab=BUFFER_EXTN}
-C {lab_wire.sym} 2620 -1080 0 1 {name=p153 sig_type=std_logic lab=BUFFER_EXTP}
-C {lab_wire.sym} 2620 -1040 0 1 {name=p154 sig_type=std_logic lab=BUFFER_EXTN}
+C {opin.sym} 2600 -1160 0 1 {name=p147 lab=FDBUF_OUTP}
+C {opin.sym} 2600 -1120 0 1 {name=p148 lab=FDBUF_OUTN}
+C {lab_wire.sym} 2620 -1160 0 1 {name=p149 sig_type=std_logic lab=FDBUF_OUTP}
+C {lab_wire.sym} 2620 -1120 0 1 {name=p150 sig_type=std_logic lab=FDBUF_OUTN}
+C {ipin.sym} 2600 -1080 0 0 {name=p151 lab=FDBUF_EXTP}
+C {ipin.sym} 2600 -1040 0 0 {name=p152 lab=FDBUF_EXTN}
+C {lab_wire.sym} 2620 -1080 0 1 {name=p153 sig_type=std_logic lab=FDBUF_EXTP}
+C {lab_wire.sym} 2620 -1040 0 1 {name=p154 sig_type=std_logic lab=FDBUF_EXTN}
 C {iopin.sym} 1200 -1200 0 1 {name=p158 lab=AVDD}
 C {iopin.sym} 1200 -1160 0 1 {name=p159 lab=AGND}
 C {lab_wire.sym} 1220 -1200 0 1 {name=p160 sig_type=std_logic lab=AVDD}
@@ -286,8 +286,8 @@ C {ipin.sym} 2320 -1000 0 0 {name=p29 lab=S1}
 C {lab_wire.sym} 2340 -1000 0 1 {name=p30 sig_type=std_logic lab=S1}
 C {ipin.sym} 2320 -960 0 0 {name=p37 lab=S0}
 C {lab_wire.sym} 2340 -960 0 1 {name=p39 sig_type=std_logic lab=S0}
-C {ipin.sym} 2600 -1200 0 0 {name=p40 lab=BUFFER_SEL}
-C {lab_wire.sym} 2620 -1200 0 1 {name=p41 sig_type=std_logic lab=BUFFER_SEL}
+C {ipin.sym} 2600 -1200 0 0 {name=p40 lab=FDBUF_SEL}
+C {lab_wire.sym} 2620 -1200 0 1 {name=p41 sig_type=std_logic lab=FDBUF_SEL}
 C {opin.sym} 1200 -1040 0 1 {name=p42 lab=OUTP}
 C {opin.sym} 1200 -1000 0 1 {name=p44 lab=OUTN}
 C {lab_wire.sym} 1220 -1040 0 1 {name=p45 sig_type=std_logic lab=OUTP}
@@ -296,4 +296,4 @@ C {opin.sym} 1480 -960 0 1 {name=p52 lab=IB}
 C {lab_wire.sym} 1500 -960 0 1 {name=p54 sig_type=std_logic lab=IB}
 C {lab_wire.sym} 520 -920 0 0 {name=p55 sig_type=std_logic lab=IB}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUX/MUX.sym} 240 -640 0 0 {name=xMUX1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/BUFFER/BUFFER.sym} 2520 -320 0 0 {name=xBUFFER1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/FDBUF/FDBUF.sym} 2580 -320 0 0 {name=xFDBUF1}

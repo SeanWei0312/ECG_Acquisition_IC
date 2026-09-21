@@ -127,7 +127,7 @@ C {iopin.sym} 140 -560 0 1 {name=p25 lab=PGA_BCMFB}
 C {lab_wire.sym} 160 -560 0 1 {name=p26 sig_type=std_logic lab=PGA_BCMFB}
 C {iopin.sym} 140 -520 0 1 {name=p29 lab=PGA_REF}
 C {lab_wire.sym} 160 -520 0 1 {name=p30 sig_type=std_logic lab=PGA_REF}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FD_OTA/FDOTA/FD_OTA.sym} 760 -500 0 0 {name=xFDOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/FDOTA/FDOTA.sym} 760 -500 0 0 {name=xFDOTA1}
 C {lab_wire.sym} 890 -520 2 1 {name=p10 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 890 -760 0 0 {name=p20 sig_type=std_logic lab=PGA_DD}
 C {lab_wire.sym} 800 -640 0 0 {name=p33 sig_type=std_logic lab=PGA_REF}

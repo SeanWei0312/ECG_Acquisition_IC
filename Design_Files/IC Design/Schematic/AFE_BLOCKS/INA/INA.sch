@@ -86,9 +86,9 @@ C {iopin.sym} 140 -200 0 1 {name=p25 lab=INA_BCMFB}
 C {lab_wire.sym} 160 -200 0 1 {name=p26 sig_type=std_logic lab=INA_BCMFB}
 C {iopin.sym} 140 -160 0 1 {name=p29 lab=INA_REF}
 C {lab_wire.sym} 160 -160 0 1 {name=p30 sig_type=std_logic lab=INA_REF}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FD_OTA/FDOTA/FD_OTA.sym} 920 -300 0 0 {name=xFDOTA1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/SE_OTA/SE_OTA.sym} 360 -500 0 0 {name=xSEOTA1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/SE_OTA/SE_OTA.sym} 360 -380 2 1 {name=xSEOTA2}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/FDOTA/FDOTA.sym} 920 -300 0 0 {name=xFDOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/SEOTA/SEOTA.sym} 360 -500 0 0 {name=xSEOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/SEOTA/SEOTA.sym} 360 -380 2 1 {name=xSEOTA2}
 C {lab_wire.sym} 520 -760 0 0 {name=p2 sig_type=std_logic lab=INA_DD}
 C {lab_wire.sym} 520 -120 2 1 {name=p3 sig_type=std_logic lab=INA_DD}
 C {lab_wire.sym} 520 -520 2 1 {name=p4 sig_type=std_logic lab=INA_SS}
@@ -151,7 +151,7 @@ C {lab_wire.sym} 800 -310 2 1 {name=RFDINN1 sig_type=std_logic lab=INA_SS
 L=20e-6}
 C {symbols/ppolyf_u_2k.sym} 640 -570 0 0 {name=RSEFP
 W=4e-6
-L=242.9e-6
+L=242.88e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
@@ -159,13 +159,13 @@ C {lab_wire.sym} 600 -570 0 0 {name=p52 sig_type=std_logic lab=INA_SS
 L=20e-6}
 C {symbols/ppolyf_u_2k.sym} 640 -310 2 1 {name=RSEFN
 W=4e-6
-L=242.9e-6
+L=242.88e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 600 -310 2 1 {name=RSEFN1 sig_type=std_logic lab=INA_SS
 L=20e-6}
-C {symbols/ppolyf_u_2k.sym} 400 -440 0 0 {name=RSEG
+C {symbols/ppolyf_u_2k.sym} 400 -440 2 1 {name=RSEG
 W=4e-6
 L=8e-6
 model=ppolyf_u_2k

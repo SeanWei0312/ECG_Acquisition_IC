@@ -61,7 +61,7 @@ C {iopin.sym} 140 -360 0 1 {name=p25 lab=LPF_BCMFB}
 C {lab_wire.sym} 160 -360 0 1 {name=p26 sig_type=std_logic lab=LPF_BCMFB}
 C {iopin.sym} 140 -320 0 1 {name=p29 lab=LPF_REF}
 C {lab_wire.sym} 160 -320 0 1 {name=p30 sig_type=std_logic lab=LPF_REF}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FD_OTA/FDOTA/FD_OTA.sym} 460 -340 0 0 {name=xFDOTA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/FDOTA/FDOTA.sym} 460 -340 0 0 {name=xFDOTA1}
 C {lab_wire.sym} 590 -360 2 1 {name=p10 sig_type=std_logic lab=LPF_SS}
 C {lab_wire.sym} 590 -600 0 0 {name=p20 sig_type=std_logic lab=LPF_DD}
 C {lab_wire.sym} 500 -480 0 0 {name=p33 sig_type=std_logic lab=LPF_REF}

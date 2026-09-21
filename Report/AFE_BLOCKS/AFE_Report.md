@@ -9,7 +9,7 @@
 The integrated analog signal path is:
 
 ```text
-Electrode input → INA + RLD → LPF → PGA → BUFFER → ADC interface
+Electrode input → INA + RLD → LPF → PGA → FDBUF → ADC interface
 ```
 
 | Stage | Nominal behavior | Detailed report |
@@ -17,7 +17,7 @@ Electrode input → INA + RLD → LPF → PGA → BUFFER → ADC interface
 | INA + RLD | 240 V/V plus input common-mode feedback | [INA + RLD report](INA_RLD_Report.md) |
 | LPF | Unity gain; −1 dB frequency ≥150 Hz | [LPF report](LPF_Report.md) |
 | PGA | 2/4/8/16 V/V | [PGA report](PGA_Report.md) |
-| Buffer | Unity-gain differential output driver | [Buffer report](BUFFER_Report.md) |
+| FDBUF | Unity-gain differential output driver | [FDBUF report](FDBUF_Report.md) |
 
 The programmed signal-path gain is nominally 480, 960, 1920, or 3840 V/V before the ADC interface.
 

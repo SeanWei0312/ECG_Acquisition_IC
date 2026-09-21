@@ -19,7 +19,7 @@ The repository contains transistor-level Xschem designs, ngspice verification te
 | 1 | [`INA`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/INA/) | Three-amplifier instrumentation front end | $240\text{ V/V}$ |
 | 2 | [`LPF`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/) | Fully differential, unity-gain active low-pass filter | $1\text{ V/V}$; $f_{-1\mathrm{dB}} \ge 150\text{ Hz}$ |
 | 3 | [`PGA`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/) | Digitally programmable differential gain | $2/4/8/16\text{ V/V}$ |
-| 4 | [`BUFFER`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BUFFER/) | Differential output driver | $1\text{ V/V}$ |
+| 4 | [`FDBUF`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FDBUF/) | Differential output driver | $1\text{ V/V}$ |
 | 5 | [`SAR_ADC`](Design_Files/IC%20Design/Schematic/SAR_ADC_BLOCKS/SAR_ADC/) | Differential successive-approximation data conversion | Verification pending |
 | Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/) | Input common-mode suppression | $55.1\text{ dB}$ at 60 Hz nominal |
 | Support | [`BIAS`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
@@ -38,7 +38,7 @@ Deterministic verification uses 45 corners: five process models (`NOM`, `FF`, `S
 | [INA + RLD](Report/AFE_BLOCKS/INA_RLD_Report.md) | 45-corner balanced PVT, mismatch stress, selector transient | MM / GL / FULL | Pass |
 | [LPF](Report/AFE_BLOCKS/LPF_Report.md) | 45-corner PVT, selector transient | MM / GL / FULL | Pass |
 | [PGA](Report/AFE_BLOCKS/PGA_Report.md) | 45-corner PVT, selector and gain-code transients | MM / GL / FULL | Pass |
-| [BUFFER](Report/AFE_BLOCKS/BUFFER_Report.md) | Raw simulation exports available | MM export available | Analysis pending |
+| [FDBUF](Report/AFE_BLOCKS/FDBUF_Report.md) | Raw simulation exports available | MM export available | Analysis pending |
 | [Integrated AFE](Report/AFE_BLOCKS/AFE_Report.md) | Top-level schematic and analyzer scaffold | — | Integration pending |
 | [SAR ADC](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md) | Complete schematic hierarchy | — | Verification pending |
 
@@ -80,7 +80,7 @@ ECG_Acquisition_IC/
 │   ├── AFE_BLOCKS/
 │   │   ├── AFE_Report.md
 │   │   ├── BIAS_Report.md
-│   │   ├── BUFFER_Report.md
+│   │   ├── FDBUF_Report.md
 │   │   ├── FDOTA_Report.md
 │   │   ├── INA_RLD_Report.md
 │   │   ├── LPF_Report.md
@@ -97,17 +97,19 @@ ECG_Acquisition_IC/
 │       │   ├── AFE_BLOCKS/                 # Analog-front-end hierarchy
 │       │   │   ├── AFE/
 │       │   │   ├── BIAS/
-│       │   │   ├── BUFFER/
-│       │   │   ├── FD_OTA/
+│       │   │   ├── FDBUF/
 │       │   │   ├── INA/
-│       │   │   ├── INV/
 │       │   │   ├── LPF/
 │       │   │   ├── MIRROR/
 │       │   │   ├── PGA/
-│       │   │   ├── RLD/
-│       │   │   ├── SEL/
-│       │   │   ├── SE_OTA/
-│       │   │   ├── SW/
+│       │   │   └── RLD/
+│       │   ├── ANALOG_BLOCKS/
+│       │   │   ├── FDOTA/
+│       │   │   └── SEOTA/
+│       │   ├── DIGITAL_BLOCKS/
+│       │   │   ├── INV/
+│       │   │   ├── MUX/
+│       │   │   ├── MUXD/
 │       │   │   └── TG/
 │       │   └── SAR_ADC_BLOCKS/             # SAR ADC hierarchy
 │       │       ├── BSW/
@@ -129,26 +131,32 @@ ECG_Acquisition_IC/
 │       │       ├── TSPC_FF/
 │       │       └── XOR/
 │       └── Testbench/
-│           └── AFE_BLOCKS/                 # AFE PVT and Monte Carlo benches
-│               ├── BIAS/
-│               ├── BUFFER/
-│               ├── FD_OTA/
-│               ├── Gm_Id/
-│               ├── INA_RLD/
-│               ├── LPF/
-│               ├── PGA/
-│               └── SE_OTA/
+│           ├── AFE_BLOCKS/                 # AFE PVT and Monte Carlo benches
+│           │   ├── BIAS/
+│           │   ├── FDBUF/
+│           │   ├── INA_RLD/
+│           │   ├── LPF/
+│           │   └── PGA/
+│           ├── ANALOG_BLOCKS/
+│           │   ├── FDOTA/
+│           │   └── SEOTA/
+│           ├── SAR_ADC_BLOCKS/
+│           └── SIZING/
+│               └── Gm_Id/
 ├── Measurement_Results/
 │   └── IC_Simulation/                     # Per-block raw data, reports, and plots
-│       ├── AFE/
-│       ├── BIAS/
-│       ├── BUFFER/
-│       ├── FD_OTA/
-│       ├── Gm_Id/
-│       ├── INA_RLD/
-│       ├── LPF/
-│       ├── PGA/
-│       └── SE_OTA/
+│       ├── AFE_BLOCKS/
+│       │   ├── AFE/
+│       │   ├── BIAS/
+│       │   ├── FDBUF/
+│       │   ├── INA_RLD/
+│       │   ├── LPF/
+│       │   └── PGA/
+│       ├── ANALOG_BLOCKS/
+│       │   ├── FDOTA/
+│       │   └── SEOTA/
+│       └── SIZING/
+│           └── Gm_Id/
 └── Simulation_Environment/                  # Minimal IIC-OSIC-TOOLS launch environment
     ├── IIC-OSIC-TOOLS/
     ├── LICENSE
@@ -161,26 +169,26 @@ ECG_Acquisition_IC/
 Run the analyzers from the repository root after generating the corresponding ngspice TXT exports:
 
 ```bash
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','SE_OTA')); SEOTA_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FD_OTA')); FDOTA_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','LPF')); LPF_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','PGA')); PGA_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','BIAS')); BIAS_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','SEOTA')); SEOTA_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','FDOTA')); FDOTA_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','INA_RLD')); INA_RLD_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','LPF')); LPF_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','PGA')); PGA_Analyze"
 ```
 
 Device-characterization utilities:
 
 ```bash
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','NMOS_Gm_Id')); NMOS_Gm_Id"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','Gm_Id','PMOS_Gm_Id')); PMOS_Gm_Id"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','SIZING','Gm_Id','NMOS_Gm_Id')); NMOS_Gm_Id"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','SIZING','Gm_Id','PMOS_Gm_Id')); PMOS_Gm_Id"
 ```
 
 Each analyzer keeps calculations in double precision and applies unit scaling only when reports and plots are produced.
 
 ## Next steps
 
-1. Complete BUFFER reporting and full-chain AFE verification.
+1. Complete FDBUF reporting and full-chain AFE verification.
 2. Implement matching-critical layout, followed by DRC and LVS.
 3. Run extracted PVT and selected FULL Monte Carlo verification.
 4. Integrate the SAR ADC, pad ring, and mixed-signal top level.

@@ -7,11 +7,11 @@
 | Verification level | Pre-layout schematic |
 | Deterministic coverage | 45 PVT corners |
 | Statistical coverage | 200-run MM, GL, and FULL |
-| Status | Pass |
+| Status | Pending rerun after common-mode fixture revision |
 
 ## Detailed results
 
-The balanced INA+RLD report contains formal limits for operating point, offset, gain accuracy, bandwidth, rejection, noise, loop stability, common-mode suppression, rail headroom, and interference-induced gain change. Gain values in V/V and dB remain descriptive. RLD swing ratio and peak current are retained only as debug quantities and are not formal signoff rows.
+The balanced INA+RLD report contains formal limits for operating point, offset, gain accuracy, bandwidth, rejection, noise, loop stability, and normalized common-mode suppression. Gain values in V/V and dB remain descriptive. RLD output rail headroom, peak current, and transient gain change are characterization quantities rather than formal signoff rows.
 
 | Metric | Specification | Nominal | Full-PVT worst case | Corner |
 | :--- | :---: | ---: | ---: | :---: |
@@ -27,13 +27,11 @@ The balanced INA+RLD report contains formal limits for operating point, offset, 
 | INA PSRR+, 60 / 150 Hz | ≥80 / 80 dB | 200.677 / 200.748 dB | 185.924 / 182.098 dB | `NOMVHTL` / `SSNOMNOM` |
 | INA PSRR−, 60 / 150 Hz | ≥80 / 80 dB | 216.490 / 216.000 dB | 201.470 / 201.309 dB | `SSVLTH` |
 | Input noise, 0.05–150 Hz | ≤4 µVrms | 2.667 µVrms | 3.117 µVrms | `SSVLTH` |
-| RLD UGF | 0.5–1.6 kHz | 0.946 kHz | 1.502 kHz | `FFVHTH` |
+| RLD -3 dB bandwidth | ≥300 Hz | 390.045 Hz | 131.138 Hz | `SSNOMTL` |
 | RLD phase margin | ≥60° | 100.672° | 100.092° | `FFVLTH` |
 | CM suppression, 60 / 150 Hz | ≥50 / 45 dB | 55.072 / 53.257 dB | 54.644 / 51.676 dB | `SSVLTL` |
-| RLD rail headroom | ≥0.1 V | 1.647 V | 1.497 V | `FFVLTH` |
-| CM-interference gain change | ±0.1% | $-3.724\times10^{-5}$% | $6.725\times10^{-4}$% | `SSVHTL` |
 
-The 200-run FULL Monte Carlo set passes every formal limit. Observed input-referred offset spans −1.448 to +1.849 mV, INA gain error spans −0.378% to +0.324%, and the minimum sampled CMRR is 95.303 dB. RLD UGF spans 0.820–1.086 kHz, phase margin remains above 100.504°, and common-mode suppression remains above 54.959 dB at 60 Hz and 52.789 dB at 150 Hz.
+The values in this document were generated before the common-mode fixture revision. Applying the new 300 Hz RLD-bandwidth limit to those files gives 12/45 passing PVT corners, with a 131.138 Hz minimum at `SSNOMTL`. These are transitional results, not final signoff: rerun deterministic PVT with the 100 pF/100 pF body-coupling fixture, then rerun MM, GL, and FULL so the updated MC summaries export RLD -3 dB bandwidth instead of UGF.
 
 ## Monte Carlo results
 
@@ -55,7 +53,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | INA gain error | % | ±0.5 | 0.008000 | 0.007199 | 0.009803 | 0.0111 | 0.0124 | 0.0150 | 0.0145 | 100% |
 | INA CMRR @ 60 Hz | dB | ≥80 | 95.392 | 81.231 | 100.892 | 110.722 | 120.552 | 140.213 | 153.651 | 100% |
 | INA CMRR @ 150 Hz | dB | ≥80 | 95.391 | 81.950 | 101.052 | 110.603 | 120.153 | 139.255 | 153.130 | 100% |
-| RLD loop UGF | kHz | 1.05±0.55 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 0.9459 | 100% |
+| RLD -3 dB bandwidth | Hz | ≥300 | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | RLD phase margin | ° | ≥60 | 100.671 | 100.671 | 100.671 | 100.672 | 100.672 | 100.673 | 100.672 | 100% |
 | Input CM suppression @ 60 Hz | dB | ≥50 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 55.077 | 100% |
 | Input CM suppression @ 150 Hz | dB | ≥45 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 53.262 | 100% |
@@ -76,7 +74,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | INA gain error | % | ±0.5 | −0.3783 | −0.3302 | −0.1062 | 0.005840 | 0.1179 | 0.3419 | 0.3236 | 100% |
 | INA CMRR @ 60 Hz | dB | ≥80 | 208.736 | 189.434 | 215.594 | 228.674 | 241.755 | 267.915 | 341.896 | 100% |
 | INA CMRR @ 150 Hz | dB | ≥80 | 208.744 | 191.052 | 216.019 | 228.502 | 240.985 | 265.952 | 335.670 | 100% |
-| RLD loop UGF | kHz | 1.05±0.55 | 0.8200 | 0.7861 | 0.8941 | 0.9482 | 1.002 | 1.110 | 1.086 | 100% |
+| RLD -3 dB bandwidth | Hz | ≥300 | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | RLD phase margin | ° | ≥60 | 100.505 | 100.490 | 100.609 | 100.669 | 100.729 | 100.849 | 100.817 | 100% |
 | Input CM suppression @ 60 Hz | dB | ≥50 | 54.959 | 54.951 | 55.034 | 55.075 | 55.116 | 55.199 | 55.164 | 100% |
 | Input CM suppression @ 150 Hz | dB | ≥45 | 52.789 | 52.731 | 53.082 | 53.257 | 53.432 | 53.782 | 53.646 | 100% |
@@ -97,7 +95,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | INA gain error | % | ±0.5 | −0.3782 | −0.3304 | −0.1062 | 0.005881 | 0.1180 | 0.3422 | 0.3237 | 100% |
 | INA CMRR @ 60 Hz | dB | ≥80 | 95.303 | 79.992 | 100.552 | 110.832 | 121.112 | 141.671 | 163.076 | 100% |
 | INA CMRR @ 150 Hz | dB | ≥80 | 95.302 | 80.656 | 100.696 | 110.717 | 120.737 | 140.777 | 162.638 | 100% |
-| RLD loop UGF | kHz | 1.05±0.55 | 0.8200 | 0.7861 | 0.8941 | 0.9482 | 1.002 | 1.110 | 1.086 | 100% |
+| RLD -3 dB bandwidth | Hz | ≥300 | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | RLD phase margin | ° | ≥60 | 100.504 | 100.490 | 100.609 | 100.669 | 100.729 | 100.849 | 100.817 | 100% |
 | Input CM suppression @ 60 Hz | dB | ≥50 | 54.959 | 54.951 | 55.034 | 55.075 | 55.117 | 55.199 | 55.164 | 100% |
 | Input CM suppression @ 150 Hz | dB | ≥45 | 52.789 | 52.735 | 53.084 | 53.259 | 53.434 | 53.783 | 53.646 | 100% |
@@ -141,12 +139,17 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | INA PSRR- @ 150 Hz | dB | ≥80 | 216.000 | 219.821 | 221.122 | 255.255 | 228.819 | 221.743 | 243.891 | 212.540 | 210.978 |
 | Input-referred noise 0.05-150 Hz | uVrms | ≤4 | 2.667 | 2.536 | 2.803 | 2.633 | 2.703 | 2.668 | 2.668 | 2.524 | 2.954 |
 | **RLD** | — | — | — | — | — | — | — | — | — | — | — |
-| RLD loop UGF | kHz | 1.05±0.55 | 0.946 | 1.313 | 0.717 | 0.946 | 0.946 | 0.946 | 0.946 | 0.839 | 1.082 |
+| RTI residual - BAL | uVpp | ≤1000 | 0.003 | — | — | — | — | — | — | — | — |
+| RTI residual - MIS-P | uVpp | ≤1000 | 8.232 | — | — | — | — | — | — | — | — |
+| RTI residual - MIS-N | uVpp | ≤1000 | 8.232 | — | — | — | — | — | — | — | — |
+| RLD -3 dB bandwidth | Hz | ≥300 | 390.045 | 270.886 | 147.759 | 195.044 | 195.042 | 390.044 | 390.047 | 346.182 | 446.199 |
 | RLD phase margin | deg | ≥60 | 100.672 | 100.310 | 100.899 | 100.689 | 100.655 | 100.644 | 100.697 | 100.779 | 100.540 |
 | Input CM suppression @ 60 Hz | dB | ≥50 | 55.072 | 55.254 | 54.807 | 55.074 | 55.070 | 55.068 | 55.075 | 54.973 | 55.160 |
 | Input CM suppression @ 150 Hz | dB | ≥45 | 53.257 | 54.098 | 52.233 | 53.269 | 53.245 | 53.237 | 53.275 | 52.853 | 53.651 |
-| RLD output rail headroom | V | ≥0.1 | 1.647 | 1.647 | 1.647 | 1.647 | 1.647 | 1.497 | 1.797 | 1.647 | 1.647 |
-| CM Interference Gain Change | % | ±0.1 | -3.724e-05 | -5.156e-04 | -3.258e-04 | -2.836e-04 | -2.270e-04 | -5.445e-04 | -3.291e-04 | -1.896e-04 | -4.596e-04 |
+| **ADDITIONAL RLD-ELECTRODE ROBUSTNESS** | — | — | — | — | — | — | — | — | — | — | — |
+| RTI residual - MIS-RLD | uVpp | Report | 0.004 | — | — | — | — | — | — | — | — |
+
+The ±300 mV differential electrode-offset cases are reserved for the complete AFE/system test including its DC-blocking path; they are not claimed as INA+RLD block-level compliance results.
 
 ## Plots
 
@@ -160,8 +163,6 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ![INA and RLD common-mode rejection](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_cm_rejection.png)
 
-![INA common-mode interference transient](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_transient.png)
-
 ![INA input-referred noise](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_noise.png)
 
 ![INA selector functional check](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/NOM.INA_RLD_sel_functional_check.png)
@@ -169,8 +170,6 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 ![INA MC input-referred offset](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_01_Vos_Histogram.png)
 
 ![INA MC gain error](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_02_INA_Gain_Error_Histogram.png)
-
-![INA MC RLD UGF](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_03_RLD_UGF_Histogram.png)
 
 ![INA MC RLD phase margin](../../Measurement_Results/IC_Simulation/INA_RLD/Plots/Fig_MC_04_RLD_PM_Histogram.png)
 
@@ -182,53 +181,53 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 
 ### INA+RLD: all 45 PVT corners
 
-| Corner | Current (mA) | Gain error (%) | BW (kHz) | Noise (µVrms) | RLD UGF (kHz) | PM (°) | Supp. 60 (dB) | Supp. 150 (dB) | Status |
+| Corner | Current (mA) | Gain error (%) | BW (kHz) | Noise (µVrms) | RLD -3 dB BW (Hz) | PM (°) | Supp. 60 (dB) | Supp. 150 (dB) | Legacy status (≥150 Hz) |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
-| `NOMNOMNOM` | 3.860 | 0.011 | 259.286 | 2.667 | 0.946 | 100.672 | 55.072 | 53.257 | Pass |
-| `NOMVLNOM` | 3.771 | -0.004 | 254.746 | 2.668 | 0.946 | 100.644 | 55.068 | 53.237 | Pass |
-| `NOMVHNOM` | 3.930 | 0.023 | 262.678 | 2.668 | 0.946 | 100.697 | 55.075 | 53.275 | Pass |
-| `NOMNOMTL` | 3.123 | -0.045 | 271.141 | 2.524 | 0.839 | 100.779 | 54.973 | 52.853 | Pass |
-| `NOMNOMTH` | 4.491 | 0.047 | 225.472 | 2.954 | 1.082 | 100.540 | 55.160 | 53.651 | Pass |
-| `NOMVLTL` | 3.044 | -0.058 | 266.533 | 2.521 | 0.839 | 100.753 | 54.970 | 52.832 | Pass |
-| `NOMVLTH` | 4.402 | 0.029 | 221.640 | 2.958 | 1.082 | 100.509 | 55.157 | 53.633 | Pass |
-| `NOMVHTL` | 3.189 | -0.035 | 274.684 | 2.527 | 0.839 | 100.803 | 54.976 | 52.872 | Pass |
-| `NOMVHTH` | 4.559 | 0.062 | 228.340 | 2.952 | 1.082 | 100.568 | 55.163 | 53.668 | Pass |
-| `FFNOMNOM` | 4.474 | -0.130 | 327.841 | 2.536 | 1.313 | 100.310 | 55.254 | 54.098 | Pass |
-| `FFVLNOM` | 4.381 | -0.145 | 322.783 | 2.536 | 1.313 | 100.273 | 55.251 | 54.079 | Pass |
-| `FFVHNOM` | 4.553 | -0.118 | 331.864 | 2.537 | 1.313 | 100.345 | 55.257 | 54.114 | Pass |
-| `FFNOMTL` | 3.624 | -0.202 | 342.319 | 2.405 | 1.166 | 100.455 | 55.200 | 53.833 | Pass |
-| `FFNOMTH` | 5.222 | -0.080 | 286.575 | 2.804 | 1.502 | 100.133 | 55.302 | 54.348 | Pass |
-| `FFVLTL` | 3.540 | -0.215 | 337.116 | 2.402 | 1.166 | 100.420 | 55.196 | 53.813 | Pass |
-| `FFVLTH` | 5.128 | -0.099 | 282.254 | 2.807 | 1.502 | 100.092 | 55.299 | 54.330 | Pass |
-| `FFVHTL` | 3.698 | -0.191 | 346.567 | 2.408 | 1.166 | 100.486 | 55.203 | 53.850 | Pass |
-| `FFVHTH` | 5.300 | -0.065 | 289.995 | 2.802 | 1.502 | 100.170 | 55.305 | 54.363 | Pass |
-| `SSNOMNOM` | 3.366 | 0.101 | 209.004 | 2.803 | 0.717 | 100.899 | 54.807 | 52.233 | Pass |
-| `SSVLNOM` | 3.273 | 0.086 | 204.410 | 2.804 | 0.717 | 100.877 | 54.803 | 52.211 | Pass |
-| `SSVHNOM` | 3.431 | 0.113 | 212.017 | 2.803 | 0.717 | 100.919 | 54.810 | 52.252 | Pass |
-| `SSNOMTL` | 2.722 | 0.056 | 218.975 | 2.646 | 0.636 | 100.983 | 54.648 | 51.699 | Pass |
-| `SSNOMTH` | 3.903 | 0.125 | 180.833 | 3.110 | 0.820 | 100.796 | 54.952 | 52.770 | Pass |
-| `SSVLTL` | 2.642 | 0.043 | 214.418 | 2.644 | 0.636 | 100.963 | 54.644 | 51.676 | Pass |
-| `SSVLTH` | 3.810 | 0.106 | 176.996 | 3.117 | 0.820 | 100.772 | 54.948 | 52.750 | Pass |
-| `SSVHTL` | 2.783 | 0.067 | 222.089 | 2.650 | 0.636 | 101.002 | 54.652 | 51.719 | Pass |
-| `SSVHTH` | 3.966 | 0.140 | 183.369 | 3.107 | 0.820 | 100.818 | 54.955 | 52.788 | Pass |
-| `FSNOMNOM` | 3.977 | 0.009 | 265.524 | 2.633 | 0.946 | 100.689 | 55.074 | 53.269 | Pass |
-| `FSVLNOM` | 3.878 | -0.008 | 260.510 | 2.634 | 0.946 | 100.661 | 55.070 | 53.250 | Pass |
-| `FSVHNOM` | 4.051 | 0.022 | 269.039 | 2.633 | 0.946 | 100.714 | 55.077 | 53.286 | Pass |
-| `FSNOMTL` | 3.218 | -0.049 | 277.561 | 2.494 | 0.839 | 100.794 | 54.975 | 52.865 | Pass |
-| `FSNOMTH` | 4.620 | 0.046 | 230.758 | 2.916 | 1.082 | 100.558 | 55.162 | 53.662 | Pass |
-| `FSVLTL` | 3.134 | -0.063 | 272.717 | 2.492 | 0.839 | 100.769 | 54.972 | 52.845 | Pass |
-| `FSVLTH` | 4.513 | 0.026 | 226.239 | 2.921 | 1.082 | 100.529 | 55.159 | 53.644 | Pass |
-| `FSVHTL` | 3.287 | -0.036 | 281.210 | 2.497 | 0.839 | 100.817 | 54.978 | 52.883 | Pass |
-| `FSVHTH` | 4.693 | 0.063 | 233.744 | 2.913 | 1.082 | 100.586 | 55.165 | 53.678 | Pass |
-| `SFNOMNOM` | 3.742 | 0.011 | 252.978 | 2.703 | 0.946 | 100.655 | 55.070 | 53.245 | Pass |
-| `SFVLNOM` | 3.655 | -0.003 | 248.429 | 2.703 | 0.946 | 100.626 | 55.066 | 53.225 | Pass |
-| `SFVHNOM` | 3.809 | 0.020 | 256.334 | 2.703 | 0.946 | 100.681 | 55.073 | 53.264 | Pass |
-| `SFNOMTL` | 3.028 | -0.044 | 264.634 | 2.555 | 0.839 | 100.764 | 54.971 | 52.841 | Pass |
-| `SFNOMTH` | 4.359 | 0.044 | 220.153 | 2.995 | 1.082 | 100.520 | 55.158 | 53.640 | Pass |
-| `SFVLTL` | 2.949 | -0.056 | 259.932 | 2.552 | 0.839 | 100.737 | 54.967 | 52.819 | Pass |
-| `SFVLTH` | 4.275 | 0.027 | 216.428 | 2.999 | 1.082 | 100.489 | 55.155 | 53.620 | Pass |
-| `SFVHTL` | 3.091 | -0.036 | 268.148 | 2.559 | 0.839 | 100.788 | 54.974 | 52.860 | Pass |
-| `SFVHTH` | 4.425 | 0.055 | 222.982 | 2.992 | 1.082 | 100.549 | 55.161 | 53.657 | Pass |
+| `NOMNOMNOM` | 3.860 | 0.011 | 259.286 | 2.667 | 390.045 | 100.672 | 55.072 | 53.257 | Pass |
+| `NOMVLNOM` | 3.771 | -0.004 | 254.746 | 2.668 | 390.044 | 100.644 | 55.068 | 53.237 | Pass |
+| `NOMVHNOM` | 3.930 | 0.023 | 262.678 | 2.668 | 390.047 | 100.697 | 55.075 | 53.275 | Pass |
+| `NOMNOMTL` | 3.123 | -0.045 | 271.141 | 2.524 | 346.182 | 100.779 | 54.973 | 52.853 | Pass |
+| `NOMNOMTH` | 4.491 | 0.047 | 225.472 | 2.954 | 446.199 | 100.540 | 55.160 | 53.651 | Pass |
+| `NOMVLTL` | 3.044 | -0.058 | 266.533 | 2.521 | 346.182 | 100.753 | 54.970 | 52.832 | Pass |
+| `NOMVLTH` | 4.402 | 0.029 | 221.640 | 2.958 | 446.198 | 100.509 | 55.157 | 53.633 | Pass |
+| `NOMVHTL` | 3.189 | -0.035 | 274.684 | 2.527 | 346.183 | 100.803 | 54.976 | 52.872 | Pass |
+| `NOMVHTH` | 4.559 | 0.062 | 228.340 | 2.952 | 446.200 | 100.568 | 55.163 | 53.668 | Pass |
+| `FFNOMNOM` | 4.474 | -0.130 | 327.841 | 2.536 | 270.886 | 100.310 | 55.254 | 54.098 | Pass |
+| `FFVLNOM` | 4.381 | -0.145 | 322.783 | 2.536 | 270.886 | 100.273 | 55.251 | 54.079 | Pass |
+| `FFVHNOM` | 4.553 | -0.118 | 331.864 | 2.537 | 270.886 | 100.345 | 55.257 | 54.114 | Pass |
+| `FFNOMTL` | 3.624 | -0.202 | 342.319 | 2.405 | 240.420 | 100.455 | 55.200 | 53.833 | Pass |
+| `FFNOMTH` | 5.222 | -0.080 | 286.575 | 2.804 | 309.893 | 100.133 | 55.302 | 54.348 | Pass |
+| `FFVLTL` | 3.540 | -0.215 | 337.116 | 2.402 | 240.420 | 100.420 | 55.196 | 53.813 | Pass |
+| `FFVLTH` | 5.128 | -0.099 | 282.254 | 2.807 | 309.893 | 100.092 | 55.299 | 54.330 | Pass |
+| `FFVHTL` | 3.698 | -0.191 | 346.567 | 2.408 | 240.420 | 100.486 | 55.203 | 53.850 | Pass |
+| `FFVHTH` | 5.300 | -0.065 | 289.995 | 2.802 | 309.893 | 100.170 | 55.305 | 54.363 | Pass |
+| `SSNOMNOM` | 3.366 | 0.101 | 209.004 | 2.803 | 147.759 | 100.899 | 54.807 | 52.233 | Fail |
+| `SSVLNOM` | 3.273 | 0.086 | 204.410 | 2.804 | 147.759 | 100.877 | 54.803 | 52.211 | Fail |
+| `SSVHNOM` | 3.431 | 0.113 | 212.017 | 2.803 | 147.759 | 100.919 | 54.810 | 52.252 | Fail |
+| `SSNOMTL` | 2.722 | 0.056 | 218.975 | 2.646 | 131.138 | 100.983 | 54.648 | 51.699 | Fail |
+| `SSNOMTH` | 3.903 | 0.125 | 180.833 | 3.110 | 169.035 | 100.796 | 54.952 | 52.770 | Pass |
+| `SSVLTL` | 2.642 | 0.043 | 214.418 | 2.644 | 131.138 | 100.963 | 54.644 | 51.676 | Fail |
+| `SSVLTH` | 3.810 | 0.106 | 176.996 | 3.117 | 169.035 | 100.772 | 54.948 | 52.750 | Pass |
+| `SSVHTL` | 2.783 | 0.067 | 222.089 | 2.650 | 131.138 | 101.002 | 54.652 | 51.719 | Fail |
+| `SSVHTH` | 3.966 | 0.140 | 183.369 | 3.107 | 169.034 | 100.818 | 54.955 | 52.788 | Pass |
+| `FSNOMNOM` | 3.977 | 0.009 | 265.524 | 2.633 | 195.044 | 100.689 | 55.074 | 53.269 | Pass |
+| `FSVLNOM` | 3.878 | -0.008 | 260.510 | 2.634 | 195.044 | 100.661 | 55.070 | 53.250 | Pass |
+| `FSVHNOM` | 4.051 | 0.022 | 269.039 | 2.633 | 195.044 | 100.714 | 55.077 | 53.286 | Pass |
+| `FSNOMTL` | 3.218 | -0.049 | 277.561 | 2.494 | 173.104 | 100.794 | 54.975 | 52.865 | Pass |
+| `FSNOMTH` | 4.620 | 0.046 | 230.758 | 2.916 | 223.127 | 100.558 | 55.162 | 53.662 | Pass |
+| `FSVLTL` | 3.134 | -0.063 | 272.717 | 2.492 | 173.104 | 100.769 | 54.972 | 52.845 | Pass |
+| `FSVLTH` | 4.513 | 0.026 | 226.239 | 2.921 | 223.127 | 100.529 | 55.159 | 53.644 | Pass |
+| `FSVHTL` | 3.287 | -0.036 | 281.210 | 2.497 | 173.104 | 100.817 | 54.978 | 52.883 | Pass |
+| `FSVHTH` | 4.693 | 0.063 | 233.744 | 2.913 | 223.127 | 100.586 | 55.165 | 53.678 | Pass |
+| `SFNOMNOM` | 3.742 | 0.011 | 252.978 | 2.703 | 195.042 | 100.655 | 55.070 | 53.245 | Pass |
+| `SFVLNOM` | 3.655 | -0.003 | 248.429 | 2.703 | 195.042 | 100.626 | 55.066 | 53.225 | Pass |
+| `SFVHNOM` | 3.809 | 0.020 | 256.334 | 2.703 | 195.042 | 100.681 | 55.073 | 53.264 | Pass |
+| `SFNOMTL` | 3.028 | -0.044 | 264.634 | 2.555 | 173.102 | 100.764 | 54.971 | 52.841 | Pass |
+| `SFNOMTH` | 4.359 | 0.044 | 220.153 | 2.995 | 223.125 | 100.520 | 55.158 | 53.640 | Pass |
+| `SFVLTL` | 2.949 | -0.056 | 259.932 | 2.552 | 173.102 | 100.737 | 54.967 | 52.819 | Pass |
+| `SFVLTH` | 4.275 | 0.027 | 216.428 | 2.999 | 223.125 | 100.489 | 55.155 | 53.620 | Pass |
+| `SFVHTL` | 3.091 | -0.036 | 268.148 | 2.559 | 173.102 | 100.788 | 54.974 | 52.860 | Pass |
+| `SFVHTH` | 4.425 | 0.055 | 222.982 | 2.992 | 223.125 | 100.549 | 55.161 | 53.657 | Pass |
 
 ## Generated artifacts
 

@@ -1,31 +1,39 @@
 Parameter,Unit,Spec,Value,Corner
-Total current,mA,≤6.2,5.300,FFVHTH
-Total power,mW,≤22,19.079,FFVHTH
-Output CM error,mV,±40,12.649,SSVHTH
-Input-referred offset,uV,±2000,0.002,SSVLTH
-S1 gain,V/V,,59.902,FFVLTL
-S1 gain dB,dB,,35.549,FFVLTL
-S1 gain error,%,±0.5,-0.163,FFVLTL
-S1 -3 dB bandwidth,kHz,≥150,178.688,SSVLTH
-S2 gain,V/V,,3.998,FFVLTL
-S2 gain dB,dB,,12.037,FFVLTL
-S2 gain error,%,±0.25,-0.052,FFVLTL
-S2 -3 dB bandwidth,MHz,≥1.5,1.793,SSVLTH
-INA gain,V/V,,239.484,FFVLTL
-INA gain dB,dB,,47.586,FFVLTL
-INA gain error,%,±0.5,-0.215,FFVLTL
-Gain flatness 0.05-150 Hz,dB,≤0.1,3.079e-06,SSVLTH
-INA -3 dB bandwidth,kHz,≥150,176.996,SSVLTH
-INA CMRR @ 60 Hz,dB,≥80,204.344,SSNOMTH
-INA CMRR @ 150 Hz,dB,≥80,203.835,SSNOMTH
-INA PSRR+ @ 60 Hz,dB,≥80,185.924,NOMVHTL
-INA PSRR+ @ 150 Hz,dB,≥80,182.098,SSNOMNOM
-INA PSRR- @ 60 Hz,dB,≥80,201.470,SSVLTH
-INA PSRR- @ 150 Hz,dB,≥80,201.309,SSVLTH
-Input-referred noise 0.05-150 Hz,uVrms,≤4,3.117,SSVLTH
-RLD loop UGF,kHz,1.05±0.55,1.502,FFVHTH
-RLD phase margin,deg,≥60,100.092,FFVLTH
-Input CM suppression @ 60 Hz,dB,≥50,54.644,SSVLTL
-Input CM suppression @ 150 Hz,dB,≥45,51.676,SSVLTL
-RLD output rail headroom,V,≥0.1,1.497,FFVLTH
-CM Interference Gain Change,%,±0.1,6.725e-04,SSVHTL
+"Total current",mA,≤6.2,4.812,FFVHTH
+"Total power",mW,≤22,17.323,FFVHTH
+"Output CM error",mV,±40,13.290,SSVHTH
+"Input-referred offset",uV,±2500,-0.002,FSVLTH
+"S1 gain",V/V,,59.959,SSVLTL
+"S1 gain dB",dB,,35.557,SSVLTL
+"S1 gain error",%,±0.5,-0.068,SSVLTL
+"S1 -3 dB bandwidth",kHz,≥150,208.980,SSVLTH
+"S2 gain",V/V,,4.001,FFVHTH
+"S2 gain dB",dB,,12.043,FFVHTH
+"S2 gain error",%,±0.25,0.021,FFVHTH
+"S2 -3 dB bandwidth",MHz,≥1.5,2.167,SSVLTH
+"INA gain",V/V,,239.794,SSVLTL
+"INA gain dB",dB,,47.597,SSVLTL
+"INA gain error",%,±0.5,-0.086,SSVLTL
+"Gain flatness 0.05-150 Hz",dB,≤0.1,2.247e-06,SSVLTH
+"INA -3 dB bandwidth",kHz,≥150,207.061,SSVLTH
+"Input range low",mV,≤-5,-10.600,FSVLTH
+"Input range high",mV,≥5,10.600,FSVLTH
+"Output range low",V,≤-1.2,-2.543,FSVLTH
+"Output range high",V,≥1.2,2.543,FSVLTH
+"INA CMRR @ 60 Hz",dB,≥80,213.266,SSVLNOM
+"INA CMRR @ 150 Hz",dB,≥80,213.233,SSVLNOM
+"INA PSRR+ @ 60 Hz",dB,≥80,186.706,FFVHNOM
+"INA PSRR+ @ 150 Hz",dB,≥80,186.706,FFVHNOM
+"INA PSRR- @ 60 Hz",dB,≥80,201.125,SSVLNOM
+"INA PSRR- @ 150 Hz",dB,≥80,201.136,SSVLNOM
+"Input-referred noise 0.05-150 Hz",uVrms,≤4,3.108,SSVLTH
+"THD @ 60 Hz, 5 mVpp",%,≤0.01,7.968e-05,FSVLTH
+"RTI residual - BAL",uVpp,≤1000,0.004,SSVHTH
+"RTI residual - MIS-P",uVpp,≤1000,9.247,SSVLTL
+"RTI residual - MIS-N",uVpp,≤1000,9.246,SSVLTL
+"RTI residual - MIS-RLD",uVpp,≤1000,0.005,SFVHTL
+"RLD gain",V/V,,4.999,FSVLTH
+"RLD -3 dB bandwidth",Hz,≥150,163.955,SSVLTL
+"RLD phase margin",deg,≥60,62.118,SSVLTH
+"Input CM suppression @ 60 Hz",dB,≥35,37.121,SSVLTL
+"Input CM suppression @ 150 Hz",dB,≥25,27.309,SSVLTL
