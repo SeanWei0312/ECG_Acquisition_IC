@@ -1,2 +1,8 @@
 .DS_Store
 *.txt
+
+# Keep SAR ADC design, verification, results, and report files local only.
+Design_Files/IC Design/Schematic/SAR_ADC_BLOCKS/
+Design_Files/IC Design/Testbench/SAR_ADC_BLOCKS/
+Measurement_Results/IC_Simulation/AFE_BLOCKS/SAR_ADC/
+Report/SAR_ADC_BLOCKS/
