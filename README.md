@@ -1,6 +1,6 @@
-# ECG Acquisition IC
+# ECG Analog Front End
 
-A self-directed, independent pre-layout ECG acquisition IC combining an analog front end (AFE) and SAR ADC, implemented in the GlobalFoundries 180 nm MCU process.
+A self-directed, independent pre-layout ECG analog front end (AFE), implemented in the GlobalFoundries 180 nm MCU process. The present project covers low-noise ECG amplification, filtering, programmable gain, common-mode control, biasing, and differential output buffering. SAR ADC integration is planned as future work.
 
 The repository contains transistor-level Xschem designs, ngspice verification testbenches, MATLAB analysis scripts, generated PVT/Monte Carlo reports, and $g_m/I_D$ characterization utilities.
 
@@ -20,11 +20,10 @@ The repository contains transistor-level Xschem designs, ngspice verification te
 | 2 | [`LPF`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/) | Fully differential, unity-gain active low-pass filter | $1\text{ V/V}$; $f_{-1\mathrm{dB}} \ge 150\text{ Hz}$ |
 | 3 | [`PGA`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/) | Digitally programmable differential gain | $2/4/8/16\text{ V/V}$ |
 | 4 | [`FDBUF`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FDBUF/) | Differential output driver | $1\text{ V/V}$ |
-| 5 | [`SAR_ADC`](Design_Files/IC%20Design/Schematic/SAR_ADC_BLOCKS/SAR_ADC/) | Differential successive-approximation data conversion | Verification pending |
 | Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/) | Input common-mode suppression | $55.1\text{ dB}$ at 60 Hz nominal |
 | Support | [`BIAS`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
 
-The verified block-level gain plan gives nominal signal-path gains from $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$) before ADC integration.
+The verified block-level gain plan gives nominal AFE signal-path gains from $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$).
 
 ## Verification status
 
@@ -40,7 +39,6 @@ Deterministic verification uses 45 corners: five process models (`NOM`, `FF`, `S
 | [PGA](Report/AFE_BLOCKS/PGA_Report.md) | 45-corner PVT, selector and gain-code transients | MM / GL / FULL | Pass |
 | [FDBUF](Report/AFE_BLOCKS/FDBUF_Report.md) | Raw simulation exports available | MM export available | Analysis pending |
 | [Integrated AFE](Report/AFE_BLOCKS/AFE_Report.md) | Top-level schematic and analyzer scaffold | — | Integration pending |
-| [SAR ADC](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md) | Complete schematic hierarchy | — | Verification pending |
 
 All completed MM, GL, and FULL analyses contain 200 valid runs, zero failed runs, and 100% joint yield against the current pre-layout specifications.
 
@@ -67,7 +65,7 @@ All completed MM, GL, and FULL analyses contain 200 valid runs, zero failed runs
 |  | Bandwidth, all codes | 0.907–5.053 MHz | 0.595–6.988 MHz | $\ge 0.15\text{ MHz}$ |
 |  | Input noise, all codes | 3.280–4.617 µVrms | 2.992–5.250 µVrms | $\le 10\text{ µVrms}$ |
 
-The block reports include selected results for all 45 PVT corners; their long-form CSV files remain the authoritative source for every reported parameter. See the [system report](Project_Report.md) for architecture, verification methodology, AFE–ADC integration status, and the complete report index.
+The block reports include selected results for all 45 PVT corners; their long-form CSV files remain the authoritative source for every reported parameter. See the [project report](Project_Report.md) for the AFE architecture, verification methodology, current limitations, and complete report index.
 
 ## Repository layout
 
@@ -75,7 +73,7 @@ The block reports include selected results for all 45 PVT corners; their long-fo
 ECG_Acquisition_IC/
 ├── README.md
 ├── Docker_Instructions.md
-├── Project_Report.md                    # System-level AFE and ADC report
+├── Project_Report.md                    # AFE project report
 ├── Report/                              # Detailed block reports
 │   ├── AFE_BLOCKS/
 │   │   ├── AFE_Report.md
@@ -86,7 +84,7 @@ ECG_Acquisition_IC/
 │   │   ├── LPF_Report.md
 │   │   ├── PGA_Report.md
 │   │   └── SEOTA_Report.md
-│   ├── SAR_ADC_BLOCKS/
+│   ├── SAR_ADC_BLOCKS/                  # Future-work documentation
 │   │   └── SAR_ADC_Report.md
 │   └── SIZING/
 │       └── Gm_Id_Report.md
@@ -111,7 +109,7 @@ ECG_Acquisition_IC/
 │       │   │   ├── MUX/
 │       │   │   ├── MUXD/
 │       │   │   └── TG/
-│       │   └── SAR_ADC_BLOCKS/             # SAR ADC hierarchy
+│       │   └── SAR_ADC_BLOCKS/             # Preliminary SAR ADC future work
 │       │       ├── BSW/
 │       │       ├── CDAC/
 │       │       ├── CLK_GEN/
@@ -140,7 +138,7 @@ ECG_Acquisition_IC/
 │           ├── ANALOG_BLOCKS/
 │           │   ├── FDOTA/
 │           │   └── SEOTA/
-│           ├── SAR_ADC_BLOCKS/
+│           ├── SAR_ADC_BLOCKS/              # Future ADC testbench work
 │           └── SIZING/
 │               └── Gm_Id/
 ├── Measurement_Results/
@@ -191,5 +189,5 @@ Each analyzer keeps calculations in double precision and applies unit scaling on
 1. Complete FDBUF reporting and full-chain AFE verification.
 2. Implement matching-critical layout, followed by DRC and LVS.
 3. Run extracted PVT and selected FULL Monte Carlo verification.
-4. Integrate the SAR ADC, pad ring, and mixed-signal top level.
-5. Prepare the evaluation PCB and laboratory characterization plan.
+4. Prepare the evaluation PCB and laboratory characterization plan.
+5. Design, verify, and integrate a SAR ADC as a future extension.

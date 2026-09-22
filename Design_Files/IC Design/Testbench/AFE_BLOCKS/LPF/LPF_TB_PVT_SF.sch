@@ -108,6 +108,7 @@ value="
 C {devices/code_shown.sym} 640 90 0 0 {name=SETUP
 only_toplevel=true
 value="
+* \{SETUP_START\}
 .param VDD_SET=3.3
 .param TEMP_SET=27
 
@@ -136,11 +137,12 @@ value="
 .options gmin=1e-12
 .options rshunt=1e12
 .options method=gear
+* \{SETUP_END\}
 "}
 C {devices/code_shown.sym} 1200 90 0 0 {name=NGSPICE
 only_toplevel=true
 value="
-
+* \{MEAS_START\}
 .control
 
 destroy all
@@ -417,8 +419,8 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-* Full valid differential-input range at minimum VDD = 3.0 V.
-dc VDIFF -3 3 2m
+* VTC
+dc VDIFF -3.3 3.3 2m
 
 let vin_diff=v(INP)-v(INN)
 let lpf_outp=v(LPF_OUTP)-v(AGND)
@@ -503,7 +505,7 @@ end
 quit
 
 .endc
-
+* \{MEAS_END\}
 "}
 C {lab_wire.sym} 600 -860 0 0 {name=p28 sig_type=std_logic lab=INP}
 C {lab_wire.sym} 600 -740 2 1 {name=p29 sig_type=std_logic lab=INN}

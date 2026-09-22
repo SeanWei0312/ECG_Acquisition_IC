@@ -1,4 +1,4 @@
-# ECG Acquisition IC System Report
+# ECG Analog Front-End Project Report
 
 [← Repository overview](README.md)
 
@@ -8,16 +8,17 @@
 | Process | GlobalFoundries 180 nm MCU (`gf180mcu`, 3.3 V, 1P6M) |
 | Application | Low-power ECG and biopotential acquisition |
 | Design flow | Xschem, ngspice, and MATLAB |
-| Main subsystems | Analog front end and SAR ADC |
+| Current scope | ECG analog front end |
+| Future extension | SAR ADC integration |
 
 ## 1. Executive summary
 
-The project combines a low-noise differential analog front end (AFE) with a successive-approximation-register ADC. The AFE signal chain contains an instrumentation amplifier with right-leg drive, an active low-pass filter, programmable gain, and a fully differential output buffer (FDBUF). A master bias network supplies the analog blocks. The SAR ADC contains differential bootstrapped sampling, a capacitive DAC, a dynamic comparator, conversion-clock generation, SAR logic, and an output register.
+The project develops a low-noise differential analog front end (AFE) for ECG and biopotential acquisition. The signal chain contains an instrumentation amplifier with right-leg drive, an active low-pass filter, programmable gain, and a fully differential output buffer (FDBUF). A master bias network supplies the analog blocks.
 
-Block-level schematic verification is complete for the bias network, SE OTA, FD OTA, INA+RLD, LPF, and PGA. These completed signal-processing blocks pass their 45-corner PVT campaigns and their available 200-run MM, GL, and FULL Monte Carlo campaigns. FDBUF reporting, full-chain AFE verification, and ADC performance verification remain pending.
+Block-level schematic verification is complete for the bias network, SE OTA, FD OTA, INA+RLD, LPF, and PGA. These completed signal-processing blocks pass their 45-corner PVT campaigns and their available 200-run MM, GL, and FULL Monte Carlo campaigns. FDBUF reporting and full-chain AFE verification remain pending. A SAR ADC is planned as future work and is not part of the current verified signal chain.
 
 > [!IMPORTANT]
-> All reported performance values are pre-layout schematic results. They do not include extracted parasitics, package effects, ADC loading unless explicitly stated, or measured-silicon behavior.
+> All reported performance values are pre-layout schematic results. They do not include extracted parasitics, package effects, future ADC loading, or measured-silicon behavior.
 
 ## 2. System architecture
 
@@ -26,7 +27,7 @@ Block-level schematic verification is complete for the bias network, SE OTA, FD 
 ![ECG analog front end](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/AFE/AFE.png)
 
 ```text
-Electrode input → INA + RLD → LPF → PGA → FDBUF → SAR ADC
+Electrode input → INA + RLD → LPF → PGA → FDBUF
 ```
 
 | Stage | Nominal behavior | Verification | Detailed report |
@@ -37,14 +38,14 @@ Electrode input → INA + RLD → LPF → PGA → FDBUF → SAR ADC
 | INA + RLD | 240 V/V instrumentation gain and input common-mode feedback | Pass | [INA + RLD](Report/AFE_BLOCKS/INA_RLD_Report.md) |
 | LPF | Unity gain; −1 dB frequency ≥150 Hz | Pass | [LPF](Report/AFE_BLOCKS/LPF_Report.md) |
 | PGA | 2/4/8/16 V/V programmable gain | Pass | [PGA](Report/AFE_BLOCKS/PGA_Report.md) |
-| FDBUF | Unity-gain differential ADC driver | Analysis pending | [FDBUF](Report/AFE_BLOCKS/FDBUF_Report.md) |
+| FDBUF | Unity-gain differential output driver | Analysis pending | [FDBUF](Report/AFE_BLOCKS/FDBUF_Report.md) |
 | Integrated AFE | 480–3840 V/V programmed signal-path gain | Verification pending | [AFE](Report/AFE_BLOCKS/AFE_Report.md) |
 
-The verified block-level gain plan gives nominal overall gains of 480, 960, 1920, and 3840 V/V before the FDBUF and ADC interface.
+The verified block-level gain plan gives nominal AFE gains of 480, 960, 1920, and 3840 V/V before the FDBUF.
 
-### 2.2 SAR ADC
+### 2.2 Future work: SAR ADC
 
-The [SAR ADC top level](Design_Files/IC%20Design/Schematic/SAR_ADC_BLOCKS/SAR_ADC/SAR_ADC.sch) directly instantiates two bootstrapped sampling switches, the differential CDAC, clock generator, comparator, SAR logic, and output register.
+The repository contains a preliminary [SAR ADC hierarchy](Design_Files/IC%20Design/Schematic/SAR_ADC_BLOCKS/SAR_ADC/SAR_ADC.sch) for a possible future extension. It includes bootstrapped sampling switches, a differential CDAC, clock generation, a comparator, SAR logic, and an output register.
 
 ```text
 Differential input → BSW → CDAC ↔ COMP → SAR_LOGIC → OUT_REG
@@ -52,7 +53,7 @@ Differential input → BSW → CDAC ↔ COMP → SAR_LOGIC → OUT_REG
                            CLK_GEN
 ```
 
-All 18 blocks stored under `SAR_ADC_BLOCKS` are reachable from the top level. Schematic and symbol paths have been audited, but formal ADC simulation results are not yet available. The complete hierarchy and required signoff campaign are documented in the [SAR ADC report](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md).
+This hierarchy is not included in current AFE performance claims. Formal ADC architecture review, simulation, verification, and AFE loading analysis remain future work; the proposed scope is documented in the [SAR ADC report](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md).
 
 ## 3. Nominal and worst-case block results
 
@@ -279,7 +280,7 @@ Each completed block has one table containing every parameter exported by its an
 | G16 PSRR- @ 150 Hz | dB | ≥80 | 185.643 | 185.634 | `FSVHNOM` |
 | G16 input-referred noise 0.05-150 Hz | µVrms | ≤10 | 3.280 | 3.736 | `SSVHTH` |
 
-The FDBUF, integrated AFE, and SAR ADC are not assigned result tables because their formal analyzer outputs are still pending. Their detailed reports list the available design files, raw data, and required completion work.
+The FDBUF and integrated AFE are not assigned result tables because their formal analyzer outputs are still pending. Their detailed reports list the available design files, raw data, and required completion work. The SAR ADC is future work and is excluded from current results.
 
 ## 4. Verification coverage
 
@@ -300,7 +301,7 @@ The compact comparison columns have these meanings:
 
 MM applies local mismatch, GL applies global process variation, and FULL combines both. Complete MM, GL, and FULL statistics are reported only in the detailed block reports, including requested, valid, and failed run counts; minimum, mean, maximum, ±1σ, and ±3σ values; and per-metric yield. Formal yield is based only on required signoff metrics, so missing report-only quantities do not invalidate a run.
 
-## 5. AFE–ADC integration status
+## 5. Future AFE–ADC integration
 
 | Interface item | Current status | Required verification |
 | :--- | :---: | :--- |
@@ -313,7 +314,7 @@ MM applies local mismatch, GL applies global process variation, and FULL combine
 | Full-chain noise | Not available | Refer ADC noise and quantization noise to the electrode input |
 | Full-chain power | Not available | Measure AFE plus ADC operating and conversion power |
 
-No complete-system performance claim is made until the integrated AFE drives the ADC in a common testbench.
+These items are outside the present AFE verification scope. No AFE–ADC system performance claim is made until a future converter is selected, verified, and connected to the AFE in a common testbench.
 
 ## 6. Detailed reports
 
@@ -328,19 +329,19 @@ No complete-system performance claim is made until the integrated AFE drives the
 | Gain stage | [PGA report](Report/AFE_BLOCKS/PGA_Report.md) | Four gain codes, bandwidth, noise, rejection, transients, MC, and plots |
 | Output driver | [FDBUF report](Report/AFE_BLOCKS/FDBUF_Report.md) | Raw-data inventory and pending signoff work |
 | AFE system | [Integrated AFE report](Report/AFE_BLOCKS/AFE_Report.md) | Integration scope and pending system measurements |
-| Data converter | [SAR ADC report](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md) | Complete hierarchy and pending ADC signoff work |
+| Future data converter | [SAR ADC report](Report/SAR_ADC_BLOCKS/SAR_ADC_Report.md) | Preliminary hierarchy and proposed ADC signoff work |
 
 ## 7. Reproducing completed analyses
 
 Run from the repository root after generating the corresponding ngspice TXT exports:
 
 ```bash
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','BIAS')); BIAS_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','SEOTA')); SEOTA_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','FDOTA')); FDOTA_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','INA_RLD')); INA_RLD_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','LPF')); LPF_Analyze"
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','PGA')); PGA_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','BIAS')); BIAS_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','SEOTA')); SEOTA_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','FDOTA')); FDOTA_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','INA_RLD')); INA_RLD_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','LPF')); LPF_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','PGA')); PGA_Analyze"
 ```
 
 The analyzers follow a numeric-first workflow:
@@ -352,8 +353,8 @@ ngspice TXT → double-precision calculations → PVT/MC selection → unit scal
 ## 8. Next steps
 
 1. Complete the FDBUF analyzer and MM/GL/FULL campaigns.
-2. Complete the integrated AFE testbench and verify all four gain settings while driving the ADC input.
-3. Build SAR ADC static, dynamic, timing, power, and PVT/MC verification.
-4. Complete matching-aware layout, DRC, and LVS.
-5. Repeat selected PVT and FULL Monte Carlo campaigns with extracted parasitics.
-6. Integrate the pad ring and prepare the laboratory characterization plan.
+2. Complete the integrated AFE testbench and verify all four gain settings at the buffered differential output.
+3. Complete matching-aware AFE layout, DRC, and LVS.
+4. Repeat selected PVT and FULL Monte Carlo campaigns with extracted parasitics.
+5. Integrate the pad ring and prepare the laboratory characterization plan.
+6. Design, verify, and integrate a SAR ADC as a future extension.

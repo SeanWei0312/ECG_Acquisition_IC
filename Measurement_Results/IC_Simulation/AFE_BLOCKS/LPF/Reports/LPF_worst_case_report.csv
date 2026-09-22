@@ -1,19 +1,24 @@
 Parameter,Unit,Spec,Value,Corner
-FDC bias current,uA,40±10,49.581,FFVHTH
-CMFB bias current,uA,40±10,49.581,FFVHTH
-Total current,mA,≤2.5,2.194,FFVHTH
-Total power,mW,≤9,7.900,FFVHTH
-Output CM error,mV,±25,12.659,SSVHTH
-LPF input offset,mV,±6,-0.000,FSVHTH
-Passband gain,V/V,,0.999,SSVLTL
-Passband gain error,%,±0.5,-0.050,SSVLTL
-Loss @ 150 Hz,dB,,0.762,SSVHTL
-LPF -1 dB frequency,Hz,≥150,174.135,SSVHTL
-LPF -3 dB frequency,Hz,,340.986,SSVHTL
-CMRR @ 60 Hz,dB,≥80,219.097,SSNOMNOM
-CMRR @ 150 Hz,dB,≥80,219.515,SSVHNOM
-PSRR+ @ 60 Hz,dB,≥80,190.540,SSVHNOM
-PSRR+ @ 150 Hz,dB,≥80,189.147,SSVLTH
-PSRR- @ 60 Hz,dB,≥80,205.507,SSVLNOM
-PSRR- @ 150 Hz,dB,≥80,204.533,SSVLNOM
-Input-referred noise 0.05-150 Hz,uVrms,≤10,7.036,SSVHTH
+"FDC bias current",uA,40±10,49.581,FFVHTH
+"CMFB bias current",uA,40±10,49.581,FFVHTH
+"Total current",mA,≤2.5,2.194,FFVHTH
+"Total power",mW,≤9,7.900,FFVHTH
+"Output CM error",mV,±25,12.659,SSVHTH
+"LPF input offset",mV,±6,-0.000,FFVHTH
+"Passband gain",V/V,,0.999,SSVLTL
+"Passband gain error",%,±0.5,-0.050,SSVLTL
+"Loss @ 150 Hz",dB,,0.762,SSVHTL
+"LPF -1 dB frequency",Hz,≥150,174.135,SSVHTL
+"LPF -3 dB frequency",Hz,,340.986,SSVHTL
+"Input range low",V,≤-1.2,-2.686,FSVLTH
+"Input range high",V,≥1.2,2.686,FSVLTH
+"Output range low",V,≤-1.2,-2.684,FSVLTH
+"Output range high",V,≥1.2,2.684,FSVLTH
+"CMRR @ 60 Hz",dB,≥80,216.009,FFVHTH
+"CMRR @ 150 Hz",dB,≥80,216.006,FFVHTH
+"PSRR+ @ 60 Hz",dB,≥80,184.867,SSNOMTL
+"PSRR+ @ 150 Hz",dB,≥80,184.692,SSNOMTL
+"PSRR- @ 60 Hz",dB,≥80,206.057,SSVLNOM
+"PSRR- @ 150 Hz",dB,≥80,206.169,SSVLNOM
+"Input-referred noise 0.05-150 Hz",uVrms,≤10,7.036,SSVHTH
+"THD @ 60 Hz, 1.2 Vpp",%,≤0.01,0.002,SSVHTL
