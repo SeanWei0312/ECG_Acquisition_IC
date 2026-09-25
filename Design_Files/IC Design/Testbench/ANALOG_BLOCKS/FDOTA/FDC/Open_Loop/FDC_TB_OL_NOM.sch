@@ -288,7 +288,7 @@ value="
 .param VCM_SET=\{AVDD_SET/2\}
 
 .param VOSDC=0
-.param CMFB_BIAS=2.4847
+.param CMFB_BIAS=2.4832
 .param CMFB_GAIN=500
 
 .temp \{TEMP_SET\}

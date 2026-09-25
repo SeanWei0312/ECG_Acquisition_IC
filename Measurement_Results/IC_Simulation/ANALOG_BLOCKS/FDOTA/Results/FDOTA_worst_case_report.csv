@@ -3,30 +3,30 @@ Parameter,Unit,Spec,Value,Corner
 "CMFB bias current",uA,40±10,49.581,FFVHTH
 "Total current",mA,≤2.5,2.194,FFVHTH
 "Total power",mW,≤9,7.900,FFVHTH
-"Differential DC gain",dB,≥85,86.753,FSVLTH
-"Differential UGF",MHz,≥8,8.435,SSVLTH
-"Differential phase margin",deg,≥60,63.377,FFVLTH
-"Input differential offset",uV,±3000,0.000,SFVHNOM
-"CMRR @ 60 Hz",dB,≥80,206.691,SFNOMTL
-"CMRR @ 150 Hz",dB,≥80,206.691,SFNOMTL
-"PSRR+ @ 60 Hz",dB,≥80,193.356,SFNOMTL
-"PSRR+ @ 150 Hz",dB,≥80,193.357,SFNOMTL
-"PSRR- @ 60 Hz",dB,≥80,204.631,SFNOMTL
-"PSRR- @ 150 Hz",dB,≥80,204.630,SFNOMTL
-"Input-referred noise 0.05-150 Hz",uVrms,≤4,3.514,SSVHTH
-"Closed-loop differential gain",dB,,-2.802e-04,SFVHTL
-"Gain error",%,±0.01,-0.005,FSVLTH
-"Output common mode, DC",V,,1.813,SSVHTH
-"Output CM error",mV,±25,12.643,SSVHTH
+"Differential DC gain",dB,≥85,90.321,FFVLTH
+"Differential UGF",MHz,≥8,9.409,SSVLTH
+"Differential phase margin",deg,≥60,69.170,FFVLTH
+"Input differential offset",uV,±3000,0.000,SSNOMTL
+"CMRR @ 60 Hz",dB,≥80,228.347,NOMVHNOM
+"CMRR @ 150 Hz",dB,≥80,228.347,NOMVHNOM
+"PSRR+ @ 60 Hz",dB,≥80,220.817,SFNOMNOM
+"PSRR+ @ 150 Hz",dB,≥80,220.817,SFNOMNOM
+"PSRR- @ 60 Hz",dB,≥80,232.233,SFNOMNOM
+"PSRR- @ 150 Hz",dB,≥80,232.212,SFNOMNOM
+"Input-referred noise 0.05-150 Hz",uVrms,≤4,3.513,SSVHTH
+"Closed-loop differential gain",dB,,-1.968e-04,SFVHTL
+"Gain error",%,±0.01,-0.003,FFVLTH
+"Output common mode, DC",V,,1.812,SSVHTH
+"Output CM error",mV,±25,11.978,SSVHTH
 "Input CM low",mV,≤1000,975.000,SSVHNOM
-"Input CM high",V,≥2.3,2.740,FSVLTH
-"Input CM high headroom",mV,,260.000,FSVLTH
-"Differential output swing low",V,≤-1.8,-2.803,FSVLTH
-"Differential output swing high",V,≥1.8,2.803,FSVLTH
-"Differential SR rise",V/us,≥4,5.135,SSVLTL
-"Differential SR fall",V/us,≥4,5.135,SSVLTL
-"Differential settling time",ns,≤300,234.856,SSVLTL
-"Differential-step CM disturbance",mV,≤60,40.985,SSVLTH
-"CMFB SR rise",V/us,≥2,2.499,SSVLTL
-"CMFB SR fall",V/us,≥2,2.613,SSVLTH
-"CMFB settling time",ns,≤1000,404.130,SSVLTL
+"Input CM high",V,≥2.3,2.945,FSVLTH
+"Input CM high headroom",mV,,55.000,FSVLTH
+"Differential output swing low",V,≤-1.8,-2.898,FSVLTH
+"Differential output swing high",V,≥1.8,2.898,FSVLTH
+"Differential SR rise",V/us,≥4,5.096,SSVLTL
+"Differential SR fall",V/us,≥4,5.096,SSVLTL
+"Differential settling time",ns,≤300,246.550,SSVLTL
+"Differential-step CM disturbance",mV,≤60,47.404,SSNOMTH
+"CMFB SR rise",V/us,≥2,2.473,SSVLTL
+"CMFB SR fall",V/us,≥2,2.576,SSVLTH
+"CMFB settling time",ns,≤1000,418.338,SSVLTH

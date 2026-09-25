@@ -35,8 +35,8 @@ C {lab_wire.sym} 160 -380 0 1 {name=p16 sig_type=std_logic lab=TG_B}
 C {lab_wire.sym} 720 -440 0 1 {name=p1 sig_type=std_logic lab=TG_SELB}
 C {lab_wire.sym} 360 -440 0 0 {name=p4 sig_type=std_logic lab=TG_SEL}
 C {symbols/pfet_03v3.sym} 660 -440 0 1 {name=MTGP
-L=0.5u
-W=40u
+L=0.28u
+W=50u
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -49,8 +49,8 @@ model=pfet_03v3
 spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 420 -440 0 0 {name=MTGN
-L=0.5u
-W=20u
+L=0.28u
+W=25u
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"

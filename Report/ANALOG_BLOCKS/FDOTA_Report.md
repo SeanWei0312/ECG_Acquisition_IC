@@ -9,6 +9,134 @@
 | Statistical coverage | 200-run MM, GL, and FULL |
 | Status | Pass |
 
+## Architecture and design intent
+
+The FD OTA separates the differential signal path from output common-mode regulation:
+
+- **FDC:** a symmetric, fully differential, two-stage signal amplifier. M1/M2 form the NMOS input pair, M3/M4 form the PMOS first-stage loads controlled by `VCMFB`, M5 is the input-stage tail device, and M10 is the NMOS bias reference. M6/M8 and M7/M9 form the two output branches. Each side has its own series $R_z$–$C_c$ compensation path.
+- **CMFB:** an NMOS differential error amplifier. M1/M2 compare the sensed output common mode against `REF`; M3/M4 provide the PMOS active load, M5 supplies the tail current, and M10 is the bias-reference device. The CMFB output drives the FDC PMOS-load gates.
+- **Output common-mode sensor:** equal R1/R2 resistors average `OUTP` and `OUTN` to generate `VOCM`; C1/C2 provide symmetric high-frequency loading and filtering. The CMFB loop forces this sensed value toward `REF` without disturbing the differential signal ideally.
+
+Schematic sources: [FDOTA.sch](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/FDOTA/FDOTA.sch>), [FDC.sch](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/FDC/FDC.sch>), and [CMFB.sch](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/CMFB/CMFB.sch>).
+
+### Implemented FDC dimensions
+
+`W_eff` is $W\times m$ because every listed MOS device uses `nf=1`.
+
+| Function | Devices | Type | $L$ (µm) | $W$ (µm) | $m$ | $W_{eff}$ per device (µm) | Sizing objective |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | :--- |
+| Input differential pair | M1, M2 | NMOS | 2.0 | 100 | 2 | 200 | High $g_m/I_D$, low input-referred noise, and differential gain |
+| CMFB-controlled first-stage load | M3, M4 | PMOS | 2.0 | 50 | 4 | 200 | High output resistance with common-mode control authority |
+| Tail source | M5 | NMOS | 2.0 | 10 | 1 | Establish the input-stage current |
+| Bias reference | M10 | NMOS | 2.0 | 20 | 1 | Generate the current-mirror reference |
+| Output pull-ups | M6, M7 | PMOS | 0.5 | 50 | 10 | Differential output current and positive slew capability |
+| Output pull-downs | M8, M9 | NMOS | 0.5 | 100 | 1 | Differential output current and negative slew capability |
+
+Each FDC MIM capacitor has $W=L=35.36\,\mu\text{m}$ in the 2 fF/µm² model, giving approximately $C_c=2.50$ pF per side. Each poly resistor uses the 2 kΩ/square model with $L/W=7/4$, giving a first-order value of approximately $R_z=3.5$ kΩ before model end and contact corrections.
+
+### Implemented CMFB and sensor dimensions
+
+| Function | Devices | Type | $L$ (µm) | $W$ (µm) | $m$ | $W_{eff}$ per device (µm) | Sizing objective |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | :--- |
+| CMFB input pair | M1, M2 | NMOS | 1.0 | 15 | 1 | 15 | Fast common-mode error sensing with useful transconductance efficiency |
+| CMFB active load | M3, M4 | PMOS | 1.0 | 41.1 | 5 | 205.5 | High load resistance and sufficient drive for `VCMFB` |
+| CMFB tail source | M5 | NMOS | 2.0 | 20 | 1 | Establish CMFB input-pair current |
+| CMFB bias reference | M10 | NMOS | 2.0 | 20 | 1 | One-to-one nominal tail-current reference |
+
+R1/R2 use the 2 kΩ/square poly model with $L/W=100/2$, so each is approximately 100 kΩ. C1/C2 use 5 µm by 5 µm MIM elements in the 2 fF/µm² model, so each is approximately 50 fF. Equal values are essential: mismatch in the averaging network converts differential output signal into a false common-mode error.
+
+## $g_m/I_D$ sizing methodology
+
+The design uses the lookup-table form of the $g_m/I_D$ method. Silveira, Flandre, and Jespers established $g_m/I_D$ as a unified design variable across weak, moderate, and strong inversion. Jespers and Murmann later formalized the simulator-generated lookup-table workflow used here: characterize the process once, select operating points from figures of merit, calculate widths, and then close the design with complete circuit simulation.
+
+The central equations are
+
+$$
+g_m=\left(\frac{g_m}{I_D}\right)I_D,
+\qquad
+J_D=\frac{I_D}{W_{eff}},
+\qquad
+W_{eff}=\frac{I_D}{J_D},
+$$
+
+where $J_D=I_D/W$ is taken from the device table at the selected length, drain bias, and $g_m/I_D$. The same operating point provides
+
+$$
+A_{v,int}=\frac{g_m}{g_{ds}},
+$$
+
+as a device-level gain indicator, while $f_T$ and $(g_m/I_D)f_T$ indicate speed. High $g_m/I_D$ improves transconductance per unit current and reduces required overdrive, but decreases current density and increases width. Long channel length improves $g_m/g_{ds}$ and matching, but reduces $f_T$ and adds capacitance. A fully differential OTA also requires the differential and CMFB loops to be designed together: increasing main-path gain or output-stage size changes the CMFB plant, and aggressive CMFB bandwidth can interact with the differential loop and output sensor.
+
+The practical sizing sequence is therefore:
+
+1. Convert differential UGF, noise, load, settling, output-swing, and slew requirements into input-stage $g_m$, branch-current, and compensation targets.
+2. Choose $L$ and $g_m/I_D$ for the FDC input pair and active loads to obtain adequate $g_m/g_{ds}$ without giving up all speed.
+3. Compute $I_D=g_m/(g_m/I_D)$ and $W_{eff}=I_D/J_D$, then implement matched pairs with identical multiplicity and orientation.
+4. Size the short-channel output devices from load current and slew rate, and size the symmetric $R_z$–$C_c$ networks from pole/zero placement.
+5. Size the CMFB input pair and load from common-mode loop gain, control-node capacitance, and settling; keep the sensor elements symmetric.
+6. Verify the two loops independently and together, followed by PVT and mismatch/global Monte Carlo analysis.
+
+### Local 180 nm characterization data
+
+The project characterization sweeps 10-µm-wide `nfet_03v3` and `pfet_03v3` devices over $L=0.28$–5 µm. The terminal tables interpolate $g_m/I_D=4$–20 V⁻¹ at $V_{DS}=1.65$ V for NMOS and $V_{SD}=1.65$ V for PMOS. Direct simulator operating-point values of $g_m$, $g_{ds}$, capacitance, and $f_T$ are converted into $g_m/I_D$, $I_D/W$, $g_m/g_{ds}$, and $(g_m/I_D)f_T$ on the physical monotonic branch.
+
+The table's $V_{OV}$ and threshold-voltage columns are diagnostic only: the postprocessor estimates $V_{OV}\approx2/(g_m/I_D)$ and derives threshold voltage from that estimate. Width selection in this report relies on simulator-derived current density and small-signal quantities, not on treating the square-law $V_{OV}$ estimate as an exact compact-model result.
+
+Representative values at $g_m/I_D=10$ V⁻¹ quantify the length tradeoff used by the FDC and CMFB:
+
+| $L$ (µm) | NMOS $I_D/W$ (µA/µm) | NMOS $g_m/g_{ds}$ (dB) | NMOS $(g_m/I_D)f_T$ (GHz/V) | PMOS $I_D/W$ (µA/µm) | PMOS $g_m/g_{ds}$ (dB) | PMOS $(g_m/I_D)f_T$ (GHz/V) |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0.5 | 4.381 | 44.80 | 54.34 | 1.265 | 48.34 | 12.62 |
+| 1.0 | 2.257 | 51.75 | 13.75 | 0.5309 | 56.26 | 2.668 |
+| 2.0 | 1.055 | 55.27 | 3.067 | 0.2390 | 61.99 | 0.6172 |
+| 4.0 | 0.4959 | 58.41 | 0.7020 | 0.1128 | 67.40 | 0.1501 |
+
+The chosen lengths follow this characterized trend. The 2-µm FDC gain devices preserve substantially more intrinsic gain than 0.5-µm devices while retaining more speed than the 4-µm option. The 1-µm CMFB devices favor loop speed, and the 0.5-µm FDC output devices favor current density and load drive.
+
+- [NMOS $g_m/I_D$ current-density plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/NMOS_Gm_Id/Plots/nmos_current_density_vs_gmid.png)
+- [NMOS intrinsic-gain plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/NMOS_Gm_Id/Plots/nmos_intrinsic_gain_db_vs_gmid.png)
+- [PMOS $g_m/I_D$ current-density plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/PMOS_Gm_Id/Plots/pmos_current_density_vs_gmid.png)
+- [PMOS intrinsic-gain plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/PMOS_Gm_Id/Plots/pmos_intrinsic_gain_db_vs_gmid.png)
+
+### Interpretation of the implemented FDC sizing
+
+The nominal FDC bias current is 40.092 µA. M5 and M10 share $L=2$ µm, and the M5 width is one half of the M10 width. A first-order mirror estimate therefore places the FDC tail current near 20 µA and each balanced input branch near 10 µA.
+
+- **M1/M2:** $10\,\mu\text{A}/200\,\mu\text{m}\approx0.050\,\mu\text{A}/\mu\text{m}$. The $L=2$ µm NMOS table gives 0.0748 µA/µm at $g_m/I_D=20$ V⁻¹, so the implemented input pair lies at the high-efficiency end of, or slightly beyond, the printed 4–20 V⁻¹ lookup range under the first-order current estimate. This supports low noise and high input transconductance per unit current.
+- **M3/M4:** the same branch current gives approximately 0.050 µA/µm in each 200-µm PMOS load. At $L=2$ µm, the PMOS table gives 0.0567 µA/µm at 16 V⁻¹ and 0.0432 µA/µm at 17 V⁻¹. The load pair is therefore consistent with high-efficiency moderate-to-weak inversion, while the 2-µm channel supplies high output resistance and CMFB control gain.
+- **M6–M9:** the output devices use $L=0.5$ µm and large widths. Their lookup curves offer far higher current density and $f_T$ than the 2-µm gain devices, which is appropriate for driving the differential load, achieving the slew target, and keeping the two compensation nodes fast. Symmetric sizing and matched compensation preserve differential balance.
+
+The FDC thus applies high $g_m/I_D$ and longer length where noise and gain dominate, then uses shorter devices where slew rate and output-current density dominate. This allocation is more useful than forcing every device to the same inversion level.
+
+### Interpretation of the CMFB sizing
+
+The nominal CMFB bias current is also 40.092 µA. M5 and M10 have identical $W/L=20/2$, so a first-order estimate gives a 40-µA tail current and approximately 20 µA per balanced input branch.
+
+- **CMFB M1/M2:** $20\,\mu\text{A}/15\,\mu\text{m}\approx1.33\,\mu\text{A}/\mu\text{m}$. For a 1-µm NMOS, the table gives 1.404 µA/µm at 12 V⁻¹ and 1.115 µA/µm at 13 V⁻¹. The input pair is therefore consistent with $g_m/I_D\approx12$–13 V⁻¹ at the characterization drain bias—a moderate-inversion point that balances transconductance efficiency and speed.
+- **CMFB M3/M4:** $20\,\mu\text{A}/205.5\,\mu\text{m}\approx0.0973\,\mu\text{A}/\mu\text{m}$. For a 1-µm PMOS, the table gives 0.0966 µA/µm at 17 V⁻¹. The large load devices therefore operate at a higher transconductance-efficiency point and contribute output resistance while driving the FDC common-mode-control gates.
+
+This division of labor explains the dedicated CMFB result: 45.128 dB gain, 966.924 MHz UGF, 71.906° phase margin, and 4.8–5.2 ns closed-loop settling. The main FDC loop is intentionally slower and more heavily compensated; the CMFB error amplifier is comparatively light and fast so that output common mode is corrected without limiting the required signal-band behavior.
+
+These are current-density-based design interpretations, not substitutes for saved transistor operating-point data. The lookup tables use a 1.65-V drain-bias slice, whereas the in-circuit devices see different $V_{DS}$/$V_{SD}$ and body biases. Exact device $g_m/I_D$ values require nominal OP vectors from the final hierarchy. The lookup analysis explains why the selected lengths, widths, and multiplicities are reasonable; PVT and Monte Carlo simulations determine whether the complete design meets specification.
+
+### Sizing-to-verification closure
+
+| Sizing choice | Intended result | Verified evidence |
+| :--- | :--- | :--- |
+| High-efficiency, 2-µm FDC input pair | High differential $g_m$, low noise, and useful intrinsic gain | 88.699 dB nominal top-level gain and 3.086 µVrms nominal integrated input noise |
+| 2-µm PMOS FDC loads | First-stage gain plus CMFB control authority | Full-PVT differential gain remains at least 86.753 dB; output CM error remains within ±12.643 mV |
+| 0.5-µm, wide output devices | High current density, output swing, and load drive | ±3.188 V nominal differential swing and 7.232 V/µs nominal differential slew rate |
+| Dual 2.5-pF / 3.5-kΩ compensation branches | Stable, symmetric differential loop | 12.447 MHz nominal UGF and 72.649° nominal phase margin; 63.377° full-PVT minimum |
+| 1-µm CMFB input/load path | Fast output-common-mode correction | 4.8–5.2 ns dedicated CMFB settling; 329.7 ns nominal top-level CMFB settling under full output loading |
+| Large matched devices and symmetric paths | Low mismatch sensitivity | FULL-MC offset spans −2.096 to +2.354 mV and all 200 runs pass |
+
+## Design-method references
+
+- F. Silveira, D. Flandre, and P. G. A. Jespers, “A $g_m/I_D$ Based Methodology for the Design of CMOS Analog Circuits and Its Application to the Synthesis of a Silicon-on-Insulator Micropower OTA,” *IEEE Journal of Solid-State Circuits*, vol. 31, no. 9, 1996. [DOI: 10.1109/4.535416](https://doi.org/10.1109/4.535416)
+- P. G. A. Jespers and B. Murmann, “Basic Sizing Using the $g_m/I_D$ Methodology,” in *Systematic Design of Analog CMOS Circuits: Using Pre-Computed Lookup Tables*, Cambridge University Press, 2017. [DOI: 10.1017/9781108125840.003](https://doi.org/10.1017/9781108125840.003)
+- P. G. A. Jespers and B. Murmann, “Lookup Table Generation and Usage,” ibid., 2017. [DOI: 10.1017/9781108125840.008](https://doi.org/10.1017/9781108125840.008)
+- A. A. Youssef, B. Murmann, and H. Omran, “Analog IC Design Using Precomputed Lookup Tables: Challenges and Solutions,” *IEEE Access*, 2020. [DOI: 10.1109/ACCESS.2020.3010875](https://doi.org/10.1109/ACCESS.2020.3010875)
+
 ## Detailed results
 
 | Metric | Specification | Nominal | Full-PVT worst case | Corner |

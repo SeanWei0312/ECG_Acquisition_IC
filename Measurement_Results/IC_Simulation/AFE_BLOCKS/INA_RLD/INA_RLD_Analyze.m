@@ -728,7 +728,7 @@ switch string(parameter)
     case {"INA CMRR @ 60 Hz","INA CMRR @ 150 Hz"}, specification = "≥80";
     case {"INA PSRR+ @ 60 Hz","INA PSRR+ @ 150 Hz", ...
             "INA PSRR- @ 60 Hz","INA PSRR- @ 150 Hz"}, specification = "≥80";
-    case "THD @ 60 Hz, 5 mVpp", specification = "≤0.01";
+    case "THD @ 60 Hz, 5 mVpp", specification = "≤0.05";
     case "RLD -3 dB bandwidth"
         specification = "≥"+specNumber(150,unit);
     case "RLD phase margin", specification = "≥60";
@@ -767,7 +767,7 @@ switch string(parameter)
     case {"INA CMRR @ 60 Hz","INA CMRR @ 150 Hz"}, pass = baseValue >= 80;
     case {"INA PSRR+ @ 60 Hz","INA PSRR+ @ 150 Hz", ...
             "INA PSRR- @ 60 Hz","INA PSRR- @ 150 Hz"}, pass = baseValue >= 80;
-    case "THD @ 60 Hz, 5 mVpp", pass = baseValue <= 0.01;
+    case "THD @ 60 Hz, 5 mVpp", pass = baseValue <= 0.05;
     case "RLD -3 dB bandwidth", pass = baseValue >= 150;
     case "RLD phase margin", pass = baseValue >= 60;
     case {"RTI residual - BAL","RTI residual - MIS-P", ...

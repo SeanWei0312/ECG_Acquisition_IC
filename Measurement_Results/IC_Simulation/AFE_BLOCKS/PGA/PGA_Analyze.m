@@ -21,6 +21,7 @@ nCorners = numel(processes)*numel(cases);
 corners = strings(1,nCorners); cornerProcesses = strings(1,nCorners);
 cornerCases = strings(1,nCorners); cornerVdd_V = nan(1,nCorners);
 cornerTemp_C = nan(1,nCorners); values = nan(size(rows,1),nCorners);
+valueRelations = strings(size(rows,1),nCorners);
 metrics = cell(1,nCorners); cornerIndex = 0;
 for processIndex = 1:numel(processes)
     process = processes(processIndex); processToken = processTokens(processIndex);
@@ -36,6 +37,8 @@ for processIndex = 1:numel(processes)
             caseVdd_V(caseIndex),cfg);
         values(:,cornerIndex) = metricsToRaw(metrics{cornerIndex},rows, ...
             caseTemp_C(caseIndex),cfg);
+        valueRelations(:,cornerIndex) = metricsToRelations( ...
+            metrics{cornerIndex},rows,cfg);
     end
 end
 specifications = specStrings(rows(:,1),cfg);
@@ -47,7 +50,7 @@ reportKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
     "SFNOMNOM" "NOMVLNOM" "NOMVHNOM" "NOMNOMTL" "NOMNOMTH"];
 [found,reportIndices] = ismember(reportKeys,corners);
 if ~all(found), error('PGA_Analyze:ReportCorners','Required corners are missing.'); end
-formattedValues = formatReportValues(values);
+formattedValues = formatReportValues(values,valueRelations);
 reportValues = formattedValues(:,reportIndices);
 summaryTable = table(rows(:,1),rows(:,2),specifications, ...
     'VariableNames',{'Parameter','Unit','Spec'});
@@ -57,14 +60,15 @@ fprintf('\nPGA COMPARISON SUMMARY\n\n');
 printSummaryTable(rows,specifications,reportColumns,reportValues);
 writetable(summaryTable,fullfile(reportDir,'PGA_table_report.csv'));
 writetable(summaryTable,fullfile(reportDir,'NOM.PGA_summary.csv'));
-fullPvtTable = buildFullPvtTable(rows,values,corners,cornerProcesses, ...
-    cornerCases,cornerVdd_V,cornerTemp_C);
+fullPvtTable = buildFullPvtTable(rows,values,valueRelations,corners, ...
+    cornerProcesses,cornerCases,cornerVdd_V,cornerTemp_C);
 writetable(fullPvtTable,fullfile(reportDir,'PGA_full_pvt_report.csv'));
-worstCase = buildWorstCaseTable(rows,values,corners,cfg);
+worstCase = buildWorstCaseTable(rows,values,valueRelations,corners,cfg);
 fprintf('\nPGA FULL-PVT WORST CASE\n\n'); printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(reportDir,'PGA_worst_case_report.csv'));
 nominal = metrics{nominalCorner};
 plotNominalDifferential(nominal,plotDir,cfg);
+plotNominalVtc(nominal,plotDir,cfg);
 plotNominalNoise(nominal,plotDir,cfg);
 plotNominalRejection(nominal,plotDir,cfg);
 plotSelectorTransient(scriptDir,plotDir);
@@ -81,6 +85,13 @@ cfg.totalCurrentLimit_mA = 2.5; cfg.totalPowerLimit_mW = 9;
 cfg.outputCmErrorLimit_mV = 20; cfg.offsetLimit_mV = 5;
 cfg.gainErrorLimit_pct = 5; cfg.bandwidthLimit_MHz = 0.15;
 cfg.rejectionLimit_dB = 80; cfg.noiseLimit_uVrms = 10;
+cfg.vtcCompression_pct = 1;
+cfg.vtcCenterFitHalfWidth_V = [0.1 0.05 0.025 0.0125];
+cfg.inputRangeLimit_V = [1.2 0.6 0.3 0.15];
+cfg.outputRangeLimit_V = 2.4;
+cfg.thdFrequency_Hz = 60;
+cfg.thdInputVpp_V = [1.2 0.6 0.3 0.15];
+cfg.thdLimit_pct = 0.05;
 end
 
 function rows = reportRows(cfg)
@@ -95,12 +106,21 @@ for gain = cfg.gains
     rows = [rows; "", ""; prefix, ""; prefix+" target gain", "V/V"; ...
         prefix+" input offset", "mV"; prefix+" gain @ 10 Hz", "V/V";
         prefix+" gain @ 150 Hz", "V/V"; prefix+" gain error", "%";
-        prefix+" -3 dB bandwidth", "MHz"; prefix+" CMRR @ 60 Hz", "dB";
+        prefix+" -3 dB bandwidth", "MHz";
+        prefix+" input range low", "V"; prefix+" input range high", "V";
+        prefix+" output range low", "V"; prefix+" output range high", "V";
+        prefix+" CMRR @ 60 Hz", "dB";
         prefix+" CMRR @ 150 Hz", "dB"; prefix+" PSRR+ @ 60 Hz", "dB";
         prefix+" PSRR+ @ 150 Hz", "dB"; prefix+" PSRR- @ 60 Hz", "dB";
         prefix+" PSRR- @ 150 Hz", "dB";
-        prefix+" input-referred noise 0.05-150 Hz", "uVrms"]; %#ok<AGROW>
+        prefix+" input-referred noise 0.05-150 Hz", "uVrms";
+        prefix+" THD @ 60 Hz, "+ ...
+            thdInputText(cfg.thdInputVpp_V(gain == cfg.gains))+" Vpp", "%"]; %#ok<AGROW>
 end
+end
+
+function text = thdInputText(value)
+text = string(sprintf('%.2f',value));
 end
 
 function specifications = specStrings(parameters,cfg)
@@ -121,7 +141,20 @@ elseif endsWith(parameter," -3 dB bandwidth"), specification = "≥"+cfg.bandwid
 elseif contains(parameter,"CMRR @") || contains(parameter,"PSRR+") || contains(parameter,"PSRR-")
     specification = "≥"+cfg.rejectionLimit_dB;
 elseif contains(parameter,"input-referred noise"), specification = "≤"+cfg.noiseLimit_uVrms;
+elseif contains(parameter," THD @ 60 Hz"), specification = "≤"+cfg.thdLimit_pct;
 else, specification = "";
+end
+for gainIndex = 1:numel(cfg.gains)
+    prefix = "G"+cfg.gains(gainIndex);
+    if parameter == prefix+" input range low"
+        specification = "≤-"+cfg.inputRangeLimit_V(gainIndex);
+    elseif parameter == prefix+" input range high"
+        specification = "≥"+cfg.inputRangeLimit_V(gainIndex);
+    elseif parameter == prefix+" output range low"
+        specification = "≤-"+cfg.outputRangeLimit_V;
+    elseif parameter == prefix+" output range high"
+        specification = "≥"+cfg.outputRangeLimit_V;
+    end
 end
 end
 
@@ -150,7 +183,20 @@ elseif endsWith(p," -3 dB bandwidth"), pass = value >= cfg.bandwidthLimit_MHz;
 elseif contains(p,"CMRR @") || contains(p,"PSRR+") || contains(p,"PSRR-")
     pass = value >= cfg.rejectionLimit_dB;
 elseif contains(p,"input-referred noise"), pass = value <= cfg.noiseLimit_uVrms;
+elseif contains(p," THD @ 60 Hz"), pass = value <= cfg.thdLimit_pct;
 else, pass = true;
+end
+for gainIndex = 1:numel(cfg.gains)
+    prefix = "G"+cfg.gains(gainIndex);
+    if p == prefix+" input range low"
+        pass = value <= -cfg.inputRangeLimit_V(gainIndex);
+    elseif p == prefix+" input range high"
+        pass = value >= cfg.inputRangeLimit_V(gainIndex);
+    elseif p == prefix+" output range low"
+        pass = value <= -cfg.outputRangeLimit_V;
+    elseif p == prefix+" output range high"
+        pass = value >= cfg.outputRangeLimit_V;
+    end
 end
 end
 
@@ -170,7 +216,7 @@ for cornerIndex = 1:numel(corners)
     passedCorners = passedCorners+cornerPass;
 end
 if isempty(failures)
-    fprintf('\nPGA PVT SPECIFICATION: PASS (%d/%d corners)\n',passedCorners,numel(corners));
+    fprintf('\nPGA FULL-PVT VERIFICATION: PASS (%d/%d corners)\n',passedCorners,numel(corners));
 else
     warning('PGA_Analyze:PvtSpecFailure','PGA PVT: FAIL (%d/%d corners):\n%s', ...
         passedCorners,numel(corners),strjoin(failures,newline));
@@ -191,6 +237,10 @@ for gainIndex = 1:numel(cfg.gains)
         readNumericFile(fullfile(resultDir,sprintf(stem,'psrrp_ac')),5), ...
         readNumericFile(fullfile(resultDir,sprintf(stem,'psrrn_ac')),5),g.diff,cfg);
     g.noise = analyzeNoise(readNumericFile(fullfile(resultDir,sprintf(stem,'noise')),3),cfg);
+    g.vtc = analyzeVtc(readNumericFile(fullfile(resultDir,sprintf(stem,'vtc')),6), ...
+        cfg.vtcCenterFitHalfWidth_V(gainIndex),cfg.vtcCompression_pct);
+    g.thd = analyzeThd(readNumericFile(fullfile(resultDir,sprintf(stem,'thd')),3), ...
+        cfg.thdFrequency_Hz);
     m.gain{gainIndex} = g;
 end
 end
@@ -249,6 +299,127 @@ result.frequency_Hz = f; result.inputDensity_VrtHz = abs(data(:,3));
 result.inputRms_V = integrateDensity(f,result.inputDensity_VrtHz,cfg.noiseBand_Hz);
 end
 
+function result = analyzeVtc(data,fitHalfWidth_V,compression_pct)
+vinDiff_V = data(:,2);
+pgaOutDiff_V = data(:,6);
+if any(diff(vinDiff_V) <= 0)
+    error('PGA_Analyze:VtcInput','PGA VTC input must be strictly increasing.');
+end
+
+[~,zeroIndex] = min(abs(pgaOutDiff_V));
+fitRows = abs(vinDiff_V-vinDiff_V(zeroIndex)) <= fitHalfWidth_V;
+if nnz(fitRows) < 3
+    error('PGA_Analyze:VtcFit', ...
+        'PGA VTC central gain fit requires at least three samples.');
+end
+centralFit = polyfit(vinDiff_V(fitRows),pgaOutDiff_V(fitRows),1);
+centralGain_VV = centralFit(1);
+if ~isfinite(centralGain_VV) || abs(centralGain_VV) <= eps
+    error('PGA_Analyze:VtcGain', ...
+        'PGA VTC central DC gain must be finite and nonzero.');
+end
+
+localGain_VV = gradient(pgaOutDiff_V)./gradient(vinDiff_V);
+gainError_pct = 100*abs(localGain_VV/centralGain_VV-1);
+
+negativeInsideIndex = zeroIndex;
+negativeOutsideIndex = [];
+for index = zeroIndex-1:-1:1
+    if isfinite(gainError_pct(index)) && gainError_pct(index) <= compression_pct
+        negativeInsideIndex = index;
+    else
+        negativeOutsideIndex = index;
+        break;
+    end
+end
+
+positiveInsideIndex = zeroIndex;
+positiveOutsideIndex = [];
+for index = zeroIndex+1:numel(vinDiff_V)
+    if isfinite(gainError_pct(index)) && gainError_pct(index) <= compression_pct
+        positiveInsideIndex = index;
+    else
+        positiveOutsideIndex = index;
+        break;
+    end
+end
+
+negativeAtBoundary = isempty(negativeOutsideIndex);
+positiveAtBoundary = isempty(positiveOutsideIndex);
+if negativeAtBoundary
+    inputNegative_V = vinDiff_V(1);
+    outputNegative_V = pgaOutDiff_V(1);
+else
+    inputNegative_V = compressionCrossing( ...
+        vinDiff_V(negativeOutsideIndex),gainError_pct(negativeOutsideIndex), ...
+        vinDiff_V(negativeInsideIndex),gainError_pct(negativeInsideIndex), ...
+        compression_pct);
+    outputNegative_V = interp1(vinDiff_V,pgaOutDiff_V,inputNegative_V,'linear');
+end
+if positiveAtBoundary
+    inputPositive_V = vinDiff_V(end);
+    outputPositive_V = pgaOutDiff_V(end);
+else
+    inputPositive_V = compressionCrossing( ...
+        vinDiff_V(positiveInsideIndex),gainError_pct(positiveInsideIndex), ...
+        vinDiff_V(positiveOutsideIndex),gainError_pct(positiveOutsideIndex), ...
+        compression_pct);
+    outputPositive_V = interp1(vinDiff_V,pgaOutDiff_V,inputPositive_V,'linear');
+end
+
+result.input_V = vinDiff_V;
+result.output_V = pgaOutDiff_V;
+result.centralGain_VV = centralGain_VV;
+result.inputNegative_V = inputNegative_V;
+result.inputPositive_V = inputPositive_V;
+result.outputNegative_V = outputNegative_V;
+result.outputPositive_V = outputPositive_V;
+result.negativeAtBoundary = negativeAtBoundary;
+result.positiveAtBoundary = positiveAtBoundary;
+end
+
+function crossing = compressionCrossing(x1,error1,x2,error2,target)
+if ~all(isfinite([x1 error1 x2 error2])) || error1 == error2
+    crossing = x2;
+    return;
+end
+fraction = (target-error1)/(error2-error1);
+crossing = x1+fraction*(x2-x1);
+end
+
+function result = analyzeThd(data,fundamental_Hz)
+t_s = data(:,1);
+pgaOutDiff_V = data(:,3);
+if any(diff(t_s) <= 0)
+    error('PGA_Analyze:ThdTime','THD transient time must be strictly increasing.');
+end
+duration_s = t_s(end)-t_s(1);
+cycleCount = duration_s*fundamental_Hz;
+if abs(cycleCount-round(cycleCount)) > 1e-3
+    error('PGA_Analyze:ThdCycles', ...
+        'THD transient must contain an integer number of cycles; found %.6g.', ...
+        cycleCount);
+end
+pgaOutDiff_V = pgaOutDiff_V-mean(pgaOutDiff_V,'omitnan');
+amplitude_Vpk = zeros(1,5);
+for harmonic = 1:5
+    angle = 2*pi*harmonic*fundamental_Hz*t_s;
+    cosineCoefficient = 2/duration_s*trapz( ...
+        t_s,pgaOutDiff_V.*cos(angle));
+    sineCoefficient = 2/duration_s*trapz( ...
+        t_s,pgaOutDiff_V.*sin(angle));
+    amplitude_Vpk(harmonic) = hypot(cosineCoefficient,sineCoefficient);
+end
+if ~isfinite(amplitude_Vpk(1)) || amplitude_Vpk(1) <= 0
+    error('PGA_Analyze:ThdFundamental', ...
+        'THD fundamental amplitude must be finite and positive.');
+end
+result.amplitude_Vpk = amplitude_Vpk;
+result.ratio = sqrt(sum(amplitude_Vpk(2:5).^2))/amplitude_Vpk(1);
+result.percent = 100*result.ratio;
+result.dB = 20*log10(result.ratio);
+end
+
 function value = integrateDensity(frequency,density,band)
 [f,y] = boundedTrace(frequency,density,band); value = sqrt(trapz(f,y.^2));
 end
@@ -295,6 +466,10 @@ for rowIndex = 1:size(rows,1)
                     case prefix+" gain @ 150 Hz", values(rowIndex) = g.diff.gain150_VV;
                     case prefix+" gain error", values(rowIndex) = g.diff.gainError_pct;
                     case prefix+" -3 dB bandwidth", values(rowIndex) = g.diff.bandwidth3dB_Hz*1e-6;
+                    case prefix+" input range low", values(rowIndex) = g.vtc.inputNegative_V;
+                    case prefix+" input range high", values(rowIndex) = g.vtc.inputPositive_V;
+                    case prefix+" output range low", values(rowIndex) = g.vtc.outputNegative_V;
+                    case prefix+" output range high", values(rowIndex) = g.vtc.outputPositive_V;
                     case prefix+" CMRR @ 60 Hz", values(rowIndex) = g.rejection.cmrr_dB(1);
                     case prefix+" CMRR @ 150 Hz", values(rowIndex) = g.rejection.cmrr_dB(2);
                     case prefix+" PSRR+ @ 60 Hz", values(rowIndex) = g.rejection.psrrP_dB(1);
@@ -303,13 +478,31 @@ for rowIndex = 1:size(rows,1)
                     case prefix+" PSRR- @ 150 Hz", values(rowIndex) = g.rejection.psrrN_dB(2);
                     case prefix+" input-referred noise 0.05-150 Hz"
                         values(rowIndex) = g.noise.inputRms_V*1e6;
+                    case prefix+" THD @ 60 Hz, "+ ...
+                            thdInputText(cfg.thdInputVpp_V(gainIndex))+" Vpp"
+                        values(rowIndex) = g.thd.percent;
                 end
             end
     end
 end
 end
 
-function result = buildFullPvtTable(rows,values,corners,processes,cases,vdd,temp)
+function relations = metricsToRelations(m,rows,cfg)
+relations = strings(size(rows,1),1);
+for gainIndex = 1:numel(cfg.gains)
+    prefix = "G"+cfg.gains(gainIndex);
+    if m.gain{gainIndex}.vtc.negativeAtBoundary
+        relations(parameterIndex(rows(:,1),prefix+" input range low")) = "≤";
+        relations(parameterIndex(rows(:,1),prefix+" output range low")) = "≤";
+    end
+    if m.gain{gainIndex}.vtc.positiveAtBoundary
+        relations(parameterIndex(rows(:,1),prefix+" input range high")) = "≥";
+        relations(parameterIndex(rows(:,1),prefix+" output range high")) = "≥";
+    end
+end
+end
+
+function result = buildFullPvtTable(rows,values,relations,corners,processes,cases,vdd,temp)
 metricRows = find(rows(:,2) ~= "" & rows(:,1) ~= "AVDD" & ...
     rows(:,1) ~= "Temperature" & rows(:,1) ~= "Shared OP gain code");
 nRecords = numel(corners)*numel(metricRows);
@@ -325,7 +518,8 @@ for cornerIndex = 1:numel(corners)
     unitCol(range) = rows(metricRows,2);
     for metricIndex = 1:numel(metricRows)
         r = metricRows(metricIndex);
-        valueCol(range(metricIndex)) = formatOne(values(r,cornerIndex));
+        valueCol(range(metricIndex)) = formatResult( ...
+            values(r,cornerIndex),relations(r,cornerIndex));
     end
 end
 result = table(cornerCol,processCol,caseCol,vddCol,tempCol,parameterCol,unitCol,valueCol, ...
@@ -333,12 +527,13 @@ result = table(cornerCol,processCol,caseCol,vddCol,tempCol,parameterCol,unitCol,
     'Parameter','Unit','Value'});
 end
 
-function result = buildWorstCaseTable(rows,values,corners,cfg)
+function result = buildWorstCaseTable(rows,values,relations,corners,cfg)
 settings = rows(:,1) == "AVDD" | rows(:,1) == "Temperature" | ...
     rows(:,1) == "Shared OP gain code" | endsWith(rows(:,1)," target gain");
 metricRows = find(rows(:,2) ~= "" & ~settings); n = numel(metricRows);
 parameters = rows(metricRows,1); units = rows(metricRows,2);
-specifications = specStrings(parameters,cfg); selected = nan(n,1); selectedCorners = strings(n,1);
+specifications = specStrings(parameters,cfg); selected = nan(n,1);
+selectedRelations = strings(n,1); selectedCorners = strings(n,1);
 for index = 1:n
     r = metricRows(index); candidates = values(r,:); p = parameters(index);
     if contains(p," gain @ ")
@@ -348,16 +543,25 @@ for index = 1:n
     elseif endsWith(p," -3 dB bandwidth") || contains(p,"CMRR @") || ...
             contains(p,"PSRR+") || contains(p,"PSRR-")
         [~,i] = min(candidates);
-    elseif p == "Total current" || p == "Total power" || contains(p,"input-referred noise")
+    elseif endsWith(p," input range low") || endsWith(p," output range low")
+        [~,i] = max(candidates);
+    elseif endsWith(p," input range high") || endsWith(p," output range high")
+        [~,i] = min(candidates);
+    elseif p == "Total current" || p == "Total power" || ...
+            contains(p,"input-referred noise") || contains(p," THD @ 60 Hz")
         [~,i] = max(candidates);
     elseif any(p == ["FDC bias current" "CMFB bias current"])
         [~,i] = max(abs(candidates-cfg.biasTarget_uA));
     else, [~,i] = max(abs(candidates));
     end
-    selected(index) = candidates(i); selectedCorners(index) = corners(i);
+    selected(index) = candidates(i);
+    selectedRelations(index) = relations(r,i);
+    selectedCorners(index) = corners(i);
 end
 formatted = strings(n,1);
-for index = 1:n, formatted(index) = formatOne(selected(index)); end
+for index = 1:n
+    formatted(index) = formatResult(selected(index),selectedRelations(index));
+end
 result = table(parameters,units,specifications,formatted,selectedCorners, ...
     'VariableNames',{'Parameter','Unit','Spec','Value','Corner'});
 end
@@ -491,7 +695,7 @@ for gainIndex = 1:4
     nexttile(layout); hold on;
     valueSets = cellfun(@(r)r.values(r.validMask,metricIndex),results,'UniformOutput',false);
     allValues = vertcat(valueSets{:}); bounds = mcSpecBounds(parameter,cfg);
-    [lo,hi,fullResult] = mcDisplayRange(allValues,results,metricIndex,bounds);
+    [lo,hi,fullResult] = mcDisplayRange(allValues,results,metricIndex);
     edges = linspace(lo,hi,21); colors = lines(3); distributionLines = gobjects(3,1);
     for k = 1:3
         sample = valueSets{k}; sample = sample(isfinite(sample) & sample >= lo & sample <= hi);
@@ -500,7 +704,11 @@ for gainIndex = 1:4
             'LineWidth',1.5,'Color',colors(k,:), ...
             'DisplayName',results{k}.mode);
     end
-    for x = bounds(isfinite(bounds)), xline(x,'--','HandleVisibility','off'); end
+    for x = bounds(isfinite(bounds))
+        if x >= lo && x <= hi
+            xline(x,'--','HandleVisibility','off');
+        end
+    end
     addFullStatMarkers(fullResult,metricIndex); xlim([lo hi]); ylabel('Samples (%)');
     stylePlot(suffix+" ("+defs.units(metricIndex)+")", ...
         "("+char('a'+gainIndex-1)+") G"+cfg.gains(gainIndex));
@@ -524,18 +732,43 @@ else
 end
 end
 
-function [lo,hi,fullResult] = mcDisplayRange(values,results,index,bounds)
-fullResult = results{find(cellfun(@(r)r.mode == "FULL",results),1)};
-limits = nan(3,2);
-for k = 1:3
-    mu = results{k}.stats(index,4); sigma = abs(results{k}.stats(index,5)-mu);
-    limits(k,:) = [mu-4*sigma mu+4*sigma];
+function [lo,hi,fullResult] = mcDisplayRange(values,results,index)
+fullIndex = find(cellfun(@(r)strcmpi(string(r.mode),"FULL"),results),1);
+if isempty(fullIndex)
+    fullIndex = numel(results);
 end
-finite = limits(isfinite(limits));
-if isempty(finite), lo = min(values); hi = max(values); else, lo = min(finite); hi = max(finite); end
-b = bounds(isfinite(bounds)); if ~isempty(b), lo = min([lo;b(:)]); hi = max([hi;b(:)]); end
-if lo == hi, pad = max(abs(lo)*0.05,1); lo = lo-pad; hi = hi+pad; end
-pad = max(0.05*(hi-lo),eps(max(abs([lo hi])))); lo = lo-pad; hi = hi+pad;
+fullResult = results{fullIndex};
+
+center = fullResult.stats(index,4);
+if ~isfinite(center)
+    fullValues = fullResult.values(:,index);
+    center = mean(fullValues(isfinite(fullValues)),'omitnan');
+end
+if ~isfinite(center)
+    center = mean(values,'omitnan');
+end
+
+limits = nan(numel(results),2);
+for k = 1:numel(results)
+    mu = results{k}.stats(index,4);
+    sigma = abs(results{k}.stats(index,5)-mu);
+    if isfinite(mu) && isfinite(sigma)
+        limits(k,:) = [mu-4*sigma mu+4*sigma];
+    end
+end
+
+finiteLimits = limits(isfinite(limits));
+if isempty(finiteLimits)
+    halfRange = max(abs(values-center),[],'omitnan');
+else
+    halfRange = max(abs(finiteLimits-center),[],'omitnan');
+end
+if ~isfinite(halfRange) || halfRange <= 0
+    halfRange = max(abs(center)*0.05,1);
+end
+halfRange = 1.05*halfRange;
+lo = center-halfRange;
+hi = center+halfRange;
 end
 
 function addFullStatMarkers(fullResult,index)
@@ -562,6 +795,67 @@ set(gca,'XScale','log'); xlim([0.01 1e8]); ylabel('Differential gain (dB)');
 legend(gainLines,cellstr("G"+string(cfg.gains)),'Location','southwest');
 stylePlot('Frequency (Hz)','PGA Differential Frequency Response - NOM');
 savePlot(fig,plotDir,'NOM.PGA_differential_ac.png');
+end
+
+function plotNominalVtc(nominal,plotDir,cfg)
+fig = figure;
+layout = tiledlayout(fig,2,2);
+for gainIndex = 1:numel(cfg.gains)
+    gain = cfg.gains(gainIndex);
+    vtc = nominal.gain{gainIndex}.vtc;
+    nexttile(layout);
+    plot(vtc.input_V,vtc.output_V,'LineWidth',1.5, ...
+        'DisplayName','Simulated');
+    hold on;
+    plot(vtc.input_V,gain*vtc.input_V,'--','LineWidth',1.2, ...
+        'DisplayName',sprintf('Ideal G = %g V/V',gain));
+
+    inputPoints = [vtc.inputNegative_V vtc.inputPositive_V];
+    outputPoints = [vtc.outputNegative_V vtc.outputPositive_V];
+    boundaryMask = [vtc.negativeAtBoundary vtc.positiveAtBoundary];
+    if any(~boundaryMask)
+        plot(inputPoints(~boundaryMask),outputPoints(~boundaryMask), ...
+            'o','MarkerSize',7,'LineWidth',1.2, ...
+            'DisplayName','1% compression points');
+    end
+    if any(boundaryMask)
+        plot(inputPoints(boundaryMask),outputPoints(boundaryMask), ...
+            's','MarkerSize',7,'LineWidth',1.2, ...
+            'DisplayName','Sweep boundaries');
+    end
+
+    lowRelation = "";
+    highRelation = "";
+    if vtc.negativeAtBoundary, lowRelation = "≤"; end
+    if vtc.positiveAtBoundary, highRelation = "≥"; end
+    xline(vtc.inputNegative_V,':', ...
+        sprintf('Input low: %s%.3f V',lowRelation,vtc.inputNegative_V), ...
+        'HandleVisibility','off','LabelVerticalAlignment','middle', ...
+        'LabelHorizontalAlignment','left');
+    xline(vtc.inputPositive_V,':', ...
+        sprintf('Input high: %s%.3f V',highRelation,vtc.inputPositive_V), ...
+        'HandleVisibility','off','LabelVerticalAlignment','middle', ...
+        'LabelHorizontalAlignment','right');
+    yline(vtc.outputNegative_V,':', ...
+        sprintf('Output low: %s%.3f V',lowRelation,vtc.outputNegative_V), ...
+        'HandleVisibility','off','LabelVerticalAlignment','bottom', ...
+        'LabelHorizontalAlignment','right');
+    yline(vtc.outputPositive_V,':', ...
+        sprintf('Output high: %s%.3f V',highRelation,vtc.outputPositive_V), ...
+        'HandleVisibility','off','LabelVerticalAlignment','top', ...
+        'LabelHorizontalAlignment','left');
+
+    xline(-cfg.inputRangeLimit_V(gainIndex),'--','HandleVisibility','off');
+    xline(cfg.inputRangeLimit_V(gainIndex),'--','HandleVisibility','off');
+    yline(-cfg.outputRangeLimit_V,'--','HandleVisibility','off');
+    yline(cfg.outputRangeLimit_V,'--','HandleVisibility','off');
+    ylabel('Differential output (V)');
+    legend('Location','best');
+    stylePlot('Differential input (V)', ...
+        "("+char('a'+gainIndex-1)+") G"+gain);
+end
+sgtitle(layout,'PGA VTC + 1% Compression - NOM');
+savePlot(fig,plotDir,'NOM.PGA_vtc.png',[10 7]);
 end
 
 function plotNominalNoise(nominal,plotDir,cfg)
@@ -702,13 +996,17 @@ for i = 1:height(t)
 end
 end
 
-function formatted = formatReportValues(values)
+function formatted = formatReportValues(values,relations)
 formatted = strings(size(values));
 for r = 1:size(values,1)
     for c = 1:size(values,2)
-        formatted(r,c) = formatOne(values(r,c));
+        formatted(r,c) = formatResult(values(r,c),relations(r,c));
     end
 end
+end
+
+function text = formatResult(value,relation)
+text = string(relation)+formatOne(value);
 end
 
 function text = formatOne(value)
@@ -790,10 +1088,11 @@ grid on; if strlength(string(xLabel)) > 0, xlabel(xLabel); end
 if strlength(string(titleText)) > 0, title(titleText); end
 end
 
-function savePlot(fig,plotDir,fileName)
+function savePlot(fig,plotDir,fileName,paperSize)
+if nargin < 4, paperSize = [10 4]; end
 drawnow;
 fig.PaperUnits = 'inches';
-fig.PaperPosition = [0 0 10 4];
-fig.PaperSize = [10 4];
+fig.PaperPosition = [0 0 paperSize];
+fig.PaperSize = paperSize;
 print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
 end

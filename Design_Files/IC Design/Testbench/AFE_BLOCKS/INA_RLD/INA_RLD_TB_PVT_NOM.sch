@@ -746,7 +746,10 @@ alterparam ELECTRODE_P_OFFSET_SET=0
 alterparam ELECTRODE_N_OFFSET_SET=0
 
 reset
-save all
+
+save v(INP) v(INN)
+save v(INA_OUTP) v(INA_OUTN)
+save v(OUTP) v(OUTN)
 
 * Balanced electrodes, RLD ON, internal INA path.
 alter RELECP 51k
@@ -763,8 +766,8 @@ alter LRLD_ISO 1p
 alter @VSEL[DC]=0
 alter @VDIFF[DC]=0
 
-* Save 10 complete cycles after 200 ms settling.
-tran 20u 366.666666667m 200m
+* 100 ms settling and 10 measured cycles.
+tran 50u 266.666667m 100m
 
 let vin_diff=v(INP)-v(INN)
 let ina_out_diff=v(INA_OUTP)-v(INA_OUTN)
@@ -775,7 +778,7 @@ wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BL
 destroy all
 
 
-* Restore the normal PVT stimulus.
+* Restore normal PVT stimulus.
 alterparam ECG_AMP_SET=0.5m
 alterparam ECG_FREQ_SET=10
 alterparam CM_SOURCE_RMS_SET=20

@@ -117,7 +117,7 @@ value="
 .param TEMP_SET=27
 .param VCM_SET=\{AVDD_SET/2\}
 
-.param CMFB_OP=2.1497
+.param CMFB_OP=2.4833
 
 .temp \{TEMP_SET\}
 

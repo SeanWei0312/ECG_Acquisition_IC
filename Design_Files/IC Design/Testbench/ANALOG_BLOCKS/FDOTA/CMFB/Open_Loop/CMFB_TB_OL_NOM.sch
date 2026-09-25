@@ -122,7 +122,7 @@ value="
 
 .param VCM_SET=\{AVDD_SET/2\}
 .param VOUT_CM_BIAS=\{AVDD_SET/2\}
-.param CMFB_OUT_BIAS=2.4833
+.param CMFB_OUT_BIAS=2.4832
 
 .param PLANT_GAIN=500
 

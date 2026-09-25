@@ -9,19 +9,19 @@ Parameter,Unit,Value
 "Operating",,
 "Total current",uA,1400.48
 "Total power",mW,4.62158
-"VOUTP,DC",V,1.65
-"VOUTN,DC",V,1.65
+"VOUTP,DC",V,1.64999
+"VOUTN,DC",V,1.65001
 "VOUT,CM",V,1.65
-"VOUT,diff,DC",V,-3.37658e-06
-"Required VCMFB",V,2.4833
+"VOUT,diff,DC",V,-1.07453e-05
+"Required VCMFB",V,2.4832
 "",,
 "Open-loop",,
-"Differential DC gain",dB,90.0898
-"Differential UGF",MHz,12.4889
-"Differential PM",deg,72.5293
-"Plant gain",V/V,1.50054e-10
-"Differential-step CM disturbance",mV,2236.9
+"Differential DC gain",dB,93.3768
+"Differential UGF",MHz,14.571
+"Differential PM",deg,77.0842
+"Plant gain",V/V,762.583
+"Differential-step CM disturbance",mV,2383.28
 "",,
 "Noise/Offset",,
-"Input offset",mV,-4.46673e-08
-"Input noise, 1-150 Hz",uVrms,2.43833
+"Input offset",mV,-3.10116e-07
+"Input noise, 1-150 Hz",uVrms,2.43926

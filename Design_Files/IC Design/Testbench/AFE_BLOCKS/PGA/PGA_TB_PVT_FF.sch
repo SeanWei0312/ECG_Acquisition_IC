@@ -15,10 +15,6 @@ N 600 -860 640 -860 {lab=INP}
 N 600 -740 640 -740 {lab=INN}
 N 600 -600 1220 -600 {lab=AGND}
 N 600 -640 1180 -640 {lab=AVDD}
-N 1480 -1000 1480 -960 {lab=AGND}
-N 1480 -900 1480 -860 {lab=OUTP}
-N 1480 -640 1480 -600 {lab=AGND}
-N 1480 -740 1480 -700 {lab=OUTN}
 N 640 -1040 640 -1000 {lab=AVDD}
 N 680 -1040 680 -1000 {lab=AGND}
 N 720 -1120 800 -1120 {lab=BP}
@@ -35,27 +31,9 @@ N 1000 -1160 1020 -1160 {lab=AVDD}
 N 920 -1120 960 -1120 {lab=BP}
 N 80 -260 80 -240 {lab=AGND}
 N 80 -400 80 -380 {lab=AVDD}
-N 740 -680 740 -600 {lab=AGND}
-N 700 -680 700 -640 {lab=AVDD}
-N 960 -860 960 -560 {lab=LPF_OUTP}
-N 920 -740 1000 -740 {lab=LPF_OUTN}
-N 1000 -820 1120 -820 {lab=LPF_OUTN}
-N 1000 -820 1000 -520 {lab=LPF_OUTN}
-N 920 -860 1120 -860 {lab=LPF_OUTP}
-N 1220 -680 1220 -600 {lab=AGND}
-N 1180 -680 1180 -640 {lab=AVDD}
-N 1260 -680 1260 -560 {lab=LPF_SEL}
-N 920 -560 960 -560 {lab=LPF_OUTP}
-N 920 -520 1000 -520 {lab=LPF_OUTN}
-N 1040 -740 1120 -740 {lab=LPF_EXTN}
-N 1040 -740 1040 -520 {lab=LPF_EXTN}
-N 1040 -520 1120 -520 {lab=LPF_EXTN}
-N 1080 -560 1120 -560 {lab=LPF_EXTP}
-N 1080 -780 1080 -560 {lab=LPF_EXTP}
-N 1080 -780 1120 -780 {lab=LPF_EXTP}
 N 1200 -260 1200 -240 {lab=VDIFF}
 N 1200 -400 1200 -380 {lab=VCM}
-N 640 -260 640 -240 {lab=LPF_SEL}
+N 640 -260 640 -240 {lab=PGA_SEL}
 N 640 -400 640 -380 {lab=REF}
 N 1760 -260 1760 -240 {lab=EXTVDIFF}
 N 1760 -400 1760 -380 {lab=EXTVCM}
@@ -70,21 +48,49 @@ N 640 -180 640 -160 {lab=AGND}
 N 1200 -180 1200 -160 {lab=AGND}
 N 1200 -320 1200 -300 {lab=AGND}
 N 640 -320 640 -300 {lab=AGND}
-N 160 -940 160 -900 {lab=LPF_EXTP}
+N 160 -940 160 -900 {lab=PGA_EXTP}
 N 160 -840 160 -760 {lab=EXTVCM}
 N 80 -890 120 -890 {lab=EXTVDIFF}
 N 80 -850 120 -850 {lab=AGND}
-N 160 -700 160 -660 {lab=LPF_EXTN}
+N 160 -700 160 -660 {lab=PGA_EXTN}
 N 80 -710 120 -710 {lab=EXTVDIFF}
 N 80 -750 120 -750 {lab=AGND}
 N 320 -710 360 -710 {lab=VDIFF}
 N 320 -750 360 -750 {lab=AGND}
 N 480 -860 520 -860 {lab=INP}
 N 480 -940 480 -860 {lab=INP}
+N 400 -940 480 -940 {lab=INP}
 N 480 -740 520 -740 {lab=INN}
 N 480 -740 480 -660 {lab=INN}
-N 400 -940 480 -940 {lab=INP}
 N 400 -660 480 -660 {lab=INN}
+N 960 -860 960 -560 {lab=PGA_OUTP}
+N 920 -740 1000 -740 {lab=PGA_OUTN}
+N 1000 -820 1120 -820 {lab=PGA_OUTN}
+N 1000 -820 1000 -520 {lab=PGA_OUTN}
+N 920 -860 1120 -860 {lab=PGA_OUTP}
+N 1220 -680 1220 -600 {lab=AGND}
+N 1180 -680 1180 -640 {lab=AVDD}
+N 1260 -680 1260 -560 {lab=PGA_SEL}
+N 740 -680 740 -600 {lab=AGND}
+N 700 -680 700 -640 {lab=AVDD}
+N 780 -680 780 -560 {lab=S1}
+N 820 -680 820 -560 {lab=S0}
+N 920 -560 960 -560 {lab=PGA_OUTP}
+N 920 -520 1000 -520 {lab=PGA_OUTN}
+N 1080 -780 1120 -780 {lab=PGA_EXTP}
+N 1080 -780 1080 -560 {lab=PGA_EXTP}
+N 1080 -560 1120 -560 {lab=PGA_EXTP}
+N 1040 -520 1120 -520 {lab=PGA_EXTN}
+N 1040 -740 1040 -520 {lab=PGA_EXTN}
+N 1040 -740 1120 -740 {lab=PGA_EXTN}
+N 800 -400 800 -380 {lab=S1}
+N 800 -320 800 -300 {lab=AGND}
+N 960 -400 960 -380 {lab=S0}
+N 960 -320 960 -300 {lab=AGND}
+N 1480 -900 1480 -860 {lab=OUTP}
+N 1480 -1000 1480 -960 {lab=AGND}
+N 1480 -740 1480 -700 {lab=OUTN}
+N 1480 -640 1480 -600 {lab=AGND}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {devices/code_shown.sym} 80 90 0 0 {name=MODELS
 only_toplevel=true
@@ -117,14 +123,18 @@ value="
 
 .param CL_SET=10p
 
-.param LPF_GAIN_TARGET_SET=1
-.param LPF_F1DB_TARGET_SET=150
-.param LPF_F3DB_TARGET_SET=300
+.param S1_SET=0
+.param S0_SET=0
 
-.param TRAN_AMP_SET=100m
+.param PGA_G2_TARGET_SET=2
+.param PGA_G4_TARGET_SET=4
+.param PGA_G8_TARGET_SET=8
+.param PGA_G16_TARGET_SET=16
+
+.param TRAN_AMP_SET=50m
 .param TRAN_FREQ_SET=10
 
-.param EXT_TRAN_AMP_SET=50m
+.param EXT_TRAN_AMP_SET=0
 .param EXT_TRAN_FREQ_SET=25
 
 .param SEL_TRAN_HIGH_SET=0
@@ -175,8 +185,8 @@ end
 end
 end
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.*.txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.*.txt
 
 foreach vddval 3.3 3.0 3.6
 foreach tval 27 -40 125
@@ -220,15 +230,40 @@ alterparam TEMP_SET=$tval
 alterparam SEL_TRAN_HIGH_SET=0
 alterparam EXT_TRAN_AMP_SET=0
 
+foreach gcode 0 1 2 3
+
+if $gcode = 0
+set gtag=g2
+set gain_target=2
+set s1v=0
+set s0v=0
+else
+if $gcode = 1
+set gtag=g4
+set gain_target=4
+set s1v=0
+set s0v=$vddval
+else
+if $gcode = 2
+set gtag=g8
+set gain_target=8
+set s1v=$vddval
+set s0v=0
+else
+set gtag=g16
+set gain_target=16
+set s1v=$vddval
+set s0v=$vddval
+end
+end
+end
+
 reset
 
-save all
-save @m.xmbfdc.m0[id]
-save @m.xmbcmfb.m0[id]
-
-* OFFSET
-
+alter @VS1[DC]=$s1v
+alter @VS0[DC]=$s0v
 alter @VSEL[DC]=0
+
 alter @VDIFF[DC]=0
 
 alter @VDIFF[ACMAG]=0
@@ -238,19 +273,27 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-dc VDIFF -10m 10m 10u
+save all
+save @m.xmbfdc.m0[id]
+save @m.xmbcmfb.m0[id]
 
-let lpf_diff=v(LPF_OUTP)-v(LPF_OUTN)
 
-meas dc vos_meas when lpf_diff=0 cross=1
+* OFFSET
+
+dc VDIFF -20m 20m 10u
+
+let pga_diff=v(PGA_OUTP)-v(PGA_OUTN)
+
+meas dc vos_meas when pga_diff=0 cross=1
 
 set vos_val=$&vos_meas
 
-echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.vos_\{$env\}.txt
+echo $vos_val > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.vos_\{$gtag\}_\{$env\}.txt
 
 destroy all
 
 alter @VDIFF[DC]=$vos_val
+
 
 * OP
 
@@ -264,9 +307,9 @@ let vref=v(REF)-v(AGND)
 let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
 let vin_diff=v(INP)-v(INN)
 
-let lpf_out_cm=0.5*(v(LPF_OUTP)+v(LPF_OUTN))-v(AGND)
-let lpf_out_diff=v(LPF_OUTP)-v(LPF_OUTN)
-let lpf_cm_error=lpf_out_cm-vref
+let pga_out_cm=0.5*(v(PGA_OUTP)+v(PGA_OUTN))-v(AGND)
+let pga_out_diff=v(PGA_OUTP)-v(PGA_OUTN)
+let pga_cm_error=pga_out_cm-vref
 
 let out_cm=0.5*(v(OUTP)+v(OUTN))-v(AGND)
 let out_diff=v(OUTP)-v(OUTN)
@@ -279,9 +322,10 @@ let ibcmfb=abs(@m.xmbcmfb.m0[id])
 
 setscale op_index
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.op_\{$env\}.txt vdd vref vin_cm vin_diff lpf_out_cm lpf_out_diff lpf_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.op_\{$gtag\}_\{$env\}.txt vdd vref v(S1) v(S0) vin_cm vin_diff pga_out_cm pga_out_diff pga_cm_error out_cm out_diff idd_total power_total ibfdc ibcmfb
 
 destroy all
+
 
 * DIFF AC
 
@@ -292,24 +336,27 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-ac dec 200 0.01 100k
+ac dec 150 0.01 100Meg
 
 let vin_diff=v(INP)-v(INN)
-let lpf_diff=v(LPF_OUTP)-v(LPF_OUTN)
+let pga_diff=v(PGA_OUTP)-v(PGA_OUTN)
 let out_diff=v(OUTP)-v(OUTN)
 
 let vin_r=real(vin_diff)
 let vin_i=imag(vin_diff)
-let lpf_r=real(lpf_diff)
-let lpf_i=imag(lpf_diff)
+
+let pga_r=real(pga_diff)
+let pga_i=imag(pga_diff)
+
 let out_r=real(out_diff)
 let out_i=imag(out_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$env\}.txt vin_r vin_i lpf_r lpf_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.diff_ac_\{$gtag\}_\{$env\}.txt vin_r vin_i pga_r pga_i out_r out_i
 
 destroy all
+
 
 * CMRR
 
@@ -320,21 +367,23 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-ac dec 200 0.01 100k
+ac dec 100 0.01 1Meg
 
 let vin_cm=0.5*(v(INP)+v(INN))-v(AGND)
-let lpf_diff=v(LPF_OUTP)-v(LPF_OUTN)
+let pga_diff=v(PGA_OUTP)-v(PGA_OUTN)
 
 let vin_r=real(vin_cm)
 let vin_i=imag(vin_cm)
-let out_r=real(lpf_diff)
-let out_i=imag(lpf_diff)
+
+let out_r=real(pga_diff)
+let out_i=imag(pga_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$env\}.txt vin_r vin_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.cmrr_ac_\{$gtag\}_\{$env\}.txt vin_r vin_i out_r out_i
 
 destroy all
+
 
 * PSRR+
 
@@ -346,21 +395,23 @@ alter @VAVDD[ACMAG]=1
 alter @VAVDD[ACPHASE]=0
 alter @VAVSS[ACMAG]=0
 
-ac dec 200 0.01 100k
+ac dec 100 0.01 1Meg
 
 let vsup=v(AVDD)-v(AGND)
-let lpf_diff=v(LPF_OUTP)-v(LPF_OUTN)
+let pga_diff=v(PGA_OUTP)-v(PGA_OUTN)
 
 let vsup_r=real(vsup)
 let vsup_i=imag(vsup)
-let out_r=real(lpf_diff)
-let out_i=imag(lpf_diff)
+
+let out_r=real(pga_diff)
+let out_i=imag(pga_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.psrrp_ac_\{$gtag\}_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
+
 
 * PSRR-
 
@@ -372,21 +423,23 @@ alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=1
 alter @VAVSS[ACPHASE]=0
 
-ac dec 200 0.01 100k
+ac dec 100 0.01 1Meg
 
 let vsup=v(AVDD)-v(AGND)
-let lpf_diff=v(LPF_OUTP)-v(LPF_OUTN)
+let pga_diff=v(PGA_OUTP)-v(PGA_OUTN)
 
 let vsup_r=real(vsup)
 let vsup_i=imag(vsup)
-let out_r=real(lpf_diff)
-let out_i=imag(lpf_diff)
+
+let out_r=real(pga_diff)
+let out_i=imag(pga_diff)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$env\}.txt vsup_r vsup_i out_r out_i
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.psrrn_ac_\{$gtag\}_\{$env\}.txt vsup_r vsup_i out_r out_i
 
 destroy all
+
 
 * NOISE
 
@@ -397,17 +450,17 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-noise v(LPF_OUTP,LPF_OUTN) VDIFF dec 100 0.01 10k
+noise v(PGA_OUTP,PGA_OUTN) VDIFF dec 100 0.01 10k
 
 setplot previous
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.noise_\{$env\}.txt onoise_spectrum inoise_spectrum
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.noise_\{$gtag\}_\{$env\}.txt onoise_spectrum inoise_spectrum
 
 destroy all
 
 
-* LPF VTC
+* VTC
 
 alter @VSEL[DC]=0
 alter @VDIFF[DC]=0
@@ -419,40 +472,65 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-if $vddval = 3.0
-dc VDIFF -3.0 3.0 6m
+if $gcode = 0
+let vtc_lim=1.2*$vddval/2
+let vtc_step=2*$&vtc_lim/1000
+dc VDIFF -$&vtc_lim $&vtc_lim $&vtc_step
 end
 
-if $vddval = 3.3
-dc VDIFF -3.3 3.3 6.6m
+if $gcode = 1
+let vtc_lim=1.2*$vddval/4
+let vtc_step=2*$&vtc_lim/1000
+dc VDIFF -$&vtc_lim $&vtc_lim $&vtc_step
 end
 
-if $vddval = 3.6
-dc VDIFF -3.6 3.6 7.2m
+if $gcode = 2
+let vtc_lim=1.2*$vddval/8
+let vtc_step=2*$&vtc_lim/1000
+dc VDIFF -$&vtc_lim $&vtc_lim $&vtc_step
+end
+
+if $gcode = 3
+let vtc_lim=1.2*$vddval/16
+let vtc_step=2*$&vtc_lim/1000
+dc VDIFF -$&vtc_lim $&vtc_lim $&vtc_step
 end
 
 let vin_diff=v(INP)-v(INN)
-let lpf_outp=v(LPF_OUTP)-v(AGND)
-let lpf_outn=v(LPF_OUTN)-v(AGND)
-let lpf_out_cm=0.5*(v(LPF_OUTP)+v(LPF_OUTN))-v(AGND)
-let lpf_out_diff=v(LPF_OUTP)-v(LPF_OUTN)
+let pga_outp=v(PGA_OUTP)-v(AGND)
+let pga_outn=v(PGA_OUTN)-v(AGND)
+let pga_out_cm=0.5*(v(PGA_OUTP)+v(PGA_OUTN))-v(AGND)
+let pga_out_diff=v(PGA_OUTP)-v(PGA_OUTN)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.vtc_\{$env\}.txt vin_diff lpf_outp lpf_outn lpf_out_cm lpf_out_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.vtc_\{$gtag\}_\{$env\}.txt vin_diff pga_outp pga_outn pga_out_cm pga_out_diff
 
 destroy all
 
 
-* LPF THD
+* THD
 
-* 5 mVpp ECG x INA gain 240 = 1.2 Vpp = 0.6 V peak.
-alterparam TRAN_AMP_SET=0.6
+if $gcode = 0
+alterparam TRAN_AMP_SET=0.60
+end
+
+if $gcode = 1
+alterparam TRAN_AMP_SET=0.30
+end
+
+if $gcode = 2
+alterparam TRAN_AMP_SET=0.15
+end
+
+if $gcode = 3
+alterparam TRAN_AMP_SET=0.075
+end
+
 alterparam TRAN_FREQ_SET=60
 
 reset
 
-save v(INP) v(INN)
-save v(LPF_OUTP) v(LPF_OUTN)
-
+alter @VS1[DC]=$s1v
+alter @VS0[DC]=$s0v
 alter @VSEL[DC]=0
 alter @VDIFF[DC]=0
 
@@ -463,31 +541,35 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-* 100 ms settling and 10 measured cycles.
+save v(INP) v(INN)
+save v(PGA_OUTP) v(PGA_OUTN)
+
 tran 50u 266.666667m 100m
 
 let vin_diff=v(INP)-v(INN)
-let lpf_out_diff=v(LPF_OUTP)-v(LPF_OUTN)
+let pga_out_diff=v(PGA_OUTP)-v(PGA_OUTN)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.thd_\{$env\}.txt vin_diff lpf_out_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.thd_\{$gtag\}_\{$env\}.txt vin_diff pga_out_diff
 
 destroy all
 
-alterparam TRAN_AMP_SET=100m
+alterparam TRAN_AMP_SET=50m
 alterparam TRAN_FREQ_SET=10
 
+end
 
 end
 end
 
-* SEL
+
+* SEL FUNCTIONAL
 
 if $&PROC_ID = 0
 
 alterparam VDD_SET=3.3
 alterparam TEMP_SET=27
 
-alterparam TRAN_AMP_SET=100m
+alterparam TRAN_AMP_SET=50m
 alterparam TRAN_FREQ_SET=10
 
 alterparam EXT_TRAN_AMP_SET=50m
@@ -498,15 +580,60 @@ alterparam SEL_SWITCH_TIME_SET=200m
 
 reset
 
+alter @VS1[DC]=0
+alter @VS0[DC]=0
+
 save all
 
 tran 20u 400m
 
-let int_in_diff=v(INP)-v(INN)
-let ext_diff=v(LPF_EXTP)-v(LPF_EXTN)
+let int_diff=v(PGA_OUTP)-v(PGA_OUTN)
+let ext_diff=v(PGA_EXTP)-v(PGA_EXTN)
 let out_diff=v(OUTP)-v(OUTN)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(LPF_SEL) int_in_diff ext_diff out_diff
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.sel_tran_nom.txt v(PGA_SEL) int_diff ext_diff out_diff
+
+destroy all
+
+end
+
+
+* GAIN SWITCH FUNCTIONAL
+
+if $&PROC_ID = 0
+
+alterparam VDD_SET=3.3
+alterparam TEMP_SET=27
+
+alterparam TRAN_AMP_SET=50m
+alterparam TRAN_FREQ_SET=10
+
+alterparam EXT_TRAN_AMP_SET=0
+alterparam SEL_TRAN_HIGH_SET=0
+
+reset
+
+alter @VS1[DC]=0
+alter @VS0[DC]=0
+alter @VSEL[DC]=0
+
+compose S1PWL values 0 0 199.98m 0 200m 3.3 400m 3.3
+
+compose S0PWL values 0 0 99.98m 0 100m 3.3 199.98m 3.3 200m 0 299.98m 0 300m 3.3 400m 3.3
+
+alter @VS1[pwl]=S1PWL
+alter @VS0[pwl]=S0PWL
+
+save all
+
+tran 20u 400m
+
+let vin_diff=v(INP)-v(INN)
+let pga_diff=v(PGA_OUTP)-v(PGA_OUTN)
+
+setscale time
+
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/\{$proc\}.Result_txt/\{$proc\}.gain_switch_tran_nom.txt v(S1) v(S0) vin_diff pga_diff
 
 destroy all
 
@@ -583,13 +710,6 @@ C {vsource.sym} 80 -210 0 0 {name=VAVSS value="dc 0 ac 0" savecurrent=false}
 C {gnd.sym} 80 -180 0 0 {name=l11 lab=0}
 C {lab_wire.sym} 80 -260 0 0 {name=p24 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 80 -400 0 0 {name=p55 sig_type=std_logic lab=AVDD}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/LPF/LPF.sym} 580 -640 0 0 {name=xLFP1}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 1060 -640 0 0 {name=xMUXD2}
-C {lab_wire.sym} 920 -560 0 0 {name=p47 sig_type=std_logic lab=LPF_OUTP}
-C {lab_wire.sym} 920 -520 0 0 {name=p48 sig_type=std_logic lab=LPF_OUTN}
-C {lab_wire.sym} 1120 -560 0 1 {name=p70 sig_type=std_logic lab=LPF_EXTP}
-C {lab_wire.sym} 1120 -520 0 1 {name=p80 sig_type=std_logic lab=LPF_EXTN}
-C {lab_wire.sym} 1260 -560 2 0 {name=p82 sig_type=std_logic lab=LPF_SEL}
 C {vsource.sym} 1200 -350 0 0 {name=VCM value="dc \{VCM_SET\} ac 0" savecurrent=false}
 C {vsource.sym} 1200 -210 0 0 {name=VDIFF value="dc 0 ac 1 sin(0 \{TRAN_AMP_SET\} \{TRAN_FREQ_SET\})" savecurrent=false}
 C {lab_wire.sym} 1200 -260 0 0 {name=p5 sig_type=std_logic lab=VDIFF}
@@ -597,7 +717,7 @@ C {lab_wire.sym} 1200 -400 0 0 {name=p6 sig_type=std_logic lab=VCM}
 C {vsource.sym} 640 -350 0 0 {name=VREF value="dc \{VREF_SET\} ac 0" savecurrent=false}
 C {vsource.sym} 640 -210 0 0 {name=VSEL value="dc 0 ac 0 pulse(0 \{SEL_TRAN_HIGH_SET\} \{SEL_SWITCH_TIME_SET\} 1u 1u 400m 800m)" savecurrent=false
 }
-C {lab_wire.sym} 640 -260 0 0 {name=p10 sig_type=std_logic lab=LPF_SEL}
+C {lab_wire.sym} 640 -260 0 0 {name=p10 sig_type=std_logic lab=PGA_SEL}
 C {lab_wire.sym} 640 -400 0 0 {name=p11 sig_type=std_logic lab=REF
 
 }
@@ -621,16 +741,35 @@ C {lab_wire.sym} 1200 -160 2 0 {name=p34 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 1200 -300 2 0 {name=p35 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 640 -300 2 0 {name=p36 sig_type=std_logic lab=AGND}
 C {vcvs.sym} 160 -870 0 0 {name=EEXTP value="0.5" savecurrent=false}
-C {lab_wire.sym} 160 -940 0 0 {name=p38 sig_type=std_logic lab=LPF_EXTP}
+C {lab_wire.sym} 160 -940 0 0 {name=p38 sig_type=std_logic lab=PGA_EXTP}
 C {lab_wire.sym} 80 -890 0 0 {name=p39 sig_type=std_logic lab=EXTVDIFF
 }
 C {lab_wire.sym} 80 -850 0 0 {name=p40 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 160 -800 0 0 {name=p41 sig_type=std_logic lab=EXTVCM}
 C {vcvs.sym} 160 -730 2 1 {name=EEXTN value="-0.5" savecurrent=false}
-C {lab_wire.sym} 160 -660 2 1 {name=p42 sig_type=std_logic lab=LPF_EXTN}
+C {lab_wire.sym} 160 -660 2 1 {name=p42 sig_type=std_logic lab=PGA_EXTN}
 C {lab_wire.sym} 80 -710 2 1 {name=p43 sig_type=std_logic lab=EXTVDIFF
 }
 C {lab_wire.sym} 80 -750 2 1 {name=p44 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 320 -710 2 1 {name=p9 sig_type=std_logic lab=VDIFF
 }
 C {lab_wire.sym} 320 -750 2 1 {name=p12 sig_type=std_logic lab=AGND}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/PGA/PGA.sym} 580 -640 0 0 {name=xPGA1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sym} 1060 -640 0 0 {name=xMUXD3}
+C {lab_wire.sym} 920 -560 0 0 {name=p62 sig_type=std_logic lab=PGA_OUTP}
+C {lab_wire.sym} 920 -520 0 0 {name=p67 sig_type=std_logic lab=PGA_OUTN}
+C {lab_wire.sym} 780 -560 2 1 {name=p83 sig_type=std_logic lab=S1}
+C {lab_wire.sym} 820 -560 2 1 {name=p84 sig_type=std_logic lab=S0}
+C {lab_wire.sym} 1260 -560 2 0 {name=p85 sig_type=std_logic lab=PGA_SEL}
+C {lab_wire.sym} 1120 -560 0 1 {name=p100 sig_type=std_logic lab=PGA_EXTP}
+C {lab_wire.sym} 1120 -520 0 1 {name=p101 sig_type=std_logic lab=PGA_EXTN}
+C {vsource.sym} 800 -350 0 0 {name=VS1 value="dc \{S1_SET\} ac 0" savecurrent=false}
+C {lab_wire.sym} 800 -400 0 0 {name=p46 sig_type=std_logic lab=S1
+
+}
+C {lab_wire.sym} 800 -300 2 0 {name=p47 sig_type=std_logic lab=AGND}
+C {vsource.sym} 960 -350 0 0 {name=VS0 value="dc \{S0_SET\} ac 0" savecurrent=false}
+C {lab_wire.sym} 960 -400 0 0 {name=p48 sig_type=std_logic lab=S0
+
+}
+C {lab_wire.sym} 960 -300 2 0 {name=p49 sig_type=std_logic lab=AGND}

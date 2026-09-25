@@ -9,6 +9,104 @@
 | Statistical coverage | 200-run MM, GL, and FULL |
 | Status | Pass |
 
+## Architecture and design intent
+
+The SE OTA is a two-stage, Miller-compensated voltage amplifier. The first stage uses the NMOS differential pair M1/M2, the PMOS active-load pair M3/M4, and the NMOS tail source M5. Its single-ended high-impedance node drives the second stage formed by PMOS M6 and NMOS M7. M8 is the NMOS bias-reference device. The series $R_z$–$C_c$ path provides frequency compensation and controls the feed-forward zero.
+
+Schematic source: [SEOTA.sch](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/SEOTA/SEOTA.sch>).
+
+The table below records the implemented schematic dimensions. `W_eff` is the total electrical width $W\times m$ because every listed device uses `nf=1`.
+
+| Function | Devices | Type | $L$ (µm) | $W$ (µm) | $m$ | $W_{eff}$ per device (µm) | Sizing objective |
+| :--- | :---: | :---: | ---: | ---: | ---: | ---: | :--- |
+| Input differential pair | M1, M2 | NMOS | 4.0 | 100 | 4 | 400 | High $g_m/I_D$, low input-referred noise, matching, and first-stage gain |
+| First-stage active load | M3, M4 | PMOS | 4.0 | 30 | 2 | 60 | High output resistance and mirror accuracy |
+| Tail source | M5 | NMOS | 2.0 | 10 | 1 | 10 | Establish the input-stage current |
+| Bias reference | M8 | NMOS | 2.0 | 20 | 1 | Generate the current-mirror reference |
+| Second-stage pull-up | M6 | PMOS | 0.5 | 50 | 8 | Output current, slew rate, and capacitive-load drive |
+| Second-stage pull-down | M7 | NMOS | 0.5 | 100 | 1 | Output current, slew rate, and capacitive-load drive |
+
+The MIM capacitor has $W=L=31.623\,\mu\text{m}$ in the 2 fF/µm² model, giving approximately $C_c=2.00$ pF. The poly resistor uses the 2 kΩ/square model with $L/W=7.6/4$, giving a first-order value of approximately $R_z=3.8$ kΩ before model end and contact corrections.
+
+## $g_m/I_D$ sizing methodology
+
+The design uses the lookup-table form of the $g_m/I_D$ method. Silveira, Flandre, and Jespers introduced $g_m/I_D$ as a unified design variable across weak, moderate, and strong inversion; it simultaneously measures transconductance efficiency, indicates inversion level, and enables device sizing. The later lookup-table flow of Jespers and Murmann retains compact-model accuracy by characterizing each device once and then interpolating the stored data during circuit design.
+
+The essential relations are
+
+$$
+g_m=\left(\frac{g_m}{I_D}\right)I_D,
+\qquad
+J_D=\frac{I_D}{W_{eff}},
+\qquad
+W_{eff}=\frac{I_D}{J_D},
+$$
+
+where $J_D=I_D/W$ is read from the characterization table at the selected channel length, drain voltage, and $g_m/I_D$. The same lookup point supplies the intrinsic-gain indicator
+
+$$
+A_{v,int}=\frac{g_m}{g_{ds}},
+$$
+
+and the speed indicators $f_T$ and $(g_m/I_D)f_T$. A larger $g_m/I_D$ produces more $g_m$ for a fixed current and generally reduces overdrive and improves input-stage noise efficiency, but it also lowers current density and therefore increases required device area. Increasing channel length generally improves $g_m/g_{ds}$ and matching while reducing $f_T$ and increasing parasitic capacitance. Sizing is therefore a constrained gain–noise–speed–headroom–area tradeoff, not a single optimum $g_m/I_D$ value.
+
+For this OTA, the practical flow is:
+
+1. Derive the required input-stage $g_m$ from UGF, compensation capacitance, load, noise, and settling targets. The familiar $f_u\approx g_{m1}/(2\pi C_c)$ relation is useful for a first estimate, but the two-stage loop is closed only by transistor-level AC and transient verification.
+2. Choose $L$ and $g_m/I_D$ for each device group. Long input and load devices prioritize intrinsic gain and matching; short output devices prioritize current density and speed.
+3. Compute current from $I_D=g_m/(g_m/I_D)$, then obtain width from $W_{eff}=I_D/J_D$.
+4. Realize the required total width with multiplicity, preserving matched geometry for differential and mirror devices.
+5. Select $C_c$ and $R_z$ from the required pole splitting and zero placement, then recheck UGF, phase margin, slew rate, settling, PVT, and mismatch.
+
+### Local 180 nm characterization data
+
+The project characterization sweeps 10-µm-wide `nfet_03v3` and `pfet_03v3` devices over $L=0.28$–5 µm. The terminal tables interpolate $g_m/I_D=4$–20 V⁻¹ at $V_{DS}=1.65$ V for NMOS and $V_{SD}=1.65$ V for PMOS. The simulator supplies $g_m$, $g_{ds}$, capacitances, and $f_T$ directly; the MATLAB postprocessor forms $g_m/I_D$, $I_D/W$, $g_m/g_{ds}$, and $(g_m/I_D)f_T$ on the physical monotonic branch.
+
+The table's $V_{OV}$ and threshold-voltage columns are diagnostic only: the postprocessor estimates $V_{OV}\approx2/(g_m/I_D)$ and derives threshold voltage from that estimate. Width selection in this report relies on simulator-derived current density and small-signal quantities, not on treating the square-law $V_{OV}$ estimate as an exact compact-model result.
+
+Representative values at $g_m/I_D=10$ V⁻¹ show the channel-length tradeoff used in this design:
+
+| $L$ (µm) | NMOS $I_D/W$ (µA/µm) | NMOS $g_m/g_{ds}$ (dB) | NMOS $(g_m/I_D)f_T$ (GHz/V) | PMOS $I_D/W$ (µA/µm) | PMOS $g_m/g_{ds}$ (dB) | PMOS $(g_m/I_D)f_T$ (GHz/V) |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0.5 | 4.381 | 44.80 | 54.34 | 1.265 | 48.34 | 12.62 |
+| 1.0 | 2.257 | 51.75 | 13.75 | 0.5309 | 56.26 | 2.668 |
+| 2.0 | 1.055 | 55.27 | 3.067 | 0.2390 | 61.99 | 0.6172 |
+| 4.0 | 0.4959 | 58.41 | 0.7020 | 0.1128 | 67.40 | 0.1501 |
+
+The numerical trend is the key design result: moving from 0.5 to 4 µm substantially raises intrinsic gain while sharply reducing current density and speed. This directly supports the use of 4-µm devices in the first-stage gain path and 0.5-µm devices in the output stage.
+
+- [NMOS $g_m/I_D$ current-density plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/NMOS_Gm_Id/Plots/nmos_current_density_vs_gmid.png)
+- [NMOS intrinsic-gain plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/NMOS_Gm_Id/Plots/nmos_intrinsic_gain_db_vs_gmid.png)
+- [PMOS $g_m/I_D$ current-density plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/PMOS_Gm_Id/Plots/pmos_current_density_vs_gmid.png)
+- [PMOS intrinsic-gain plot](../../Measurement_Results/IC_Simulation/SIZING/Gm_Id/PMOS_Gm_Id/Plots/pmos_intrinsic_gain_db_vs_gmid.png)
+
+### Interpretation of the implemented SE OTA sizing
+
+The nominal bias current is 40.092 µA. M5 and M8 share $L=2$ µm, while the M5 width is one half of the M8 width. A first-order mirror estimate therefore places the input-stage tail current near 20 µA and each balanced input branch near 10 µA. With $W_{eff}=400$ µm per input transistor, the implied current density is approximately 0.025 µA/µm. At $L=4$ µm the NMOS table gives 0.0327 µA/µm even at $g_m/I_D=20$ V⁻¹, so this geometry intentionally places M1/M2 at the high-efficiency end of the characterized range. That choice is consistent with the large input devices, low 0.05–150 Hz input-noise target, and high first-stage gain.
+
+The same branch estimate gives approximately 0.167 µA/µm in each 60-µm PMOS load. At $L=4$ µm, the PMOS table gives 0.1875 µA/µm at 8 V⁻¹ and 0.1444 µA/µm at 9 V⁻¹. M3/M4 therefore occupy a more current-dense moderate-inversion region than M1/M2 while retaining the large intrinsic gain of a 4-µm channel. This is appropriate for a mirror load whose output resistance and matching directly affect first-stage gain and systematic offset.
+
+M6/M7 instead use $L=0.5$ µm and large effective widths. The lookup table shows why: at $g_m/I_D=10$ V⁻¹, the 0.5-µm devices provide much greater current density and $(g_m/I_D)f_T$ than their 4-µm counterparts. These devices can therefore supply the output current required for the 10-pF load and slew-rate target without the excessive area and capacitance that a 4-µm output pair would impose. The resulting topology deliberately assigns efficiency and gain to the first stage, then assigns speed and drive to the second stage.
+
+These current-density estimates are design interpretations, not direct transistor operating-point measurements. The lookup slice is at 1.65 V drain bias, whereas each in-circuit device has its own $V_{DS}$ or $V_{SD}$ and body bias. Exact per-device $g_m/I_D$ should be reported only from saved nominal operating-point vectors. Here the lookup data explains the sizing choices, while the circuit-level PVT and Monte Carlo results provide the final evidence.
+
+### Sizing-to-verification closure
+
+| Sizing choice | Intended result | Verified evidence |
+| :--- | :--- | :--- |
+| Large, long-channel M1/M2 | High transconductance efficiency, low input noise, good matching | 96.522 dB nominal gain; 1.873 µVrms nominal integrated noise; FULL-MC offset remains within ±2 mV |
+| Long-channel M3/M4 | High first-stage output resistance and gain | Full-PVT gain remains at least 93.988 dB |
+| Short, wide M6/M7 | High output current density and fast load drive | 12.835 MHz nominal UGF; 9.814/7.966 V/µs nominal rise/fall slew rate |
+| Approximately 2-pF $C_c$ with 3.8-kΩ $R_z$ | Pole splitting and adequate phase margin | 67.767° nominal phase margin; 56.368° full-PVT minimum against the 55° limit |
+| Bias and mirror ratios | Controlled power and reproducible operating point | 0.825 mA nominal total current; 1.106 mA full-PVT maximum; all 200 FULL-MC runs pass |
+
+## Design-method references
+
+- F. Silveira, D. Flandre, and P. G. A. Jespers, “A $g_m/I_D$ Based Methodology for the Design of CMOS Analog Circuits and Its Application to the Synthesis of a Silicon-on-Insulator Micropower OTA,” *IEEE Journal of Solid-State Circuits*, vol. 31, no. 9, 1996. [DOI: 10.1109/4.535416](https://doi.org/10.1109/4.535416)
+- P. G. A. Jespers and B. Murmann, “Basic Sizing Using the $g_m/I_D$ Methodology,” in *Systematic Design of Analog CMOS Circuits: Using Pre-Computed Lookup Tables*, Cambridge University Press, 2017. [DOI: 10.1017/9781108125840.003](https://doi.org/10.1017/9781108125840.003)
+- P. G. A. Jespers and B. Murmann, “Lookup Table Generation and Usage,” ibid., 2017. [DOI: 10.1017/9781108125840.008](https://doi.org/10.1017/9781108125840.008)
+- A. A. Youssef, B. Murmann, and H. Omran, “Analog IC Design Using Precomputed Lookup Tables: Challenges and Solutions,” *IEEE Access*, 2020. [DOI: 10.1109/ACCESS.2020.3010875](https://doi.org/10.1109/ACCESS.2020.3010875)
+
 ## Detailed results
 
 | Metric | Specification | Nominal | Full-PVT worst case | Corner |

@@ -419,8 +419,17 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-* VTC
-dc VDIFF -3.3 3.3 2m
+if $vddval = 3.0
+dc VDIFF -3.0 3.0 6m
+end
+
+if $vddval = 3.3
+dc VDIFF -3.3 3.3 6.6m
+end
+
+if $vddval = 3.6
+dc VDIFF -3.6 3.6 7.2m
+end
 
 let vin_diff=v(INP)-v(INN)
 let lpf_outp=v(LPF_OUTP)-v(AGND)
@@ -440,7 +449,9 @@ alterparam TRAN_AMP_SET=0.6
 alterparam TRAN_FREQ_SET=60
 
 reset
-save all
+
+save v(INP) v(INN)
+save v(LPF_OUTP) v(LPF_OUTN)
 
 alter @VSEL[DC]=0
 alter @VDIFF[DC]=0
@@ -452,8 +463,8 @@ alter @VEXTDIFF[ACMAG]=0
 alter @VAVDD[ACMAG]=0
 alter @VAVSS[ACMAG]=0
 
-* Save exactly 10 cycles after 100 ms settling.
-tran 20u 266.666667m 100m
+* 100 ms settling and 10 measured cycles.
+tran 50u 266.666667m 100m
 
 let vin_diff=v(INP)-v(INN)
 let lpf_out_diff=v(LPF_OUTP)-v(LPF_OUTN)
@@ -462,7 +473,6 @@ wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/AFE_BL
 
 destroy all
 
-* Restore normal testbench transient settings.
 alterparam TRAN_AMP_SET=100m
 alterparam TRAN_FREQ_SET=10
 

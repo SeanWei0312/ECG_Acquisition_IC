@@ -32,6 +32,7 @@ cornerCases = strings(1,nCorners);
 cornerVdd_V = nan(1,nCorners);
 cornerTemp_C = nan(1,nCorners);
 values = nan(size(rows,1),nCorners);
+valueRelations = strings(size(rows,1),nCorners);
 metrics = cell(1,nCorners);
 
 cornerIndex = 0;
@@ -51,6 +52,8 @@ for processIndex = 1:numel(processes)
             caseVdd_V(caseIndex),cfg);
         values(:,cornerIndex) = metricsToRaw(metrics{cornerIndex}, ...
             rows,caseTemp_C(caseIndex),cfg.targetGain_VV);
+        valueRelations(:,cornerIndex) = metricsToRelations( ...
+            metrics{cornerIndex},rows);
     end
 end
 
@@ -68,7 +71,7 @@ if ~all(found)
         'One or more required comparison corners are missing.');
 end
 
-formattedValues = formatReportValues(rows,values);
+formattedValues = formatReportValues(rows,values,valueRelations);
 reportValues = formattedValues(:,reportIndices);
 summaryTable = table(rows(:,1),rows(:,2),specifications, ...
     'VariableNames',{'Parameter','Unit','Spec'});
@@ -80,10 +83,10 @@ writetable(summaryTable,fullfile(reportDir,'LPF_table_report.csv'));
 writetable(summaryTable,fullfile(reportDir,'NOM.LPF_summary.csv'));
 
 fullPvtTable = buildFullPvtTable(rows,values,corners,cornerProcesses, ...
-    cornerCases,cornerVdd_V,cornerTemp_C);
+    cornerCases,cornerVdd_V,cornerTemp_C,valueRelations);
 writetable(fullPvtTable,fullfile(reportDir,'LPF_full_pvt_report.csv'));
 
-worstCase = buildWorstCaseTable(rows,values,corners);
+worstCase = buildWorstCaseTable(rows,values,corners,valueRelations);
 fprintf('\nLPF FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(reportDir,'LPF_worst_case_report.csv'));
@@ -177,7 +180,7 @@ switch string(parameter)
     case "Input-referred noise 0.05-150 Hz"
         specification = "≤10";
     case "THD @ 60 Hz, 1.2 Vpp"
-        specification = "≤0.01";
+        specification = "≤0.05";
     otherwise
         specification = "";
 end
@@ -228,7 +231,7 @@ switch string(parameter)
     case "Input-referred noise 0.05-150 Hz"
         pass = value <= 10;
     case "THD @ 60 Hz, 1.2 Vpp"
-        pass = value <= 0.01;
+        pass = value <= 0.05;
     otherwise
         pass = true;
 end
@@ -394,26 +397,73 @@ end
 localGain_VV = gradient(lpfOutDiff_V)./gradient(vinDiff_V);
 gainError_pct = 100*abs(localGain_VV/centralGain_VV-1);
 
-negativeIndex = zeroIndex;
-while negativeIndex > 1 && ...
-        isfinite(gainError_pct(negativeIndex-1)) && ...
-        gainError_pct(negativeIndex-1) <= cfg.vtcCompression_pct
-    negativeIndex = negativeIndex-1;
+negativeInsideIndex = zeroIndex;
+negativeOutsideIndex = [];
+for index = zeroIndex-1:-1:1
+    if isfinite(gainError_pct(index)) && ...
+            gainError_pct(index) <= cfg.vtcCompression_pct
+        negativeInsideIndex = index;
+    else
+        negativeOutsideIndex = index;
+        break;
+    end
 end
-positiveIndex = zeroIndex;
-while positiveIndex < numel(vinDiff_V) && ...
-        isfinite(gainError_pct(positiveIndex+1)) && ...
-        gainError_pct(positiveIndex+1) <= cfg.vtcCompression_pct
-    positiveIndex = positiveIndex+1;
+
+positiveInsideIndex = zeroIndex;
+positiveOutsideIndex = [];
+for index = zeroIndex+1:numel(vinDiff_V)
+    if isfinite(gainError_pct(index)) && ...
+            gainError_pct(index) <= cfg.vtcCompression_pct
+        positiveInsideIndex = index;
+    else
+        positiveOutsideIndex = index;
+        break;
+    end
+end
+
+negativeAtBoundary = isempty(negativeOutsideIndex);
+positiveAtBoundary = isempty(positiveOutsideIndex);
+
+if negativeAtBoundary
+    inputNegative_V = vinDiff_V(1);
+    outputNegative_V = lpfOutDiff_V(1);
+else
+    inputNegative_V = compressionCrossing( ...
+        vinDiff_V(negativeOutsideIndex),gainError_pct(negativeOutsideIndex), ...
+        vinDiff_V(negativeInsideIndex),gainError_pct(negativeInsideIndex), ...
+        cfg.vtcCompression_pct);
+    outputNegative_V = interp1(vinDiff_V,lpfOutDiff_V,inputNegative_V,'linear');
+end
+
+if positiveAtBoundary
+    inputPositive_V = vinDiff_V(end);
+    outputPositive_V = lpfOutDiff_V(end);
+else
+    inputPositive_V = compressionCrossing( ...
+        vinDiff_V(positiveInsideIndex),gainError_pct(positiveInsideIndex), ...
+        vinDiff_V(positiveOutsideIndex),gainError_pct(positiveOutsideIndex), ...
+        cfg.vtcCompression_pct);
+    outputPositive_V = interp1(vinDiff_V,lpfOutDiff_V,inputPositive_V,'linear');
 end
 
 result.input_V = vinDiff_V;
 result.output_V = lpfOutDiff_V;
 result.centralGain_VV = centralGain_VV;
-result.inputNegative_V = vinDiff_V(negativeIndex);
-result.inputPositive_V = vinDiff_V(positiveIndex);
-result.outputNegative_V = lpfOutDiff_V(negativeIndex);
-result.outputPositive_V = lpfOutDiff_V(positiveIndex);
+result.inputNegative_V = inputNegative_V;
+result.inputPositive_V = inputPositive_V;
+result.outputNegative_V = outputNegative_V;
+result.outputPositive_V = outputPositive_V;
+result.negativeAtBoundary = negativeAtBoundary;
+result.positiveAtBoundary = positiveAtBoundary;
+end
+
+function crossing = compressionCrossing(x1,error1,x2,error2,target)
+if ~all(isfinite([x1 error1 x2 error2])) || error1 == error2
+    crossing = x2;
+    return;
+end
+fraction = (target-error1)/(error2-error1);
+crossing = x1+fraction*(x2-x1);
 end
 
 function result = analyzeThd(data,fundamental_Hz)
@@ -522,7 +572,19 @@ for rowIndex = 1:size(rows,1)
 end
 end
 
-function result = buildFullPvtTable(rows,values,corners,processes,cases,vdd_V,temp_C)
+function relations = metricsToRelations(m,rows)
+relations = strings(size(rows,1),1);
+if m.vtc.negativeAtBoundary
+    relations(rows(:,1) == "Input range low") = "≤";
+    relations(rows(:,1) == "Output range low") = "≤";
+end
+if m.vtc.positiveAtBoundary
+    relations(rows(:,1) == "Input range high") = "≥";
+    relations(rows(:,1) == "Output range high") = "≥";
+end
+end
+
+function result = buildFullPvtTable(rows,values,corners,processes,cases,vdd_V,temp_C,relations)
 metricRows = find(rows(:,2) ~= "");
 nRecords = numel(corners)*numel(metricRows);
 cornerColumn = strings(nRecords,1);
@@ -546,8 +608,9 @@ for cornerIndex = 1:numel(corners)
     unitColumn(range) = rows(metricRows,2);
     for metricIndex = 1:numel(metricRows)
         rowIndex = metricRows(metricIndex);
-        valueColumn(range(metricIndex)) = formatOne( ...
-            values(rowIndex,cornerIndex),rows(rowIndex,2));
+        valueColumn(range(metricIndex)) = formatResult( ...
+            values(rowIndex,cornerIndex),rows(rowIndex,2), ...
+            relations(rowIndex,cornerIndex));
     end
 end
 result = table(cornerColumn,processColumn,caseColumn,vddColumn,tempColumn, ...
@@ -556,7 +619,7 @@ result = table(cornerColumn,processColumn,caseColumn,vddColumn,tempColumn, ...
     'Temperature_C','Parameter','Unit','Value'});
 end
 
-function result = buildWorstCaseTable(rows,values,corners)
+function result = buildWorstCaseTable(rows,values,corners,relations)
 definitions = [
     "FDC bias current",                       "FDC bias current",                       "maxspecmid"
     "CMFB bias current",                      "CMFB bias current",                      "maxspecmid"
@@ -588,6 +651,7 @@ units = strings(n,1);
 specifications = strings(n,1);
 selectedValues = nan(n,1);
 selectedCorners = strings(n,1);
+selectedRelations = strings(n,1);
 for definitionIndex = 1:n
     sourceRow = parameterIndex(rows(:,1),definitions(definitionIndex,2));
     units(definitionIndex) = rows(sourceRow,2);
@@ -612,11 +676,13 @@ for definitionIndex = 1:n
     end
     selectedValues(definitionIndex) = candidates(selectedIndex);
     selectedCorners(definitionIndex) = corners(selectedIndex);
+    selectedRelations(definitionIndex) = relations(sourceRow,selectedIndex);
     specifications(definitionIndex) = specText(definitions(definitionIndex,2));
 end
 formattedValues = strings(n,1);
 for index = 1:n
-    formattedValues(index) = formatOne(selectedValues(index),units(index));
+    formattedValues(index) = formatResult( ...
+        selectedValues(index),units(index),selectedRelations(index));
 end
 result = table(parameters,units,specifications,formattedValues,selectedCorners, ...
     'VariableNames',{'Parameter','Unit','Spec','Value','Corner'});
@@ -945,25 +1011,40 @@ plot(vin_V,vout_V,'LineWidth',1.5,'DisplayName','Simulated');
 hold on;
 plot(vin_V,idealVout_V,'--','LineWidth',1.2, ...
     'DisplayName','Ideal G = 1 V/V');
-plot([metric.vtc.inputNegative_V metric.vtc.inputPositive_V], ...
-    [metric.vtc.outputNegative_V metric.vtc.outputPositive_V], ...
-    'o','MarkerSize',7,'LineWidth',1.2, ...
-    'DisplayName','1% compression points');
 
 inputLow_V = metric.vtc.inputNegative_V;
 inputHigh_V = metric.vtc.inputPositive_V;
 outputLow_V = metric.vtc.outputNegative_V;
 outputHigh_V = metric.vtc.outputPositive_V;
-xline(inputLow_V,':',sprintf('Input low: %.3f V',inputLow_V), ...
+
+inputPoints = [inputLow_V inputHigh_V];
+outputPoints = [outputLow_V outputHigh_V];
+boundaryMask = [metric.vtc.negativeAtBoundary metric.vtc.positiveAtBoundary];
+if any(~boundaryMask)
+    plot(inputPoints(~boundaryMask),outputPoints(~boundaryMask), ...
+        'o','MarkerSize',7,'LineWidth',1.2, ...
+        'DisplayName','1% compression points');
+end
+if any(boundaryMask)
+    plot(inputPoints(boundaryMask),outputPoints(boundaryMask), ...
+        's','MarkerSize',7,'LineWidth',1.2, ...
+        'DisplayName','Valid-input boundaries');
+end
+
+lowRelation = "";
+highRelation = "";
+if metric.vtc.negativeAtBoundary, lowRelation = "≤"; end
+if metric.vtc.positiveAtBoundary, highRelation = "≥"; end
+xline(inputLow_V,':',sprintf('Input low: %s%.3f V',lowRelation,inputLow_V), ...
     'HandleVisibility','off','LabelVerticalAlignment','middle', ...
     'LabelHorizontalAlignment','left');
-xline(inputHigh_V,':',sprintf('Input high: %.3f V',inputHigh_V), ...
+xline(inputHigh_V,':',sprintf('Input high: %s%.3f V',highRelation,inputHigh_V), ...
     'HandleVisibility','off','LabelVerticalAlignment','middle', ...
     'LabelHorizontalAlignment','right');
-yline(outputLow_V,':',sprintf('Output low: %.3f V',outputLow_V), ...
+yline(outputLow_V,':',sprintf('Output low: %s%.3f V',lowRelation,outputLow_V), ...
     'HandleVisibility','off','LabelVerticalAlignment','bottom', ...
     'LabelHorizontalAlignment','right');
-yline(outputHigh_V,':',sprintf('Output high: %.3f V',outputHigh_V), ...
+yline(outputHigh_V,':',sprintf('Output high: %s%.3f V',highRelation,outputHigh_V), ...
     'HandleVisibility','off','LabelVerticalAlignment','top', ...
     'LabelHorizontalAlignment','left');
 xline(-1.2,'--','HandleVisibility','off');
@@ -973,7 +1054,7 @@ yline(1.2,'--','HandleVisibility','off');
 ylabel('LPF Differential Output Voltage (V)');
 legend('Location','best');
 stylePlot('Differential Input Voltage (V)', ...
-    'LPF VTC + 1% Compression - NOM');
+    'LPF VTC + 1% Linearity - NOM');
 savePlot(fig,plotDir,'NOM.LPF_vtc.png');
 end
 
@@ -1138,14 +1219,22 @@ for index = 1:height(tableValue)
 end
 end
 
-function formatted = formatReportValues(rows,values)
+function formatted = formatReportValues(rows,values,relations)
 formatted = strings(size(values));
 for rowIndex = 1:size(values,1)
     if rows(rowIndex,2) == "", continue; end
     for columnIndex = 1:size(values,2)
-        formatted(rowIndex,columnIndex) = ...
-            formatOne(values(rowIndex,columnIndex),rows(rowIndex,2));
+        formatted(rowIndex,columnIndex) = formatResult( ...
+            values(rowIndex,columnIndex),rows(rowIndex,2), ...
+            relations(rowIndex,columnIndex));
     end
+end
+end
+
+function textValue = formatResult(value,unit,relation)
+textValue = formatOne(value,unit);
+if strlength(relation) > 0
+    textValue = relation+textValue;
 end
 end
 

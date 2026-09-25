@@ -60,7 +60,7 @@ N 700 -440 780 -440 {lab=CMFB_OUT}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {symbols/pfet_03v3.sym} 760 -520 0 0 {name=M4
 L=1u
-W=41.3u
+W=41.1u
 nf=1
 m=5
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -73,7 +73,7 @@ model=pfet_03v3
 spiceprefix=X}
 C {symbols/pfet_03v3.sym} 560 -520 0 1 {name=M3
 L=1u
-W=41.3u
+W=41.1u
 nf=1
 m=5
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
