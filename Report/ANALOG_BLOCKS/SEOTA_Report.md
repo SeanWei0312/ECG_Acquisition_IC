@@ -46,14 +46,18 @@ The nominal design specification is intentionally tighter than the formal PVT li
 
 The 10-MHz nominal UGF target gives 25% margin over the 8-MHz PVT requirement. The implemented nominal result is 12.835 MHz, so the design target remains conservative without overstating the required bandwidth.
 
-The sizing dependency is:
+Each result becomes the input to the next sizing step:
 
-1. Use slew rate and tail current to bound $C_c$.
-2. Use $C_c$ and UGF to calculate $g_{m1}$.
-3. Use the selected $g_m/I_D$ and lookup-table current density to calculate M1–M4.
-4. Use phase margin and load capacitance to calculate the minimum second-stage $g_m$.
-5. Allocate the total-current target between the input, bias, and output stages, then calculate M6/M7.
-6. Select $R_z$ from $1/g_{m2}$ and close the remaining pole-zero error with transistor-level simulation.
+| Step | Starting requirement | Calculated result | Next design decision |
+| ---: | :--- | :--- | :--- |
+| 1 | Slew rate and 20.046-µA tail current | $C_c\le2.51$ pF | Choose $C_c=2.00$ pF |
+| 2 | $C_c$ and 10-MHz UGF | $g_{m1}=125.7$ µS | Set M1/M2 current and width |
+| 3 | M1/M2 current, $g_m/I_D$, and $J_D$ | $W_{1,calc}=192.1$ µm | Enlarge to 400 µm for noise and matching |
+| 4 | Input-branch current and PMOS $J_D$ | $W_{3,calc}=33.5$ µm | Use 60 µm for matching and final current |
+| 5 | Phase margin, $C_L$, and $C_c$ | $g_{m2,min}=1.617$ mS | Allocate 0.75 mA to stage 2 |
+| 6 | Stage-2 current and current density | $W_{6,calc}=362.8$ µm; $W_{7,calc}=103.6$ µm | Use 400/100 µm |
+| 7 | Implemented $g_{m2}$ and $C_c$ | $1/g_{m2}\approx167\ \Omega$ | Choose 3.8-kΩ $R_z$ for an LHP zero |
+| 8 | Complete transistor and passive network | First-order gain, UGF, PM, and slew estimates | Verify the full loop over PVT and Monte Carlo |
 
 The first dependency is fixed before transistor sizing. The nominal slew target and the mirrored 20.046-µA tail require
 
@@ -170,7 +174,19 @@ W_{1,calc}=\frac{6.283\ \mu\text{A}}
 =192.1\ \mu\text{m}.
 $$
 
-The nearest whole-micrometre width is 192 µm. The implemented $W_{eff}=400$ µm intentionally increases device area. Larger input devices reduce mismatch according to the area dependence reported by [Pelgrom, Duinmaijer, and Welbers](https://doi.org/10.1109/JSSC.1989.572629). At the final branch current, the lower current density also keeps M1/M2 in high transconductance efficiency and increases gate area against flicker noise. The costs are larger gate capacitance and silicon area.
+The nearest whole-micrometre width is 192 µm. This is the minimum first-pass value from the UGF target, not the final noise-optimized width. Input-pair thermal noise decreases as $g_m$ increases, while the MOS flicker-noise contribution scales approximately as
+
+$$
+S_{v,1/f}\propto\frac{1}{WLf}.
+$$
+
+The input pair is therefore enlarged by approximately
+
+$$
+\frac{W_{used}}{W_{calc}}=\frac{400}{192.1}=2.08.
+$$
+
+The implemented $W_{eff}=400$ µm lowers current density, supports higher $g_m/I_D$ at the final branch current, reduces flicker noise, and improves mismatch through the area dependence reported by [Pelgrom, Duinmaijer, and Welbers](https://doi.org/10.1109/JSSC.1989.572629). The trade-offs are larger input capacitance, greater first-stage-node capacitance, and more silicon area. The resulting 1.873-µVrms nominal and 2.189-µVrms worst-PVT input-noise values remain below the 2.5-µVrms specification.
 
 The 40.092-µA bias mirror predicts a 20.046-µA tail current and approximately 10.023 µA per input branch. The implemented current density is
 
@@ -303,7 +319,14 @@ PM_{2pole}\approx90^\circ-\tan^{-1}\left(\frac{10}{79.58}\right)
 =82.84^\circ.
 $$
 
-This is an optimistic two-pole estimate. Device capacitances, the compensation zero, and higher poles are included only in simulation.
+This is a screening bound, not a signoff prediction. At the simulated 12.835-MHz crossover, the same two-pole model gives
+
+$$
+PM_{2pole,sim\ f_u}=90^\circ-\tan^{-1}\left(\frac{12.835}{79.58}\right)
+=80.84^\circ.
+$$
+
+The 21.9-MHz LHP zero contributes about $\tan^{-1}(12.835/21.9)=30.4^\circ$ of lead. The simulated phase margin is 67.767°, so the remaining internal poles contribute about $80.84+30.4-67.767=43.5^\circ$ of lag. Their net effect relative to the two-pole model is 13.07° of additional lag. The analytical model therefore sets the initial sizes; the complete transistor-level return ratio provides final stability signoff.
 
 ### 4.4 Nulling resistor
 
@@ -379,11 +402,11 @@ M1/M2 and M3/M4 must be laid out as matched pairs. M5/M8 must preserve the 1:2 m
 | :--- | ---: | ---: | ---: |
 | DC gain | 95.45 dB | 96.522 dB | $\ge88$ dB |
 | UGF | 10 MHz sizing target | 12.835 MHz | $\ge8$ MHz |
-| Phase margin | 82.84° | 67.767° | $\ge55^\circ$ |
+| Phase margin | 80.84° at simulated UGF | 67.767° | $\ge55^\circ$ |
 | Slew rate | 10.02 V/µs | 9.814 / 7.966 V/µs | $\ge6.5/5.0$ V/µs |
 | Output range | Must be simulated | 0.108–3.235 V | Low $\le0.6$ V; high $\ge2.75$ V |
 
-The gain estimate differs from simulation by 1.07 dB, and the slew estimate tracks the simulated edges. The UGF exceeds its nominal design target. The phase estimate is 15.07° optimistic because it omits parasitic poles and the exact zero; the transistor-level value is therefore used for signoff. The implemented input-device area is supported by the 1.873-µVrms nominal and 2.189-µVrms worst-PVT noise results. The square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ is not used for range signoff because it omits body effect and real terminal-voltage dependence.
+The gain estimate differs from simulation by 1.07 dB, and the slew estimate tracks the simulated edges. The UGF exceeds its nominal design target. The first-order phase model is 13.07° optimistic at the actual crossover because it omits internal poles and the exact compensation path. The transistor-level loop result is therefore the stability signoff value. The square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ is not used for range signoff because it omits body effect and real terminal-voltage dependence.
 
 ## 5. Integrated SEOTA verification
 
