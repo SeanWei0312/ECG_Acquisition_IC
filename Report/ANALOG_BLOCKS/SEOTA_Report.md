@@ -30,18 +30,39 @@ The supplied sizing worksheet provided the correct overall flow: specification, 
 
 ### 2.1 Design targets
 
-The 15-MHz sizing target provides margin over the formal 8-MHz UGF requirement.
+The nominal design specification is intentionally tighter than the formal PVT limit. The analytical target is set equal to, or slightly above, the nominal specification; it is not derived from the completed simulation.
 
-| Quantity | Value used for sizing | Signoff specification |
-| :--- | ---: | ---: |
-| Supply, $V_{DD}$ | 3.3 V | 3.0–3.6 V in PVT |
-| Load, $C_L$ | 10 pF | 10 pF |
-| Miller capacitor, $C_c$ | 2.00 pF | Implemented value |
-| UGF, $f_u$ | 15 MHz target | $\ge 8$ MHz |
-| Phase margin | 60° design target | $\ge 55^\circ$ |
-| DC gain | — | $\ge 88$ dB |
-| Slew rate | — | $\ge 6.5/5.0$ V/µs rise/fall |
-| Bias reference | 40 µA | $40\pm10$ µA |
+| Quantity | Design target | Nominal specification | PVT specification |
+| :--- | ---: | ---: | ---: |
+| Supply, $V_{DD}$ | 3.3 V | 3.3 V | 3.0–3.6 V |
+| Load, $C_L$ | 10 pF | 10 pF | 10 pF |
+| Miller capacitor, $C_c$ | 2.00 pF | 2.00 pF | 2.00 pF |
+| UGF, $f_u$ | 10 MHz | $\ge10$ MHz | $\ge8$ MHz |
+| Phase margin | 65° | $\ge65^\circ$ | $\ge55^\circ$ |
+| DC gain | 92 dB | $\ge92$ dB | $\ge88$ dB |
+| Slew rate, rise/fall | 8/6 V/µs | $\ge8/6$ V/µs | $\ge6.5/5.0$ V/µs |
+| Total current | 1.0 mA | $\le1.0$ mA | $\le1.25$ mA |
+| Bias reference | 40 µA | 40 µA nominal | $40\pm10$ µA |
+
+The 10-MHz nominal UGF target gives 25% margin over the 8-MHz PVT requirement. The implemented nominal result is 12.835 MHz, so the design target remains conservative without overstating the required bandwidth.
+
+The sizing dependency is:
+
+1. Use slew rate and tail current to bound $C_c$.
+2. Use $C_c$ and UGF to calculate $g_{m1}$.
+3. Use the selected $g_m/I_D$ and lookup-table current density to calculate M1–M4.
+4. Use phase margin and load capacitance to calculate the minimum second-stage $g_m$.
+5. Allocate the total-current target between the input, bias, and output stages, then calculate M6/M7.
+6. Select $R_z$ from $1/g_{m2}$ and close the remaining pole-zero error with transistor-level simulation.
+
+The first dependency is fixed before transistor sizing. The nominal slew target and the mirrored 20.046-µA tail require
+
+$$
+C_c\le\frac{20.046\ \mu\text{A}}{8\ \text{V}/\mu\text{s}}
+=2.51\ \text{pF}.
+$$
+
+Selecting $C_c=2.00$ pF leaves slew margin and becomes the input to the UGF calculation below.
 
 ### 2.2 Governing equations
 
@@ -127,11 +148,11 @@ g_{m1,min}=2\pi(8\ \text{MHz})(2.00\ \text{pF})
 =100.5\ \mu\text{S}.
 $$
 
-Using the 15-MHz design target gives
+Using the 10-MHz nominal design target gives
 
 $$
-g_{m1,target}=2\pi(15\ \text{MHz})(2.00\ \text{pF})
-=188.5\ \mu\text{S}.
+g_{m1,target}=2\pi(10\ \text{MHz})(2.00\ \text{pF})
+=125.7\ \mu\text{S}.
 $$
 
 ### 3.2 M1/M2 current and width
@@ -139,17 +160,19 @@ $$
 For M1/M2, select $L=4$ µm and $g_m/I_D=20\ \text{V}^{-1}$. The local NMOS table gives $J_D=0.03271\ \mu\text{A}/\mu\text{m}$ and $g_m/g_{ds}=707.60$.
 
 $$
-I_{D1}=\frac{188.5\ \mu\text{S}}{20\ \text{V}^{-1}}
-=9.425\ \mu\text{A},
+I_{D1}=\frac{125.7\ \mu\text{S}}{20\ \text{V}^{-1}}
+=6.283\ \mu\text{A},
 $$
 
 $$
-W_{1,calc}=\frac{9.425\ \mu\text{A}}
+W_{1,calc}=\frac{6.283\ \mu\text{A}}
 {0.03271\ \mu\text{A}/\mu\text{m}}
-=288.1\ \mu\text{m}.
+=192.1\ \mu\text{m}.
 $$
 
-The implemented $W_{eff}=400$ µm adds noise and mismatch margin. The 40.092-µA bias mirror predicts a 20.046-µA tail current and approximately 10.023 µA per input branch. Its current density is therefore
+The nearest whole-micrometre width is 192 µm. The implemented $W_{eff}=400$ µm intentionally increases device area. Larger input devices reduce mismatch according to the area dependence reported by [Pelgrom, Duinmaijer, and Welbers](https://doi.org/10.1109/JSSC.1989.572629). At the final branch current, the lower current density also keeps M1/M2 in high transconductance efficiency and increases gate area against flicker noise. The costs are larger gate capacitance and silicon area.
+
+The 40.092-µA bias mirror predicts a 20.046-µA tail current and approximately 10.023 µA per input branch. The implemented current density is
 
 $$
 J_{D1,impl}\approx\frac{10.023}{400}
@@ -163,78 +186,92 @@ This density is below the printed $g_m/I_D=20\ \text{V}^{-1}$ row. Exact inversi
 Select $L=4$ µm and $g_m/I_D=8\ \text{V}^{-1}$ for the PMOS load. The table gives $J_D=0.1875\ \mu\text{A}/\mu\text{m}$.
 
 $$
-W_{3,calc}=\frac{9.425\ \mu\text{A}}
+W_{3,calc}=\frac{6.283\ \mu\text{A}}
 {0.1875\ \mu\text{A}/\mu\text{m}}
-=50.3\ \mu\text{m}.
+=33.5\ \mu\text{m}.
 $$
 
-The implemented value is 60 µm per device.
+The nearest integer is 34 µm. The implemented value is 60 µm per device. The larger area improves M3/M4 matching and accommodates the final branch current. Its added node capacitance is accepted because the simulated nominal UGF remains 12.835 MHz.
 
-### 3.4 Implemented first-stage devices
+### 3.4 M5/M8 mirror sizing
 
-`W_eff` is $W\times m$ because the listed devices use `nf=1`.
+Choose $L=2$ µm and a reference current density near $2\ \mu\text{A}/\mu\text{m}$ for the 40-µA bias device:
 
-| Function | Devices | Type | $L$ (µm) | $W$ (µm) | $m$ | $W_{eff}$ (µm) |
-| :--- | :---: | :---: | ---: | ---: | ---: | ---: |
-| Input pair | M1, M2 | NMOS | 4.0 | 100 | 4 | 400 |
-| Active load | M3, M4 | PMOS | 4.0 | 30 | 2 | 60 |
-| Tail source | M5 | NMOS | 2.0 | 10 | 1 | 10 |
-| Bias reference | M8 | NMOS | 2.0 | 20 | 1 | 20 |
+$$
+W_{8,calc}=\frac{40\ \mu\text{A}}{2\ \mu\text{A}/\mu\text{m}}
+=20\ \mu\text{m}.
+$$
 
-The 4-µm devices favor intrinsic gain and matching. M5/M8 use a 1:2 width ratio, producing approximately 20 µA tail current from the 40-µA reference.
+The input tail is one-half of the reference current, so equal-length mirror scaling gives
 
-### 3.5 First-stage gain estimate
+$$
+W_{5,calc}=W_8\frac{20\ \mu\text{A}}{40\ \mu\text{A}}
+=10\ \mu\text{m}.
+$$
+
+Both values are already whole micrometres and are implemented directly. The 2-µm length improves mirror output resistance and current accuracy; the trade-off is more area and drain capacitance.
+
+### 3.5 First-stage size selection
+
+`W_{calc}` follows the target equations. `W_{round}` is the closest whole-micrometre width. `W_{used}=W\times m$ is the schematic value because every listed device uses `nf=1`.
+
+| Devices | Function | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic $W\times m$ (µm) | $W_{used}$ (µm) |
+| :---: | :--- | ---: | ---: | ---: | :---: | ---: |
+| M1/M2 | NMOS input pair | 4.0 | 192.1 | 192 | $100\times4$ | 400 |
+| M3/M4 | PMOS active load | 4.0 | 33.5 | 34 | $30\times2$ | 60 |
+| M5 | NMOS tail source | 2.0 | 10.0 | 10 | $10\times1$ | 10 |
+| M8 | NMOS bias reference | 2.0 | 20.0 | 20 | $20\times1$ | 20 |
+
+The $L=4$ µm input and load devices were chosen because the local lookup tables show higher $g_m/g_{ds}$ at longer length. This improves first-stage gain and matching, but reduces $f_T$ and increases area. M5/M8 use $L=2$ µm to improve current-source output resistance without the large area of a 4-µm mirror. A current density near 2 µA/µm gives $W_8\approx40/2=20$ µm; the 1:2 width ratio then gives $W_5=10$ µm and approximately 20 µA tail current.
+
+### 3.6 First-stage gain estimate
 
 At the selected lookup points,
 
 $$
-g_{ds1}=\frac{188.5\ \mu\text{S}}{707.60}=0.266\ \mu\text{S},
+g_{ds1}=\frac{125.7\ \mu\text{S}}{707.60}=0.178\ \mu\text{S},
 $$
 
 $$
-g_{m3}=(8)(9.425\ \mu\text{A})=75.40\ \mu\text{S},
+g_{m3}=(8)(6.283\ \mu\text{A})=50.27\ \mu\text{S},
 \qquad
-g_{ds3}=\frac{75.40}{2017.65}=0.0374\ \mu\text{S}.
+g_{ds3}=\frac{50.27}{2017.65}=0.0249\ \mu\text{S}.
 $$
 
 Thus
 
 $$
-A_1\approx\frac{188.5}{0.266+0.0374}
+A_1\approx\frac{125.7}{0.178+0.0249}
 =620.5\ \text{V/V}=55.86\ \text{dB}.
 $$
 
 ## 4. Second-stage and compensation calculation
 
-| Function | Device or element | Type | Implemented value |
-| :--- | :---: | :---: | ---: |
-| Second-stage pull-up | M6 | PMOS | $L=0.5$ µm, $W=50$ µm, $m=8$ |
-| Second-stage pull-down | M7 | NMOS | $L=0.5$ µm, $W=100$ µm, $m=1$ |
-| Miller capacitor | $C_c$ | MIM | Approximately 2.00 pF |
-| Zero-setting resistor | $R_z$ | Poly | Approximately 3.8 kΩ |
-
 ### 4.1 Transconductance and current
 
-For a 60° design target,
+For the 65° nominal design target,
 
 $$
-g_{m2,min}=2\pi(15\ \text{MHz})(10\ \text{pF}+2\ \text{pF})\tan60^\circ
-=1.959\ \text{mS}.
+g_{m2,min}=2\pi(10\ \text{MHz})(10\ \text{pF}+2\ \text{pF})\tan65^\circ
+=1.617\ \text{mS}.
 $$
 
-Using the nominal total current as a current-budget check gives approximately
+Allocate approximately 0.75 mA of the 1.0-mA nominal current target to the second stage. This leaves current for the 40-µA reference, the approximately 20-µA input tail, and bias overhead. With $g_m/I_D\approx8\ \text{V}^{-1}$,
 
 $$
-I_{stage2}\approx825-40.092-20.046
-=764.9\ \mu\text{A}.
+g_{m2,target}\approx(8)(750\ \mu\text{A})
+=6.00\ \text{mS}>g_{m2,min}.
 $$
 
-The implemented M6/M7 current densities are about 1.91 and 7.65 µA/µm. Both correspond to roughly $g_m/I_D\approx8\ \text{V}^{-1}$ near the lookup bias, so
+At $L=0.5$ µm and $g_m/I_D\approx8\ \text{V}^{-1}$, the lookup tables give $J_P=2.067$ and $J_N=7.241$ µA/µm. Therefore
 
 $$
-g_{m2}\approx(8)(764.9\ \mu\text{A})
-=6.12\ \text{mS}>g_{m2,min}.
+W_{6,calc}=\frac{750}{2.067}=362.8\ \mu\text{m},
+\qquad
+W_{7,calc}=\frac{750}{7.241}=103.6\ \mu\text{m}.
 $$
+
+The closest integer widths are 363 and 104 µm. The implemented 400-µm PMOS and 100-µm NMOS closely bracket these estimates. The nominal operating point later reports approximately 764.9 µA in the stage, validating the original 0.75-mA allocation. Minimum-length 0.5-µm devices provide current density and speed. Their lower intrinsic gain is acceptable because the long-channel first stage supplies most of the DC gain.
 
 ### 4.2 Gain estimate
 
@@ -242,8 +279,8 @@ Using the $L=0.5$ µm lookup values $g_m/g_{ds}=225.52$ for PMOS and 165.52 for 
 
 $$
 A_2\approx
-\frac{6.12\ \text{mS}}
-{6.12\ \text{mS}/225.52+6.12\ \text{mS}/165.52}
+\frac{6.00\ \text{mS}}
+{6.00\ \text{mS}/225.52+6.00\ \text{mS}/165.52}
 =95.46\ \text{V/V}=39.60\ \text{dB}.
 $$
 
@@ -257,13 +294,13 @@ $$
 ### 4.3 Pole and phase-margin estimate
 
 $$
-f_{p2}\approx\frac{6.12\ \text{mS}}
-{2\pi(12\ \text{pF})}=81.15\ \text{MHz},
+f_{p2}\approx\frac{6.00\ \text{mS}}
+{2\pi(12\ \text{pF})}=79.58\ \text{MHz},
 $$
 
 $$
-PM_{2pole}\approx90^\circ-\tan^{-1}\left(\frac{15}{81.15}\right)
-=79.53^\circ.
+PM_{2pole}\approx90^\circ-\tan^{-1}\left(\frac{10}{79.58}\right)
+=82.84^\circ.
 $$
 
 This is an optimistic two-pole estimate. Device capacitances, the compensation zero, and higher poles are included only in simulation.
@@ -279,7 +316,7 @@ $$
 $R_z=1/g_{m2}$ moves the feed-forward zero to infinity; $R_z>1/g_{m2}$ moves it to the left half-plane. Here,
 
 $$
-\frac{1}{g_{m2}}\approx163\ \Omega,
+\frac{1}{g_{m2}}\approx167\ \Omega,
 $$
 
 while the implemented $R_z\approx3.8$ kΩ gives the first-order estimate
@@ -289,6 +326,8 @@ f_z\approx-21.9\ \text{MHz}.
 $$
 
 The negative sign denotes a left-half-plane zero. The large difference from $1/g_{m2}$ is intentional lead compensation and is closed by loop simulation, consistent with the compensation principles in [Ahuja's original paper](https://doi.org/10.1109/JSSC.1983.1052012).
+
+The poly resistor uses 1.9 squares: $L/W=7.6/4$. With a nominal 2-kΩ/square layer, this implements approximately 3.8 kΩ. A wider resistor would reduce mismatch and current density but consume more area; the selected 4-µm width is a compact, symmetric value.
 
 ### 4.5 Slew-rate check
 
@@ -310,17 +349,41 @@ $$
 
 The mirrored 20.046-µA tail predicts $SR\approx10.02$ V/µs. The 10-pF output load needs only 65 µA to meet the 6.5-V/µs rise specification, well below the estimated second-stage current.
 
-### 4.6 Estimate-to-simulation comparison
+### 4.6 Complete component-size audit
+
+Choosing 2 pF preserves the slew margin established in Section 2.1 while providing pole splitting. A larger capacitor improves robustness but reduces UGF and slew rate; a smaller capacitor saves area but raises the crossover frequency and stability risk.
+
+| Component | Role | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
+| :---: | :--- | ---: | ---: | ---: | :---: | ---: |
+| M1/M2 | Input transconductance, noise, matching | 4.0 | 192.1 | 192 | $100\ \mu\text{m}\times m4$ | $W_{eff}=400$ µm |
+| M3/M4 | First-stage active load | 4.0 | 33.5 | 34 | $30\ \mu\text{m}\times m2$ | $W_{eff}=60$ µm |
+| M5 | Tail-current mirror | 2.0 | 10.0 | 10 | $10\ \mu\text{m}\times m1$ | $W_{eff}=10$ µm |
+| M8 | 40-µA reference mirror | 2.0 | 20.0 | 20 | $20\ \mu\text{m}\times m1$ | $W_{eff}=20$ µm |
+| M6 | Second-stage PMOS | 0.5 | 362.8 | 363 | $50\ \mu\text{m}\times m8$ | $W_{eff}=400$ µm |
+| M7 | Second-stage NMOS | 0.5 | 103.6 | 104 | $100\ \mu\text{m}\times m1$ | $W_{eff}=100$ µm |
+| $C_c$ | Miller compensation | — | — | — | $31.623\times31.623$ µm MIM | 2.00 pF |
+| $R_z$ | LHP-zero placement | 7.6 | 4.0 width | — | 1.9 squares, $m=1$ | 3.8 kΩ |
+
+The passive geometries are calculated directly from the process densities:
+
+| Component | Calculation | Calculated geometry | Implemented geometry |
+| :---: | :--- | :---: | :---: |
+| $C_c$ | $A=C/2\ \text{fF}/\mu\text{m}^2=1000\ \mu\text{m}^2$ | Square side $31.623$ µm | $31.623\times31.623$ µm |
+| $R_z$ | $N_\square=3.8\text{k}/2\text{k}=1.9$; choose $W=4$ µm | $L=1.9(4)=7.6$ µm | $W/L=4/7.6$ µm |
+
+M1/M2 and M3/M4 must be laid out as matched pairs. M5/M8 must preserve the 1:2 mirror ratio. The final widths differ from the first-pass rounded widths only where noise, matching, or output-current margin justified the added area. The square MIM geometry avoids an orientation-dependent aspect ratio; the wide poly resistor reduces current density and matching sensitivity at the cost of area.
+
+### 4.7 Estimate-to-simulation comparison
 
 | Metric | First-order estimate | Nominal simulation | Specification |
 | :--- | ---: | ---: | ---: |
 | DC gain | 95.45 dB | 96.522 dB | $\ge88$ dB |
-| UGF | 15 MHz sizing target | 12.835 MHz | $\ge8$ MHz |
-| Phase margin | 79.53° | 67.767° | $\ge55^\circ$ |
+| UGF | 10 MHz sizing target | 12.835 MHz | $\ge8$ MHz |
+| Phase margin | 82.84° | 67.767° | $\ge55^\circ$ |
 | Slew rate | 10.02 V/µs | 9.814 / 7.966 V/µs | $\ge6.5/5.0$ V/µs |
 | Output range | Must be simulated | 0.108–3.235 V | Low $\le0.6$ V; high $\ge2.75$ V |
 
-The gain estimate is close. The phase-margin estimate is deliberately optimistic because it omits parasitic poles and the exact zero. The square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ is not used for range signoff; it is inaccurate in moderate/weak inversion and does not include body effect or real saturation voltage.
+The gain estimate differs from simulation by 1.07 dB, and the slew estimate tracks the simulated edges. The UGF exceeds its nominal design target. The phase estimate is 15.07° optimistic because it omits parasitic poles and the exact zero; the transistor-level value is therefore used for signoff. The implemented input-device area is supported by the 1.873-µVrms nominal and 2.189-µVrms worst-PVT noise results. The square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ is not used for range signoff because it omits body effect and real terminal-voltage dependence.
 
 ## 5. Integrated SEOTA verification
 
@@ -418,6 +481,7 @@ FULL-MC gain error spans −0.0025% to 0%, within the ±0.01% limit.
 - P. G. A. Jespers and B. Murmann, “Basic Sizing Using the $g_m/I_D$ Methodology,” in *Systematic Design of Analog CMOS Circuits*, Cambridge University Press, 2017. [DOI: 10.1017/9781108125840.003](https://doi.org/10.1017/9781108125840.003)
 - P. G. A. Jespers and B. Murmann, “Lookup Table Generation and Usage,” in *Systematic Design of Analog CMOS Circuits*, 2017. [DOI: 10.1017/9781108125840.008](https://doi.org/10.1017/9781108125840.008)
 - A. A. Youssef, B. Murmann, and H. Omran, “Analog IC Design Using Precomputed Lookup Tables: Challenges and Solutions,” *IEEE Access*, 2020. [DOI: 10.1109/ACCESS.2020.3010875](https://doi.org/10.1109/ACCESS.2020.3010875)
+- M. J. M. Pelgrom, A. C. J. Duinmaijer, and A. P. G. Welbers, “Matching Properties of MOS Transistors,” *IEEE Journal of Solid-State Circuits*, 1989. [DOI: 10.1109/JSSC.1989.572629](https://doi.org/10.1109/JSSC.1989.572629)
 - B. K. Ahuja, “An Improved Frequency Compensation Technique for CMOS Operational Amplifiers,” *IEEE Journal of Solid-State Circuits*, 1983. [DOI: 10.1109/JSSC.1983.1052012](https://doi.org/10.1109/JSSC.1983.1052012)
 - P. E. Allen, “Compensation of Op Amps—I,” Georgia Institute of Technology, ECE 6412 lecture notes. [PDF](https://www.pallen.ece.gatech.edu/Academic/ECE_6412/Spring_2004/L120-CompOpAmpsI%282UP%29.pdf)
 - University of California, Berkeley, “CMOS Op Amp Compensation,” EE 140 Lecture 22. [PDF](https://www-inst.cs.berkeley.edu/~ee140/sp12/lectures/Lec22w.CMOSOpAmpCompensation.ee140.s12.ctn.pdf)
