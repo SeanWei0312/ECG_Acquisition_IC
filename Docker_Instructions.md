@@ -21,9 +21,30 @@ $env:DESIGNS="D:\path\to\GitHub"
 ### Mac Terminal
 
 ```bash
-cd "/path/to/GitHub/ECG_Acquisition_IC/Simulation_Environment/IIC-OSIC-TOOLS"
-export DESIGNS="/path/to/GitHub"
+cd "/Users/sean/Documents/GitHub/ECG_Acquisition_IC/Simulation_Environment/IIC-OSIC-TOOLS"
+export DESIGNS="/Users/sean/Documents/GitHub"
 ./start_chipathon_vnc.sh
+```
+
+These Mac commands use Sean's local checkout. On another Mac, replace `/Users/sean/Documents/GitHub` with your GitHub directory in both commands.
+
+Verify the paths before starting Docker:
+
+```bash
+ls -ld "/Users/sean/Documents/GitHub"
+ls -l "/Users/sean/Documents/GitHub/ECG_Acquisition_IC/Simulation_Environment/IIC-OSIC-TOOLS/start_chipathon_vnc.sh"
+```
+
+If an existing container has the wrong mount, changing `DESIGNS` will not update it. Inspect its mounts:
+
+```bash
+docker inspect --format '{{json .Mounts}}' "iic-osic-tools_chipathon_xvnc_uid_$(id -u)"
+```
+
+To recreate that container, first save any files stored only inside it, then remove it and rerun the Mac startup commands above. Removal deletes the container's internal files; files in the bind-mounted Mac directory remain.
+
+```bash
+docker rm -f "iic-osic-tools_chipathon_xvnc_uid_$(id -u)"
 ```
 
 ### Access the desktop

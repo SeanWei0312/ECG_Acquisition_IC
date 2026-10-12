@@ -28,47 +28,7 @@ The schematic shows the differential input stage, single-ended second stage, bia
 
 The supplied sizing worksheet provided the correct overall flow: specification, $g_m$, current, current density, width, estimated performance, and simulation. Its transistor polarities did not match the implemented SEOTA, and its fixed second-stage multiplier was not a general two-stage OTA equation. The calculation below uses the actual NMOS-input topology and treats the second-stage requirement as a pole/phase-margin constraint.
 
-### 2.1 Design targets
-
-The nominal design specification is intentionally tighter than the formal PVT limit. The analytical target is set equal to, or slightly above, the nominal specification; it is not derived from the completed simulation.
-
-| Quantity | Design target | Nominal specification | PVT specification |
-| :--- | ---: | ---: | ---: |
-| Supply, $V_{DD}$ | 3.3 V | 3.3 V | 3.0–3.6 V |
-| Load, $C_L$ | 10 pF | 10 pF | 10 pF |
-| Miller capacitor, $C_c$ | 2.00 pF | 2.00 pF | 2.00 pF |
-| UGF, $f_u$ | 10 MHz | $\ge10$ MHz | $\ge8$ MHz |
-| Phase margin | 65° | $\ge65^\circ$ | $\ge55^\circ$ |
-| DC gain | 92 dB | $\ge92$ dB | $\ge88$ dB |
-| Slew rate, rise/fall | 8/6 V/µs | $\ge8/6$ V/µs | $\ge6.5/5.0$ V/µs |
-| Total current | 1.0 mA | $\le1.0$ mA | $\le1.25$ mA |
-| Bias reference | 40 µA | 40 µA nominal | $40\pm10$ µA |
-
-The 10-MHz nominal UGF target gives 25% margin over the 8-MHz PVT requirement. The implemented nominal result is 12.835 MHz, so the design target remains conservative without overstating the required bandwidth.
-
-Each result becomes the input to the next sizing step:
-
-| Step | Starting requirement | Calculated result | Next design decision |
-| ---: | :--- | :--- | :--- |
-| 1 | Slew rate and 20.046-µA tail current | $C_c\le2.51$ pF | Choose $C_c=2.00$ pF |
-| 2 | $C_c$ and 10-MHz UGF | $g_{m1}=125.7$ µS | Set M1/M2 current and width |
-| 3 | M1/M2 current, $g_m/I_D$, and $J_D$ | $W_{1,calc}=192.1$ µm | Enlarge to 400 µm for noise and matching |
-| 4 | Input-branch current and PMOS $J_D$ | $W_{3,calc}=33.5$ µm | Use 60 µm for matching and final current |
-| 5 | Phase margin, $C_L$, and $C_c$ | $g_{m2,min}=1.617$ mS | Allocate 0.75 mA to stage 2 |
-| 6 | Stage-2 current and current density | $W_{6,calc}=362.8$ µm; $W_{7,calc}=103.6$ µm | Use 400/100 µm |
-| 7 | Implemented $g_{m2}$ and $C_c$ | $1/g_{m2}\approx167\ \Omega$ | Choose 3.8-kΩ $R_z$ for an LHP zero |
-| 8 | Complete transistor and passive network | First-order gain, UGF, PM, and slew estimates | Verify the full loop over PVT and Monte Carlo |
-
-The first dependency is fixed before transistor sizing. The nominal slew target and the mirrored 20.046-µA tail require
-
-$$
-C_c\le\frac{20.046\ \mu\text{A}}{8\ \text{V}/\mu\text{s}}
-=2.51\ \text{pF}.
-$$
-
-Selecting $C_c=2.00$ pF leaves slew margin and becomes the input to the UGF calculation below.
-
-### 2.2 Governing equations
+### 2.1 Governing equations
 
 The $g_m/I_D$ method uses transconductance efficiency and normalized current density to convert a circuit requirement into device current and width [Silveira, Flandre, and Jespers](https://people.engr.tamu.edu/spalermo/ecen474/gm_ID_methodology_silveira_jssc_1996.pdf):
 
@@ -141,9 +101,49 @@ PMOS intrinsic gain rises from 48.34 to 67.40 dB over the same length range.
 
 These tables guide sizing; they do not replace final-hierarchy operating-point data. Exact device $g_m/I_D$ depends on its in-circuit terminal and body voltages.
 
-## 3. Input-stage calculation
+## 3. SEOTA core
 
-### 3.1 Required input transconductance
+### 3.1 Design targets and sizing flow
+
+The nominal design specification is intentionally tighter than the formal PVT limit. The analytical target is set equal to, or slightly above, the nominal specification; it is not derived from the completed simulation.
+
+| Quantity | Design target | Nominal specification | PVT specification |
+| :--- | ---: | ---: | ---: |
+| Supply, $V_{DD}$ | 3.3 V | 3.3 V | 3.0–3.6 V |
+| Load, $C_L$ | 10 pF | 10 pF | 10 pF |
+| Miller capacitor, $C_c$ | 2.00 pF | 2.00 pF | 2.00 pF |
+| UGF, $f_u$ | 10 MHz | $\ge10$ MHz | $\ge8$ MHz |
+| Phase margin | 65° | $\ge65^\circ$ | $\ge55^\circ$ |
+| DC gain | 92 dB | $\ge92$ dB | $\ge88$ dB |
+| Slew rate, rise/fall | 8/6 V/µs | $\ge8/6$ V/µs | $\ge6.5/5.0$ V/µs |
+| Total current | 1.0 mA | $\le1.0$ mA | $\le1.25$ mA |
+| Bias reference | 40 µA | 40 µA nominal | $40\pm10$ µA |
+
+The 10-MHz nominal UGF target gives 25% margin over the 8-MHz PVT requirement. The implemented nominal result is 12.835 MHz, so the design target remains conservative without overstating the required bandwidth.
+
+Each result becomes the input to the next sizing step:
+
+| Step | Starting requirement | Calculated result | Next design decision |
+| ---: | :--- | :--- | :--- |
+| 1 | Slew rate and 20.046-µA tail current | $C_c\le2.51$ pF | Choose $C_c=2.00$ pF |
+| 2 | $C_c$ and 10-MHz UGF | $g_{m1}=125.7$ µS | Set M1/M2 current and width |
+| 3 | M1/M2 current, $g_m/I_D$, and $J_D$ | $W_{1,calc}=192.1$ µm | Enlarge to 400 µm for noise and matching |
+| 4 | Input-branch current and PMOS $J_D$ | $W_{3,calc}=33.5$ µm | Use 60 µm for matching and final current |
+| 5 | Phase margin, $C_L$, and $C_c$ | $g_{m2,min}=1.617$ mS | Allocate 0.75 mA to stage 2 |
+| 6 | Stage-2 current and current density | $W_{6,calc}=362.8$ µm; $W_{7,calc}=103.6$ µm | Use 400/100 µm |
+| 7 | Implemented $g_{m2}$ and $C_c$ | $1/g_{m2}\approx167\ \Omega$ | Choose 3.8-kΩ $R_z$ for an LHP zero |
+| 8 | Complete transistor and passive network | First-order gain, UGF, PM, and slew estimates | Verify the full loop over PVT and Monte Carlo |
+
+The first dependency is fixed before transistor sizing. The nominal slew target and the mirrored 20.046-µA tail require
+
+$$
+C_c\le\frac{20.046\ \mu\text{A}}{8\ \text{V}/\mu\text{s}}
+=2.51\ \text{pF}.
+$$
+
+Selecting $C_c=2.00$ pF leaves slew margin and becomes the input to the UGF calculation below.
+
+### 3.2 Required input transconductance
 
 The formal 8-MHz requirement needs
 
@@ -159,7 +159,7 @@ g_{m1,target}=2\pi(10\ \text{MHz})(2.00\ \text{pF})
 =125.7\ \mu\text{S}.
 $$
 
-### 3.2 M1/M2 current and width
+### 3.3 M1/M2 current and width
 
 For M1/M2, select $L=4$ µm and $g_m/I_D=20\ \text{V}^{-1}$. The local NMOS table gives $J_D=0.03271\ \mu\text{A}/\mu\text{m}$ and $g_m/g_{ds}=707.60$.
 
@@ -197,7 +197,7 @@ $$
 
 This density is below the printed $g_m/I_D=20\ \text{V}^{-1}$ row. Exact inversion level must therefore come from the final operating point, not extrapolation.
 
-### 3.3 M3/M4 active-load width
+### 3.4 M3/M4 active-load width
 
 Select $L=4$ µm and $g_m/I_D=8\ \text{V}^{-1}$ for the PMOS load. The table gives $J_D=0.1875\ \mu\text{A}/\mu\text{m}$.
 
@@ -209,7 +209,7 @@ $$
 
 The nearest integer is 34 µm. The implemented value is 60 µm per device. The larger area improves M3/M4 matching and accommodates the final branch current. Its added node capacitance is accepted because the simulated nominal UGF remains 12.835 MHz.
 
-### 3.4 M5/M8 mirror sizing
+### 3.5 M5/M8 mirror sizing
 
 Choose $L=2$ µm and a reference current density near $2\ \mu\text{A}/\mu\text{m}$ for the 40-µA bias device:
 
@@ -226,19 +226,6 @@ W_{5,calc}=W_8\frac{20\ \mu\text{A}}{40\ \mu\text{A}}
 $$
 
 Both values are already whole micrometres and are implemented directly. The 2-µm length improves mirror output resistance and current accuracy; the trade-off is more area and drain capacitance.
-
-### 3.5 First-stage size selection
-
-`W_{calc}` follows the target equations. `W_{round}` is the closest whole-micrometre width. `W_{used}=W\times m$ is the schematic value because every listed device uses `nf=1`.
-
-| Devices | Function | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic $W\times m$ (µm) | $W_{used}$ (µm) |
-| :---: | :--- | ---: | ---: | ---: | :---: | ---: |
-| M1/M2 | NMOS input pair | 4.0 | 192.1 | 192 | $100\times4$ | 400 |
-| M3/M4 | PMOS active load | 4.0 | 33.5 | 34 | $30\times2$ | 60 |
-| M5 | NMOS tail source | 2.0 | 10.0 | 10 | $10\times1$ | 10 |
-| M8 | NMOS bias reference | 2.0 | 20.0 | 20 | $20\times1$ | 20 |
-
-The $L=4$ µm input and load devices were chosen because the local lookup tables show higher $g_m/g_{ds}$ at longer length. This improves first-stage gain and matching, but reduces $f_T$ and increases area. M5/M8 use $L=2$ µm to improve current-source output resistance without the large area of a 4-µm mirror. A current density near 2 µA/µm gives $W_8\approx40/2=20$ µm; the 1:2 width ratio then gives $W_5=10$ µm and approximately 20 µA tail current.
 
 ### 3.6 First-stage gain estimate
 
@@ -261,7 +248,7 @@ A_1\approx\frac{125.7}{0.178+0.0249}
 =620.5\ \text{V/V}=55.86\ \text{dB}.
 $$
 
-## 4. Second-stage and compensation calculation
+## 4. Output-stage and compensation calculation
 
 ### 4.1 Transconductance and current
 
@@ -374,9 +361,9 @@ The mirrored 20.046-µA tail predicts $SR\approx10.02$ V/µs. The 10-pF output l
 
 ### 4.6 Complete component-size audit
 
-Choosing 2 pF preserves the slew margin established in Section 2.1 while providing pole splitting. A larger capacitor improves robustness but reduces UGF and slew rate; a smaller capacitor saves area but raises the crossover frequency and stability risk.
+Choosing 2 pF preserves the slew margin established in Section 3.1 while providing pole splitting. A larger capacitor improves robustness but reduces UGF and slew rate; a smaller capacitor saves area but raises the crossover frequency and stability risk.
 
-| Component | Role | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
+| Component(s) | Role | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
 | :---: | :--- | ---: | ---: | ---: | :---: | ---: |
 | M1/M2 | Input transconductance, noise, matching | 4.0 | 192.1 | 192 | $100\ \mu\text{m}\times m4$ | $W_{eff}=400$ µm |
 | M3/M4 | First-stage active load | 4.0 | 33.5 | 34 | $30\ \mu\text{m}\times m2$ | $W_{eff}=60$ µm |
@@ -389,7 +376,7 @@ Choosing 2 pF preserves the slew margin established in Section 2.1 while providi
 
 The passive geometries are calculated directly from the process densities:
 
-| Component | Calculation | Calculated geometry | Implemented geometry |
+| Component(s) | Calculation | Calculated geometry | Implemented geometry |
 | :---: | :--- | :---: | :---: |
 | $C_c$ | $A=C/2\ \text{fF}/\mu\text{m}^2=1000\ \mu\text{m}^2$ | Square side $31.623$ µm | $31.623\times31.623$ µm |
 | $R_z$ | $N_\square=3.8\text{k}/2\text{k}=1.9$; choose $W=4$ µm | $L=1.9(4)=7.6$ µm | $W/L=4/7.6$ µm |
@@ -454,7 +441,7 @@ Integrated input noise is 1.873 µVrms nominal and 2.189 µVrms worst case over 
 
 ![SEOTA input-referred noise](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.input_referred_noise_density.png)
 
-### 5.3 Closed-loop range
+### 5.3 Input and output range
 
 At nominal conditions, the usable input range is 0.106–3.237 V and the output range is 0.108–3.235 V. Every headroom limit passes across PVT.
 

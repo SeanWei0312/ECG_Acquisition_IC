@@ -27,6 +27,8 @@ The top-level schematic shows the FDC, output common-mode sensor, and CMFB loop 
 
 The supplied FDC and CMFB worksheets provided a useful sequence, but several assumptions did not match the implemented circuits. The FDC uses 2.5-pF compensation per side and 0.5-µm output devices, not the worksheet's 2-pF and 1-µm values. The CMFB amplifier is a single-stage error amplifier, not a two-stage Miller OTA. The calculations below use the implemented topologies and dimensions.
 
+### 2.1 Governing equations
+
 The core $g_m/I_D$ relations are [Silveira, Flandre, and Jespers](https://people.engr.tamu.edu/spalermo/ecen474/gm_ID_methodology_silveira_jssc_1996.pdf):
 
 $$
@@ -98,13 +100,13 @@ PMOS intrinsic gain rises from 48.34 to 67.40 dB over the same length range.
 
 These tables guide sizing; they do not replace final-hierarchy operating-point data. Exact device $g_m/I_D$ depends on its in-circuit terminal and body voltages.
 
-## 3. Fully differential core
+## 3. FDC core
 
 The FDC schematic shows the symmetric signal paths and the matched compensation networks.
 
 ![FDC circuit schematic](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/FDC/FDC.png>)
 
-### 3.1 FDC design targets
+### 3.1 Design targets and sizing flow
 
 The nominal specification is the design-stage target. The PVT specification is the formal 45-corner signoff limit.
 
@@ -147,7 +149,7 @@ $$
 
 Selecting 2.50 pF per side leaves slew margin and becomes the input to the UGF calculation below.
 
-### 3.2 M1/M2 input-pair calculation
+### 3.2 Required input transconductance
 
 The formal UGF requirement gives
 
@@ -162,6 +164,8 @@ $$
 g_{m1,target}=2\pi(10\ \text{MHz})(2.50\ \text{pF})
 =157.1\ \mu\text{S}.
 $$
+
+### 3.3 M1/M2 current and width
 
 Select $L=2$ µm and $g_m/I_D=20\ \text{V}^{-1}$. The NMOS table gives $J_D=0.07476\ \mu\text{A}/\mu\text{m}$ and $g_m/g_{ds}=510.58$.
 
@@ -184,7 +188,7 @@ $$
 
 The implemented $W_{eff}=200$ µm reduces flicker noise and mismatch and lowers current density, which supports higher transconductance efficiency at the final branch current. The trade-offs are increased input capacitance, first-stage-node capacitance, area, and potentially lower high-frequency pole locations. The 14.576-MHz nominal UGF confirms adequate bandwidth, while the 3.083-µVrms nominal and 3.513-µVrms worst-PVT noise results remain below the 4-µVrms limit.
 
-### 3.3 M3/M4 active-load calculation
+### 3.4 M3/M4 active-load width
 
 For the CMFB-controlled PMOS loads, select $L=2$ µm and $g_m/I_D=16\ \text{V}^{-1}$. The table gives $J_D=0.05669\ \mu\text{A}/\mu\text{m}$.
 
@@ -196,7 +200,7 @@ $$
 
 The nearest integer is 139 µm. The implemented value is 200 µm per device. The added area improves matching between the two CMFB-controlled loads and supports the final branch current.
 
-### 3.4 M5/M10 mirror sizing
+### 3.5 M5/M10 mirror sizing
 
 Choose $L=2$ µm and a reference current density near $2\ \mu\text{A}/\mu\text{m}$:
 
@@ -214,7 +218,7 @@ $$
 
 The implemented 20- and 10-µm widths preserve this 2:1 ratio. The 2-µm length improves current-source output resistance; the trade-off is additional area and capacitance.
 
-### 3.5 First-stage gain estimate
+### 3.6 First-stage gain estimate
 
 At the selected lookup points,
 
@@ -236,7 +240,9 @@ A_1\approx\frac{157.1}{0.308+0.0781}
 =407.2\ \text{V/V}=52.20\ \text{dB}.
 $$
 
-### 3.6 Output-stage calculation
+## 4. Output-stage and compensation calculation
+
+### 4.1 Transconductance and current
 
 For the 65° nominal design target,
 
@@ -279,6 +285,8 @@ $$
 
 These values round directly to the implemented 500-µm PMOS and 100-µm NMOS devices.
 
+### 4.2 Gain estimate
+
 Using interpolated intrinsic gains gives
 
 $$
@@ -292,7 +300,7 @@ A_0\approx(407.2)(111.3)=4.533\times10^4\ \text{V/V}
 =93.13\ \text{dB}.
 $$
 
-### 3.7 Compensation and slew-rate check
+### 4.3 Pole and phase-margin estimate
 
 The non-dominant-pole estimate is
 
@@ -306,6 +314,8 @@ PM_{2pole}\approx90^\circ-\tan^{-1}\left(\frac{10}{24.53}\right)
 =67.82^\circ.
 $$
 
+### 4.4 Nulling resistors
+
 For a series nulling resistor, the signed zero is [Geiger, Allen, and Strader, Chapter 6](https://class.ece.iastate.edu/ee508/GAS_book/chap6.pdf)
 
 $$
@@ -313,6 +323,8 @@ $$
 $$
 
 $1/g_{mP}\approx153\ \Omega$. The implemented $R_z\approx3.5$ kΩ gives $f_z\approx-19.0$ MHz; the negative sign denotes a left-half-plane zero. The final value is simulation-tuned, following the compensation principles established by [Ahuja](https://doi.org/10.1109/JSSC.1983.1052012).
+
+### 4.5 Slew-rate check
 
 The classical Miller slew estimate is [Johns and Martin, Chapter 6](https://www.d.umn.edu/~htang/ECE5211_doc_files/ECE5211_files/Chapter6.pdf)
 
@@ -336,11 +348,11 @@ Thus 2.5 pF provides stability margin without consuming all of the slew budget. 
 
 Rz1 and Rz2 are also identical. Each poly resistor has $L/W=7/4=1.75$ squares, giving approximately 3.5 kΩ with a 2-kΩ/square layer. The matched pair places the two compensation zeros at the same frequency. The value is larger than $1/g_{mP}$, so the first-order zero is in the left half-plane; transistor-level loop simulation confirms 77.135° nominal phase margin.
 
-### 3.8 Complete FDC size audit
+### 4.6 Complete component-size audit
 
 `W_{calc}` is obtained from the preceding current-density calculation or from the fixed mirror ratio. `W_{round}` is the closest whole-micrometre width. `W_{used}=W\times m$ because the listed devices use `nf=1`.
 
-| Components | Function | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
+| Component(s) | Function | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
 | :---: | :--- | ---: | ---: | ---: | :---: | ---: |
 | M1/M2 | NMOS input pair | 2.0 | 105.1 | 105 | $100\ \mu\text{m}\times m2$ | $W_{eff}=200$ µm |
 | M3/M4 | PMOS CMFB-controlled loads | 2.0 | 138.5 | 139 | $50\ \mu\text{m}\times m4$ | $W_{eff}=200$ µm |
@@ -353,25 +365,25 @@ Rz1 and Rz2 are also identical. Each poly resistor has $L/W=7/4=1.75$ squares, g
 
 The passive calculations and implemented geometries are:
 
-| Components | Calculation | Calculated geometry | Implemented geometry |
+| Component(s) | Calculation | Calculated geometry | Implemented geometry |
 | :---: | :--- | :---: | :---: |
 | Cc1/Cc2 | $A=2.5\text{pF}/(2\text{fF}/\mu\text{m}^2)=1250\ \mu\text{m}^2$ | Square side $35.355$ µm | $35.36\times35.36$ µm each |
 | Rz1/Rz2 | $N_\square=3.5\text{k}/2\text{k}=1.75$; choose $W=4$ µm | $L=1.75(4)=7.0$ µm | $W/L=4/7$ µm each |
 
 M1/M2 and M3/M4 use $L=2$ µm for higher intrinsic gain and matching than minimum-length devices, while retaining more speed than a 4-µm choice. Their final widths are larger than the first-pass result to improve noise and matching. M5/M10 use the same 1:2 mirror rule as the SEOTA. The 0.5-µm output devices trade intrinsic gain for current density and speed; their calculated and implemented widths agree within 0.1%. The matched Cc/Rz branches preserve differential symmetry. Square MIM capacitors avoid unequal orientation and aspect-ratio effects; the 4-µm resistor width reduces current density and mismatch at the cost of area.
 
-### 3.9 Estimate-to-simulation comparison
+### 4.7 Estimate-to-simulation comparison
 
-| Metric | First-order estimate | FDC nominal simulation | Integrated nominal | Specification |
-| :--- | ---: | ---: | ---: | ---: |
-| DC gain | 93.13 dB | 93.377 dB | 92.064 dB | $\ge85$ dB |
-| UGF | 10 MHz sizing target | 14.571 MHz | 14.576 MHz | $\ge8$ MHz |
-| Phase margin | 67.82° two-pole screen | 77.084° | 77.135° | $\ge60^\circ$ |
-| Slew rate | 8.02 V/µs | — | 7.204 V/µs | $\ge4$ V/µs |
+| Metric | First-order estimate | Nominal simulation | Specification |
+| :--- | ---: | ---: | ---: |
+| DC gain | 93.13 dB | 92.064 dB | $\ge85$ dB |
+| UGF | 10 MHz sizing target | 14.576 MHz | $\ge8$ MHz |
+| Phase margin | 67.82° two-pole screen | 77.135° | $\ge60^\circ$ |
+| Slew rate | 8.02 V/µs | 7.204 V/µs | $\ge4$ V/µs |
 
 The gain estimate is within 1.07 dB of the integrated result, and the slew estimate is within 11.3%. The nominal UGF exceeds its 10-MHz target. The 67.82° two-pole result is conservative because it excludes the intended LHP zeros. At the 14.576-MHz simulated crossover, a 19.0-MHz LHP zero provides about 37.5° of lead; internal poles remove part of that lead, yielding 77.135°. The full transistor-level return ratio is therefore used for signoff. Output swing is not signed off with the square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ because it omits body effect, real saturation voltage, and terminal-voltage dependence.
 
-### 3.10 Nominal block verification
+### 4.8 Nominal FDC verification
 
 | Metric | Nominal result |
 | :--- | ---: |
@@ -412,13 +424,13 @@ With CMFB open, a differential step creates a 2.383-V common-mode excursion. The
 
 ![FDC differential-step common-mode disturbance](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.diff_step_cm_disturbance.png)
 
-## 4. Common-mode feedback block
+## 5. Common-mode feedback block
 
 The CMFB schematic shows the error amplifier that converts sensed common-mode error into the `VCMFB` control voltage.
 
 ![CMFB circuit schematic](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/CMFB/CMFB.png>)
 
-### 4.1 CMFB requirements and design sequence
+### 5.1 Design targets and sizing flow
 
 The CMFB signoff requirements are an output common-mode error within ±25 mV and integrated settling within 1 µs. For a first-order 1% response,
 
@@ -460,7 +472,7 @@ Each result becomes the input to the next sizing step:
 | 7 | Sensor loading and symmetry | 100-kΩ R1/R2; 50-fF C1/C2 | Use matched geometries |
 | 8 | Complete FDC, sensor, and CMFB | Common-mode return ratio and transient response | Sign off PVT and Monte Carlo |
 
-### 4.2 Input-pair sizing
+### 5.2 Input-pair sizing
 
 The fixed 40-µA tail gives 19.912 µA per input branch. Select $L=1$ µm and $g_m/I_D=12\ \text{V}^{-1}$ for high transconductance efficiency with more speed and less area than a 2-µm device. The NMOS table gives $J_D=1.404\ \mu\text{A}/\mu\text{m}$, so
 
@@ -498,7 +510,7 @@ $$
 
 Both widths are implemented directly. Equal $W/L$ copies the reference current 1:1; the 2-µm length reduces current error from channel-length modulation.
 
-### 4.3 PMOS-load sizing
+### 5.3 PMOS-load sizing
 
 At $L=1$ µm and $g_m/I_D\approx17\ \text{V}^{-1}$, the PMOS table gives $J_D=0.09658\ \mu\text{A}/\mu\text{m}$.
 
@@ -512,7 +524,7 @@ The implemented $W_{eff}=205.5$ µm matches the lookup result.
 
 The $L=1$ µm choice for M1–M4 is a gain-speed compromise. The lookup tables show materially more intrinsic gain than at 0.5 µm, while retaining much higher $f_T$ and lower area than a 2-µm choice. M3/M4 are made large because their low PMOS current density at $g_m/I_D\approx17$ requires about 206 µm and because mismatch directly appears as CMFB offset.
 
-### 4.4 Gain estimate
+### 5.4 Gain estimate
 
 Interpolating the lookup-table intrinsic gains gives $g_m/g_{ds}\approx392.5$ for M1/M2 and 878.8 for M3/M4. Therefore
 
@@ -535,7 +547,7 @@ A_{CMFB}\approx\frac{244.2}{0.622+0.385}
 =242.5\ \text{V/V}=47.69\ \text{dB}.
 $$
 
-### 4.5 Testbench and loop interpretation
+### 5.5 Testbench and loop interpretation
 
 The standalone open-loop test does not measure the raw error amplifier. It connects a 10-pF capacitor to `CMFB_OUT`, adds an ideal common-mode plant with `PLANT_GAIN=500`, and writes
 
@@ -543,7 +555,7 @@ $$
 T_{CM}(s)=\frac{V_{OUTCM}(s)}{V_{CMFB,REF}(s)-V_{CMFB,IN}(s)}.
 $$
 
-Therefore 45.137 dB, 967.213 MHz, and 71.900° are metrics of that ideal-plant loop. They must not be inserted into $g_m/(2\pi C)$ as if 967.213 MHz were the isolated amplifier UGF. The 3.89-MHz output-pole reference from Section 4.2 is the valid first-order device-sizing check.
+Therefore 45.137 dB, 967.213 MHz, and 71.900° are metrics of that ideal-plant loop. They must not be inserted into $g_m/(2\pi C)$ as if 967.213 MHz were the isolated amplifier UGF. The 3.89-MHz output-pole reference from Section 5.2 is the valid first-order device-sizing check.
 
 The ideal-plant closed-loop test settles in 5.2 ns. The integrated transistor-level FDOTA settles its common-mode loop in 309.737 ns nominally and 418.338 ns at the worst PVT corner. These correspond to first-order equivalent bandwidths of
 
@@ -557,7 +569,7 @@ $$
 
 Both exceed the formal 0.733-MHz minimum. The nominal value also exceeds the 1.83-MHz design target. This is the relevant estimate-to-simulation check because it includes the actual FDC plant and sensor.
 
-### 4.6 Sensor and complete size audit
+### 5.6 Complete component-size audit
 
 The matched approximately 100-kΩ sensor resistors produce
 
@@ -567,7 +579,7 @@ $$
 
 Matched 50-fF capacitors preserve high-frequency symmetry. Resistor and capacitor mismatch would convert differential output into common-mode error, consistent with the CMFB mismatch sensitivity described by [Bult and Geelen](https://doi.org/10.1109/ISCAS.1990.112716).
 
-| Components | Function | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
+| Component(s) | Function | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
 | :---: | :--- | ---: | ---: | ---: | :---: | ---: |
 | M1/M2 | NMOS error input pair | 1.0 | 14.18 | 14 | $15\ \mu\text{m}\times m1$ | $W_{eff}=15$ µm |
 | M3/M4 | PMOS active load | 1.0 | 206.2 | 206 | $41.1\ \mu\text{m}\times m5$ | $W_{eff}=205.5$ µm |
@@ -578,26 +590,25 @@ Matched 50-fF capacitors preserve high-frequency symmetry. Resistor and capacito
 
 The sensor geometries are calculated from the process sheet resistance and MIM density:
 
-| Components | Calculation | Calculated geometry | Implemented geometry |
+| Component(s) | Calculation | Calculated geometry | Implemented geometry |
 | :---: | :--- | :---: | :---: |
 | R1/R2 | $N_\square=100\text{k}/2\text{k}=50$; choose $W=2$ µm | $L=50(2)=100$ µm | $W/L=2/100$ µm each |
 | C1/C2 | $A=50\text{fF}/(2\text{fF}/\mu\text{m}^2)=25\ \mu\text{m}^2$ | Square side $5$ µm | $5\times5$ µm each |
 
 M5 and M10 use equal $W/L$, so the 40-µA reference is copied 1:1 into the CMFB tail. Their $L=2$ µm reduces mirror channel-length modulation; the trade-off is area and parasitic capacitance. R1/R2 use $100/2=50$ squares of 2-kΩ/square poly. The 2-µm width balances matching area against parasitic capacitance. The large 100-kΩ value minimizes differential-output loading, while a still larger value would increase thermal noise and parasitic sensitivity. C1/C2 use square $5\times5$-µm MIM geometries, giving 25 µm² at 2 fF/µm². The square form supports matched orientation. Each 50-fF capacitor is only 0.125% of the verified 40-pF load per FDOTA output, so symmetry is improved without materially reducing bandwidth. Lower sensor capacitance supports GBW and slew rate, consistent with the continuous-time CMFB trade-off reported by [Hernandez-Garduno and Silva-Martinez](https://doi.org/10.1109/JSSC.2005.852047).
 
-### 4.7 Estimate-to-simulation comparison
+### 5.7 Estimate-to-simulation comparison
 
-| Metric | First-order estimate | Ideal-plant loop test | Integrated result |
+| Metric | First-order estimate | Nominal simulation | Specification |
 | :--- | ---: | ---: | ---: |
-| Intrinsic error-amplifier gain | 47.69 dB | Not isolated | CM error −0.134 mV |
-| Error-amplifier output-pole reference | 3.89 MHz into 10 pF | Not isolated | Full loop required |
-| Common-mode loop gain / UGF / PM | Full loop required | 45.137 dB / 967.213 MHz / 71.900° | Full transistor plant used for signoff |
-| Settling | 400-ns target | 5.2 ns | 309.737 ns |
-| Equivalent settling bandwidth | 1.83-MHz target | Ideal plant | 2.36 MHz |
+| Intrinsic error-amplifier gain | 47.69 dB | Not isolated | $\ge40$ dB internal check |
+| Error-amplifier output-pole reference | 3.89 MHz into 10 pF | Not isolated | $\ge1.83$ MHz design target |
+| Integrated settling | 400-ns design target | 309.737 ns | $\le400$ ns nominal |
+| Equivalent settling bandwidth | 1.83-MHz design target | 2.36 MHz | $\ge1.83$ MHz nominal |
 
-The intrinsic 47.69-dB gain estimate and the ideal-plant 45.137-dB return ratio are not one-to-one quantities; their numerical proximity is not used as validation. The causal validation is the integrated 309.737-ns settling result versus the 400-ns design target, followed by the 418.338-ns worst-corner result versus the 1-µs specification.
+The intrinsic 47.69-dB gain estimate and the ideal-plant 45.137-dB return ratio are not one-to-one quantities; their numerical proximity is not used as validation. The ideal-plant loop metrics are reported separately in Section 5.8. The causal validation is the integrated 309.737-ns settling result versus the 400-ns design target, followed by the 418.338-ns worst-corner result versus the 1-µs specification.
 
-### 4.8 Nominal block verification
+### 5.8 Nominal CMFB verification
 
 | Metric | Nominal result |
 | :--- | ---: |
@@ -621,7 +632,7 @@ Both closed-loop CMFB transitions settle in 5.2 ns.
 
 ![CMFB closed-loop transient response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Plots/NOM.cl_tran.png)
 
-## 5. Integrated FDOTA verification
+## 6. Integrated FDOTA verification
 
 All 45 process, supply, and temperature corners pass.
 
@@ -647,7 +658,7 @@ All 45 process, supply, and temperature corners pass.
 | CMFB slew, rise / fall | ≥2 / 2 V/µs | 3.555 / 3.496 V/µs | 2.473 / 2.576 V/µs | `SSVLTL` / `SSVLTH` |
 | CMFB settling | ≤1000 ns | 309.737 ns | 418.338 ns | `SSVLTH` |
 
-### 5.1 Open-loop response
+### 6.1 Open-loop response
 
 Nominal gain is 92.064 dB, UGF is 14.576 MHz, and phase margin is 77.135°. Full-PVT minima are 90.321 dB, 9.409 MHz, and 69.170°.
 
@@ -657,7 +668,7 @@ The deterministic input offset is below reporting resolution because the PVT mod
 
 ![FDOTA open-loop VTC](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.open_loop_vtc.png)
 
-### 5.2 Rejection and noise
+### 6.2 Rejection and noise
 
 Nominal CMRR is 310.521 dB at 60 Hz and 310.557 dB at 150 Hz. The full-PVT minimum is 228.347 dB at both frequencies.
 
@@ -673,7 +684,7 @@ Integrated input noise is 3.083 µVrms nominal and 3.513 µVrms worst case over 
 
 ![FDOTA input-referred noise](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.input_referred_noise_density.png)
 
-### 5.3 Input and output range
+### 6.3 Input and output range
 
 The nominal input common-mode range is 0.870–3.300 V. Across PVT, the limiting low and high values are 0.975 V and 2.945 V.
 
@@ -683,7 +694,7 @@ Nominal differential swing is ±3.248 V, with ±2.898 V available at the limitin
 
 ![FDOTA output swing and closed-loop VTC](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
 
-### 5.4 Transient response
+### 6.4 Transient response
 
 Nominal differential slew rate is 7.204 V/µs and settling time is 175.868 ns. Worst-case values are 5.096 V/µs and 246.550 ns.
 
@@ -697,7 +708,7 @@ The integrated CMFB response settles in 309.737 ns nominal and 418.338 ns worst 
 
 ![FDOTA output common-mode transient](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.output_cm_transient.png)
 
-## 6. Monte Carlo verification
+## 7. Monte Carlo verification
 
 MM applies local mismatch, GL applies global variation, and FULL combines both. All 600 runs are valid and pass the joint limits.
 
@@ -733,7 +744,7 @@ FULL-MC gain error has a −0.002505% mean and spans −0.00277% to −0.00224%.
 
 ![FDOTA MC gain error](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_06_Gain_Error_Histogram.png)
 
-## 7. References and generated artifacts
+## 8. References and generated artifacts
 
 ### Design-method references
 
@@ -762,6 +773,6 @@ FULL-MC gain error has a −0.002505% mean and spans −0.00277% to −0.00224%.
 - [FDC block summary](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.FDC_summary.csv)
 - [CMFB block summary](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.CMFB_summary.csv)
 
-## 8. Scope
+## 9. Scope
 
 These are schematic-level results. Layout parasitics, package effects, extracted verification, and measured-silicon behavior are not included.
