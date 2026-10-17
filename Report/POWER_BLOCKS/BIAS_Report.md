@@ -1,4 +1,4 @@
-# BIAS and Mirror Verification Report
+# BIAS and Mirror Design and Verification Report
 
 [← Project report](../../Project_Report.md)
 
@@ -13,6 +13,85 @@ The master bias core and current mirror provide the reference and distributed bi
 [MIRROR schematic](../../Design_Files/IC%20Design/Schematic/POWER_BLOCKS/MIRROR/MIRROR.sch)
 
 ![MIRROR](../../Design_Files/IC%20Design/Schematic/POWER_BLOCKS/MIRROR/MIRROR.png)
+
+## Design requirements and sequence
+
+The design starts from a 40-µA reference shared by the amplifier bias mirrors. The accepted current range is 30–50 µA. Mirror error must remain within ±1%, and the startup device must turn off after initialization.
+
+The following sequence reconstructs the implemented design from its topology and dimensions. It is not a record of the original optimization history. A transistor geometry without a unique analytical solution is identified as a design choice, not presented as a calculated optimum.
+
+### 1. Generate a current without an external precision voltage
+
+MP1/MP2 form a nominally equal-current PMOS mirror. Q1/Q2 use emitter-area multiplicities of 1 and 30. Equal emitter currents therefore produce an approximate junction-voltage difference
+
+$$
+\Delta V_{EB}=V_T\ln(30),\qquad
+V_T=\frac{kT}{q}=25.865\ \mathrm{mV}\quad(27^\circ\mathrm C),
+$$
+
+$$
+\Delta V_{EB}\approx87.97\ \mathrm{mV}.
+$$
+
+The junction exponential law supplies the voltage difference. The MOS/BJT loop, not the area ratio alone, establishes the current. Base currents, finite output resistance, and unequal branch currents are neglected in this first-order expression.
+
+### 2. Include the unequal NMOS pair before choosing RS
+
+MN1 and MN2 share a gate voltage but have different widths. Kirchhoff's voltage law around their source paths gives
+
+$$
+I_{RS}R_S=\Delta V_{EB}+V_{GS1}-V_{GS2}.
+$$
+
+MN1 has \(W/L=24/4\), versus \(16/4\) for MN2. At equal current, the wider device generally requires less overdrive. Its negative \(V_{GS1}-V_{GS2}\) reduces the voltage across RS.
+
+Consequently, using \(R_S=\Delta V_{EB}/40\,\mu\mathrm A=2.20\ \mathrm{k\Omega}\) would be incorrect for this implemented topology. The NMOS body effect and operating-point voltages must remain in the calculation.
+
+### 3. Translate the current-setting resistance into geometry
+
+RS is an n-well resistor with drawn \(W=3\) µm and \(L=1.52\) µm. The installed typical model includes a body resistor and two terminal resistors. Its nominal geometry corrections give
+
+$$
+W_{\mathrm{eff}}=3-2(0.222)=2.556\ \mu\mathrm m,
+\qquad
+L_{\mathrm{eff}}=1.52-2(0.0102)=1.4996\ \mu\mathrm m.
+$$
+
+At 27°C, including the separate body and terminal temperature factors,
+
+$$
+R_S\approx
+\frac{1000(1.00461)(1.4996)+2(250)(1.00348)}
+{2.556}
+=785.7\ \Omega.
+$$
+
+The 40-µA target then requires approximately 31.43 mV across RS. The loop equation implies \(V_{GS1}-V_{GS2}\approx-56.54\) mV. This is a consistency requirement, not an independently exported MOS operating-point measurement.
+
+The simple drawn rectangle would predict only 506.7 Ω. This difference explains why sheet resistance alone cannot justify the final short-resistor length. The PDK explicitly models separate body/end resistances and substrate capacitance. [GF180 resistor models](https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/LV/LV_4.html)
+
+### 4. Set transistor ratios, matching area, and startup strength
+
+| Devices | Implemented size | Reason for W and L | Main trade-off |
+| :--- | :--- | :--- | :--- |
+| MP1/MP2 | W/L = 16/4 µm, m = 1 | Equal geometry establishes a 1:1 reference mirror; long L reduces drain-voltage sensitivity | More gate area and startup capacitance than minimum-length devices |
+| MN1/MN2 | W/L = 24/4 and 16/4 µm | The 1.5 width ratio creates the required MOS voltage difference; equal long L limits unequal channel-length effects | Current also depends on MOS parameters and body effect |
+| Q1/Q2 | Same PNP unit, m = 1/30 | An integer area ratio of 30 creates the junction-voltage difference | Larger ratio increases area and junction capacitance |
+| MST | W/L = 0.5/10 µm | A narrow, long device weakly couples the startup nodes and suppresses steady-state leakage | Too weak can delay startup; too strong perturbs the established reference |
+| RS | W/L = 3/1.52 µm | Model-corrected resistance closes the MOS/BJT current equation | Well resistance and temperature variation move the reference current |
+| All MIRROR outputs | W/L = 16/4 µm, m = 1 | Match the master PMOS dimensions for nominal 1:1 current copies | Different drain voltages still cause mirror error |
+
+The 16-µm PMOS width corresponds to a nominal current density of \(40/16=2.5\) µA/µm. This is an implemented operating choice, not a separately recovered lookup-table optimum. Wider devices improve matching but increase distribution-node capacitance.
+
+No unique calculated integer W/L can be recovered from the exported branch-current summaries alone. Those summaries do not contain the complete \(g_m/I_D\), \(g_{ds}\), and terminal-bias data needed to reproduce every MOS sizing decision.
+
+### 5. Compare the intended current with the measured reference
+
+The reference target is 40 µA; nominal simulation gives 40.018 µA, a +0.045% difference. The complete DC grid spans 31.071–49.466 µA. The high-current limit has only 0.534 µA margin.
+
+Mirror error reaches 0.149% in deterministic DC sweeps and remains below ±1% in the sampled MC results. This supports the matched long-channel mirror choice, but does not establish mismatch yield at every PVT extreme.
+
+Startup succeeds in all 45 tested cases. The worst startup time is 3.702 ms under the tested supply ramp. MST's minimum reported turn-off margin is 0.742 V. These validate initialization and turn-off for that stimulus, not for every possible supply-ramp shape.
 
 ## Verification conditions
 

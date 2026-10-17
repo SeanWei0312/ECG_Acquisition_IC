@@ -1,4 +1,4 @@
-# FDBUF Verification Report
+# FDBUF Design and Verification Report
 
 [← Project report](../../Project_Report.md)
 
@@ -9,6 +9,97 @@ The unity-gain differential buffer is verified at 40, 60, 80, and 100 pF per out
 [Circuit schematic](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FDBUF/FDBUF.sch)
 
 ![FDBUF](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FDBUF/FDBUF.png)
+
+## Design requirements and sequence
+
+The buffer must reproduce the differential input with unity gain while driving 40, 60, 80, or 100 pF per output. CL60 is the nominal load. Gain error is limited to ±1%; 0.05% settling must complete within 1 µs.
+
+Bandwidth and overshoot are diagnostic quantities, not independent pass/fail requirements. The following estimates explain the implemented resistive feedback and capacitive-load choices.
+
+### 1. Reuse the FDOTA rather than add another gain stage
+
+The input/output common mode is centered on REF. A closed-loop differential stage isolates the preceding PGA from the output capacitance while retaining common-mode regulation.
+
+Its transistor dimensions, input-pair noise sizing, output-stage current, Miller capacitors, and nulling resistors are inherited from the [FDOTA design](../ANALOG_BLOCKS/FDOTA_Report.md). They are not independently resized for FDBUF.
+
+### 2. Choose equal input and feedback resistors
+
+For matched fully differential feedback,
+
+$$
+G_d\approx\frac{R_F}{R_{\mathrm{IN}}}=1.
+$$
+
+Choose 20 kΩ for all four resistors. At 2 kΩ/square and W = 2 µm,
+
+$$
+L_{\mathrm{calc}}=\frac{20\ \mathrm{k\Omega}}{2\ \mathrm{k\Omega}}
+(2\ \mu\mathrm m)=20\ \mu\mathrm m.
+$$
+
+| Components | Calculated W/L | Integer choice | Implemented W/L |
+| :--- | :--- | :--- | :--- |
+| RINP/RINN | 2/20 µm | 2/20 µm | 2/20 µm |
+| RFBP/RFBN | 2/20 µm | 2/20 µm | 2/20 µm |
+
+Equal geometry cancels much of the common process/temperature dependence in the gain ratio. Absolute model corrections can move both resistance values without changing the ideal ratio.
+
+The 2-µm width is an area/matching compromise. Larger equal resistors reduce amplifier current loading but increase thermal noise and parasitic time constants. Smaller resistors reduce noise and node impedance but demand more signal current.
+
+### 3. Distinguish unity signal gain from feedback noise gain
+
+Although signal gain is one, the approximate differential noise gain is
+
+$$
+NG\approx1+\frac{R_F}{R_{\mathrm{IN}}}=2,\qquad\beta\approx\frac12.
+$$
+
+With nominal integrated FDOTA open-loop gain of 92.064 dB,
+
+$$
+A_0=10^{92.064/20}\approx4.01\times10^4,
+\qquad
+\epsilon_G\approx-\frac{NG}{A_0}100\%\approx-0.0050\%.
+$$
+
+The buffer's measured nominal gain error is −0.008%. The same order of magnitude supports finite loop gain as a useful first estimate. The complete simulated circuit, including the selector and load, remains the accuracy check.
+
+Using the nominal FDOTA UGF of 14.586 MHz gives a one-pole bandwidth scale of \(UGF/NG\approx7.29\) MHz. This is not a prediction for every load: load-dependent poles, zeros, and peaking alter the actual response. [TI fully differential feedback theory](https://www.ti.com/lit/pdf/SLOA054)
+
+### 4. Translate the load sweep into required transient charge
+
+A 100-mV differential step centered at fixed common mode moves each output by approximately 50 mV. Hence
+
+$$
+\Delta Q_{\mathrm{side}}=C_L(50\ \mathrm{mV})
+=\{2,\ 3,\ 4,\ 5\}\ \mathrm{pC}.
+$$
+
+Delivering that charge in 1 µs requires only 2–5 µA average per output. This is a lower-bound charge calculation, not sufficient proof of 0.05% settling. Recovery, loop damping, and time-varying available current determine the actual result.
+
+The 40/60/80/100-pF capacitors are test loads, not four on-chip capacitors requiring layout W/L. They represent a load envelope; no SAR acquisition-time requirement is inferred.
+
+### 5. Calculate settling internally and retain the loaded output waveform
+
+For an ideal first-order response,
+
+$$
+e^{-2\pi BWt}\le0.0005
+\quad\Rightarrow\quad
+t_{0.05\%}\approx\frac{1.210}{BW}.
+$$
+
+At the measured CL60 bandwidth of 8.437 MHz, this predicts approximately 0.143 µs. Simulation instead gives 0.319 µs because the loaded response is not a single monotonic pole.
+
+The analyzer checks that the normalized response enters and remains within ±0.05% during the analyzed plateau. Overshoot alone cannot determine that time.
+
+### 6. Compare load dependence with the design expectation
+
+Nominal settling times are 0.225, 0.319, 0.364, and 0.399 µs for CL40/60/80/100. Worst PVT values are 0.282, 0.360, 0.432, and 0.514 µs, respectively.
+
+Increasing load slows the response and increases the damping challenge. CL100 is therefore the principal transient stress case, not a different gain setting. Its worst settling time remains below 1 µs.
+
+The output selector reuses MUXD. Its switch sizing follows the shared transmission-gate implementation; the selected OUT waveform, rather than the unloaded internal buffer output alone, is needed to assess delivered settling.
 
 ## Verification conditions
 

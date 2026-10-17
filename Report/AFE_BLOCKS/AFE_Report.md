@@ -1,4 +1,4 @@
-# Integrated AFE Verification Report
+# Integrated AFE Design and Verification Report
 
 [← System-level project report](../../Project_Report.md)
 
@@ -20,6 +20,81 @@ Electrode input → INA + RLD → LPF → PGA → FDBUF
 | FDBUF | Unity-gain differential output driver | [FDBUF report](FDBUF_Report.md) |
 
 The programmed signal-path gain is nominally 480, 960, 1920, or 3840 V/V at the FDBUF output.
+
+## System design sequence
+
+The integrated AFE is assembled from verified amplifier and signal-conditioning blocks. The following calculations define the architecture and expected signal levels; they are not measured full-chain results.
+
+### 1. Allocate gain before selecting programmable range
+
+The fixed input gain is 240 V/V. Keep the LPF and output buffer at unity gain, then place the selectable gain after the LPF:
+
+$$
+G_{\mathrm{AFE}}=G_{\mathrm{INA}}G_{\mathrm{LPF}}G_{\mathrm{PGA}}G_{\mathrm{BUF}}
+=240(1)\{2,4,8,16\}(1).
+$$
+
+| PGA gain | Planned AFE gain | Gain, dB | Electrode-input magnitude for 2.4-V differential output |
+| :--- | :--- | :--- | :--- |
+| 2 | 480 V/V | 53.62 | 5.000 mV |
+| 4 | 960 V/V | 59.65 | 2.500 mV |
+| 8 | 1920 V/V | 65.67 | 1.250 mV |
+| 16 | 3840 V/V | 71.69 | 0.625 mV |
+
+The input column follows \(V_{\mathrm{IN}}=2.4/G_{\mathrm{AFE}}\). It is a gain-plan limit, not a measured integrated usable range. Higher gain improves output utilization for small signals but clips larger electrode signals sooner.
+
+### 2. Put low-noise gain first and filtering before programmable gain
+
+The INA's large initial gain reduces later stages' noise when referred to the electrode input. For uncorrelated stage-added noise,
+
+$$
+e_{\mathrm{RTI}}^2\approx e_{\mathrm{INA}}^2+
+\frac{e_{\mathrm{LPF}}^2}{240^2}+
+\frac{e_{\mathrm{PGA}}^2}{240^2}+
+\frac{e_{\mathrm{BUF}}^2}{(240G_{\mathrm{PGA}})^2}.
+$$
+
+Each contribution must use its own frequency-dependent transfer and the same integration band. The displayed equation is a flat-passband approximation, not the complete integrated noise calculation.
+
+For example, the LPF's nominal 6.173 µVrms becomes approximately 25.72 nVrms after division by the preceding gain of 240. The INA's nominal 2.677 µVrms remains the dominant contribution in that comparison.
+
+The LPF follows the input gain so its multi-megaohm network does not directly set electrode input impedance. Placing it before PGA prevents programmable gain from amplifying as much out-of-band content. It does not eliminate the need to test overload recovery.
+
+### 3. Keep differential gain and common-mode control separate
+
+Use \(V_{\mathrm{REF}}=V_{\mathrm{DD}}/2\) as the nominal output-common-mode target. Differential FDOTA stages regulate their own output common mode; RLD separately reduces electrode/body common-mode interference.
+
+This separation does not make the loops independent. The body model, source mismatch, finite amplifier output impedance, and selector states must be included when testing the integrated RLD loop.
+
+### 4. Distribute bias with matched unit mirrors
+
+BIAS establishes approximately 40 µA. MIRROR uses equal 16/4-µm PMOS units to provide reference currents to the reused amplifier blocks.
+
+The unit geometry is chosen for matching and reduced drain-voltage sensitivity. Total AFE supply current is not 40 µA times the number of reference pins: each amplifier scales its reference internally and draws output-stage current.
+
+Do not add block-testbench currents as a final power estimate. Their bias generators and fixtures can overlap; the integrated supply source must measure the actual system current.
+
+### 5. Add selectors for internal-versus-external signal testing
+
+MUXD selects internal stage outputs or externally driven differential signals. MUX selects the internal or external bias voltage. These paths support testing one stage without requiring the complete upstream chain.
+
+The shared transmission gate uses NMOS W/L = 25/0.28 µm and PMOS W/L = 50/0.28 µm. Short L and wide W reduce on-resistance; larger gate area increases charge injection and feedthrough.
+
+The inverter uses NMOS W/L = 1/0.5 µm and PMOS W/L = 2/0.5 µm. Its longer channel and smaller width reduce control loading relative to the analog switches, at the cost of finite gate-drive delay.
+
+These are inherited cell choices, not independently optimized widths for every selector. Correct static selection does not establish glitch-free gain switching or break-before-make behavior.
+
+### 6. Verify the load envelope at the delivered output
+
+FDBUF drives 40–100 pF per side, with 60 pF nominal. The preceding PGA should see the buffer input network rather than the full output capacitance.
+
+The integrated output test must include the selected MUXD path. A correct internal buffer waveform does not prove that the delivered OUT waveform has the same settling and distortion.
+
+### 7. Close the architecture with full-chain simulation
+
+The component-level sizing rationale remains in the BIAS, SEOTA, FDOTA, INA/RLD, LPF, PGA, and FDBUF reports. Their dimensions are inherited unchanged at integration.
+
+The next comparison is planned gain and noise versus integrated results at every gain setting, supply, temperature, and intended load. Until those exports exist, the tables above describe design intent only.
 
 ## Verification status
 

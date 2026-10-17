@@ -1,4 +1,4 @@
-# LPF Verification Report
+# LPF Design and Verification Report
 
 [← Project report](../../Project_Report.md)
 
@@ -9,6 +9,92 @@ The unity-gain differential LPF preserves the ECG passband through 150 Hz. Its �
 [Circuit schematic](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/LPF.sch)
 
 ![LPF](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/LPF.png)
+
+## Design requirements and sequence
+
+The LPF must retain unity differential gain while limiting attenuation through 150 Hz. Its frequency requirement is \(f_{-1\mathrm{dB}}\ge150\) Hz. Gain error is limited to ±0.5%; THD remains ≤0.05%.
+
+The implemented circuit is a first-order active low-pass stage, not a higher-order Butterworth filter. The following calculations reconstruct its passive sizing from the actual schematic.
+
+### 1. Use equal input and feedback resistances for unity gain
+
+Each FDOTA feedback branch contains a resistor in parallel with a capacitor. For matched branches and an ideal amplifier,
+
+$$
+H_d(s)\approx\frac{R_F/R_{\mathrm{IN}}}{1+sR_FC_F}.
+$$
+
+Choose \(R_F=R_{\mathrm{IN}}\). This sets the low-frequency gain magnitude to one while preserving differential symmetry. The cross-connected output labels determine the positive differential transfer reported by the analyzer. [TI fully differential feedback analysis](https://www.ti.com/lit/pdf/SLOA054)
+
+### 2. Convert the passband requirement into a pole target
+
+For a first-order low-pass response,
+
+$$
+|H(f)|=\frac{1}{\sqrt{1+(f/f_p)^2}},
+\qquad
+f_{-1\mathrm{dB}}=f_p\sqrt{10^{0.1}-1}=0.50885f_p.
+$$
+
+The 150-Hz acceptance boundary therefore requires
+
+$$
+f_p\ge\frac{150}{0.50885}=294.8\ \mathrm{Hz}.
+$$
+
+A nominal pole near 500 Hz provides margin for RC variation. Its expected −1 dB frequency is 254.4 Hz, close to the simulated nominal 258.688 Hz. This nominal target is reconstructed from the implemented network; it is not an additional specification.
+
+### 3. Allocate capacitance, then calculate resistance
+
+Use approximately 60 pF per feedback branch. At a 500-Hz pole,
+
+$$
+R_{F,\mathrm{calc}}
+=\frac{1}{2\pi(500)(60\ \mathrm{pF})}
+=5.305\ \mathrm{M\Omega}.
+$$
+
+Using the 2-kΩ/square poly resistor, a first-order 5-MΩ rectangle at W = 1 µm requires L = 2500 µm. Its corrected PDK resistance is about 5.219 MΩ at 27°C.
+
+Consequently,
+
+$$
+f_{p,\mathrm{model}}
+\approx\frac{1}{2\pi(5.219\ \mathrm{M\Omega})(60\ \mathrm{pF})}
+=508.2\ \mathrm{Hz}.
+$$
+
+The resulting design is close to the 500-Hz starting target. Exact geometry and terminal terms matter more than rounding a nominal resistance to a preferred value. [GF180 resistor models](https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/LV/LV_4.html)
+
+### 4. Convert resistance and capacitance into implemented dimensions
+
+| Components | Calculation | Rounded starting size | Implemented size |
+| :--- | :--- | :--- | :--- |
+| RINP/RINN | Same R as feedback for unity gain | W/L = 1/2500 µm | W/L = 1/2500 µm |
+| RFBP/RFBN | 5 MΩ × 1 µm / 2 kΩ | L = 2500 µm | W/L = 1/2500 µm |
+| CLPFP/CLPFN | 60 pF / (2 fF/µm²) = 30000 µm² total | Four 7500-µm² units | W/L = 75/100 µm, m = 4 per branch |
+
+The strict 500-Hz/60-pF resistance calculation would give a raw sheet-resistance length of 2653 µm. The implemented 2500 µm is justified by the model-corrected RC result, not by claiming the uncorrected rectangle is exact.
+
+The 1-µm resistor width limits the area of a multi-megaohm element. Increasing width at constant resistance requires proportional length and greater substrate capacitance. Decreasing resistance reduces thermal-noise voltage but requires a larger feedback capacitor for the same pole.
+
+Each capacitor uses a 75 × 100 µm unit. Four equal units supply the required area without introducing a new capacitor ratio. Both sides use the same geometry and multiplicity to control differential imbalance. MIM device conventions follow the [GF180 capacitor models](https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/LV/LV_7.html).
+
+### 5. Verify amplifier loading, noise, and linearity
+
+The stage reuses the FDOTA without changing its internal transistor sizes or Miller compensation. Those sizes are explained in the [FDOTA report](../ANALOG_BLOCKS/FDOTA_Report.md).
+
+Large feedback resistors avoid heavy resistive loading. Their thermal noise and substrate capacitance remain important; a single-resistor density is \(\sqrt{4kTR}\), but total input-referred noise requires the complete transfer from every noise source.
+
+The nominal integrated input noise is 6.173 µVrms and is report-only. THD is 0.004% nominal and 0.006% worst PVT under the specified 60-Hz test. These measurements support linear operation; they do not prove that resistance or capacitor area is globally optimal.
+
+### 6. Close the calculation with the simulated response
+
+The model-based pole estimate is 508.2 Hz; simulation gives \(f_{-3\mathrm{dB}}=506.908\) Hz, about 0.26% lower. The first-order −1 dB estimate is 258.6 Hz, consistent with the measured 258.688 Hz.
+
+At 150 Hz, the same model predicts approximately 0.36 dB attenuation. Simulation gives 0.361 dB nominal and 0.762 dB worst PVT.
+
+The worst measured −1 dB frequency is 174.134 Hz, above the 150-Hz limit. RC variation therefore consumes a meaningful part of the nominal margin. Keep the frequency requirement unchanged for extracted-layout verification.
 
 ## Verification conditions
 

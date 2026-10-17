@@ -1,4 +1,4 @@
-# PGA Verification Report
+# PGA Design and Verification Report
 
 [← Project report](../../Project_Report.md)
 
@@ -9,6 +9,104 @@ The differential PGA selects gains of 2, 4, 8, or 16. Range and THD verification
 [Circuit schematic](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/PGA.sch)
 
 ![PGA](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/PGA.png)
+
+## Design requirements and sequence
+
+The PGA provides differential gains of 2, 4, 8, and 16. Gain error must remain within ±1%, and THD within 0.05%. Required input range decreases with gain so the output can retain the specified ±2.4-V differential range.
+
+The design uses one FDOTA with a symmetric switched-resistor feedback network. The resistor ratios set the gains; transmission-gate resistance and parasitics determine how closely the physical circuit follows those ratios.
+
+### 1. Set a common input resistance and calculate feedback levels
+
+For matched differential branches,
+
+$$
+G_d\approx\frac{R_{F,\mathrm{eff}}}{R_{\mathrm{IN}}}.
+$$
+
+Choose approximately 20 kΩ for each input resistor. The required feedback values are then
+
+$$
+R_F=\{2,4,8,16\}(20\ \mathrm{k\Omega})
+=\{40,80,160,320\}\ \mathrm{k\Omega}.
+$$
+
+The fully differential feedback relation and its noise-gain consequences follow [TI's amplifier analysis](https://www.ti.com/lit/pdf/SLOA054).
+
+### 2. Decompose the feedback into selectable sections
+
+Use nominal segment values of 40, 40, 120, and 120 kΩ per side. With the two bypass controls, the selected series path becomes:
+
+| S1/S0 | Selected effective path, ideal switches | Target feedback | Target gain |
+| :--- | :--- | :--- | :--- |
+| 00 | R1 | 40 kΩ | 2 |
+| 01 | R1 + R2 | 80 kΩ | 4 |
+| 10 | R1 + R4 | 160 kΩ | 8 |
+| 11 | R1 + R2 + R3 + R4 | 320 kΩ | 16 |
+
+At low control levels, the corresponding bypass transmission gates conduct. At high levels, the resistor sections are inserted. The same selection is applied to both differential halves.
+
+The G8 path includes a bypass around the middle section; it is not simply the first three series resistors. This distinction follows from the actual switch connections.
+
+### 3. Calculate resistor geometry and retain model-corrected lengths
+
+Use the same W = 2 µm poly width throughout the network. With 2 kΩ/square, the uncorrected length is
+
+$$
+L_{\mathrm{calc}}=\frac{R_{\mathrm{target}}W}{R_\square}.
+$$
+
+| Components, P/N pairs grouped | Target segment R | Calculated L | Integer L | Implemented W/L |
+| :--- | :--- | :--- | :--- | :--- |
+| RINP/RINN | 20 kΩ | 20 µm | 20 µm | 2/20 µm |
+| RFBP1/RFBN1 | 40 kΩ | 40 µm | 40 µm | 2/40.04 µm |
+| RFBP2/RFBN2 | 40 kΩ | 40 µm | 40 µm | 2/40.32 µm |
+| RFBP3/RFBN3 | 120 kΩ | 120 µm | 120 µm | 2/121.28 µm |
+| RFBP4/RFBN4 | 120 kΩ | 120 µm | 120 µm | 2/121.14 µm |
+
+The small unequal length adjustments belong to the implemented model/circuit solution. Their individual optimization history is not archived, so they are not attributed to a fabricated tuning procedure.
+
+The PDK includes effective geometry, separate end resistances, temperature dependence, and substrate capacitance. Therefore the final gain must use the complete selected network rather than drawn L/W alone. [GF180 resistor model structure](https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/LV/LV_4.html)
+
+### 4. Size the switches to limit gain error and distortion
+
+Each transmission gate uses an NMOS of W/L = 25/0.28 µm and a PMOS of 50/0.28 µm. Short L reduces channel resistance; the wider PMOS compensates qualitatively for lower hole mobility.
+
+This 2:1 width ratio is a design choice, not proof of equal NMOS and PMOS conductance over the full signal range. Wider switches reduce on-resistance but increase charge injection, feedthrough, and node capacitance.
+
+A first-order gain-error screen is
+
+$$
+\left|\frac{\Delta G}{G}\right|
+\sim\frac{R_{\mathrm{ON,eff}}}{R_{F,\mathrm{eff}}}
+$$
+
+for a small series-equivalent switch resistance. At G2, a 1% allowance corresponds to approximately 400 Ω relative to a 40-kΩ feedback path. This is a sensitivity screen, not a universal equivalent circuit for every bypass state.
+
+The exported data do not contain switch on-resistance versus voltage, so no unique calculated switch width can be claimed. Nominal/PVT gain and THD validate the implemented dimensions under the tested signals.
+
+The complementary-control inverters use NMOS W/L = 1/0.5 µm and PMOS W/L = 2/0.5 µm. Equal channel lengths simplify the complementary pair; the 2:1 width ratio balances drive qualitatively. Larger widths would charge the switch gates faster but increase control capacitance and switching current. No delay/load optimization is recoverable from DC gain data; switching traces remain the relevant check.
+
+### 5. Set input range from output swing before testing distortion
+
+For the required differential output magnitude of 2.4 V,
+
+$$
+|V_{\mathrm{IN,max}}|=\frac{2.4}{G}
+=\{1.2,\ 0.6,\ 0.3,\ 0.15\}\ \mathrm V.
+$$
+
+This sets gain-dependent range tests without changing the output requirement. G16 is the closest measured range case: worst input range is approximately ±0.160 V against ±0.150 V required.
+
+THD tests use the amplitudes retained in the result tables. They must not be confused with the separate usable-range endpoints.
+
+### 6. Compare the ideal network with simulation
+
+Nominal gain errors are −0.011%, −0.001%, +0.002%, and +0.001% for G2/G4/G8/G16. Worst PVT magnitudes are 0.409%, 0.120%, 0.133%, and 0.053%, all below 1%.
+
+G2 has the largest measured worst-case error and THD, consistent with stronger sensitivity to the switch/feedback network at the smallest feedback resistance. The results are consistent with that trade-off, but do not isolate its cause from amplifier nonlinearity.
+
+The FDOTA's internal W/L, bias, and compensation follow the [FDOTA design report](../ANALOG_BLOCKS/FDOTA_Report.md). Only the external gain network and switch states change between PGA settings.
 
 ## Verification conditions
 

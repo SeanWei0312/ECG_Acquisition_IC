@@ -421,6 +421,19 @@ Individual block passes are not an integrated AFE pass. Do not sum independently
 
 The OTA reports retain the step-by-step $g_m/I_D$ sizing flow: specification → required $g_m$ → current → current density → width → compensation → simulation comparison. Component-level reasons and trade-offs remain in those detailed reports.
 
+The signal-chain design follows the same requirement-to-component sequence:
+
+| Block | Starting requirement | Calculated design choice | Verification used to close the design |
+| :--- | :--- | :--- | :--- |
+| BIAS/MIRROR | 40-µA reference and accurate distribution | MOS/BJT loop equation, 1:30 PNP ratio, model-corrected RS, matched unit mirrors | Current range, mirror error, and startup |
+| INA | 240-V/V gain with low input-referred noise | 60 × 4 gain allocation and matched feedback ratios | Gain accuracy, noise, usable range, and THD |
+| RLD | Mains/common-mode suppression with stable feedback | Gain-five controller and approximately 80-pF feedback capacitor | Complete-loop phase margin and suppression |
+| LPF | −1 dB frequency ≥150 Hz at unity gain | Approximately 500-Hz nominal pole; matched multi-megaohm resistors and 60-pF feedback branches | Passband loss, frequency margin, and THD |
+| PGA | Gains 2/4/8/16 and ±2.4-V output range | 20-kΩ input network and switched 40/40/120/120-kΩ feedback sections | Gain-dependent error, range, and distortion |
+| FDBUF | Unity gain and 0.05% settling ≤1 µs into 40–100 pF per output | Equal 20-kΩ input/feedback resistors around the FDOTA | Delivered-output settling across all four loads |
+
+These are reconstructed design explanations, not a claim that every final dimension follows from one closed-form optimum. The block reports distinguish raw sheet-resistance estimates, PDK corrections, implemented geometries, and measured circuit behavior.
+
 - [Device characterization and lookup plots](Report/SIZING/Gm_Id_Report.md)
 - [Integrated AFE verification scope](Report/AFE_BLOCKS/AFE_Report.md)
 
