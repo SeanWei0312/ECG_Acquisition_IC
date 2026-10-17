@@ -25,7 +25,7 @@ The top-level schematic shows the FDC, output common-mode sensor, and CMFB loop 
 
 ## 2. Sizing assumptions and method
 
-The following hand calculations retain the first-pass sizing assumptions. They explain design choices; they are not a new device-level extraction. Current acceptance limits and simulation values are listed in the verification snapshot below.
+The following hand calculations retain the first-pass sizing assumptions. They explain design choices; they are not a new device-level extraction. Current acceptance limits and simulation values are listed in the verification results below.
 
 The supplied FDC and CMFB worksheets provided a useful sequence, but several assumptions did not match the implemented circuits. The FDC uses 2.5-pF compensation per side and 0.5-µm output devices, not the worksheet's 2-pF and 1-µm values. The CMFB amplifier is a single-stage error amplifier, not a two-stage Miller OTA. The calculations below use the implemented topologies and dimensions.
 
@@ -650,9 +650,9 @@ Both closed-loop CMFB transitions settle in 5.2 ns.
 
 ![CMFB closed-loop transient response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Plots/NOM.cl_tran.png)
 
-## Verification snapshot
+## Verification conditions
 
-Updated 2026-10-17 from archived analyzer CSV exports. This documentation update did not rerun simulations.
+Checked 2026-10-17 against the latest analyzer CSV exports. No simulations were rerun for this documentation update.
 
 Blank specification cells mean report-only. Exported worst-case values meet their listed limits; this is pre-layout block verification, not post-layout or silicon signoff.
 
@@ -663,6 +663,8 @@ The PVT campaign uses NOM/FF/SS/FS/SF, 3.0/3.3/3.6 V, and −40/27/125°C: 45 op
 Nominal columns refer to NOM process, 3.3 V, and 27°C. Compact corner names encode process, supply, and temperature. Sweep labels identify a fixed supply or temperature rather than a single corner.
 
 OL and CL testbenches each use five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files plus one `*_MC.sch`. Each MC file runs MM, GL, and FULL separately.
+
+## Nominal and full-PVT results
 
 ### Operating point
 
@@ -775,7 +777,7 @@ MM applies local mismatch; GL applies global variation; FULL combines both. Thes
 | GL | 200 | 200 | 0 | 100% |
 | FULL | 200 | 200 | 0 | 100% |
 
-“Failed” is the analyzer’s exported non-valid count; it may include missing or invalid measurements and must not automatically be interpreted as demonstrated circuit failures. Sample yield applies only to measured MC metrics, not production yield.
+Counts and yield apply to the measured MC metrics at nominal supply and temperature. Missing or invalid results prevent a pass; they are not demonstrated circuit failures. Sample yield is not production yield.
 
 ### FULL sampled statistics
 
@@ -831,7 +833,7 @@ FULL Gain error: -0.003 to -0.002 %; mean -0.003 %.
 
 Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
-## Scope and next checks
+## Limitations and next steps
 
 These results exclude extracted parasitics, package effects, switched-ADC loading, and silicon measurements. Repeat the same limits after layout; do not infer integrated AFE signoff from individual block passes.
 

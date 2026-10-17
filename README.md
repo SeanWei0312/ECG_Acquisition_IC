@@ -37,7 +37,7 @@ The verified block-level gain plan gives nominal AFE signal-path gains from $480
 | PGA | 45-condition PVT; MM/GL/FULL exports | [Details](Report/AFE_BLOCKS/PGA_Report.md) |
 | FDBUF | 45-condition PVT; MM/GL/FULL exports | [Details](Report/AFE_BLOCKS/FDBUF_Report.md) |
 
-BIAS additionally includes a 50,630-point DC grid. PGA covers four gains; FDBUF covers four loads. Current archived MC counts and yields are listed in each report; incomplete exports do not establish a circuit failure or a pass. Integrated AFE verification remains pending.
+BIAS additionally includes a 50,630-point DC grid. PGA covers four gains; FDBUF covers four loads. All seven measured blocks have 200/200 valid samples and 100% measured yield in each MM/GL/FULL campaign at nominal supply and temperature. Detailed counts and limits are listed in the block reports. Integrated AFE verification remains pending.
 
 Current values and specifications are summarized in the [project report](Project_Report.md). Blank specification fields are report-only. All results are pre-layout schematic simulations.
 

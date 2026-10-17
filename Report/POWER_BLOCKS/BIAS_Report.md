@@ -14,9 +14,9 @@ The master bias core and current mirror provide the reference and distributed bi
 
 ![MIRROR](../../Design_Files/IC%20Design/Schematic/POWER_BLOCKS/MIRROR/MIRROR.png)
 
-## Verification snapshot
+## Verification conditions
 
-Updated 2026-10-17 from archived analyzer CSV exports. This documentation update did not rerun simulations.
+Checked 2026-10-17 against the latest analyzer CSV exports. No simulations were rerun for this documentation update.
 
 Blank specification cells mean report-only. Exported worst-case values meet their listed limits; this is pre-layout block verification, not post-layout or silicon signoff.
 
@@ -38,6 +38,8 @@ $$
 
 The Ibias worst case is selected by the greatest absolute deviation from 40 µA, not automatically by the highest current. BP uses the minimum exported voltage; MST margin uses the minimum; mirror error uses the maximum magnitude.
 
+## Nominal and full-PVT results
+
 ### Operating point and mirroring
 
 | Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
@@ -49,7 +51,7 @@ The Ibias worst case is selected by the greatest absolute deviation from 40 µA,
 | Mirror error | % | ±1 | -0.003 | 0.149 | FSVLTH |
 | MST margin | V | >0 | 1.541 | 0.742 | FFVHTH |
 
-Nominal schematic response. The adjacent table gives the corresponding exported measurements.
+The nominal current is 40.018 µA. The DC grid spans 31.071–49.466 µA across process, supply, and temperature.
 
 ![NOM BIAS 2D](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/Plots/NOM_BIAS_2D.png)
 
@@ -101,31 +103,31 @@ MM applies local mismatch; GL applies global variation; FULL combines both. Thes
 | :--- | :--- | :--- | :--- | :--- |
 | MM | 200 | 200 | 0 | 100% |
 | GL | 200 | 200 | 0 | 100% |
-| FULL | 200 | 125 | 75 | 62.5% |
+| FULL | 200 | 200 | 0 | 100% |
 
-“Failed” is the analyzer’s exported non-valid count; it may include missing or invalid measurements and must not automatically be interpreted as demonstrated circuit failures. Sample yield applies only to measured MC metrics, not production yield.
+Counts and yield apply to the measured MC metrics at nominal supply and temperature. Missing or invalid results prevent a pass; they are not demonstrated circuit failures. Sample yield is not production yield.
 
-This archived MC report is incomplete. Do not claim full MC signoff; finish or validate the exports and rerun the existing analyzer before regenerating this report.
+All three MC campaigns are complete: 200/200 valid samples and 100% measured yield per mode.
 
 ### FULL sampled statistics
 
 | Parameter | Unit | Spec | Min | Mean | Max | Yield |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Ibias | uA | 40±10 | 38.639 | 40.09 | 41.785 | 62.5% |
-| Total current | uA |  | 115.838 | 120.186 | 125.113 |  |
+| Ibias | uA | 40±10 | 38.563 | 40.034 | 41.785 | 100% |
+| Total current | uA |  | 115.394 | 120.021 | 125.113 |  |
 | BP | V |  | 1.554 | 1.643 | 1.73 |  |
-| Mirror error | % | ±1 | -0.467 | 0.024 | 0.431 | 62.5% |
-| MST margin | V | >0 | 1.356 | 1.535 | 1.735 | 62.5% |
-| Startup time | us |  | 784.605 | 808.316 | 849.014 |  |
-| Startup success |  | PASS | 1 | 1 | 1 | 62.5% |
+| Mirror error | % | ±1 | -0.467 | 0.02 | 0.431 | 100% |
+| MST margin | V | >0 | 1.356 | 1.54 | 1.735 | 100% |
+| Startup time | us |  | 784.605 | 808.521 | 849.014 |  |
+| Startup success |  | PASS | 1 | 1 | 1 | 100% |
 
 The source CSVs retain μ±σ and μ±3σ. Those statistical extrapolations are not additional simulated extrema.
 
-FULL Ibias: 38.639 to 41.785 uA; mean 40.09 uA.
+FULL Ibias: 38.563 to 41.785 uA; mean 40.034 uA.
 
 ![Fig MC 01 Ibias Histogram](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/Plots/Fig_MC_01_Ibias_Histogram.png)
 
-FULL Startup time: 784.605 to 849.014 us; mean 808.316 us.
+FULL Startup time: 784.605 to 849.014 us; mean 808.521 us.
 
 ![Fig MC 02 Startup Histogram](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/Plots/Fig_MC_02_Startup_Histogram.png)
 
@@ -142,6 +144,6 @@ FULL Startup time: 784.605 to 849.014 us; mean 808.316 us.
 
 Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
-## Scope and next checks
+## Limitations and next steps
 
 These results exclude extracted parasitics, package effects, switched-ADC loading, and silicon measurements. Repeat the same limits after layout; do not infer integrated AFE signoff from individual block passes.

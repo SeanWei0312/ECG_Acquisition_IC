@@ -70,7 +70,7 @@ Startup time: nominal **807.522 µs**; worst **3701.808 µs** at `SSVLTL`. All 4
 
 TC comparison values use VDD = 3.3 V; line regulation uses T = 27°C. Their worst cases search 15 temperature and 15 supply sweeps, respectively.
 
-**FULL MC snapshot:** 125/200 valid samples; exported joint yield 62.5%. The archive is incomplete; this is not a completed MC pass.
+**FULL MC:** 200/200 valid samples; measured joint yield 100%. MM and GL also have 200/200 valid samples and 100% yield. These campaigns use nominal supply and temperature.
 
 [Detailed design, measurements, plots, and source exports](Report/POWER_BLOCKS/BIAS_Report.md).
 
@@ -118,7 +118,7 @@ Settling time: nominal **162.9 ns**; worst **213.4 ns** at `SSVLTL`. The phase-m
 
 ![NOM.closed loop step response.png](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.closed_loop_step_response.png)
 
-**FULL MC snapshot:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
+**FULL MC:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
 
 [Detailed design, measurements, plots, and source exports](Report/ANALOG_BLOCKS/SEOTA_Report.md).
 
@@ -154,7 +154,7 @@ Differential settling time: nominal **175.867 ns**; worst **246.549 ns** at `SSV
 
 ![NOM.closed loop step response.png](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.closed_loop_step_response.png)
 
-**FULL MC snapshot:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
+**FULL MC:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
 
 [Detailed design, measurements, plots, and source exports](Report/ANALOG_BLOCKS/FDOTA_Report.md).
 
@@ -236,7 +236,7 @@ Input-referred noise 0.05-150 Hz: nominal **2.677 µVrms**; worst **3.107 µVrms
 
 ![NOM.INA RLD noise.png](Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/Plots/NOM.INA_RLD_noise.png)
 
-**FULL MC snapshot:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
+**FULL MC:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
 
 [Detailed design, measurements, plots, and source exports](Report/AFE_BLOCKS/INA_RLD_Report.md).
 
@@ -295,7 +295,7 @@ Input range high: nominal **3.158 V**; worst **2.798 V** at `FSVLTH`. The requir
 
 ![NOM.LPF vtc.png](Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/Plots/NOM.LPF_vtc.png)
 
-**FULL MC snapshot:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
+**FULL MC:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
 
 [Detailed design, measurements, plots, and source exports](Report/AFE_BLOCKS/LPF_Report.md).
 
@@ -333,7 +333,7 @@ G16 input range high: nominal **0.186 V**; worst **0.16 V** at `FSVLTH`. G16 req
 
 ![NOM.PGA vtc.png](Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/Plots/NOM.PGA_vtc.png)
 
-**FULL MC snapshot:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
+**FULL MC:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
 
 [Detailed design, measurements, plots, and source exports](Report/AFE_BLOCKS/PGA_Report.md).
 
@@ -369,7 +369,7 @@ CL100 0.05% settling time: nominal **0.399 µs**; worst **0.514 µs** at `SSVLTH
 
 ![FDBUF settling response.png](Measurement_Results/IC_Simulation/AFE_BLOCKS/FDBUF/Plots/FDBUF_settling_response.png)
 
-**FULL MC snapshot:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
+**FULL MC:** 200/200 valid samples; exported joint yield 100%. This applies to measured MC quantities at nominal supply and temperature.
 
 [Detailed design, measurements, plots, and source exports](Report/AFE_BLOCKS/FDBUF_Report.md).
 
@@ -419,7 +419,7 @@ The PGA trace compares internal, external, control, and selected differential si
 
 | Block campaign | PVT conditions | MM valid / yield | GL valid / yield | FULL valid / yield |
 | :--- | :--- | :--- | :--- | :--- |
-| BIAS | 45 + 50,630-point DC grid | 200/200; 100% | 200/200; 100% | 125/200; 62.5% |
+| BIAS | 45 + 50,630-point DC grid | 200/200; 100% | 200/200; 100% | 200/200; 100% |
 | SEOTA | 45 | 200/200; 100% | 200/200; 100% | 200/200; 100% |
 | FDOTA | 45 | 200/200; 100% | 200/200; 100% | 200/200; 100% |
 | INA_RLD | 45 | 200/200; 100% | 200/200; 100% | 200/200; 100% |
@@ -433,7 +433,7 @@ MM means local mismatch; GL means global variation; FULL combines both at the no
 
 | Item | Current evidence | Remaining work |
 | :--- | :--- | :--- |
-| Block schematic verification | Exported PVT and MC tables for the measured blocks | Resolve incomplete BIAS FULL-MC summary |
+| Block schematic verification | Exported PVT and MC tables for the measured blocks | Repeat verification after layout and extraction |
 | Integrated AFE | Top schematic and MATLAB analyzer exist | Generate full-chain gain, noise, rejection, RLD-loop, and transient results |
 | Selector/control cells | Schematics and in-context functional traces | Independent cell characterization if required by the implementation |
 | Physical implementation | Schematic-level results only | Layout, DRC/LVS, extraction, and re-verification |
@@ -456,8 +456,7 @@ Run ngspice to completion before invoking MATLAB. The analyzers read existing fi
 
 The project has a documented transistor-level AFE hierarchy, numerical block verification, and nominal functional traces. The current evidence supports continued AFE implementation and integration work; it does not establish extracted-layout or silicon performance.
 
-1. Finish or regenerate the incomplete BIAS FULL-MC analysis snapshot.
-2. Refresh the isolated FDC characterization to resolve its recorded load mismatch.
-3. Simulate the integrated AFE at every programmed gain with the intended output loads.
-4. Complete layout and extraction, then repeat the existing acceptance limits.
-5. Track phase margin, offset, noise, usable swing, and settling across the extracted hierarchy.
+1. Refresh the isolated FDC characterization to resolve its recorded load mismatch.
+2. Simulate the integrated AFE at every programmed gain with the intended output loads.
+3. Complete layout and extraction, then repeat the existing acceptance limits.
+4. Track phase margin, offset, noise, usable swing, and settling across the extracted hierarchy.

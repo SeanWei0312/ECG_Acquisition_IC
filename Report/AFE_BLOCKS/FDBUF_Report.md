@@ -10,9 +10,9 @@ The unity-gain differential buffer is verified at 40, 60, 80, and 100 pF per out
 
 ![FDBUF](../../Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FDBUF/FDBUF.png)
 
-## Verification snapshot
+## Verification conditions
 
-Updated 2026-10-17 from archived analyzer CSV exports. This documentation update did not rerun simulations.
+Checked 2026-10-17 against the latest analyzer CSV exports. No simulations were rerun for this documentation update.
 
 Blank specification cells mean report-only. Exported worst-case values meet their listed limits; this is pre-layout block verification, not post-layout or silicon signoff.
 
@@ -23,6 +23,8 @@ The 45-corner campaign covers CL40/CL60/CL80/CL100 per output: 180 load/corner c
 Nominal columns refer to NOM process, 3.3 V, and 27°C. Compact corner names encode process, supply, and temperature. Sweep labels identify a fixed supply or temperature rather than a single corner.
 
 Settling is the time to enter and remain within ±0.05% during the analyzed step plateau. It does not establish SAR acquisition or kickback performance.
+
+## Nominal and full-PVT results
 
 ### Operating point
 
@@ -140,7 +142,7 @@ MM applies local mismatch; GL applies global variation; FULL combines both. Thes
 | GL | 200 | 200 | 0 | 100% |
 | FULL | 200 | 200 | 0 | 100% |
 
-“Failed” is the analyzer’s exported non-valid count; it may include missing or invalid measurements and must not automatically be interpreted as demonstrated circuit failures. Sample yield applies only to measured MC metrics, not production yield.
+Counts and yield apply to the measured MC metrics at nominal supply and temperature. Missing or invalid results prevent a pass; they are not demonstrated circuit failures. Sample yield is not production yield.
 
 ### FULL sampled statistics
 
@@ -209,6 +211,6 @@ FULL Input offset: -4.611 to 5.067 mV; mean -0.091 mV.
 
 Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
-## Scope and next checks
+## Limitations and next steps
 
 These results exclude extracted parasitics, package effects, switched-ADC loading, and silicon measurements. Repeat the same limits after layout; do not infer integrated AFE signoff from individual block passes.
