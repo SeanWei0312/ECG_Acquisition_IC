@@ -11,8 +11,6 @@ N 1320 -860 1360 -860 {lab=OUTP}
 N 780 -960 780 -920 {lab=REF}
 N 820 -960 820 -920 {lab=BFDC}
 N 860 -960 860 -920 {lab=BCMFB}
-N 600 -860 660 -860 {lab=INP}
-N 600 -740 660 -740 {lab=INN}
 N 600 -600 1220 -600 {lab=AGND}
 N 600 -640 1180 -640 {lab=AVDD}
 N 1480 -1000 1480 -960 {lab=AGND}
@@ -89,6 +87,8 @@ N 2320 -400 2320 -380 {lab=VDIFF_TRAN}
 N 2320 -320 2320 -300 {lab=VDIFF_DC}
 N 2320 -260 2320 -240 {lab=VDIFF_SIG}
 N 2320 -180 2320 -160 {lab=VDIFF_TRAN}
+N 600 -860 640 -860 {lab=INP}
+N 600 -740 640 -740 {lab=INN}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {devices/code_shown.sym} 80 90 0 0 {name=MODELS
 only_toplevel=true
