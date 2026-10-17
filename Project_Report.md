@@ -30,6 +30,30 @@ BIAS/MIRROR supply shared bias currents. SEOTA and FDOTA provide the amplifier c
 
 The nominal gain plan is **480 / 960 / 1920 / 3840 V/V**. It is the product of stage targets, not a measured full-chain gain. Integrated AFE exports are not yet available.
 
+### System design sequence
+
+First place low-noise gain at the electrode interface. Keep LPF and FDBUF at unity gain, and make the later PGA programmable:
+
+$$
+G_{\mathrm{AFE}}=240\times1\times\{2,4,8,16\}\times1.
+$$
+
+For a ±2.4-V differential-output range, the corresponding planned electrode-input magnitudes are ±5.000, ±2.500, ±1.250, and ±0.625 mV. More gain improves small-signal output utilization but reduces the maximum input before clipping.
+
+Next place the LPF before the PGA so programmable gain does not amplify as much out-of-band content. Place FDBUF last to isolate the PGA from the output capacitance. Keep RLD as an electrode/body common-mode loop, distinct from each FDOTA's internal output-common-mode loop.
+
+For a flat-passband approximation with uncorrelated stage-added noise,
+
+$$
+e_{\mathrm{RTI}}^2\approx e_{\mathrm{INA}}^2+
+\frac{e_{\mathrm{LPF}}^2+e_{\mathrm{PGA}}^2}{240^2}+
+\frac{e_{\mathrm{BUF}}^2}{(240G_{\mathrm{PGA}})^2}.
+$$
+
+For example, nominal LPF noise of 6.173 µVrms contributes approximately 25.72 nVrms when referred through the preceding gain of 240. This explains the priority given to the INA's 2.677-µVrms nominal noise. Final integrated noise still requires frequency-dependent transfer functions and the complete circuit.
+
+The block narratives below reconstruct design intent from implemented dimensions and analysis exports. A first-order estimate is not an independently optimized size, and agreement at nominal conditions does not replace PVT or mismatch verification.
+
 ### Conditions and interpretation
 
 Nominal means NOM process, 3.3 V, and 27°C. PVT covers five processes and all nine combinations of 3.0/3.3/3.6 V with −40/27/125°C. `FFVHTH`, for example, means FF process at 3.6 V and 125°C.
@@ -45,6 +69,18 @@ BIAS generates the PMOS bias voltage BP. The nominal current target is 40 µA. T
 [Schematic source](Design_Files/IC%20Design/Schematic/POWER_BLOCKS/BIAS/BIAS.sch)
 
 ![BIAS circuit schematic](Design_Files/IC%20Design/Schematic/POWER_BLOCKS/BIAS/BIAS.png)
+
+**Design sequence.** Begin with the 40-µA reference target. Equal PMOS branch currents and a 1:30 PNP area ratio produce approximately \(V_T\ln30=87.97\) mV at 27°C. The unequal NMOS pair also contributes:
+
+$$
+I_{RS}R_S=V_T\ln30+V_{GS1}-V_{GS2}.
+$$
+
+MN1/MN2 use W/L = 24/4 and 16/4 µm. The wider MN1 lowers its required gate-source voltage at equal current, so RS cannot be calculated from \(\Delta V_{EB}/I\) alone.
+
+The implemented 3/1.52-µm n-well resistor is approximately 785.7 Ω after model corrections. Matched 16/4-µm PMOS devices establish the current ratio; the weak 0.5/10-µm startup device initiates the loop without materially loading its final state.
+
+**Design closure.** Simulation gives 40.018 µA nominal. The high-side PVT margin is only 0.534 µA, so current variation remains important despite excellent nominal agreement.
 
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -82,6 +118,12 @@ MIRROR copies the reference bias into the required branches. It is verified as p
 
 ![MIRROR circuit schematic](Design_Files/IC%20Design/Schematic/POWER_BLOCKS/MIRROR/MIRROR.png)
 
+**Design sequence.** Use equal master/output aspect ratios so \(I_{\mathrm{OUT}}/I_{\mathrm{REF}}\approx1\). Every distribution unit uses W/L = 16/4 µm, matching the master PMOS.
+
+The long channel reduces drain-voltage sensitivity; equal geometry improves matching. Larger area increases BP-node capacitance, while unequal output voltages still cause current error.
+
+**Design closure.** The measured mirror path reaches 0.149% maximum deterministic error against ±1%. That check does not establish equal accuracy for every differently loaded integrated branch.
+
 The BIAS testbench reports a nominal mirror error of **−0.003%**, a full-DC-PVT maximum magnitude of **0.149%**, and a **±1%** limit. These values apply to the measured mirror path, not automatically to every loaded branch in the integrated AFE.
 
 [Detailed design, measurements, plots, and source exports](Report/POWER_BLOCKS/BIAS_Report.md).
@@ -95,6 +137,20 @@ SEOTA is a two-stage Miller-compensated amplifier. Its verification combines ope
 [Schematic source](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/SEOTA/SEOTA.sch)
 
 ![SEOTA circuit schematic](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/SEOTA/SEOTA.png)
+
+**Design sequence.** Start with the 10-pF load and approximately 20-µA tail current. An 8-V/µs nominal slew target permits \(C_c\le2.51\) pF; choose 2 pF for pole splitting with slew margin.
+
+The 10-MHz nominal UGF target then requires
+
+$$
+g_{m1}=2\pi f_uC_c=125.7\ \mu\mathrm S.
+$$
+
+At L = 4 µm and \(g_m/I_D=20\) V⁻¹, the lookup calculation gives 6.283 µA and W = 192.1 µm. The implemented input pair uses 400 µm effective width per device for noise and matching; its final mirror allocation supplies approximately 10 µA per branch.
+
+Shorter 0.5-µm output devices provide current density and speed. The 2-pF capacitor and approximately 3.8-kΩ nulling resistor trade crossover frequency against phase margin. Enlarging the input pair reduces noise but adds capacitance.
+
+**Design closure.** Nominal UGF is 12.842 MHz and noise is 1.873 µVrms. Worst phase margin is only 1.371° above its 55° limit, making extracted-node capacitance a significant risk.
 
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -129,6 +185,19 @@ FDOTA combines two-stage differential amplification with common-mode feedback. T
 [Schematic source](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/FDOTA/FDOTA/FDOTA.sch)
 
 ![FDOTA circuit schematic](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/FDOTA/FDOTA/FDOTA.png)
+
+**Design sequence.** Size the differential path for 40 pF per output, then close CMFB around the actual output sensor. With 2.5-pF compensation per side and a 10-MHz nominal UGF target,
+
+$$
+g_{m1}=2\pi(10\ \mathrm{MHz})(2.5\ \mathrm{pF})
+=157.1\ \mu\mathrm S.
+$$
+
+The input pair uses L = 2 µm and effective W = 200 µm per device, enlarged from the 105.1-µm first-pass result for noise and matching. Each output branch uses a 500-µm PMOS and 100-µm NMOS at L = 0.5 µm for drive capability.
+
+Matched 2.5-pF/3.5-kΩ compensation branches preserve symmetry and provide pole splitting and zero placement. More compensation improves robustness but reduces bandwidth and slew rate.
+
+**Design closure.** Estimated gain is 93.13 dB versus 92.064 dB nominal simulation. Integrated differential and common-mode transients validate the coupled system; standalone fixture responses are not substitutes.
 
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -166,6 +235,12 @@ FDC supplies the differential forward path. Its isolated characterization uses a
 
 ![FDC circuit schematic](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/FDOTA/FDC/FDC.png)
 
+**Design sequence.** The input pair sets transconductance; the active loads provide first-stage gain; two output branches drive equal capacitive loads. Input/load devices use L = 2 µm for gain and matching, while L = 0.5 µm output devices favor speed.
+
+The 10/20-µm tail/reference widths give approximately half the 40-µA reference as tail current. Identical output and compensation branches reduce differential-to-common-mode conversion.
+
+These choices serve the integrated FDOTA gain, noise, and settling requirements. Their component-by-component calculations remain in the detailed FDOTA report.
+
 FDC nominal testbenches and MATLAB diagnostics support FDOTA sizing and debugging. Standalone fixture results are not project-level verification results. Integrated FDOTA nominal, PVT, and MC results are reported in Section 3.2.
 
 [Detailed circuit sizing and integrated results](Report/ANALOG_BLOCKS/FDOTA_Report.md).
@@ -177,6 +252,14 @@ CMFB senses the average output and adjusts the FDC load bias. The isolated bench
 [Schematic source](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/FDOTA/CMFB/CMFB.sch)
 
 ![CMFB circuit schematic](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/FDOTA/CMFB/CMFB.png)
+
+**Design sequence.** Matched 100-kΩ resistors and 50-fF capacitors sense average output voltage. The amplifier compares this common mode with REF and adjusts the FDC load bias.
+
+A 40-µA tail gives approximately 20 µA per input branch. Selecting L = 1 µm and \(g_m/I_D\approx12\) V⁻¹ gives about 240 µS. The calculated input width is 14.18 µm; use 15 µm for matching margin.
+
+A first-order 1% settling screen gives 0.733 MHz for the 1-µs requirement and 1.83 MHz for a 400-ns nominal target. The actual FDC plant and sensor must remain in final loop verification.
+
+**Design closure.** Integrated CMFB settling is 309.735 ns nominal and 418.338 ns worst PVT. These are integrated FDOTA results, not ideal-plant fixture results.
 
 CMFB nominal testbenches and MATLAB diagnostics support FDOTA sizing and debugging. Standalone fixture results are not project-level verification results. Integrated FDOTA nominal, PVT, and MC results are reported in Section 3.2.
 
@@ -191,6 +274,20 @@ The INA target is 240 V/V, formed by nominal S1 = 60 V/V and S2 = 4 V/V. It prov
 [Schematic source](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/INA/INA.sch)
 
 ![INA circuit schematic](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/INA/INA.png)
+
+**Design sequence.** Allocate gain as 60 V/V in the high-input-impedance SEOTA pair and 4 V/V in the FDOTA stage:
+
+$$
+G_{\mathrm{INA}}=
+\left(1+\frac{2R_{\mathrm{SEF}}}{R_{\mathrm{SEG}}}\right)
+\frac{R_{\mathrm{FDFB}}}{R_{\mathrm{FDIN}}}=240.
+$$
+
+A 4-kΩ gain resistor gives a first-pass 118-kΩ first-stage feedback value. A 10-kΩ second-stage input resistor requires 40-kΩ feedback. W = 4 µm is shared across INA resistors; implemented lengths account for PDK geometry and end-resistance effects.
+
+Large first-stage gain reduces later-stage input-referred noise but consumes bandwidth and input range. The second stage completes the gain without demanding the full ratio from one amplifier.
+
+**Design closure.** Measured nominal gains are 60.001 and 4.000 V/V, giving 240.027 V/V overall. Worst input noise is 3.107 µVrms against 4 µVrms.
 
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -224,6 +321,18 @@ RLD uses the sensed common-mode signal to drive the body model through the safet
 
 ![RLD circuit schematic](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/RLD.png)
 
+**Design sequence.** Equal 4-MΩ input resistors average the sensed signals. A 10-MΩ feedback resistor gives common-mode controller gain magnitude
+
+$$
+|G_{\mathrm{CM}}|\approx\frac{2R_F}{R_{\mathrm{IN}}}=5.
+$$
+
+For a feedback pole near 200 Hz, \(C_F=1/(2\pi R_Ff_p)=79.6\) pF. Use 80 pF, implemented as four 100 × 100 µm MIM units.
+
+Large resistors minimize loading but need substantial area and parasitic control. More capacitance improves roll-off while reducing mains-frequency loop gain.
+
+**Design closure.** Nominal gain is 4.999 V/V. Acceptance uses complete body/electrode-loop phase margin and suppression, not the controller RC pole alone.
+
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | RLD gain | V/V |  | 4.999 | 4.999 | FSVLTH |
@@ -250,6 +359,19 @@ The LPF target is unity gain. The −1 dB frequency must remain at or above 150 
 [Schematic source](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/LPF.sch)
 
 ![LPF circuit schematic](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/LPF.png)
+
+**Design sequence.** Equal input and feedback resistors establish unity differential gain. A capacitor across each feedback resistor gives
+
+$$
+H_d(s)\approx\frac{1}{1+sR_FC_F},
+\qquad f_{-1\mathrm{dB}}=0.50885f_p.
+$$
+
+The 150-Hz passband requirement implies \(f_p\ge294.8\) Hz. Choose a nominal pole near 500 Hz for RC margin. With 60 pF per side, the initial resistance is about 5.3 MΩ.
+
+Use 1/2500-µm poly resistors and four 75 × 100 µm MIM units per feedback branch. Corrected resistance is approximately 5.219 MΩ, giving a 508.2-Hz pole estimate. Narrow resistors save area but increase matching/parasitic sensitivity.
+
+**Design closure.** Simulation gives 506.908 Hz at −3 dB, within about 0.26% of the reduced-model estimate. The worst −1 dB frequency remains 174.134 Hz, above 150 Hz.
 
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -282,6 +404,16 @@ The PGA selects G2/G4/G8/G16. Its 45-corner campaign contains 180 gain/corner co
 [Schematic source](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/PGA.sch)
 
 ![PGA circuit schematic](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/PGA.png)
+
+**Design sequence.** Fix input resistance near 20 kΩ and calculate \(R_F=GR_{\mathrm{IN}}\). Gains 2/4/8/16 require effective feedback values of 40/80/160/320 kΩ.
+
+Use selectable 40/40/120/120-kΩ sections per side. At W = 2 µm, first-pass lengths are 40/40/120/120 µm; final lengths are 40.04/40.32/121.28/121.14 µm.
+
+Transmission gates use NMOS W/L = 25/0.28 µm and PMOS W/L = 50/0.28 µm. Wider switches reduce on-resistance error but increase charge injection and feedback-node capacitance.
+
+The ±2.4-V output requirement gives input magnitudes \(2.4/G=\{1.2,0.6,0.3,0.15\}\) V. This sets the gain-dependent range tests.
+
+**Design closure.** G2 has the largest gain error, 0.409% worst PVT. G16 has the closest input-range margin, approximately ±0.160 V against ±0.150 V required.
 
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -321,6 +453,14 @@ FDBUF is a unity-gain output stage. Loads of 40, 60, 80, and 100 pF per output a
 
 ![FDBUF circuit schematic](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FDBUF/FDBUF.png)
 
+**Design sequence.** Equal input/feedback resistors give unity differential gain. A 20-kΩ target at W = 2 µm requires L = 20 µm; all four resistors use that geometry.
+
+Unity signal gain still gives approximate noise gain two. With FDOTA UGF = 14.586 MHz, the one-pole bandwidth scale is 7.29 MHz before load-dependent poles and peaking.
+
+A 100-mV differential step moves each side by approximately 50 mV. The load envelope therefore requires 2–5 pC per output. Charge delivery is necessary, but loop damping determines high-accuracy settling.
+
+**Design closure.** At CL60, \(t_{0.05\%}\approx1.210/BW\) predicts 0.143 µs from 8.437 MHz; simulation gives 0.319 µs. This difference demonstrates the non-single-pole loaded response. Worst CL100 settling is 0.514 µs against 1 µs.
+
 | Parameter | Unit | Spec | NOM | PVT worst | Corner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | Total current | mA | ≤2.5 | 1.605 | 2.196 | FFVHTH |
@@ -357,6 +497,8 @@ These cells support internal/external signal selection and bypass operation. The
 
 Generates the complementary control polarity used by the selection logic.
 
+**Design choice.** Use NMOS W/L = 1/0.5 µm and PMOS W/L = 2/0.5 µm. The wider PMOS qualitatively compensates for lower mobility. Modest widths limit control loading; larger devices would charge switch gates faster but increase switching current and capacitance. Timing is not established by the static analog tests.
+
 [Schematic source](Design_Files/IC%20Design/Schematic/DIGITAL_BLOCKS/INV/INV.sch)
 
 ![INV circuit schematic](Design_Files/IC%20Design/Schematic/DIGITAL_BLOCKS/INV/INV.png)
@@ -364,6 +506,8 @@ Generates the complementary control polarity used by the selection logic.
 ### TG
 
 Provides the complementary MOS transmission path. Its sizing affects analog loading and distortion; no independent TG linearity result is claimed here.
+
+**Design choice.** Use parallel NMOS/PMOS devices at 25/0.28 and 50/0.28 µm. Complementary conduction reduces the signal-range weakness of a single MOS switch. Short channels and large widths reduce on-resistance, at the cost of charge injection, feedthrough, and capacitive loading.
 
 [Schematic source](Design_Files/IC%20Design/Schematic/DIGITAL_BLOCKS/TG/TG.sch)
 
@@ -373,6 +517,8 @@ Provides the complementary MOS transmission path. Its sizing affects analog load
 
 Selects the single-ended bias-control path in the BIAS testbench.
 
+**Design sequence.** Combine two transmission paths with complementary selection. Reuse the INV/TG sizes rather than introducing another analog-switch geometry. The chosen path must preserve BP and mirror compliance; the static selector checks assess this, while startup tests assess recovery with the selected bias source.
+
 [Schematic source](Design_Files/IC%20Design/Schematic/DIGITAL_BLOCKS/MUX/MUX.sch)
 
 ![MUX circuit schematic](Design_Files/IC%20Design/Schematic/DIGITAL_BLOCKS/MUX/MUX.png)
@@ -380,6 +526,8 @@ Selects the single-ended bias-control path in the BIAS testbench.
 ### MUXD
 
 Selects differential internal/external signal paths in the AFE block testbenches.
+
+**Design sequence.** Duplicate the selection path for the two differential halves and use common controls. Symmetric signal paths reduce conversion of switching imbalance into differential error. Evaluate the delivered OUT waveform with its load; correct internal-node behavior alone does not verify output settling or glitch suppression.
 
 [Schematic source](Design_Files/IC%20Design/Schematic/DIGITAL_BLOCKS/MUXD/MUXD.sch)
 
