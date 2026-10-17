@@ -599,7 +599,7 @@ Nominal columns refer to NOM process, 3.3 V, and 27°C. Compact corner names enc
 
 Integrated FDOTA OL and CL verification benches each use five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files plus one `*_MC.sch`. Each MC file runs MM, GL, and FULL separately.
 
-FDC and CMFB testbenches are design-support fixtures only. They have no `NOM` filename qualifier or PVT/MC campaign. Their MATLAB terminal summaries and local plots support sizing and debugging; standalone fixture results are intentionally excluded from this report.
+FDC and CMFB fixtures isolate forward gain and common-mode control during design. Performance acceptance uses the integrated FDOTA with its actual sensor, compensation, and output loads.
 
 ## Nominal and full-PVT results
 
@@ -757,7 +757,7 @@ FULL Gain error: -0.003 to -0.002 %; mean -0.003 %.
 
 ![Fig MC 06 Gain Error Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_06_Gain_Error_Histogram.png)
 
-## Sources and reproduction
+## Measurement sources
 
 - [MATLAB analyzer](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDOTA_Analyze.m)
 - [Representative-corner comparison](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_table_report.csv)
@@ -767,8 +767,6 @@ FULL Gain error: -0.003 to -0.002 %; mean -0.003 %.
 - [FULL statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FULL_FDOTA_MC_Summary.csv)
 - [MC coverage and yield](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_MC_Run_Summary.csv)
 - [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/ANALOG_BLOCKS/FDOTA)
-
-Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
 ## Limitations and next steps
 

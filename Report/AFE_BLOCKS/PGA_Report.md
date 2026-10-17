@@ -218,7 +218,7 @@ FULL G2 CMRR @ 60 Hz: 91.691 to 143.495 dB; mean 105.672 dB.
 
 ![Fig MC 04 CMRR 60Hz Histogram](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/Plots/Fig_MC_04_CMRR_60Hz_Histogram.png)
 
-## Sources and reproduction
+## Measurement sources
 
 - [MATLAB analyzer](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/PGA_Analyze.m)
 - [Representative-corner comparison](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/Reports/PGA_table_report.csv)
@@ -229,8 +229,6 @@ FULL G2 CMRR @ 60 Hz: 91.691 to 143.495 dB; mean 105.672 dB.
 - [FULL statistics](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/Reports/FULL_MC_Summary.csv)
 - [MC coverage and yield](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/PGA/Reports/MC_Run_Summary.csv)
 - [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/AFE_BLOCKS/PGA)
-
-Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
 ## Limitations and next steps
 

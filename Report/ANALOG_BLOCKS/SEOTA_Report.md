@@ -542,7 +542,7 @@ FULL Gain error: -0.003 to 0 %; mean -0.001 %.
 
 ![Fig MC 05 Gain Error Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_05_Gain_Error_Histogram.png)
 
-## Sources and reproduction
+## Measurement sources
 
 - [MATLAB analyzer](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/SEOTA_Analyze.m)
 - [Representative-corner comparison](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_table_report.csv)
@@ -552,8 +552,6 @@ FULL Gain error: -0.003 to 0 %; mean -0.001 %.
 - [FULL statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/FULL_SEOTA_MC_Summary.csv)
 - [MC coverage and yield](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_MC_Run_Summary.csv)
 - [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/ANALOG_BLOCKS/SEOTA)
-
-Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
 ## Limitations and next steps
 

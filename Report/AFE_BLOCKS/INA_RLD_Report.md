@@ -183,7 +183,7 @@ FULL S1 gain: 59.824 to 60.14 V/V; mean 59.998 V/V.
 
 ![Fig MC 06 Input CM Suppression Histogram](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/Plots/Fig_MC_06_Input_CM_Suppression_Histogram.png)
 
-## Sources and reproduction
+## Measurement sources
 
 - [MATLAB analyzer](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/INA_RLD_Analyze.m)
 - [Representative-corner comparison](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/Reports/INA_RLD_table_report.csv)
@@ -194,8 +194,6 @@ FULL S1 gain: 59.824 to 60.14 V/V; mean 59.998 V/V.
 - [FULL statistics](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/Reports/FULL_MC_Summary.csv)
 - [MC coverage and yield](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/INA_RLD/Reports/MC_Run_Summary.csv)
 - [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/AFE_BLOCKS/INA_RLD)
-
-Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
 ## Limitations and next steps
 

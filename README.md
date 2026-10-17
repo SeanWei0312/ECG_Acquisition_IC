@@ -41,7 +41,7 @@ BIAS additionally includes a 50,630-point DC grid. PGA covers four gains; FDBUF 
 
 Current values and specifications are summarized in the [project report](Project_Report.md). Blank specification fields are report-only. All results are pre-layout schematic simulations.
 
-FDC and CMFB are FDOTA design-support circuits, not separate PVT/MC verification campaigns. Their MATLAB scripts retain terminal diagnostics and plots; Markdown reports present their schematics and sizing, with simulation results reported for the integrated FDOTA only.
+FDC provides differential gain; CMFB regulates the average output voltage. Their coupled behavior is verified in the integrated FDOTA.
 
 ## Repository layout
 
@@ -141,8 +141,6 @@ FDOTA design-support diagnostics:
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','FDOTA','FDC')); FDC_Analyze"
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','FDOTA','CMFB')); CMFB_Analyze"
 ```
-
-The [FDC guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/README.md) and [CMFB guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/README.md) list the required support testbenches. Their filenames have no `NOM` suffix; exports use `Result_txt/`, and generated figures use `Plots/`. Historical outputs are preserved in `Archive/` and are not current verification evidence.
 
 Device-characterization utilities:
 

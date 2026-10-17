@@ -139,7 +139,7 @@ FULL CMRR @ 60 Hz: 91.179 to 154.616 dB; mean 107.885 dB.
 
 ![Fig MC 03 CMRR Histogram](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/Plots/Fig_MC_03_CMRR_Histogram.png)
 
-## Sources and reproduction
+## Measurement sources
 
 - [MATLAB analyzer](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/LPF_Analyze.m)
 - [Representative-corner comparison](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/Reports/LPF_table_report.csv)
@@ -150,8 +150,6 @@ FULL CMRR @ 60 Hz: 91.179 to 154.616 dB; mean 107.885 dB.
 - [FULL statistics](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/Reports/FULL_MC_Summary.csv)
 - [MC coverage and yield](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/LPF/Reports/MC_Run_Summary.csv)
 - [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/AFE_BLOCKS/LPF)
-
-Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
 ## Limitations and next steps
 

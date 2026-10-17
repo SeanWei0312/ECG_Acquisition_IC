@@ -197,7 +197,7 @@ FULL Input offset: -4.611 to 5.067 mV; mean -0.091 mV.
 
 ![FDBUF MC input offset](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/FDBUF/Plots/FDBUF_MC_input_offset.png)
 
-## Sources and reproduction
+## Measurement sources
 
 - [MATLAB analyzer](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/FDBUF/FDBUF_Analyze.m)
 - [Representative-corner comparison](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/FDBUF/Reports/FDBUF_table_report.csv)
@@ -208,8 +208,6 @@ FULL Input offset: -4.611 to 5.067 mV; mean -0.091 mV.
 - [FULL statistics](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/FDBUF/Reports/FULL_MC_Summary.csv)
 - [MC coverage and yield](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/FDBUF/Reports/MC_Run_Summary.csv)
 - [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/AFE_BLOCKS/FDBUF)
-
-Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
 ## Limitations and next steps
 

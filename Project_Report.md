@@ -424,9 +424,9 @@ The OTA reports retain the step-by-step $g_m/I_D$ sizing flow: specification →
 - [Device characterization and lookup plots](Report/SIZING/Gm_Id_Report.md)
 - [Integrated AFE verification scope](Report/AFE_BLOCKS/AFE_Report.md)
 
-Regenerate netlists after editing schematics. Integrated SEOTA and FDOTA OL/CL verification benches each have five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files and one `*_MC.sch`, which runs MM/GL/FULL separately. BIAS and MIRROR are under `POWER_BLOCKS` in schematic, testbench, and measurement folders.
+SEOTA and FDOTA are evaluated in open-loop and closed-loop configurations. PVT sweeps cover process, supply, and temperature; separate MM, GL, and FULL campaigns assess mismatch and global variation.
 
-FDC and CMFB support testbenches are directly inside their respective `Testbench/ANALOG_BLOCKS/FDOTA/FDC/` and `CMFB/` folders. They have no `NOM` filename qualifier or PVT/MC campaign. Their analyzers read `Result_txt/`, print design diagnostics, and generate local plots. See the [FDC directory guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/README.md) and [CMFB directory guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/README.md). Standalone fixture outputs are not reported as block verification results.
+FDC and CMFB fixtures isolate differential amplification, common-mode control sensitivity, and feedback polarity during design. Integrated FDOTA simulation evaluates their interaction with the actual output sensor and load.
 
 Run ngspice to completion before invoking MATLAB. The analyzers read existing files; they do not launch simulations. Detailed CSVs and block reports are the source for the summaries above. No result files, specifications, circuits, or analyzers were changed for this document.
 

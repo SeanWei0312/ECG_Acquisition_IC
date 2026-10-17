@@ -131,7 +131,7 @@ FULL Startup time: 784.605 to 849.014 us; mean 808.521 us.
 
 ![Fig MC 02 Startup Histogram](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/Plots/Fig_MC_02_Startup_Histogram.png)
 
-## Sources and reproduction
+## Measurement sources
 
 - [MATLAB analyzer](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/BIAS_Analyze.m)
 - [Representative-corner comparison](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/Reports/BIAS_comparison_report.csv)
@@ -141,8 +141,6 @@ FULL Startup time: 784.605 to 849.014 us; mean 808.521 us.
 - [FULL statistics](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/Reports/FULL_MC_Summary.csv)
 - [MC coverage and yield](../../Measurement_Results/IC_Simulation/POWER_BLOCKS/BIAS/Reports/MC_Run_Summary.csv)
 - [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/POWER_BLOCKS/BIAS)
-
-Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
 
 ## Limitations and next steps
 
