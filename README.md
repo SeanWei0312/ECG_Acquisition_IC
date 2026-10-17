@@ -1,6 +1,6 @@
 # ECG Analog Front End
 
-A self-directed, independent pre-layout ECG analog front end (AFE), implemented in the GlobalFoundries 180 nm MCU process. The present project covers low-noise ECG amplification, filtering, programmable gain, common-mode control, biasing, and differential output buffering. SAR ADC integration is planned as future work.
+A self-directed, independent pre-layout ECG analog front end (AFE), implemented in the GlobalFoundries 180 nm MCU process. The present project covers low-noise ECG amplification, filtering, programmable gain, common-mode control, biasing, and differential output buffering. ADC development is outside the current scope.
 
 The repository contains transistor-level Xschem designs, ngspice verification testbenches, MATLAB analysis scripts, generated PVT/Monte Carlo reports, and $g_m/I_D$ characterization utilities.
 
@@ -20,52 +20,26 @@ The repository contains transistor-level Xschem designs, ngspice verification te
 | 2 | [`LPF`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/LPF/) | Fully differential, unity-gain active low-pass filter | $1\text{ V/V}$; $f_{-1\mathrm{dB}} \ge 150\text{ Hz}$ |
 | 3 | [`PGA`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/PGA/) | Digitally programmable differential gain | $2/4/8/16\text{ V/V}$ |
 | 4 | [`FDBUF`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/FDBUF/) | Differential output driver | $1\text{ V/V}$ |
-| Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/) | Input common-mode suppression | $55.1\text{ dB}$ at 60 Hz nominal |
-| Support | [`BIAS`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
+| Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/) | Input common-mode suppression | Mains/common-mode reduction; see current report |
+| Support | [`BIAS`](Design_Files/IC%20Design/Schematic/POWER_BLOCKS/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/POWER_BLOCKS/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
 
 The verified block-level gain plan gives nominal AFE signal-path gains from $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$).
 
 ## Verification status
 
-Deterministic verification uses 45 corners: five process models (`NOM`, `FF`, `SS`, `FS`, and `SF`) across nine voltage/temperature conditions. Statistical verification uses 200-run mismatch-only (MM), global-only (GL), and combined (FULL) Monte Carlo sets.
+| Block | Available verification | Report |
+| :--- | :--- | :--- |
+| BIAS and Mirror | 45-condition PVT; MM/GL/FULL exports | [Details](Report/POWER_BLOCKS/BIAS_Report.md) |
+| SEOTA | 45-condition PVT; MM/GL/FULL exports | [Details](Report/ANALOG_BLOCKS/SEOTA_Report.md) |
+| FDOTA | 45-condition PVT; MM/GL/FULL exports | [Details](Report/ANALOG_BLOCKS/FDOTA_Report.md) |
+| INA + RLD | 45-condition PVT; MM/GL/FULL exports | [Details](Report/AFE_BLOCKS/INA_RLD_Report.md) |
+| LPF | 45-condition PVT; MM/GL/FULL exports | [Details](Report/AFE_BLOCKS/LPF_Report.md) |
+| PGA | 45-condition PVT; MM/GL/FULL exports | [Details](Report/AFE_BLOCKS/PGA_Report.md) |
+| FDBUF | 45-condition PVT; MM/GL/FULL exports | [Details](Report/AFE_BLOCKS/FDBUF_Report.md) |
 
-| Block | Deterministic verification | Monte Carlo | Status |
-| :--- | :--- | :--- | :---: |
-| [BIAS / SEL](Report/AFE_BLOCKS/BIAS_Report.md) | PVT, voltage/temperature surface, startup, selector transient | — | Complete |
-| [SE OTA](Report/AFE_BLOCKS/SEOTA_Report.md) | 45-corner PVT | MM / GL / FULL | Pass |
-| [FD OTA](Report/AFE_BLOCKS/FDOTA_Report.md) | 45-corner PVT | MM / GL / FULL | Pass |
-| [INA + RLD](Report/AFE_BLOCKS/INA_RLD_Report.md) | 45-corner balanced PVT, mismatch stress, selector transient | MM / GL / FULL | Pass |
-| [LPF](Report/AFE_BLOCKS/LPF_Report.md) | 45-corner PVT, selector transient | MM / GL / FULL | Pass |
-| [PGA](Report/AFE_BLOCKS/PGA_Report.md) | 45-corner PVT, selector and gain-code transients | MM / GL / FULL | Pass |
-| [FDBUF](Report/AFE_BLOCKS/FDBUF_Report.md) | Raw simulation exports available | MM export available | Analysis pending |
-| [Integrated AFE](Report/AFE_BLOCKS/AFE_Report.md) | Top-level schematic and analyzer scaffold | — | Integration pending |
+BIAS additionally includes a 50,630-point DC grid. PGA covers four gains; FDBUF covers four loads. Current archived MC counts and yields are listed in each report; incomplete exports do not establish a circuit failure or a pass. Integrated AFE verification remains pending.
 
-All completed MM, GL, and FULL analyses contain 200 valid runs, zero failed runs, and 100% joint yield against the current pre-layout specifications.
-
-## Headline results
-
-| Block | Metric | Nominal | Full 45-corner range | Specification |
-| :--- | :--- | ---: | ---: | ---: |
-| SE OTA | DC gain | 96.522 dB | 93.988–97.180 dB | $\ge 88\text{ dB}$ |
-|  | UGF | 12.835 MHz | 8.762–16.895 MHz | $\ge 8\text{ MHz}$ |
-|  | Phase margin | 67.767° | 56.368–77.712° | $\ge 55°$ |
-|  | Input noise, 0.05–150 Hz | 1.873 µVrms | 1.687–2.189 µVrms | $\le 2.5\text{ µVrms}$ |
-| FD OTA | Differential gain | 88.699 dB | 86.753–89.804 dB | $\ge 85\text{ dB}$ |
-|  | Differential UGF | 12.447 MHz | 8.435–16.195 MHz | $\ge 8\text{ MHz}$ |
-|  | Differential phase margin | 72.649° | 63.377–79.898° | $\ge 60°$ |
-|  | Input noise, 0.05–150 Hz | 3.086 µVrms | 2.815–3.514 µVrms | $\le 4\text{ µVrms}$ |
-| INA + RLD | INA gain error | 0.011% | −0.215% to +0.140% | ±0.5% |
-|  | INA bandwidth | 259.286 kHz | 176.996–346.567 kHz | $\ge 150\text{ kHz}$ |
-|  | Input noise, 0.05–150 Hz | 2.667 µVrms | 2.402–3.117 µVrms | $\le 4\text{ µVrms}$ |
-|  | CM suppression, 60 / 150 Hz | 55.072 / 53.257 dB | 54.644–55.305 / 51.676–54.363 dB | $\ge 50/45\text{ dB}$ |
-| LPF | Passband gain error | −0.027% | −0.050% to −0.016% | ±0.5% |
-|  | −1 dB frequency | 258.691 Hz | 174.135–410.798 Hz | $\ge 150\text{ Hz}$ |
-|  | Input noise, 0.05–150 Hz | 6.176 µVrms | 5.632–7.036 µVrms | $\le 10\text{ µVrms}$ |
-| PGA | Gain error, all codes | 0.751 / −0.236 / −0.522 / −0.878% | −0.932% to +2.502% | ±5% |
-|  | Bandwidth, all codes | 0.907–5.053 MHz | 0.595–6.988 MHz | $\ge 0.15\text{ MHz}$ |
-|  | Input noise, all codes | 3.280–4.617 µVrms | 2.992–5.250 µVrms | $\le 10\text{ µVrms}$ |
-
-The block reports include selected results for all 45 PVT corners; their long-form CSV files remain the authoritative source for every reported parameter. See the [project report](Project_Report.md) for the AFE architecture, verification methodology, current limitations, and complete report index.
+Current values and specifications are summarized in the [project report](Project_Report.md). Blank specification fields are report-only. All results are pre-layout schematic simulations.
 
 ## Repository layout
 
@@ -77,15 +51,15 @@ ECG_Acquisition_IC/
 ├── Report/                              # Detailed block reports
 │   ├── AFE_BLOCKS/
 │   │   ├── AFE_Report.md
-│   │   ├── BIAS_Report.md
 │   │   ├── FDBUF_Report.md
-│   │   ├── FDOTA_Report.md
 │   │   ├── INA_RLD_Report.md
 │   │   ├── LPF_Report.md
-│   │   ├── PGA_Report.md
+│   │   └── PGA_Report.md
+│   ├── ANALOG_BLOCKS/
+│   │   ├── FDOTA_Report.md
 │   │   └── SEOTA_Report.md
-│   ├── SAR_ADC_BLOCKS/                  # Future-work documentation
-│   │   └── SAR_ADC_Report.md
+│   ├── POWER_BLOCKS/
+│   │   └── BIAS_Report.md
 │   └── SIZING/
 │       └── Gm_Id_Report.md
 ├── Design_Files/
@@ -94,13 +68,14 @@ ECG_Acquisition_IC/
 │       ├── Schematic/
 │       │   ├── AFE_BLOCKS/                 # Analog-front-end hierarchy
 │       │   │   ├── AFE/
-│       │   │   ├── BIAS/
 │       │   │   ├── FDBUF/
 │       │   │   ├── INA/
 │       │   │   ├── LPF/
-│       │   │   ├── MIRROR/
 │       │   │   ├── PGA/
 │       │   │   └── RLD/
+│       │   ├── POWER_BLOCKS/
+│       │   │   ├── BIAS/
+│       │   │   └── MIRROR/
 │       │   ├── ANALOG_BLOCKS/
 │       │   │   ├── FDOTA/
 │       │   │   └── SEOTA/
@@ -109,47 +84,29 @@ ECG_Acquisition_IC/
 │       │   │   ├── MUX/
 │       │   │   ├── MUXD/
 │       │   │   └── TG/
-│       │   └── SAR_ADC_BLOCKS/             # Preliminary SAR ADC future work
-│       │       ├── BSW/
-│       │       ├── CDAC/
-│       │       ├── CLK_GEN/
-│       │       ├── COMP/
-│       │       ├── DLY_CELL/
-│       │       ├── INV/
-│       │       ├── INV2/
-│       │       ├── MUX/
-│       │       ├── NAND/
-│       │       ├── OUT_REG/
-│       │       ├── RS_LATCH/
-│       │       ├── SAR_ADC/
-│       │       ├── SAR_LOGIC/
-│       │       ├── SA_LATCH/
-│       │       ├── SW_NW/
-│       │       ├── TG_SW/
-│       │       ├── TSPC_FF/
-│       │       └── XOR/
 │       └── Testbench/
 │           ├── AFE_BLOCKS/                 # AFE PVT and Monte Carlo benches
-│           │   ├── BIAS/
 │           │   ├── FDBUF/
 │           │   ├── INA_RLD/
 │           │   ├── LPF/
 │           │   └── PGA/
+│           ├── POWER_BLOCKS/
+│           │   └── BIAS/
 │           ├── ANALOG_BLOCKS/
 │           │   ├── FDOTA/
 │           │   └── SEOTA/
-│           ├── SAR_ADC_BLOCKS/              # Future ADC testbench work
 │           └── SIZING/
 │               └── Gm_Id/
 ├── Measurement_Results/
 │   └── IC_Simulation/                     # Per-block raw data, reports, and plots
 │       ├── AFE_BLOCKS/
 │       │   ├── AFE/
-│       │   ├── BIAS/
 │       │   ├── FDBUF/
 │       │   ├── INA_RLD/
 │       │   ├── LPF/
 │       │   └── PGA/
+│       ├── POWER_BLOCKS/
+│       │   └── BIAS/
 │       ├── ANALOG_BLOCKS/
 │       │   ├── FDOTA/
 │       │   └── SEOTA/
@@ -190,4 +147,4 @@ Each analyzer keeps calculations in double precision and applies unit scaling on
 2. Implement matching-critical layout, followed by DRC and LVS.
 3. Run extracted PVT and selected FULL Monte Carlo verification.
 4. Prepare the evaluation PCB and laboratory characterization plan.
-5. Design, verify, and integrate a SAR ADC as a future extension.
+5. Complete integrated AFE verification under its intended output load.

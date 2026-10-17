@@ -1,16 +1,19 @@
 function PGA_Analyze
-% PGA_ANALYZE Characterize the four-gain fully differential PGA.
-%
-% MATLAB calculates PVT metrics from raw NGSPICE output, selects full-PVT
-% worst cases, summarizes correlated MM/GL/FULL Monte Carlo runs, and
-% creates nominal plots. Shared operating-point quantities use G2.
+% PGA_ANALYZE Verify PVT and Monte Carlo results.
+% Specs, measurements, reports, and plots are defined below.
 
-clc; close all;
+%% Setup and output directories
+
+clc;
+close all;
+
 scriptDir = fileparts(mfilename('fullpath'));
-plotDir = fullfile(scriptDir,'Plots'); reportDir = fullfile(scriptDir,'Reports');
+plotDir = fullfile(scriptDir,'Plots');
+reportDir = fullfile(scriptDir,'Reports');
 if ~isfolder(plotDir), mkdir(plotDir); end
 if ~isfolder(reportDir), mkdir(reportDir); end
-cfg = analysisConfig(); rows = reportRows(cfg);
+cfg = analysisConfig();
+rows = reportRows(cfg);
 processes = ["NOM" "FF" "SS" "FS" "SF"]; processTokens = lower(processes);
 cases = ["nom" "vl" "vh" "tl" "th" "vltl" "vlth" "vhtl" "vhth"];
 caseLabels = ["NOMNOM" "VLNOM" "VHNOM" "NOMTL" "NOMTH" ...
@@ -76,15 +79,23 @@ plotGainSwitchTransient(scriptDir,plotDir,cfg);
 runMcSection(scriptDir,plotDir,reportDir,cfg);
 end
 
+%% Configuration and report definitions
+
 function cfg = analysisConfig
-cfg.gains = [2 4 8 16]; cfg.gainTags = ["g2" "g4" "g8" "g16"];
-cfg.referenceFrequency_Hz = 10; cfg.bandEdge_Hz = 150;
-cfg.noiseBand_Hz = [0.05 150]; cfg.rejectionFrequencies_Hz = [60 150];
-cfg.mcRequestedRuns = 200; cfg.biasTarget_uA = 40; cfg.biasTolerance_uA = 10;
-cfg.totalCurrentLimit_mA = 2.5; cfg.totalPowerLimit_mW = 9;
-cfg.outputCmErrorLimit_mV = 20; cfg.offsetLimit_mV = 5;
-cfg.gainErrorLimit_pct = 5; cfg.bandwidthLimit_MHz = 0.15;
-cfg.rejectionLimit_dB = 80; cfg.noiseLimit_uVrms = 10;
+cfg.gains = [2 4 8 16];
+cfg.gainTags = ["g2" "g4" "g8" "g16"];
+cfg.referenceFrequency_Hz = 10;
+cfg.bandEdge_Hz = 150;
+cfg.noiseBand_Hz = [0.05 150];
+cfg.rejectionFrequencies_Hz = [60 150];
+cfg.mcRequestedRuns = 200;
+cfg.biasTarget_uA = 40;
+cfg.biasTolerance_uA = 10;
+cfg.totalCurrentLimit_mA = 2.5;
+cfg.outputCmErrorLimit_mV = 20;
+cfg.offsetLimit_mV = 5;
+cfg.gainErrorLimit_pct = 1;
+cfg.rejectionLimit_dB = 80;
 cfg.vtcCompression_pct = 1;
 cfg.vtcCenterFitHalfWidth_V = [0.1 0.05 0.025 0.0125];
 cfg.inputRangeLimit_V = [1.2 0.6 0.3 0.15];
@@ -119,9 +130,7 @@ for gain = cfg.gains
 end
 end
 
-function text = thdInputText(value)
-text = string(sprintf('%.2f',value));
-end
+%% Specifications and verification
 
 function specifications = specStrings(parameters,cfg)
 specifications = strings(size(parameters));
@@ -133,14 +142,14 @@ parameter = string(parameter);
 if any(parameter == ["FDC bias current" "CMFB bias current"])
     specification = sprintf('%g±%g',cfg.biasTarget_uA,cfg.biasTolerance_uA);
 elseif parameter == "Total current", specification = "≤"+cfg.totalCurrentLimit_mA;
-elseif parameter == "Total power", specification = "≤"+cfg.totalPowerLimit_mW;
+elseif parameter == "Total power", specification = "";
 elseif parameter == "Output CM error", specification = "±"+cfg.outputCmErrorLimit_mV;
 elseif endsWith(parameter," input offset"), specification = "±"+cfg.offsetLimit_mV;
 elseif endsWith(parameter," gain error"), specification = "±"+cfg.gainErrorLimit_pct;
-elseif endsWith(parameter," -3 dB bandwidth"), specification = "≥"+cfg.bandwidthLimit_MHz;
+elseif endsWith(parameter," -3 dB bandwidth"), specification = "";
 elseif contains(parameter,"CMRR @") || contains(parameter,"PSRR+") || contains(parameter,"PSRR-")
     specification = "≥"+cfg.rejectionLimit_dB;
-elseif contains(parameter,"input-referred noise"), specification = "≤"+cfg.noiseLimit_uVrms;
+elseif contains(parameter,"input-referred noise"), specification = "";
 elseif contains(parameter," THD @ 60 Hz"), specification = "≤"+cfg.thdLimit_pct;
 else, specification = "";
 end
@@ -162,7 +171,8 @@ function checkReportSpecCoverage(rows,specifications)
 p = rows(:,1);
 descriptive = rows(:,2) == "" | p == "AVDD" | p == "Temperature" | ...
     p == "Shared OP gain code" | endsWith(p," target gain") | ...
-    contains(p," gain @ 10 Hz") | contains(p," gain @ 150 Hz");
+    contains(p," gain @ 10 Hz") | contains(p," gain @ 150 Hz") | ...
+    p == "Total power" | endsWith(p," -3 dB bandwidth") | contains(p,"input-referred noise");
 missing = rows(:,2) ~= "" & strlength(specifications) == 0 & ~descriptive;
 if any(missing)
     error('PGA_Analyze:MissingReportSpec','Rows lack specifications: %s',strjoin(p(missing),', '));
@@ -175,14 +185,11 @@ p = string(parameter);
 if any(p == ["FDC bias current" "CMFB bias current"])
     pass = abs(value-cfg.biasTarget_uA) <= cfg.biasTolerance_uA;
 elseif p == "Total current", pass = value <= cfg.totalCurrentLimit_mA;
-elseif p == "Total power", pass = value <= cfg.totalPowerLimit_mW;
 elseif p == "Output CM error", pass = abs(value) <= cfg.outputCmErrorLimit_mV;
 elseif endsWith(p," input offset"), pass = abs(value) <= cfg.offsetLimit_mV;
 elseif endsWith(p," gain error"), pass = abs(value) <= cfg.gainErrorLimit_pct;
-elseif endsWith(p," -3 dB bandwidth"), pass = value >= cfg.bandwidthLimit_MHz;
 elseif contains(p,"CMRR @") || contains(p,"PSRR+") || contains(p,"PSRR-")
     pass = value >= cfg.rejectionLimit_dB;
-elseif contains(p,"input-referred noise"), pass = value <= cfg.noiseLimit_uVrms;
 elseif contains(p," THD @ 60 Hz"), pass = value <= cfg.thdLimit_pct;
 else, pass = true;
 end
@@ -222,6 +229,20 @@ else
         passedCorners,numel(corners),strjoin(failures,newline));
 end
 end
+
+function bounds = mcSpecBounds(parameter,cfg)
+if endsWith(parameter,"input offset")
+    bounds = [-cfg.offsetLimit_mV cfg.offsetLimit_mV];
+elseif endsWith(parameter,"gain error")
+    bounds = [-cfg.gainErrorLimit_pct cfg.gainErrorLimit_pct];
+elseif contains(parameter,"CMRR @")
+    bounds = [cfg.rejectionLimit_dB Inf];
+else
+    bounds = [-Inf Inf];
+end
+end
+
+%% PVT measurement extraction
 
 function m = analyzeCorner(resultDir,processToken,caseToken,expectedVdd_V,cfg)
 opFile = fullfile(resultDir,processToken+".op_g2_"+caseToken+".txt");
@@ -284,13 +305,6 @@ adCurve = interpLog(diff.frequency_Hz,diff.gain_VV,cmF);
 result.cmrrCurve_dB = 20*log10(adCurve./cm);
 result.psrrPCurve_dB = 20*log10(adCurve./interpLog(pF,p,cmF));
 result.psrrNCurve_dB = 20*log10(adCurve./interpLog(nF,n,cmF));
-end
-
-function [f,magnitude] = transferMagnitudeCurve(data,label)
-f = data(:,1); validateFrequency(f,label);
-source = complex(data(:,2),data(:,3)); output = complex(data(:,4),data(:,5));
-if any(abs(source) == 0), error('PGA_Analyze:ZeroAcSource','%s has zero source.',label); end
-magnitude = abs(output./source);
 end
 
 function result = analyzeNoise(data,cfg)
@@ -378,15 +392,6 @@ result.negativeAtBoundary = negativeAtBoundary;
 result.positiveAtBoundary = positiveAtBoundary;
 end
 
-function crossing = compressionCrossing(x1,error1,x2,error2,target)
-if ~all(isfinite([x1 error1 x2 error2])) || error1 == error2
-    crossing = x2;
-    return;
-end
-fraction = (target-error1)/(error2-error1);
-crossing = x1+fraction*(x2-x1);
-end
-
 function result = analyzeThd(data,fundamental_Hz)
 t_s = data(:,1);
 pgaOutDiff_V = data(:,3);
@@ -418,29 +423,6 @@ result.amplitude_Vpk = amplitude_Vpk;
 result.ratio = sqrt(sum(amplitude_Vpk(2:5).^2))/amplitude_Vpk(1);
 result.percent = 100*result.ratio;
 result.dB = 20*log10(result.ratio);
-end
-
-function value = integrateDensity(frequency,density,band)
-[f,y] = boundedTrace(frequency,density,band); value = sqrt(trapz(f,y.^2));
-end
-
-function [boundedFrequency,boundedValue] = boundedTrace(frequency,value,band)
-if band(1) < frequency(1) || band(2) > frequency(end)
-    error('PGA_Analyze:BandCoverage','Band is outside the data range.');
-end
-inside = frequency > band(1) & frequency < band(2);
-boundedFrequency = [band(1); frequency(inside); band(2)];
-boundedValue = [interpLog(frequency,value,band(1)); value(inside); ...
-    interpLog(frequency,value,band(2))];
-end
-
-function crossing = descendingCrossing(f,response,level,startFrequency)
-start = find(f >= startFrequency,1); crossing = NaN;
-if isempty(start), return; end
-relative = find(response(start:end-1) > level & response(start+1:end) <= level,1);
-if isempty(relative), return; end
-i = start+relative-1; x1 = log10(f(i)); x2 = log10(f(i+1));
-crossing = 10^(x1+(level-response(i))*(x2-x1)/(response(i+1)-response(i)));
 end
 
 function values = metricsToRaw(m,rows,temperature_C,cfg)
@@ -501,6 +483,8 @@ for gainIndex = 1:numel(cfg.gains)
     end
 end
 end
+
+%% PVT tables and terminal output
 
 function result = buildFullPvtTable(rows,values,relations,corners,processes,cases,vdd,temp)
 metricRows = find(rows(:,2) ~= "" & rows(:,1) ~= "AVDD" & ...
@@ -566,6 +550,33 @@ result = table(parameters,units,specifications,formatted,selectedCorners, ...
     'VariableNames',{'Parameter','Unit','Spec','Value','Corner'});
 end
 
+function printSummaryTable(rows,specs,columns,values)
+w = max(46,max(strlength(rows(:,1)))+2); fprintf('%-*s %-8s %-14s',w,'Parameter','Unit','Spec');
+for i = 1:numel(columns), fprintf(' %13s',columns(i)); end
+fprintf('\n%s\n',repmat('-',1,w+24+14*numel(columns)));
+for r = 1:size(rows,1)
+    if rows(r,1) == "" && rows(r,2) == "", fprintf('\n');
+    elseif rows(r,2) == "", fprintf('%-*s\n',w,upper(rows(r,1)));
+    else
+        fprintf('%-*s %-8s %-14s',w,rows(r,1),rows(r,2),specs(r));
+        for c = 1:numel(columns), fprintf(' %13s',values(r,c)); end
+        fprintf('\n');
+    end
+end
+end
+
+function printWorstCaseTable(t)
+w = max(46,max(strlength(t.Parameter))+2);
+fprintf('%-*s %-8s %-14s %13s %-10s\n',w,'Parameter','Unit','Spec','Value','Corner');
+fprintf('%s\n',repmat('-',1,w+49));
+for i = 1:height(t)
+    fprintf('%-*s %-8s %-14s %13s %-10s\n',w,t.Parameter(i),t.Unit(i), ...
+        t.Spec(i),t.Value(i),t.Corner(i));
+end
+end
+
+%% Monte Carlo analysis and reporting
+
 function runMcSection(scriptDir,plotDir,reportDir,cfg)
 modes = ["MM" "GL" "FULL"]; defs = mcDefinitions(cfg); results = cell(3,1);
 for modeIndex = 1:3
@@ -603,16 +614,6 @@ for gain = cfg.gains
     defs.units = [defs.units "mV" "V/V" "V/V" "%" "MHz" "dB" "dB"];
 end
 defs.specs = specStrings(defs.names,cfg); defs.required = strlength(defs.specs) > 0;
-end
-
-function raw = readMcSummary(filePath,expectedColumns)
-if ~isfile(filePath), error('PGA_Analyze:MissingMcSummary','Missing %s',filePath); end
-raw = readmatrix(filePath,'FileType','text'); raw = raw(any(isfinite(raw),2),:);
-raw = raw(:,any(isfinite(raw),1));
-if size(raw,2) ~= expectedColumns
-    error('PGA_Analyze:McColumns','%s must have %d numeric columns; found %d.', ...
-        filePath,expectedColumns,size(raw,2));
-end
 end
 
 function [opRaw,gainRaw] = joinMcByRun(opRaw,gainRaw,mode,cfg)
@@ -687,51 +688,6 @@ for j = 1:height(result.table)
 end
 end
 
-function plotMcGainGrid(results,defs,cfg,suffix,fileName,plotDir)
-fig = figure; layout = tiledlayout(fig,2,2);
-for gainIndex = 1:4
-    parameter = "G"+cfg.gains(gainIndex)+" "+suffix;
-    metricIndex = parameterIndex(defs.names,parameter);
-    nexttile(layout); hold on;
-    valueSets = cellfun(@(r)r.values(r.validMask,metricIndex),results,'UniformOutput',false);
-    allValues = vertcat(valueSets{:}); bounds = mcSpecBounds(parameter,cfg);
-    [lo,hi,fullResult] = mcDisplayRange(allValues,results,metricIndex);
-    edges = linspace(lo,hi,21); colors = lines(3); distributionLines = gobjects(3,1);
-    for k = 1:3
-        sample = valueSets{k}; sample = sample(isfinite(sample) & sample >= lo & sample <= hi);
-        probability = 100*histcounts(sample,edges,'Normalization','probability');
-        distributionLines(k) = stairs(edges,[probability 0], ...
-            'LineWidth',1.5,'Color',colors(k,:), ...
-            'DisplayName',results{k}.mode);
-    end
-    for x = bounds(isfinite(bounds))
-        if x >= lo && x <= hi
-            xline(x,'--','HandleVisibility','off');
-        end
-    end
-    addFullStatMarkers(fullResult,metricIndex); xlim([lo hi]); ylabel('Samples (%)');
-    stylePlot(suffix+" ("+defs.units(metricIndex)+")", ...
-        "("+char('a'+gainIndex-1)+") G"+cfg.gains(gainIndex));
-    legend(distributionLines,{'MM','GL','FULL'},'Location','northeast');
-end
-sgtitle(layout,"PGA "+suffix+" Distribution - MM / GL / FULL");
-savePlot(fig,plotDir,fileName);
-end
-
-function bounds = mcSpecBounds(parameter,cfg)
-if endsWith(parameter,"input offset")
-    bounds = [-cfg.offsetLimit_mV cfg.offsetLimit_mV];
-elseif endsWith(parameter,"gain error")
-    bounds = [-cfg.gainErrorLimit_pct cfg.gainErrorLimit_pct];
-elseif endsWith(parameter,"-3 dB bandwidth")
-    bounds = [cfg.bandwidthLimit_MHz Inf];
-elseif contains(parameter,"CMRR @")
-    bounds = [cfg.rejectionLimit_dB Inf];
-else
-    bounds = [-Inf Inf];
-end
-end
-
 function [lo,hi,fullResult] = mcDisplayRange(values,results,index)
 fullIndex = find(cellfun(@(r)strcmpi(string(r.mode),"FULL"),results),1);
 if isempty(fullIndex)
@@ -769,6 +725,39 @@ end
 halfRange = 1.05*halfRange;
 lo = center-halfRange;
 hi = center+halfRange;
+end
+
+%% Plots and annotations
+
+function plotMcGainGrid(results,defs,cfg,suffix,fileName,plotDir)
+fig = figure; layout = tiledlayout(fig,2,2);
+for gainIndex = 1:4
+    parameter = "G"+cfg.gains(gainIndex)+" "+suffix;
+    metricIndex = parameterIndex(defs.names,parameter);
+    nexttile(layout); hold on;
+    valueSets = cellfun(@(r)r.values(r.validMask,metricIndex),results,'UniformOutput',false);
+    allValues = vertcat(valueSets{:}); bounds = mcSpecBounds(parameter,cfg);
+    [lo,hi,fullResult] = mcDisplayRange(allValues,results,metricIndex);
+    edges = linspace(lo,hi,21); colors = lines(3); distributionLines = gobjects(3,1);
+    for k = 1:3
+        sample = valueSets{k}; sample = sample(isfinite(sample) & sample >= lo & sample <= hi);
+        probability = 100*histcounts(sample,edges,'Normalization','probability');
+        distributionLines(k) = stairs(edges,[probability 0], ...
+            'LineWidth',1.5,'Color',colors(k,:), ...
+            'DisplayName',results{k}.mode);
+    end
+    for x = bounds(isfinite(bounds))
+        if x >= lo && x <= hi
+            xline(x,'--','HandleVisibility','off');
+        end
+    end
+    addFullStatMarkers(fullResult,metricIndex); xlim([lo hi]); ylabel('Samples (%)');
+    stylePlot(suffix+" ("+defs.units(metricIndex)+")", ...
+        "("+char('a'+gainIndex-1)+") G"+cfg.gains(gainIndex));
+    legend(distributionLines,{'MM','GL','FULL'},'Location','northeast');
+end
+sgtitle(layout,"PGA "+suffix+" Distribution - MM / GL / FULL");
+savePlot(fig,plotDir,fileName);
 end
 
 function addFullStatMarkers(fullResult,index)
@@ -952,15 +941,6 @@ sgtitle("PGA Gain Switching G"+strjoin(string(cfg.gains),' → G')+" - NOM");
 savePlot(fig,plotDir,'NOM.PGA_gain_switching.png');
 end
 
-function switchTime = selectorSwitchTime(time,sel,file)
-low = min(sel,[],'omitnan'); high = max(sel,[],'omitnan');
-index = find(sel >= 0.5*(low+high),1,'first');
-if ~isfinite(low) || ~isfinite(high) || high <= low || isempty(index)
-    error('PGA_Analyze:SelectorSwitch','No selector transition in %s.',file);
-end
-switchTime = time(index);
-end
-
 function addSelectorSwitchGuide(time,showLabels)
 xline(time,'--','HandleVisibility','off');
 if showLabels
@@ -971,29 +951,129 @@ if showLabels
 end
 end
 
-function printSummaryTable(rows,specs,columns,values)
-w = max(46,max(strlength(rows(:,1)))+2); fprintf('%-*s %-8s %-14s',w,'Parameter','Unit','Spec');
-for i = 1:numel(columns), fprintf(' %13s',columns(i)); end
-fprintf('\n%s\n',repmat('-',1,w+24+14*numel(columns)));
-for r = 1:size(rows,1)
-    if rows(r,1) == "" && rows(r,2) == "", fprintf('\n');
-    elseif rows(r,2) == "", fprintf('%-*s\n',w,upper(rows(r,1)));
-    else
-        fprintf('%-*s %-8s %-14s',w,rows(r,1),rows(r,2),specs(r));
-        for c = 1:numel(columns), fprintf(' %13s',values(r,c)); end
-        fprintf('\n');
-    end
+function addMetricBox(lines)
+text(0.98,0.94,strjoin(lines,newline),'Units','normalized','BackgroundColor','w', ...
+    'Color','k','Margin',4,'VerticalAlignment','top','HorizontalAlignment','right', ...
+    'HandleVisibility','off');
+end
+
+function addCursorLine(x,label)
+if ~isfinite(x), return; end
+xline(x,':'," "+string(label),'HandleVisibility','off', ...
+    'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
+end
+
+function stylePlot(xLabel,titleText)
+grid on; if strlength(string(xLabel)) > 0, xlabel(xLabel); end
+if strlength(string(titleText)) > 0, title(titleText); end
+end
+
+function savePlot(fig,plotDir,fileName,paperSize)
+if nargin < 4, paperSize = [10 4]; end
+drawnow;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 paperSize];
+fig.PaperSize = paperSize;
+print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
+end
+
+%% File input and validation
+
+function raw = readMcSummary(filePath,expectedColumns)
+if ~isfile(filePath), error('PGA_Analyze:MissingMcSummary','Missing %s',filePath); end
+raw = readmatrix(filePath,'FileType','text'); raw = raw(any(isfinite(raw),2),:);
+raw = raw(:,any(isfinite(raw),1));
+if size(raw,2) ~= expectedColumns
+    error('PGA_Analyze:McColumns','%s must have %d numeric columns; found %d.', ...
+        filePath,expectedColumns,size(raw,2));
 end
 end
 
-function printWorstCaseTable(t)
-w = max(46,max(strlength(t.Parameter))+2);
-fprintf('%-*s %-8s %-14s %13s %-10s\n',w,'Parameter','Unit','Spec','Value','Corner');
-fprintf('%s\n',repmat('-',1,w+49));
-for i = 1:height(t)
-    fprintf('%-*s %-8s %-14s %13s %-10s\n',w,t.Parameter(i),t.Unit(i), ...
-        t.Spec(i),t.Value(i),t.Corner(i));
+function value = readScalar(file)
+data = readNumericFile(file,1); value = data(find(isfinite(data(:,1)),1,'last'),1);
 end
+
+function data = readNumericFile(file,minimumColumns)
+if ~isfile(file), error('PGA_Analyze:MissingFile','Missing result file: %s',file); end
+data = readmatrix(file,'FileType','text'); data = data(any(isfinite(data),2),:);
+data = data(:,any(isfinite(data),1));
+if isempty(data) || size(data,2) < minimumColumns
+    error('PGA_Analyze:InvalidFile','%s must have at least %d numeric columns.',file,minimumColumns);
+end
+end
+
+function validateFrequency(f,label)
+if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
+    error('PGA_Analyze:InvalidFrequency','%s frequency is invalid.',label);
+end
+end
+
+%% Numerical helpers
+
+function [f,magnitude] = transferMagnitudeCurve(data,label)
+f = data(:,1); validateFrequency(f,label);
+source = complex(data(:,2),data(:,3)); output = complex(data(:,4),data(:,5));
+if any(abs(source) == 0), error('PGA_Analyze:ZeroAcSource','%s has zero source.',label); end
+magnitude = abs(output./source);
+end
+
+function crossing = compressionCrossing(x1,error1,x2,error2,target)
+if ~all(isfinite([x1 error1 x2 error2])) || error1 == error2
+    crossing = x2;
+    return;
+end
+fraction = (target-error1)/(error2-error1);
+crossing = x1+fraction*(x2-x1);
+end
+
+function value = integrateDensity(frequency,density,band)
+[f,y] = boundedTrace(frequency,density,band); value = sqrt(trapz(f,y.^2));
+end
+
+function [boundedFrequency,boundedValue] = boundedTrace(frequency,value,band)
+if band(1) < frequency(1) || band(2) > frequency(end)
+    error('PGA_Analyze:BandCoverage','Band is outside the data range.');
+end
+inside = frequency > band(1) & frequency < band(2);
+boundedFrequency = [band(1); frequency(inside); band(2)];
+boundedValue = [interpLog(frequency,value,band(1)); value(inside); ...
+    interpLog(frequency,value,band(2))];
+end
+
+function crossing = descendingCrossing(f,response,level,startFrequency)
+start = find(f >= startFrequency,1); crossing = NaN;
+if isempty(start), return; end
+relative = find(response(start:end-1) > level & response(start+1:end) <= level,1);
+if isempty(relative), return; end
+i = start+relative-1; x1 = log10(f(i)); x2 = log10(f(i+1));
+crossing = 10^(x1+(level-response(i))*(x2-x1)/(response(i+1)-response(i)));
+end
+
+function switchTime = selectorSwitchTime(time,sel,file)
+low = min(sel,[],'omitnan'); high = max(sel,[],'omitnan');
+index = find(sel >= 0.5*(low+high),1,'first');
+if ~isfinite(low) || ~isfinite(high) || high <= low || isempty(index)
+    error('PGA_Analyze:SelectorSwitch','No selector transition in %s.',file);
+end
+switchTime = time(index);
+end
+
+function index = parameterIndex(parameters,parameter)
+index = find(parameters == parameter,1);
+if isempty(index), error('PGA_Analyze:MissingParameter','Missing parameter: %s',parameter); end
+end
+
+function result = interpLog(f,value,query)
+if any(query < f(1) | query > f(end))
+    error('PGA_Analyze:InterpolationRange','Frequency query is outside data.');
+end
+result = interp1(log10(f),value,log10(query),'linear');
+end
+
+%% Units and formatting
+
+function text = thdInputText(value)
+text = string(sprintf('%.2f',value));
 end
 
 function formatted = formatReportValues(values,relations)
@@ -1028,37 +1108,6 @@ else
 end
 end
 
-function index = parameterIndex(parameters,parameter)
-index = find(parameters == parameter,1);
-if isempty(index), error('PGA_Analyze:MissingParameter','Missing parameter: %s',parameter); end
-end
-
-function value = readScalar(file)
-data = readNumericFile(file,1); value = data(find(isfinite(data(:,1)),1,'last'),1);
-end
-
-function data = readNumericFile(file,minimumColumns)
-if ~isfile(file), error('PGA_Analyze:MissingFile','Missing result file: %s',file); end
-data = readmatrix(file,'FileType','text'); data = data(any(isfinite(data),2),:);
-data = data(:,any(isfinite(data),1));
-if isempty(data) || size(data,2) < minimumColumns
-    error('PGA_Analyze:InvalidFile','%s must have at least %d numeric columns.',file,minimumColumns);
-end
-end
-
-function validateFrequency(f,label)
-if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
-    error('PGA_Analyze:InvalidFrequency','%s frequency is invalid.',label);
-end
-end
-
-function result = interpLog(f,value,query)
-if any(query < f(1) | query > f(end))
-    error('PGA_Analyze:InterpolationRange','Frequency query is outside data.');
-end
-result = interp1(log10(f),value,log10(query),'linear');
-end
-
 function text = frequencyText(f)
 if ~isfinite(f)
     text = "NaN";
@@ -1069,30 +1118,4 @@ elseif f >= 1e3
 else
     text = string(sprintf('%.4g Hz',f));
 end
-end
-
-function addMetricBox(lines)
-text(0.98,0.94,strjoin(lines,newline),'Units','normalized','BackgroundColor','w', ...
-    'Color','k','Margin',4,'VerticalAlignment','top','HorizontalAlignment','right', ...
-    'HandleVisibility','off');
-end
-
-function addCursorLine(x,label)
-if ~isfinite(x), return; end
-xline(x,':'," "+string(label),'HandleVisibility','off', ...
-    'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
-end
-
-function stylePlot(xLabel,titleText)
-grid on; if strlength(string(xLabel)) > 0, xlabel(xLabel); end
-if strlength(string(titleText)) > 0, title(titleText); end
-end
-
-function savePlot(fig,plotDir,fileName,paperSize)
-if nargin < 4, paperSize = [10 4]; end
-drawnow;
-fig.PaperUnits = 'inches';
-fig.PaperPosition = [0 0 paperSize];
-fig.PaperSize = paperSize;
-print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
 end

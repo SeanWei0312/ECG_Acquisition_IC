@@ -1,12 +1,8 @@
 function SEOTA_Analyze
-% SEOTA_ANALYZE Characterize the single-ended OTA across PVT.
-%
-% Expected NGSPICE output is stored beside this file in:
-%   nom.Result_txt, ff.Result_txt, ss.Result_txt, fs.Result_txt,
-%   sf.Result_txt
-%
-% The analyzer reports the configured comparison corners and the full-PVT
-% worst case, then regenerates the NOM/NOM plots as native MATLAB figures.
+% SEOTA_ANALYZE Verify PVT and Monte Carlo results.
+% Specs, measurements, reports, and plots are defined below.
+
+%% Setup and output directories
 
 clc;
 close all;
@@ -345,274 +341,17 @@ fprintf('\nSEOTA FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
 writetable(worstCase,fullfile(reportDir,'SEOTA_worst_case_report.csv'));
 
-%% Monte Carlo analysis (independent of the existing PVT flow)
+%% Monte Carlo analysis
 runMcSection(scriptDir,plotDir,reportDir);
 
 end
 
-function runMcSection(scriptDir,plotDir,reportDir)
-% Read only compact MM / GL / FULL summaries; debug operating-point exports
-% remain available for diagnosis and are intentionally excluded from reports.
-modes = ["MM" "GL" "FULL"];
-definitions = seotaMcDefinitions();
-results = cell(numel(modes),1);
-missingFiles = strings(0,1);
-for modeIndex = 1:numel(modes)
-    token = lower(modes(modeIndex));
-    resultDir = fullfile(scriptDir,token+".Result_txt");
-    olFile = fullfile(resultDir,token+".ol_mc_summary.txt");
-    clFile = fullfile(resultDir,token+".cl_mc_summary.txt");
-    if ~isfile(olFile) || ~isfile(clFile)
-        missingFiles(end+1,1) = modes(modeIndex)+": "+olFile+" | "+clFile; %#ok<AGROW>
-        continue;
-    end
-    results{modeIndex} = summarizeSeotaMc(olFile,clFile,modes(modeIndex),definitions);
-end
-if ~isempty(missingFiles)
-    warning('SEOTA_Analyze:MissingMcFiles','SEOTA MC files missing:\n%s', ...
-        strjoin(cellstr(missingFiles),newline));
-end
-results = results(~cellfun(@isempty,results));
-if isempty(results), return; end
-
-fprintf('\nSE OTA MONTE CARLO SUMMARY\n');
-for resultIndex = 1:numel(results)
-    result = results{resultIndex};
-    fprintf('\n%s MONTE CARLO SUMMARY\n',result.mode);
-    fprintf('Requested: %d   Valid: %d   Failed: %d   Overall yield: %.2f%%\n', ...
-        result.requested,result.valid,result.failed,result.overallYield);
-    if ~isempty(result.failedRunIds)
-        fprintf('Failed run IDs: %s\n',strjoin(string(result.failedRunIds),', '));
-    end
-    printSeotaMcTable(result.table);
-    writetable(result.table,fullfile(reportDir,result.mode+'_SEOTA_MC_Summary.csv'));
-end
-modeValues = string(cellfun(@(r) r.mode,results,'UniformOutput',false));
-requestedValues = cellfun(@(r) r.requested,results);
-validValues = cellfun(@(r) r.valid,results);
-failedValues = cellfun(@(r) r.failed,results);
-yieldValues = cellfun(@(r) r.overallYield,results);
-runTable = table(modeValues(:),requestedValues(:),validValues(:), ...
-    failedValues(:),yieldValues(:), ...
-    'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns', ...
-    'OverallYield_pct'});
-writetable(runTable,fullfile(reportDir,'SEOTA_MC_Run_Summary.csv'));
-fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
-if isempty(fullIndex) || results{fullIndex}.valid == 0
-    warning('SEOTA_Analyze:MissingFullMc', ...
-        'MC tables were written, but MC plots require valid FULL data.');
-    return;
-end
-plotSeotaMcHistograms(results,definitions,plotDir);
-end
-
-function definitions = seotaMcDefinitions()
-definitions.names = ["Bias current" "Total current" "Total power" ...
-    "DC gain" "UGF" "Phase margin" "Input offset" "Gain error"];
-definitions.units = ["uA" "mA" "mW" "dB" "MHz" "deg" "uV" "%"];
-definitions.specs = strings(size(definitions.names));
-definitions.bounds = cell(size(definitions.names));
-for metricIndex = 1:numel(definitions.names)
-    definitions.specs(metricIndex) = seotaSpecText( ...
-        definitions.names(metricIndex),definitions.units(metricIndex));
-    definitions.bounds{metricIndex} = seotaSpecBounds( ...
-        definitions.names(metricIndex),definitions.units(metricIndex));
-end
-definitions.requestedRuns = 200;
-definitions.columns = seotaMcSchema();
-definitions.plotParameters = ["Input offset" "DC gain" "UGF" ...
-    "Phase margin" "Gain error"];
-definitions.plotFiles = ["Fig_MC_01_Vos_Histogram.png" ...
-    "Fig_MC_02_DC_Gain_Histogram.png" "Fig_MC_03_UGF_Histogram.png" ...
-    "Fig_MC_04_Phase_Margin_Histogram.png" "Fig_MC_05_Gain_Error_Histogram.png"];
-end
-
-function columns = seotaMcSchema()
-% Compact MC TXT column map; keep this synchronized with the testbench.
-columns.ol = struct('count',13,'run',1,'vos',2,'centerError',3, ...
-    'gainVV',4,'gainDb',5,'ugfHz',6,'phaseUgf',7,'phaseMargin',8, ...
-    'vout',9,'biasNode',10,'biasCurrent',11,'totalCurrent',12, ...
-    'totalPower',13);
-columns.cl = struct('count',9,'run',1,'vos',2,'vout',3, ...
-    'voutError',4,'gainVV',5,'biasNode',6,'biasCurrent',7, ...
-    'totalCurrent',8,'totalPower',9);
-end
-
-function result = summarizeSeotaMc(olFile,clFile,mode,definitions)
-columns = definitions.columns;
-ol = readMcSummary(olFile,columns.ol.count);
-cl = readMcSummary(clFile,columns.cl.count);
-validateMcRunIds(ol(:,columns.ol.run),olFile,definitions.requestedRuns);
-validateMcRunIds(cl(:,columns.cl.run),clFile,definitions.requestedRuns);
-[runIds,olIndex,clIndex] = intersect( ...
-    ol(:,columns.ol.run),cl(:,columns.cl.run),'stable');
-if isempty(runIds)
-    error('SEOTA_Analyze:McRunIds','%s and %s have no matching MC run IDs.',olFile,clFile);
-end
-if any(~isfinite(ol(olIndex,columns.ol.centerError)))
-    warning('SEOTA_Analyze:McCenterError','%s contains nonfinite OL center-error samples.',olFile);
-end
-values = [abs(ol(olIndex,columns.ol.biasCurrent))*1e6, ...
-    abs(ol(olIndex,columns.ol.totalCurrent))*1e3, ...
-    abs(ol(olIndex,columns.ol.totalPower))*1e3, ...
-    ol(olIndex,columns.ol.gainDb),ol(olIndex,columns.ol.ugfHz)/1e6, ...
-    ol(olIndex,columns.ol.phaseMargin),cl(clIndex,columns.cl.vos)*1e6, ...
-    100*(cl(clIndex,columns.cl.gainVV)-1)];
-validMask = all(isfinite(values),2) & values(:,5) > 0;
-result.mode = mode;
-result.requested = definitions.requestedRuns;
-result.runs = runIds(validMask);
-result.values = values(validMask,:);
-result.valid = heightOrLength(result.runs);
-result.failed = result.requested-result.valid;
-result.failedRunIds = setdiff((1:result.requested)',result.runs);
-warnOnSeotaMcGainCollapse(result,definitions);
-[result.stats,result.yield,result.overallYield] = seotaMcStatistics( ...
-    result.values,definitions);
-result.table = table(definitions.names',definitions.units',definitions.specs', ...
-    result.stats(:,1),result.stats(:,2),result.stats(:,3),result.stats(:,4), ...
-    result.stats(:,5),result.stats(:,6),result.stats(:,7),result.yield', ...
-    'VariableNames',{'Parameter','Unit','Spec','Min','MeanMinus3Sigma', ...
-    'MeanMinusSigma','Mean','MeanPlusSigma','MeanPlus3Sigma','Max','Yield_pct'});
-end
-
-function count = heightOrLength(values)
-count = numel(values);
-end
-
-function warnOnSeotaMcGainCollapse(result,definitions)
-metricIndex = find(definitions.names == "Gain error",1);
-if isempty(metricIndex) || isempty(result.values), return; end
-collapsed = result.values(:,metricIndex) <= -90;
-if any(collapsed)
-    warning('SEOTA_Analyze:McGainCollapse', ...
-        '%s has %d valid sample(s) with gain error <= -90%% (MC run ID(s): %s). Verify circuit collapse versus an ngspice measurement failure before trusting these samples.', ...
-        char(result.mode),nnz(collapsed),char(strjoin(string(result.runs(collapsed)),', ')));
-end
-end
-
-function [stats,yield,overallYield] = seotaMcStatistics(values,definitions)
-nMetrics = numel(definitions.names);
-stats = nan(nMetrics,7);
-if isempty(values)
-    yield = zeros(1,nMetrics);
-    overallYield = 0;
-    return;
-end
-pass = false(size(values));
-for metricIndex = 1:nMetrics
-    x = values(:,metricIndex); mu = mean(x); sigma = std(x,0);
-    stats(metricIndex,:) = [min(x) mu-3*sigma mu-sigma mu mu+sigma mu+3*sigma max(x)];
-    pass(:,metricIndex) = seotaSpecPass( ...
-        definitions.names(metricIndex),x,definitions.units(metricIndex));
-end
-yield = 100*mean(pass,1);
-overallYield = 100*mean(all(pass,2));
-end
-
-function validateMcRunIds(runIds,filePath,requestedRuns)
-if any(~isfinite(runIds)) || any(runIds ~= round(runIds)) || ...
-        any(runIds < 1 | runIds > requestedRuns) || numel(unique(runIds)) ~= numel(runIds)
-    error('SEOTA_Analyze:McRunIds', ...
-        '%s must contain unique integer MC run IDs in 1...%d.',filePath,requestedRuns);
-end
-end
-
-function plotSeotaMcHistograms(results,definitions,plotDir)
-for plotIndex = 1:numel(definitions.plotParameters)
-    metricIndex = find(definitions.names == definitions.plotParameters(plotIndex),1);
-    if isempty(metricIndex)
-        error('SEOTA_Analyze:MissingMcParameter', ...
-            'MC plot parameter is not defined: %s',definitions.plotParameters(plotIndex));
-    end
-    seotaMcHistogram(results,metricIndex,plotDir,definitions.plotFiles(plotIndex), ...
-        'SEOTA '+definitions.names(metricIndex)+' Distribution - MM / GL / FULL', ...
-        mcXAxisLabel(definitions.names(metricIndex),definitions.units(metricIndex)), ...
-        definitions.bounds{metricIndex});
-end
-end
-
-function seotaMcHistogram(results,metricIndex,plotDir,fileName,titleText,xLabelText,specBounds)
-valueSets = cellfun(@(r) r.values(:,metricIndex),results,'UniformOutput',false);
-allValues = vertcat(valueSets{:});
-if isempty(allValues), return; end
-[lower,upper,fullResult] = seotaMcDisplayRange(allValues,results,metricIndex,specBounds);
-edges = linspace(lower,upper,21);
-fig = figure; hold on; colors = lines(numel(results));
-for resultIndex = 1:numel(results)
-    values = results{resultIndex}.values(:,metricIndex);
-    values = values(isfinite(values) & values >= lower & values <= upper);
-    if isempty(values), continue; end
-    probabilityPct = 100*histcounts(values,edges,'Normalization','probability');
-    stairs(edges,[probabilityPct 0],'LineWidth',1.5,'Color',colors(resultIndex,:), ...
-        'DisplayName',char(results{resultIndex}.mode));
-end
-addMcSpecLines(specBounds,lower,upper);
-seotaMcAddFullStatMarkers(fullResult,metricIndex);
-xlim([lower upper]); ylabel('Samples (%)');
-stylePlot(xLabelText,titleText); legend('Location','best');
-savePlot(fig,plotDir,fileName);
-end
-
-function [lower,upper,fullResult] = seotaMcDisplayRange(values,results,metricIndex,specBounds)
-fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
-fullResult = results{fullIndex};
-center = fullResult.stats(metricIndex,4);
-distances = abs(values(:)-center);
-finiteBounds = specBounds(isfinite(specBounds));
-if ~isempty(finiteBounds)
-    distances = [distances; abs(finiteBounds(:)-center)];
-end
-halfRange = max(distances);
-if ~isfinite(halfRange) || halfRange == 0, halfRange = max(abs(center)*0.05,1); end
-lower = center-1.05*halfRange;
-upper = center+1.05*halfRange;
-end
-
-function seotaMcAddFullStatMarkers(fullResult,metricIndex)
-markers = fullResult.stats(metricIndex,2:6);
-labels = ["-3σ" "-σ" "μ" "+σ" "+3σ"];
-for markerIndex = 1:numel(markers)
-    addCursorLine(markers(markerIndex),0,labels(markerIndex));
-end
-end
-
-function addMcSpecLines(bounds,lower,upper)
-for value = bounds(:)'
-    if isfinite(value) && value >= lower && value <= upper
-        xline(value,'--','HandleVisibility','off');
-    end
-end
-end
-
-function label = mcXAxisLabel(parameter,unit)
-if parameter == "Input offset"
-    label = "Input Offset (" + unit + ")";
-else
-    label = parameter + " (" + unit + ")";
-end
-end
-
-function printSeotaMcTable(resultTable)
-fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
-    'Parameter','Unit','Spec','Min','μ-3σ','μ-σ','Mean','μ+σ','μ+3σ','Max','Yield');
-for rowIndex = 1:height(resultTable)
-    fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
-        char(resultTable.Parameter(rowIndex)),char(resultTable.Unit(rowIndex)), ...
-        char(resultTable.Spec(rowIndex)),formatFixed(resultTable.Min(rowIndex)), ...
-        formatFixed(resultTable.MeanMinus3Sigma(rowIndex)), ...
-        formatFixed(resultTable.MeanMinusSigma(rowIndex)),formatFixed(resultTable.Mean(rowIndex)), ...
-        formatFixed(resultTable.MeanPlusSigma(rowIndex)), ...
-        formatFixed(resultTable.MeanPlus3Sigma(rowIndex)),formatFixed(resultTable.Max(rowIndex)), ...
-        sprintf('%.2f%%',resultTable.Yield_pct(rowIndex)));
-end
-end
+%% Configuration and report definitions
 
 function cfg = analysisConfig
 cfg.cLoad_pF = 10;
 cfg.nominalCase = "nom";
 cfg.closedLoopTarget_VV = 1;
-cfg.biasTarget_A = 40e-6;
 cfg.trackTolerance_V = 2e-3;
 cfg.settleTolerance_V = 2e-3;
 cfg.offsetMaxJumpFraction = 0.25;
@@ -665,64 +404,70 @@ rows = [
 ];
 end
 
-function specifications = pvtSpecStrings(rows)
-specifications = strings(size(rows,1),1);
-for rowIndex = 1:size(rows,1)
-    specifications(rowIndex) = seotaSpecText(rows(rowIndex,1),rows(rowIndex,2));
+%% Specifications and verification
+
+function addMcSpecLines(bounds,lower,upper)
+for value = bounds(:)'
+    if isfinite(value) && value >= lower && value <= upper
+        xline(value,'--','HandleVisibility','off');
+    end
 end
 end
 
-function specification = seotaSpecText(parameter,unit)
+function specifications = pvtSpecStrings(rows)
+specifications = strings(size(rows,1),1);
+for rowIndex = 1:size(rows,1)
+    specifications(rowIndex) = specText(rows(rowIndex,1),rows(rowIndex,2));
+end
+end
+
+function specification = specText(parameter,unit)
 switch string(parameter)
-    case "Bias current", specification = seotaRangeSpec(40e-6,10e-6,unit);
-    case "Total current", specification = "≤"+seotaSpecNumber(1.25e-3,unit);
-    case "Total power", specification = "≤"+seotaSpecNumber(4.5e-3,unit);
+    case "Bias current", specification = rangeSpec(40e-6,10e-6,unit);
+    case "Total current", specification = "≤"+specNumber(1.25e-3,unit);
+    case "Total power", specification = "";
     case "DC gain", specification = "≥88";
-    case "UGF", specification = "≥"+seotaSpecNumber(8e6,unit);
+    case "UGF", specification = "≥"+specNumber(8e6,unit);
     case "Phase margin", specification = "≥55";
-    case "Input offset", specification = "±"+seotaSpecNumber(2e-3,unit);
+    case "Input offset", specification = "±"+specNumber(2e-3,unit);
     case "CMRR @ 60 Hz", specification = "≥105";
     case "CMRR @ 150 Hz", specification = "≥105";
     case "PSRR+ @ 60 Hz", specification = "≥100";
     case "PSRR+ @ 150 Hz", specification = "≥95";
     case "PSRR- @ 60 Hz", specification = "≥100";
     case "PSRR- @ 150 Hz", specification = "≥95";
-    case "Input-referred noise 0.05-150 Hz", specification = "≤"+seotaSpecNumber(2.5e-6,unit);
+    case "Input-referred noise 0.05-150 Hz", specification = "≤"+specNumber(2.5e-6,unit);
     case "Gain error", specification = "±0.01";
-    case "Vout,DC error", specification = "±"+seotaSpecNumber(2e-3,unit);
-    case "Input low", specification = "≤"+seotaSpecNumber(600e-3,unit);
-    case "Input high", specification = "≥"+seotaSpecNumber(2.75,unit);
-    case "Input high headroom", specification = "≤"+seotaSpecNumber(250e-3,unit);
-    case "Output low", specification = "≤"+seotaSpecNumber(600e-3,unit);
-    case "Output high", specification = "≥"+seotaSpecNumber(2.75,unit);
-    case "Output high headroom", specification = "≤"+seotaSpecNumber(250e-3,unit);
+    case "Vout,DC error", specification = "";
+    case "Input low", specification = "≤"+specNumber(600e-3,unit);
+    case "Input high", specification = "≥"+specNumber(2.75,unit);
+    case "Input high headroom", specification = "";
+    case "Output low", specification = "≤"+specNumber(600e-3,unit);
+    case "Output high", specification = "≥"+specNumber(2.75,unit);
+    case "Output high headroom", specification = "";
     case "SR rise", specification = "≥6.5";
     case "SR fall", specification = "≥5.0";
-    case "Settling time", specification = "≤"+seotaSpecNumber(225e-9,unit);
+    case "Settling time", specification = "≤"+specNumber(225e-9,unit);
     otherwise, specification = "";
 end
 end
 
-function specification = seotaRangeSpec(center,tolerance,unit)
-specification = seotaSpecNumber(center,unit)+"±"+seotaSpecNumber(tolerance,unit);
+function specification = rangeSpec(center,tolerance,unit)
+specification = specNumber(center,unit)+"±"+specNumber(tolerance,unit);
 end
 
-function text = seotaSpecNumber(baseValue,unit)
-text = string(sprintf('%.6g',baseValue*seotaUnitFactor(unit)));
-end
-
-function bounds = seotaSpecBounds(parameter,unit)
+function bounds = specBounds(parameter,unit)
 % Return numeric specification limits in the requested display unit.
-baseBounds = seotaSpecBaseBounds(parameter);
-bounds = baseBounds/seotaUnitToBase(unit);
+baseBounds = specBaseBounds(parameter);
+bounds = baseBounds/unitToBase(unit);
 end
 
-function bounds = seotaSpecBaseBounds(parameter)
+function bounds = specBaseBounds(parameter)
 % Each row is defined once in SI/base units: [lower upper].
 switch string(parameter)
     case "Bias current", bounds = [30e-6 50e-6];
     case "Total current", bounds = [-Inf 1.25e-3];
-    case "Total power", bounds = [-Inf 4.5e-3];
+    case "Total power", bounds = [-Inf Inf];
     case "DC gain", bounds = [88 Inf];
     case "UGF", bounds = [8e6 Inf];
     case "Phase margin", bounds = [55 Inf];
@@ -734,10 +479,10 @@ switch string(parameter)
     case "PSRR- @ 150 Hz", bounds = [95 Inf];
     case "Input-referred noise 0.05-150 Hz", bounds = [-Inf 2.5e-6];
     case "Gain error", bounds = [-0.01 0.01];
-    case "Vout,DC error", bounds = [-2e-3 2e-3];
+    case "Vout,DC error", bounds = [-Inf Inf];
     case {"Input low","Output low"}, bounds = [-Inf 600e-3];
     case {"Input high","Output high"}, bounds = [2.75 Inf];
-    case {"Input high headroom","Output high headroom"}, bounds = [-Inf 250e-3];
+    case {"Input high headroom","Output high headroom"}, bounds = [-Inf Inf];
     case "SR rise", bounds = [6.5 Inf];
     case "SR fall", bounds = [5.0 Inf];
     case "Settling time", bounds = [-Inf 225e-9];
@@ -745,18 +490,14 @@ switch string(parameter)
 end
 end
 
-function factor = seotaUnitFactor(unit)
-factor = 1/seotaUnitToBase(unit);
-end
-
 function checkPvtSpecifications(rows,values,corners)
 passMatrix = true(size(values));
 checkedRows = false(size(rows,1),1);
 for rowIndex = 1:size(rows,1)
-    if strlength(seotaSpecText(rows(rowIndex,1),rows(rowIndex,2))) == 0
+    if strlength(specText(rows(rowIndex,1),rows(rowIndex,2))) == 0
         continue;
     end
-    passMatrix(rowIndex,:) = seotaSpecPass(rows(rowIndex,1), ...
+    passMatrix(rowIndex,:) = specPass(rows(rowIndex,1), ...
         values(rowIndex,:),rows(rowIndex,2));
     checkedRows(rowIndex) = true;
 end
@@ -771,83 +512,12 @@ else
 end
 end
 
-function pass = seotaSpecPass(parameter,value,unit)
-bounds = seotaSpecBounds(parameter,unit);
+function pass = specPass(parameter,value,unit)
+bounds = specBounds(parameter,unit);
 pass = isfinite(value) & value >= bounds(1) & value <= bounds(2);
 end
 
-function files = runFiles(resultDir,process,caseName)
-olPrefix = fullfile(resultDir,process+".ol_"+caseName+"_");
-clPrefix = fullfile(resultDir,process+".cl_"+caseName+"_");
-files.olOp = olPrefix+"op.txt";
-files.diffAc = olPrefix+"diff_ac.txt";
-files.cmAc = olPrefix+"cm_ac.txt";
-files.psrrpAc = olPrefix+"psrrp_ac.txt";
-files.psrrnAc = olPrefix+"psrrn_ac.txt";
-files.vtc = olPrefix+"vtc.txt";
-files.noise = olPrefix+"noise.txt";
-files.clOp = clPrefix+"op.txt";
-files.clDc = clPrefix+"dc.txt";
-files.clTran = clPrefix+"tran.txt";
-end
-
-function data = readNumericFile(file,expectedColumns)
-if ~isfile(file)
-    error('SEOTA_Analyze:MissingFile','Missing required file: %s',file);
-end
-
-data = readmatrix(file,'FileType','text');
-data = data(any(isfinite(data),2),:);
-data = data(:,any(isfinite(data),1));
-if isempty(data)
-    error('SEOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
-end
-if size(data,2) == expectedColumns+1 && columnsMatch(data(:,1),data(:,2))
-    data = data(:,2:end);
-end
-if size(data,2) ~= expectedColumns
-    error('SEOTA_Analyze:ColumnCount', ...
-        '%s must contain %d columns; found %d.', ...
-        file,expectedColumns,size(data,2));
-end
-if any(~isfinite(data),'all')
-    error('SEOTA_Analyze:NonfiniteData', ...
-        '%s contains nonfinite numeric samples.',file);
-end
-end
-
-function data = readMcSummary(file,expectedColumns)
-% Keep nonfinite metric cells so MC can classify their runs as failed.
-if ~isfile(file)
-    error('SEOTA_Analyze:MissingFile','Missing required file: %s',file);
-end
-data = readmatrix(file,'FileType','text');
-data = data(any(isfinite(data),2),:);
-data = data(:,any(isfinite(data),1));
-if isempty(data)
-    error('SEOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
-end
-if size(data,2) == expectedColumns+1 && columnsMatch(data(:,1),data(:,2))
-    data = data(:,2:end);
-end
-if size(data,2) ~= expectedColumns
-    error('SEOTA_Analyze:ColumnCount', ...
-        '%s must contain %d columns; found %d.',file,expectedColumns,size(data,2));
-end
-end
-
-function tf = columnsMatch(a,b)
-scale = max([ones(size(a)) abs(a) abs(b)],[],2);
-tf = all(abs(a-b) <= 100*eps(scale));
-end
-
-function validateFrequency(f,label)
-if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
-    error('SEOTA_Analyze:FrequencyAxis', ...
-        '%s frequency must be finite, positive, and strictly increasing.', ...
-        label);
-end
-end
+%% PVT measurement extraction
 
 function m = analyzeRun(scriptDir,process,caseName,cfg)
     resultDir = fullfile(scriptDir,process + ".Result_txt");
@@ -967,6 +637,8 @@ function values = metricsToRaw(m,rows,cfg)
     end
 end
 
+%% PVT tables and terminal output
+
 function results = buildWorstCaseTable(rows,columns,values,metrics)
     % values is numeric double (pvtScaledValues), already unit-adapted.
     keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
@@ -1001,8 +673,8 @@ function results = buildWorstCaseTable(rows,columns,values,metrics)
         elseif ismember(parameter,["Output high" "Output high headroom"])
             selectedColumn = worstOutputHighCol;
             selectedValue = candidates(selectedColumn);
-        elseif all(isfinite(seotaSpecBounds(parameter,rows(rowIndex,2))))
-            bounds = seotaSpecBounds(parameter,rows(rowIndex,2));
+        elseif all(isfinite(specBounds(parameter,rows(rowIndex,2))))
+            bounds = specBounds(parameter,rows(rowIndex,2));
             [~,localIndex] = max(abs(candidates(valid)-mean(bounds)));
             selectedColumn = validIndices(localIndex);
             selectedValue = candidates(selectedColumn);
@@ -1041,6 +713,413 @@ function printWorstCaseTable(results)
             char(results.Corner(rowIndex)));
     end
 end
+
+function printSummaryTable(rows,specifications,columns,values)
+    parameterWidth = max(36,max(strlength(rows(:,1)))+2);
+    fprintf('%-*s %-8s %-14s',parameterWidth,'Parameter','Unit','Spec');
+    for columnIndex = 1:numel(columns)
+        fprintf(' %13s',columns(columnIndex));
+    end
+    fprintf('\n%s\n',repmat('-',1,parameterWidth+24+14*numel(columns)));
+    for rowIndex = 1:size(rows,1)
+        parameter = rows(rowIndex,1);
+        unit = rows(rowIndex,2);
+        if parameter == "" && unit == ""
+            fprintf('\n');
+        elseif unit == ""
+            fprintf('%-*s\n',parameterWidth,upper(char(parameter)));
+        else
+            fprintf('%-*s %-8s %-14s',parameterWidth,char(parameter), ...
+                char(unit),char(specifications(rowIndex)));
+            for columnIndex = 1:numel(columns)
+                fprintf(' %13s',char(values(rowIndex,columnIndex)));
+            end
+            fprintf('\n');
+        end
+    end
+end
+
+%% Monte Carlo analysis and reporting
+
+function runMcSection(scriptDir,plotDir,reportDir)
+% Read only compact MM / GL / FULL summaries; debug operating-point exports
+% remain available for diagnosis and are intentionally excluded from reports.
+modes = ["MM" "GL" "FULL"];
+definitions = mcDefinitions();
+results = cell(numel(modes),1);
+missingFiles = strings(0,1);
+for modeIndex = 1:numel(modes)
+    token = lower(modes(modeIndex));
+    resultDir = fullfile(scriptDir,token+".Result_txt");
+    olFile = fullfile(resultDir,token+".ol_mc_summary.txt");
+    clFile = fullfile(resultDir,token+".cl_mc_summary.txt");
+    if ~isfile(olFile) || ~isfile(clFile)
+        missingFiles(end+1,1) = modes(modeIndex)+": "+olFile+" | "+clFile; %#ok<AGROW>
+        continue;
+    end
+    results{modeIndex} = summarizeMc(olFile,clFile,modes(modeIndex),definitions);
+end
+if ~isempty(missingFiles)
+    warning('SEOTA_Analyze:MissingMcFiles','SEOTA MC files missing:\n%s', ...
+        strjoin(cellstr(missingFiles),newline));
+end
+results = results(~cellfun(@isempty,results));
+if isempty(results), return; end
+
+fprintf('\nSE OTA MONTE CARLO SUMMARY\n');
+for resultIndex = 1:numel(results)
+    result = results{resultIndex};
+    fprintf('\n%s MONTE CARLO SUMMARY\n',result.mode);
+    fprintf('Requested: %d   Valid: %d   Failed: %d   Overall yield: %.2f%%\n', ...
+        result.requested,result.valid,result.failed,result.overallYield);
+    if ~isempty(result.failedRunIds)
+        fprintf('Failed run IDs: %s\n',strjoin(string(result.failedRunIds),', '));
+    end
+    printMcSummary(result.table);
+    writetable(result.table,fullfile(reportDir,result.mode+'_SEOTA_MC_Summary.csv'));
+end
+modeValues = string(cellfun(@(r) r.mode,results,'UniformOutput',false));
+requestedValues = cellfun(@(r) r.requested,results);
+validValues = cellfun(@(r) r.valid,results);
+failedValues = cellfun(@(r) r.failed,results);
+yieldValues = cellfun(@(r) r.overallYield,results);
+runTable = table(modeValues(:),requestedValues(:),validValues(:), ...
+    failedValues(:),yieldValues(:), ...
+    'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns', ...
+    'OverallYield_pct'});
+writetable(runTable,fullfile(reportDir,'SEOTA_MC_Run_Summary.csv'));
+fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
+if isempty(fullIndex) || results{fullIndex}.valid == 0
+    warning('SEOTA_Analyze:MissingFullMc', ...
+        'MC tables were written, but MC plots require valid FULL data.');
+    return;
+end
+plotMcHistograms(results,definitions,plotDir);
+end
+
+function definitions = mcDefinitions()
+definitions.names = ["Bias current" "Total current" "Total power" ...
+    "DC gain" "UGF" "Phase margin" "Input offset" "Gain error"];
+definitions.units = ["uA" "mA" "mW" "dB" "MHz" "deg" "uV" "%"];
+definitions.specs = strings(size(definitions.names));
+definitions.bounds = cell(size(definitions.names));
+for metricIndex = 1:numel(definitions.names)
+    definitions.specs(metricIndex) = specText( ...
+        definitions.names(metricIndex),definitions.units(metricIndex));
+    definitions.bounds{metricIndex} = specBounds( ...
+        definitions.names(metricIndex),definitions.units(metricIndex));
+end
+definitions.requestedRuns = 200;
+definitions.columns = mcSchema();
+definitions.plotParameters = ["Input offset" "DC gain" "UGF" ...
+    "Phase margin" "Gain error"];
+definitions.plotFiles = ["Fig_MC_01_Vos_Histogram.png" ...
+    "Fig_MC_02_DC_Gain_Histogram.png" "Fig_MC_03_UGF_Histogram.png" ...
+    "Fig_MC_04_Phase_Margin_Histogram.png" "Fig_MC_05_Gain_Error_Histogram.png"];
+end
+
+function columns = mcSchema()
+% Compact MC TXT column map; keep this synchronized with the testbench.
+columns.ol = struct('count',13,'run',1,'vos',2,'centerError',3, ...
+    'gainVV',4,'gainDb',5,'ugfHz',6,'phaseUgf',7,'phaseMargin',8, ...
+    'vout',9,'biasNode',10,'biasCurrent',11,'totalCurrent',12, ...
+    'totalPower',13);
+columns.cl = struct('count',9,'run',1,'vos',2,'vout',3, ...
+    'voutError',4,'gainVV',5,'biasNode',6,'biasCurrent',7, ...
+    'totalCurrent',8,'totalPower',9);
+end
+
+function result = summarizeMc(olFile,clFile,mode,definitions)
+columns = definitions.columns;
+ol = readMcSummary(olFile,columns.ol.count);
+cl = readMcSummary(clFile,columns.cl.count);
+validateMcRunIds(ol(:,columns.ol.run),olFile,definitions.requestedRuns);
+validateMcRunIds(cl(:,columns.cl.run),clFile,definitions.requestedRuns);
+[runIds,olIndex,clIndex] = intersect( ...
+    ol(:,columns.ol.run),cl(:,columns.cl.run),'stable');
+if isempty(runIds)
+    error('SEOTA_Analyze:McRunIds','%s and %s have no matching MC run IDs.',olFile,clFile);
+end
+if any(~isfinite(ol(olIndex,columns.ol.centerError)))
+    warning('SEOTA_Analyze:McCenterError','%s contains nonfinite OL center-error samples.',olFile);
+end
+values = [abs(ol(olIndex,columns.ol.biasCurrent))*1e6, ...
+    abs(ol(olIndex,columns.ol.totalCurrent))*1e3, ...
+    abs(ol(olIndex,columns.ol.totalPower))*1e3, ...
+    ol(olIndex,columns.ol.gainDb),ol(olIndex,columns.ol.ugfHz)/1e6, ...
+    ol(olIndex,columns.ol.phaseMargin),cl(clIndex,columns.cl.vos)*1e6, ...
+    100*(cl(clIndex,columns.cl.gainVV)-1)];
+validMask = all(isfinite(values),2) & values(:,5) > 0;
+result.mode = mode;
+result.requested = definitions.requestedRuns;
+result.runs = runIds(validMask);
+result.values = values(validMask,:);
+result.valid = numel(result.runs);
+result.failed = result.requested-result.valid;
+result.failedRunIds = setdiff((1:result.requested)',result.runs);
+warnOnMcGainCollapse(result,definitions);
+[result.stats,result.yield,result.overallYield] = mcStatistics( ...
+    result.values,definitions);
+result.table = table(definitions.names',definitions.units',definitions.specs', ...
+    result.stats(:,1),result.stats(:,2),result.stats(:,3),result.stats(:,4), ...
+    result.stats(:,5),result.stats(:,6),result.stats(:,7),result.yield', ...
+    'VariableNames',{'Parameter','Unit','Spec','Min','MeanMinus3Sigma', ...
+    'MeanMinusSigma','Mean','MeanPlusSigma','MeanPlus3Sigma','Max','Yield_pct'});
+end
+
+function warnOnMcGainCollapse(result,definitions)
+metricIndex = find(definitions.names == "Gain error",1);
+if isempty(metricIndex) || isempty(result.values), return; end
+collapsed = result.values(:,metricIndex) <= -90;
+if any(collapsed)
+    warning('SEOTA_Analyze:McGainCollapse', ...
+        '%s has %d valid sample(s) with gain error <= -90%% (MC run ID(s): %s). Verify circuit collapse versus an ngspice measurement failure before trusting these samples.', ...
+        char(result.mode),nnz(collapsed),char(strjoin(string(result.runs(collapsed)),', ')));
+end
+end
+
+function [stats,yield,overallYield] = mcStatistics(values,definitions)
+nMetrics = numel(definitions.names);
+stats = nan(nMetrics,7);
+if isempty(values)
+    yield = zeros(1,nMetrics);
+    overallYield = 0;
+    return;
+end
+pass = false(size(values));
+for metricIndex = 1:nMetrics
+    x = values(:,metricIndex); mu = mean(x); sigma = std(x,0);
+    stats(metricIndex,:) = [min(x) mu-3*sigma mu-sigma mu mu+sigma mu+3*sigma max(x)];
+    pass(:,metricIndex) = specPass( ...
+        definitions.names(metricIndex),x,definitions.units(metricIndex));
+end
+yield = 100*mean(pass,1);
+required = strlength(definitions.specs) > 0;
+yield(~required) = NaN;
+overallYield = 100*mean(all(pass(:,required),2));
+end
+
+function validateMcRunIds(runIds,filePath,requestedRuns)
+if any(~isfinite(runIds)) || any(runIds ~= round(runIds)) || ...
+        any(runIds < 1 | runIds > requestedRuns) || numel(unique(runIds)) ~= numel(runIds)
+    error('SEOTA_Analyze:McRunIds', ...
+        '%s must contain unique integer MC run IDs in 1...%d.',filePath,requestedRuns);
+end
+end
+
+function [lower,upper,fullResult] = mcDisplayRange(values,results,metricIndex,specBounds)
+fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
+fullResult = results{fullIndex};
+center = fullResult.stats(metricIndex,4);
+distances = abs(values(:)-center);
+finiteBounds = specBounds(isfinite(specBounds));
+if ~isempty(finiteBounds)
+    distances = [distances; abs(finiteBounds(:)-center)];
+end
+halfRange = max(distances);
+if ~isfinite(halfRange) || halfRange == 0, halfRange = max(abs(center)*0.05,1); end
+lower = center-1.05*halfRange;
+upper = center+1.05*halfRange;
+end
+
+function label = mcXAxisLabel(parameter,unit)
+if parameter == "Input offset"
+    label = "Input Offset (" + unit + ")";
+else
+    label = parameter + " (" + unit + ")";
+end
+end
+
+function printMcSummary(resultTable)
+fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
+    'Parameter','Unit','Spec','Min','μ-3σ','μ-σ','Mean','μ+σ','μ+3σ','Max','Yield');
+for rowIndex = 1:height(resultTable)
+    yieldText = '';
+    if isfinite(resultTable.Yield_pct(rowIndex))
+        yieldText = sprintf('%.2f%%',resultTable.Yield_pct(rowIndex));
+    end
+    fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
+        char(resultTable.Parameter(rowIndex)),char(resultTable.Unit(rowIndex)), ...
+        char(resultTable.Spec(rowIndex)),formatFixed(resultTable.Min(rowIndex)), ...
+        formatFixed(resultTable.MeanMinus3Sigma(rowIndex)), ...
+        formatFixed(resultTable.MeanMinusSigma(rowIndex)),formatFixed(resultTable.Mean(rowIndex)), ...
+        formatFixed(resultTable.MeanPlusSigma(rowIndex)), ...
+        formatFixed(resultTable.MeanPlus3Sigma(rowIndex)),formatFixed(resultTable.Max(rowIndex)), ...
+        yieldText);
+end
+end
+
+%% Plots and annotations
+
+function plotMcHistograms(results,definitions,plotDir)
+for plotIndex = 1:numel(definitions.plotParameters)
+    metricIndex = find(definitions.names == definitions.plotParameters(plotIndex),1);
+    if isempty(metricIndex)
+        error('SEOTA_Analyze:MissingMcParameter', ...
+            'MC plot parameter is not defined: %s',definitions.plotParameters(plotIndex));
+    end
+    mcHistogram(results,metricIndex,plotDir,definitions.plotFiles(plotIndex), ...
+        'SEOTA '+definitions.names(metricIndex)+' Distribution - MM / GL / FULL', ...
+        mcXAxisLabel(definitions.names(metricIndex),definitions.units(metricIndex)), ...
+        definitions.bounds{metricIndex});
+end
+end
+
+function mcHistogram(results,metricIndex,plotDir,fileName,titleText,xLabelText,specBounds)
+valueSets = cellfun(@(r) r.values(:,metricIndex),results,'UniformOutput',false);
+allValues = vertcat(valueSets{:});
+if isempty(allValues), return; end
+[lower,upper,fullResult] = mcDisplayRange(allValues,results,metricIndex,specBounds);
+edges = linspace(lower,upper,21);
+fig = figure; hold on; colors = lines(numel(results));
+for resultIndex = 1:numel(results)
+    values = results{resultIndex}.values(:,metricIndex);
+    values = values(isfinite(values) & values >= lower & values <= upper);
+    if isempty(values), continue; end
+    probabilityPct = 100*histcounts(values,edges,'Normalization','probability');
+    stairs(edges,[probabilityPct 0],'LineWidth',1.5,'Color',colors(resultIndex,:), ...
+        'DisplayName',char(results{resultIndex}.mode));
+end
+addMcSpecLines(specBounds,lower,upper);
+addFullStatMarkers(fullResult,metricIndex);
+xlim([lower upper]); ylabel('Samples (%)');
+stylePlot(xLabelText,titleText); legend('Location','best');
+savePlot(fig,plotDir,fileName);
+end
+
+function addFullStatMarkers(fullResult,metricIndex)
+markers = fullResult.stats(metricIndex,2:6);
+labels = ["-3σ" "-σ" "μ" "+σ" "+3σ"];
+for markerIndex = 1:numel(markers)
+    addCursorLine(markers(markerIndex),0,labels(markerIndex));
+end
+end
+
+function labelFreqSet(f,y,fList)
+    for f0 = fList
+        y0 = interpAtFreq(f,y,f0);
+        addCursorLine(f0,y0, ...
+            sprintf('%s: %.4g dB',frequencyText(f0),y0));
+    end
+end
+
+function addSrCursor(point,labelText)
+    addCursor(point(1),point(2),labelText);
+end
+
+function addMetricBox(lines)
+    text(0.02,0.94,strjoin(lines,newline),'Units','normalized', ...
+        'BackgroundColor','w','Color','k','Margin',4, ...
+        'VerticalAlignment','top','HorizontalAlignment','left', ...
+        'HandleVisibility','off');
+end
+
+function addCursor(x,y,labelText)
+    if ~isfinite(x) || ~isfinite(y), return; end
+    xline(x,':','HandleVisibility','off');
+    plot(x,y,'o','MarkerFaceColor','r','MarkerEdgeColor','r', ...
+        'MarkerSize',6,'HandleVisibility','off');
+    text(x,y," " + string(labelText),'BackgroundColor','w','Color','k', ...
+        'Margin',2,'VerticalAlignment','bottom','HorizontalAlignment','left', ...
+        'Clipping','on');
+end
+
+function addCursorLine(x,y,labelText)
+    if ~isfinite(x) || ~isfinite(y), return; end
+    xline(x,':'," " + string(labelText),'HandleVisibility','off', ...
+        'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
+end
+
+function stylePlot(xLabelText,titleText)
+    grid on;
+    if strlength(string(xLabelText)) > 0, xlabel(xLabelText); end
+    if strlength(string(titleText)) > 0, title(titleText); end
+end
+
+function savePlot(fig,plotDir,fileName)
+    drawnow;
+    fig.PaperUnits = 'inches';
+    fig.PaperPosition = [0 0 10 4];
+    fig.PaperSize = [10 4];
+    print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
+end
+
+%% File input and validation
+
+function files = runFiles(resultDir,process,caseName)
+olPrefix = fullfile(resultDir,process+".ol_"+caseName+"_");
+clPrefix = fullfile(resultDir,process+".cl_"+caseName+"_");
+files.olOp = olPrefix+"op.txt";
+files.diffAc = olPrefix+"diff_ac.txt";
+files.cmAc = olPrefix+"cm_ac.txt";
+files.psrrpAc = olPrefix+"psrrp_ac.txt";
+files.psrrnAc = olPrefix+"psrrn_ac.txt";
+files.vtc = olPrefix+"vtc.txt";
+files.noise = olPrefix+"noise.txt";
+files.clOp = clPrefix+"op.txt";
+files.clDc = clPrefix+"dc.txt";
+files.clTran = clPrefix+"tran.txt";
+end
+
+function data = readNumericFile(file,expectedColumns)
+if ~isfile(file)
+    error('SEOTA_Analyze:MissingFile','Missing required file: %s',file);
+end
+
+data = readmatrix(file,'FileType','text');
+data = data(any(isfinite(data),2),:);
+data = data(:,any(isfinite(data),1));
+if isempty(data)
+    error('SEOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
+end
+if size(data,2) == expectedColumns+1 && columnsMatch(data(:,1),data(:,2))
+    data = data(:,2:end);
+end
+if size(data,2) ~= expectedColumns
+    error('SEOTA_Analyze:ColumnCount', ...
+        '%s must contain %d columns; found %d.', ...
+        file,expectedColumns,size(data,2));
+end
+if any(~isfinite(data),'all')
+    error('SEOTA_Analyze:NonfiniteData', ...
+        '%s contains nonfinite numeric samples.',file);
+end
+end
+
+function data = readMcSummary(file,expectedColumns)
+% Keep nonfinite metric cells so MC can classify their runs as failed.
+if ~isfile(file)
+    error('SEOTA_Analyze:MissingFile','Missing required file: %s',file);
+end
+data = readmatrix(file,'FileType','text');
+data = data(any(isfinite(data),2),:);
+data = data(:,any(isfinite(data),1));
+if isempty(data)
+    error('SEOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
+end
+if size(data,2) == expectedColumns+1 && columnsMatch(data(:,1),data(:,2))
+    data = data(:,2:end);
+end
+if size(data,2) ~= expectedColumns
+    error('SEOTA_Analyze:ColumnCount', ...
+        '%s must contain %d columns; found %d.',file,expectedColumns,size(data,2));
+end
+end
+
+function tf = columnsMatch(a,b)
+scale = max([ones(size(a)) abs(a) abs(b)],[],2);
+tf = all(abs(a-b) <= 100*eps(scale));
+end
+
+function validateFrequency(f,label)
+if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
+    error('SEOTA_Analyze:FrequencyAxis', ...
+        '%s frequency must be finite, positive, and strictly increasing.', ...
+        label);
+end
+end
+
+%% Numerical helpers
 
 function [f,H] = transferFromFile(file)
     d = readNumericFile(file,5);
@@ -1081,14 +1160,6 @@ end
 function rej_dB = rejectionDb(fAd,Ad,fBad,Abad)
     AdMag = interpAtFreq(fAd,abs(Ad),fBad);
     rej_dB = 20*log10(AdMag ./ abs(Abad));
-end
-
-function labelFreqSet(f,y,fList)
-    for f0 = fList
-        y0 = interpAtFreq(f,y,f0);
-        addCursorLine(f0,y0, ...
-            sprintf('%s: %.4g dB',frequencyText(f0),y0));
-    end
 end
 
 function noiseRms = integrateNoise(f,noiseDensity,band)
@@ -1234,70 +1305,14 @@ function y = maxFinite(x)
     if isempty(x), y = NaN; else, y = max(x); end
 end
 
-function addSrCursor(point,labelText)
-    addCursor(point(1),point(2),labelText);
+%% Units and formatting
+
+function text = specNumber(baseValue,unit)
+text = string(sprintf('%.6g',baseValue*unitFactor(unit)));
 end
 
-function addMetricBox(lines)
-    text(0.02,0.94,strjoin(lines,newline),'Units','normalized', ...
-        'BackgroundColor','w','Color','k','Margin',4, ...
-        'VerticalAlignment','top','HorizontalAlignment','left', ...
-        'HandleVisibility','off');
-end
-
-function addCursor(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y), return; end
-    xline(x,':','HandleVisibility','off');
-    plot(x,y,'o','MarkerFaceColor','r','MarkerEdgeColor','r', ...
-        'MarkerSize',6,'HandleVisibility','off');
-    text(x,y," " + string(labelText),'BackgroundColor','w','Color','k', ...
-        'Margin',2,'VerticalAlignment','bottom','HorizontalAlignment','left', ...
-        'Clipping','on');
-end
-
-function addCursorLine(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y), return; end
-    xline(x,':'," " + string(labelText),'HandleVisibility','off', ...
-        'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
-end
-
-function stylePlot(xLabelText,titleText)
-    grid on;
-    if strlength(string(xLabelText)) > 0, xlabel(xLabelText); end
-    if strlength(string(titleText)) > 0, title(titleText); end
-end
-
-function savePlot(fig,plotDir,fileName)
-    drawnow;
-    fig.PaperUnits = 'inches';
-    fig.PaperPosition = [0 0 10 4];
-    fig.PaperSize = [10 4];
-    print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
-end
-
-function printSummaryTable(rows,specifications,columns,values)
-    parameterWidth = max(36,max(strlength(rows(:,1)))+2);
-    fprintf('%-*s %-8s %-14s',parameterWidth,'Parameter','Unit','Spec');
-    for columnIndex = 1:numel(columns)
-        fprintf(' %13s',columns(columnIndex));
-    end
-    fprintf('\n%s\n',repmat('-',1,parameterWidth+24+14*numel(columns)));
-    for rowIndex = 1:size(rows,1)
-        parameter = rows(rowIndex,1);
-        unit = rows(rowIndex,2);
-        if parameter == "" && unit == ""
-            fprintf('\n');
-        elseif unit == ""
-            fprintf('%-*s\n',parameterWidth,upper(char(parameter)));
-        else
-            fprintf('%-*s %-8s %-14s',parameterWidth,char(parameter), ...
-                char(unit),char(specifications(rowIndex)));
-            for columnIndex = 1:numel(columns)
-                fprintf(' %13s',char(values(rowIndex,columnIndex)));
-            end
-            fprintf('\n');
-        end
-    end
+function factor = unitFactor(unit)
+factor = 1/unitToBase(unit);
 end
 
 function s = formatFixed(x)
@@ -1325,11 +1340,11 @@ end
 function [rows,scaledValues] = adaptReportUnits(rows,rawValues)
 scaledValues = rawValues;
 for rowIndex = 1:size(rows,1)
-    sharedUnit = seotaCommonDisplayUnit(rows(rowIndex,1));
+    sharedUnit = commonDisplayUnit(rows(rowIndex,1));
     if sharedUnit ~= ""
-        baseValues = rawValues(rowIndex,:)*seotaUnitToBase(rows(rowIndex,2));
+        baseValues = rawValues(rowIndex,:)*unitToBase(rows(rowIndex,2));
         rows(rowIndex,2) = sharedUnit;
-        scaledValues(rowIndex,:) = baseValues/seotaUnitToBase(sharedUnit);
+        scaledValues(rowIndex,:) = baseValues/unitToBase(sharedUnit);
         continue;
     end
     [rows(rowIndex,2),scaledValues(rowIndex,:)] = ...
@@ -1337,7 +1352,7 @@ for rowIndex = 1:size(rows,1)
 end
 end
 
-function unit = seotaCommonDisplayUnit(parameter)
+function unit = commonDisplayUnit(parameter)
 switch string(parameter)
     case "Bias current", unit = "uA";
     case "Total current", unit = "mA";
@@ -1351,7 +1366,7 @@ switch string(parameter)
 end
 end
 
-function factor = seotaUnitToBase(unit)
+function factor = unitToBase(unit)
 [prefix,~] = splitUnitPrefix(unit);
 switch prefix
     case "T", factor = 1e12;

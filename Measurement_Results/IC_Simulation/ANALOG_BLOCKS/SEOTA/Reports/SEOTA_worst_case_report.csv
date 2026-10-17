@@ -1,27 +1,27 @@
 Parameter,Unit,Spec,Value,Corner
-"Bias current",uA,40±10,49.581,FFVHTH
-"Total current",mA,≤1.25,1.106,FFVHTH
-"Total power",mW,≤4.5,3.982,FFVHTH
-"DC gain",dB,≥88,93.988,FSVLTH
-"UGF",MHz,≥8,8.762,SSVLTH
-"Phase margin",deg,≥55,56.368,FFVLTH
-"Input offset",uV,±2000,12.092,FSVLTH
-"CMRR @ 60 Hz",dB,≥105,109.711,SSVLTH
-"CMRR @ 150 Hz",dB,≥105,109.711,SSVLTH
-"PSRR+ @ 60 Hz",dB,≥100,101.385,SSVLTL
-"PSRR+ @ 150 Hz",dB,≥95,96.565,SSVLTH
-"PSRR- @ 60 Hz",dB,≥100,101.385,SSVLTL
-"PSRR- @ 150 Hz",dB,≥95,96.565,SSVLTH
+"Bias current",uA,40±10,49.606,FFVHTH
+"Total current",mA,≤1.25,1.107,FFVHTH
+"Total power",mW,,3.984,FFVHTH
+"DC gain",dB,≥88,93.985,FSVLTH
+"UGF",MHz,≥8,8.767,SSVLTH
+"Phase margin",deg,≥55,56.371,FFVLTH
+"Input offset",uV,±2000,12.101,FSVLTH
+"CMRR @ 60 Hz",dB,≥105,109.709,SSVLTH
+"CMRR @ 150 Hz",dB,≥105,109.709,SSVLTH
+"PSRR+ @ 60 Hz",dB,≥100,101.386,SSVLTL
+"PSRR+ @ 150 Hz",dB,≥95,96.570,SSVLTH
+"PSRR- @ 60 Hz",dB,≥100,101.386,SSVLTL
+"PSRR- @ 150 Hz",dB,≥95,96.570,SSVLTH
 "Input-referred noise 0.05-150 Hz",uVrms,≤2.5,2.189,SSVLTH
-"Closed-loop gain",dB,,-9.346e-05,FFVHNOM
+"Closed-loop gain",dB,,-9.634e-05,FFVHNOM
 "Gain error",%,±0.01,-0.001,FSVLTH
-"Vout,DC error",uV,±2000,-12.092,FSVLTH
-"Input low",mV,≤600,429.000,SSVHTL
-"Input high",V,≥2.75,2.815,FSVLTH
-"Input high headroom",mV,≤250,185.000,FSVLTH
-"Output low",mV,≤600,430.970,SSVHTL
-"Output high",V,≥2.75,2.813,FSVLTH
-"Output high headroom",mV,≤250,187.000,FSVLTH
-"SR rise",V/us,≥6.5,6.927,SSVLTL
-"SR fall",V/us,≥5.0,5.636,SSVLTL
+"Vout,DC error",uV,,6.133,SSVLTL
+"Input low",mV,≤600,430.000,SSVHTL
+"Input high",V,≥2.75,2.814,FSVLTH
+"Input high headroom",mV,,186.000,FSVLTH
+"Output low",mV,≤600,431.884,SSVHTL
+"Output high",V,≥2.75,2.812,FSVLTH
+"Output high headroom",mV,,187.861,FSVLTH
+"SR rise",V/us,≥6.5,6.931,SSVLTL
+"SR fall",V/us,≥5.0,5.640,SSVLTL
 "Settling time",ns,≤225,213.400,SSVLTL

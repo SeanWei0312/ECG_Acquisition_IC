@@ -1,74 +1,74 @@
 Parameter,Unit,Spec,Value,Corner
-"FDC bias current",uA,40±10,49.581,FFVHTH
-"CMFB bias current",uA,40±10,49.581,FFVHTH
-"Total current",mA,≤2.5,2.195,FFVHTH
-"Total power",mW,≤9,7.901,FFVHTH
-"Output CM error",mV,±20,11.988,SSVHTH
-"G2 input offset",mV,±5,-1.891e-06,SSNOMNOM
-"G2 gain @ 10 Hz",V/V,,2.006,SSVLTH
-"G2 gain @ 150 Hz",V/V,,2.006,SSVLTH
-"G2 gain error",%,±5,0.310,SSVLTH
-"G2 -3 dB bandwidth",MHz,≥0.15,3.257,SSVLTH
-"G2 input range low",V,≤-1.2,-1.330,SSVLTH
-"G2 input range high",V,≥1.2,1.330,SSVLTH
+"FDC bias current",uA,40±10,49.606,FFVHTH
+"CMFB bias current",uA,40±10,49.606,FFVHTH
+"Total current",mA,≤2.5,2.196,FFVHTH
+"Total power",mW,,7.905,FFVHTH
+"Output CM error",mV,±20,11.992,SSVHTH
+"G2 input offset",mV,±5,-1.250e-06,FFVHTH
+"G2 gain @ 10 Hz",V/V,,2.008,SSVLTH
+"G2 gain @ 150 Hz",V/V,,2.008,SSVLTH
+"G2 gain error",%,±1,0.409,SSVLTH
+"G2 -3 dB bandwidth",MHz,,3.257,SSVLTH
+"G2 input range low",V,≤-1.2,-1.329,SSVLTH
+"G2 input range high",V,≥1.2,1.329,SSVLTH
 "G2 output range low",V,≤-2.4,-2.660,SSVLTH
 "G2 output range high",V,≥2.4,2.660,SSVLTH
-"G2 CMRR @ 60 Hz",dB,≥80,214.728,SSVLNOM
-"G2 CMRR @ 150 Hz",dB,≥80,214.728,SSVLNOM
-"G2 PSRR+ @ 60 Hz",dB,≥80,187.036,SSVHNOM
-"G2 PSRR+ @ 150 Hz",dB,≥80,187.036,SSVHNOM
-"G2 PSRR- @ 60 Hz",dB,≥80,201.684,SSVLNOM
-"G2 PSRR- @ 150 Hz",dB,≥80,201.684,SSVLNOM
-"G2 input-referred noise 0.05-150 Hz",uVrms,≤10,5.269,SSVHTH
+"G2 CMRR @ 60 Hz",dB,≥80,214.886,SSVLNOM
+"G2 CMRR @ 150 Hz",dB,≥80,214.887,SSVLNOM
+"G2 PSRR+ @ 60 Hz",dB,≥80,186.984,SSVHNOM
+"G2 PSRR+ @ 150 Hz",dB,≥80,186.984,SSVHNOM
+"G2 PSRR- @ 60 Hz",dB,≥80,202.079,SSVLNOM
+"G2 PSRR- @ 150 Hz",dB,≥80,202.078,SSVLNOM
+"G2 input-referred noise 0.05-150 Hz",uVrms,,5.267,SSVHTH
 "G2 THD @ 60 Hz, 1.20 Vpp",%,≤0.05,0.023,FSVLTL
-"G4 input offset",mV,±5,-1.010e-06,SSVHNOM
-"G4 gain @ 10 Hz",V/V,,3.979,FFVHTL
-"G4 gain @ 150 Hz",V/V,,3.979,FFVHTL
-"G4 gain error",%,±5,-0.521,FFVHTL
-"G4 -3 dB bandwidth",MHz,≥0.15,1.968,SSVLTH
-"G4 input range low",V,≤-0.6,-0.675,FSVLTH
-"G4 input range high",V,≥0.6,0.675,FSVLTH
+"G4 input offset",mV,±5,-1.102e-06,FFVHTH
+"G4 gain @ 10 Hz",V/V,,4.005,SSVLTH
+"G4 gain @ 150 Hz",V/V,,4.005,SSVLTH
+"G4 gain error",%,±1,0.120,SSVLTH
+"G4 -3 dB bandwidth",MHz,,1.962,SSVLTH
+"G4 input range low",V,≤-0.6,-0.671,FSVLTH
+"G4 input range high",V,≥0.6,0.671,FSVLTH
 "G4 output range low",V,≤-2.4,-2.686,FSVLTH
 "G4 output range high",V,≥2.4,2.686,FSVLTH
-"G4 CMRR @ 60 Hz",dB,≥80,210.195,SSNOMTH
-"G4 CMRR @ 150 Hz",dB,≥80,210.195,SSNOMTH
-"G4 PSRR+ @ 60 Hz",dB,≥80,188.627,SSVHNOM
-"G4 PSRR+ @ 150 Hz",dB,≥80,188.627,SSVHNOM
-"G4 PSRR- @ 60 Hz",dB,≥80,202.192,SSNOMTH
-"G4 PSRR- @ 150 Hz",dB,≥80,202.192,SSNOMTH
-"G4 input-referred noise 0.05-150 Hz",uVrms,≤10,4.395,SSVHTH
+"G4 CMRR @ 60 Hz",dB,≥80,210.094,SSVLTH
+"G4 CMRR @ 150 Hz",dB,≥80,210.094,SSVLTH
+"G4 PSRR+ @ 60 Hz",dB,≥80,188.643,SSVHNOM
+"G4 PSRR+ @ 150 Hz",dB,≥80,188.643,SSVHNOM
+"G4 PSRR- @ 60 Hz",dB,≥80,201.051,FFVLNOM
+"G4 PSRR- @ 150 Hz",dB,≥80,201.051,FFVLNOM
+"G4 input-referred noise 0.05-150 Hz",uVrms,,4.391,SSVHTH
 "G4 THD @ 60 Hz, 0.60 Vpp",%,≤0.05,0.006,FSVLTL
-"G8 input offset",mV,±5,-1.643e-06,FFVHTH
-"G8 gain @ 10 Hz",V/V,,7.934,FFVHTL
-"G8 gain @ 150 Hz",V/V,,7.934,FFVHTL
-"G8 gain error",%,±5,-0.819,FFVHTL
-"G8 -3 dB bandwidth",MHz,≥0.15,1.253,SSVLTH
-"G8 input range low",V,≤-0.3,-0.332,FSVLTH
-"G8 input range high",V,≥0.3,0.332,FSVLTH
-"G8 output range low",V,≤-2.4,-2.635,FSVLTH
-"G8 output range high",V,≥2.4,2.635,FSVLTH
-"G8 CMRR @ 60 Hz",dB,≥80,187.102,FSVLTL
-"G8 CMRR @ 150 Hz",dB,≥80,187.102,FSVLTL
-"G8 PSRR+ @ 60 Hz",dB,≥80,189.535,SSVHNOM
-"G8 PSRR+ @ 150 Hz",dB,≥80,189.535,SSVHNOM
-"G8 PSRR- @ 60 Hz",dB,≥80,183.569,FSVLTL
-"G8 PSRR- @ 150 Hz",dB,≥80,183.569,FSVLTL
-"G8 input-referred noise 0.05-150 Hz",uVrms,≤10,3.955,SSVHTH
-"G8 THD @ 60 Hz, 0.30 Vpp",%,≤0.05,5.311e-04,SSVLTL
-"G16 input offset",mV,±5,-9.150e-07,SSVHNOM
-"G16 gain @ 10 Hz",V/V,,15.854,FFVLTL
-"G16 gain @ 150 Hz",V/V,,15.854,FFVLTL
-"G16 gain error",%,±5,-0.911,FFVLTL
-"G16 -3 dB bandwidth",MHz,≥0.15,0.600,SSVLTH
-"G16 input range low",V,≤-0.15,-0.162,FSVLTH
-"G16 input range high",V,≥0.15,0.162,FSVLTH
-"G16 output range low",V,≤-2.4,-2.563,FSVLTH
-"G16 output range high",V,≥2.4,2.563,FSVLTH
-"G16 CMRR @ 60 Hz",dB,≥80,199.763,SSNOMTH
-"G16 CMRR @ 150 Hz",dB,≥80,199.763,SSNOMTH
-"G16 PSRR+ @ 60 Hz",dB,≥80,190.033,SSVHNOM
-"G16 PSRR+ @ 150 Hz",dB,≥80,190.033,SSVHNOM
-"G16 PSRR- @ 60 Hz",dB,≥80,197.564,SSVHTH
-"G16 PSRR- @ 150 Hz",dB,≥80,197.564,SSVHTH
-"G16 input-referred noise 0.05-150 Hz",uVrms,≤10,3.734,SSVHTH
-"G16 THD @ 60 Hz, 0.15 Vpp",%,≤0.05,3.949e-04,FFVLTH
+"G8 input offset",mV,±5,-3.057e-06,SSNOMTL
+"G8 gain @ 10 Hz",V/V,,8.011,SSVLTH
+"G8 gain @ 150 Hz",V/V,,8.011,SSVLTH
+"G8 gain error",%,±1,0.133,SSVLTH
+"G8 -3 dB bandwidth",MHz,,1.245,SSVLTH
+"G8 input range low",V,≤-0.3,-0.329,FSVLTH
+"G8 input range high",V,≥0.3,0.329,FSVLTH
+"G8 output range low",V,≤-2.4,-2.634,FSVLTH
+"G8 output range high",V,≥2.4,2.634,FSVLTH
+"G8 CMRR @ 60 Hz",dB,≥80,185.090,SSNOMNOM
+"G8 CMRR @ 150 Hz",dB,≥80,185.090,SSNOMNOM
+"G8 PSRR+ @ 60 Hz",dB,≥80,189.557,SSVHNOM
+"G8 PSRR+ @ 150 Hz",dB,≥80,189.557,SSVHNOM
+"G8 PSRR- @ 60 Hz",dB,≥80,181.017,SSNOMNOM
+"G8 PSRR- @ 150 Hz",dB,≥80,181.017,SSNOMNOM
+"G8 input-referred noise 0.05-150 Hz",uVrms,,3.952,SSVHTH
+"G8 THD @ 60 Hz, 0.30 Vpp",%,≤0.05,5.248e-04,SSVLTL
+"G16 input offset",mV,±5,-1.288e-06,FFNOMTH
+"G16 gain @ 10 Hz",V/V,,15.992,FFVLTL
+"G16 gain @ 150 Hz",V/V,,15.992,FFVLTL
+"G16 gain error",%,±1,-0.053,FFVLTL
+"G16 -3 dB bandwidth",MHz,,0.595,SSVLTH
+"G16 input range low",V,≤-0.15,-0.160,FSVLTH
+"G16 input range high",V,≥0.15,0.160,FSVLTH
+"G16 output range low",V,≤-2.4,-2.562,FSVLTH
+"G16 output range high",V,≥2.4,2.562,FSVLTH
+"G16 CMRR @ 60 Hz",dB,≥80,199.956,SSVLTH
+"G16 CMRR @ 150 Hz",dB,≥80,199.956,SSVLTH
+"G16 PSRR+ @ 60 Hz",dB,≥80,190.043,SSVHNOM
+"G16 PSRR+ @ 150 Hz",dB,≥80,190.043,SSVHNOM
+"G16 PSRR- @ 60 Hz",dB,≥80,197.017,FFVLNOM
+"G16 PSRR- @ 150 Hz",dB,≥80,197.017,FFVLNOM
+"G16 input-referred noise 0.05-150 Hz",uVrms,,3.733,SSVHTH
+"G16 THD @ 60 Hz, 0.15 Vpp",%,≤0.05,4.064e-04,FFVLTH

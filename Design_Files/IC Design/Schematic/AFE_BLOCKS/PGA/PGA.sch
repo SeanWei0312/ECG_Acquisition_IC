@@ -198,56 +198,56 @@ C {lab_wire.sym} 400 -660 2 1 {name=p65 sig_type=std_logic lab=PGA_SS}
 C {lab_wire.sym} 400 -620 0 0 {name=p66 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 570 -800 3 1 {name=RFBP1
 W=2e-6
-L=40e-6
+L=40.04e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 540 -820 0 0 {name=p67 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 570 -480 3 0 {name=RFBN1
 W=2e-6
-L=40e-6
+L=40.04e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 540 -460 2 1 {name=RFBN5 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 740 -800 3 1 {name=RFBP2
 W=2e-6
-L=40e-6
+L=40.32e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 720 -820 0 0 {name=p68 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 740 -480 3 0 {name=RFBN2
 W=2e-6
-L=40e-6
+L=40.32e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 720 -460 2 1 {name=RFBN6 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 1020 -800 3 1 {name=RFBP3
 W=2e-6
-L=120e-6
+L=121.28e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 1000 -820 0 0 {name=p69 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 1220 -800 3 1 {name=RFBP4
 W=2e-6
-L=120e-6
+L=121.14e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 1200 -820 0 0 {name=p70 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 1020 -480 3 0 {name=RFBN3
 W=2e-6
-L=120e-6
+L=121.28e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}
 C {lab_wire.sym} 1000 -460 2 1 {name=RFBN7 sig_type=std_logic lab=PGA_SS}
 C {symbols/ppolyf_u_2k.sym} 1220 -480 3 0 {name=RFBN4
 W=2e-6
-L=120e-6
+L=121.14e-6
 model=ppolyf_u_2k
 spiceprefix=X
 m=1}

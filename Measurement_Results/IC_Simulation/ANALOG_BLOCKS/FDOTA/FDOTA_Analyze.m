@@ -1,12 +1,8 @@
 function FDOTA_Analyze
-% FDOTA_ANALYZE Characterize the fully differential OTA testbench.
-%
-% Expected NGSPICE output is stored beside this file in:
-%   nom.Result_txt, ff.Result_txt, ss.Result_txt, fs.Result_txt,
-%   sf.Result_txt
-%
-% Numerical reports cover the full 45-corner PVT sweep. Plots use the
-% NOM/3.3 V/27 C data and retain MATLAB's native floating figure style.
+% FDOTA_ANALYZE Verify PVT and Monte Carlo results.
+% Specs, measurements, reports, and plots are defined below.
+
+%% Setup and output directories
 
 clc;
 close all;
@@ -16,9 +12,9 @@ plotDir = fullfile(scriptDir,'Plots');
 if ~isfolder(plotDir)
     mkdir(plotDir);
 end
-resultsDir = fullfile(scriptDir,'Results');
-if ~isfolder(resultsDir)
-    mkdir(resultsDir);
+reportDir = fullfile(scriptDir,'Results');
+if ~isfolder(reportDir)
+    mkdir(reportDir);
 end
 
 cfg = analysisConfig();
@@ -350,8 +346,8 @@ end
 
 [rows,scaledValues] = adaptReportUnits(rows,rawValues);
 formattedValues = formatReportValues(rows,scaledValues);
-specifications = fdSpecStrings(rows);
-fdCheckPvtSpecifications(rows,scaledValues,corners);
+specifications = specStrings(rows);
+checkPvtSpecifications(rows,scaledValues,corners);
 
 reportColumns = ["NOM" "FF" "SS" "FS" "SF" "VL" "VH" "TL" "TH"];
 reportKeys = ["NOMNOMNOM" "FFNOMNOM" "SSNOMNOM" "FSNOMNOM" ...
@@ -368,386 +364,24 @@ summaryTable = [summaryTable array2table(reportValues, ...
     'VariableNames',cellstr(reportColumns))];
 fprintf('\nFDOTA COMPARISON SUMMARY\n\n');
 printSummaryTable(rows,specifications,reportColumns,reportValues);
-writetable(summaryTable,fullfile(resultsDir,'FDOTA_table_report.csv'));
-writetable(summaryTable,fullfile(resultsDir,'NOM.FDOTA_summary.csv'));
+writetable(summaryTable,fullfile(reportDir,'FDOTA_table_report.csv'));
+writetable(summaryTable,fullfile(reportDir,'NOM.FDOTA_summary.csv'));
 
 worstCase = buildWorstCaseTable(rows,corners,scaledValues,metrics);
 fprintf('\nFDOTA FULL-PVT WORST CASE\n\n');
 printWorstCaseTable(worstCase);
-writetable(worstCase,fullfile(resultsDir,'FDOTA_worst_case_report.csv'));
+writetable(worstCase,fullfile(reportDir,'FDOTA_worst_case_report.csv'));
 
-%% Monte Carlo analysis (appended; PVT flow above is unchanged)
-fdRunMcSection(scriptDir,plotDir,resultsDir);
+%% Monte Carlo analysis
+runMcSection(scriptDir,plotDir,reportDir);
 
-end
-
-function fdRunMcSection(scriptDir,plotDir,resultsDir)
-definitions = fdMcDefinitions();
-modes = ["MM" "GL" "FULL"];
-results = cell(numel(modes),1);
-missing = strings(0,1);
-for modeIndex = 1:numel(modes)
-    token = lower(modes(modeIndex));
-    resultDir = fullfile(scriptDir,token+".Result_txt");
-    olFile = fullfile(resultDir,token+".ol_mc_summary.txt");
-    clFile = fullfile(resultDir,token+".cl_mc_summary.txt");
-    if ~isfile(olFile) || ~isfile(clFile)
-        missing(end+1) = modes(modeIndex)+": "+olFile+" | "+clFile; %#ok<AGROW>
-        continue;
-    end
-    results{modeIndex} = fdSummarizeMc(olFile,clFile,modes(modeIndex),definitions);
-end
-if ~isempty(missing)
-    warning('FDOTA_Analyze:MissingMcFiles','FDOTA MC files missing:\n%s', ...
-        strjoin(cellstr(missing),newline));
-end
-results = results(~cellfun(@isempty,results));
-if isempty(results), return; end
-fprintf('\nFDOTA MONTE CARLO SUMMARY\n');
-for resultIndex = 1:numel(results)
-    r = results{resultIndex};
-    fprintf('\n%s MONTE CARLO SUMMARY\n',r.mode);
-    fprintf('Requested: %d   Valid: %d   Failed: %d   Overall yield: %.2f%%\n', ...
-        r.requested,r.valid,r.failed,r.overallYield);
-    if ~isempty(r.failedRunIds)
-        fprintf('Failed run IDs: %s\n',strjoin(string(r.failedRunIds),', '));
-    end
-    fdPrintMcTable(r.table);
-    writetable(r.table,fullfile(resultsDir,r.mode+'_FDOTA_MC_Summary.csv'));
-end
-modeValues = string(cellfun(@(r) r.mode,results,'UniformOutput',false));
-requestedValues = cellfun(@(r) r.requested,results);
-validValues = cellfun(@(r) r.valid,results);
-failedValues = cellfun(@(r) r.failed,results);
-yieldValues = cellfun(@(r) r.overallYield,results);
-runTable = table(modeValues(:),requestedValues(:),validValues(:), ...
-    failedValues(:),yieldValues(:), ...
-    'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns', ...
-    'OverallYield_pct'});
-writetable(runTable,fullfile(resultsDir,'FDOTA_MC_Run_Summary.csv'));
-fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
-if isempty(fullIndex) || results{fullIndex}.valid == 0
-    warning('FDOTA_Analyze:MissingFullMc', ...
-        'MC tables were written, but MC plots require valid FULL data.');
-    return;
-end
-fdPlotMcHistograms(results,definitions,plotDir);
 end
 
-function d = fdMcDefinitions()
-d.names = ["FDC bias current" "CMFB bias current" "Total current" ...
-    "Total power" "Differential DC gain" "Differential UGF" ...
-    "Differential phase margin" "Input differential offset" ...
-    "Gain error" "Output CM error"];
-d.units = ["uA" "uA" "mA" "mW" "dB" "MHz" "deg" "uV" "%" "mV"];
-d.specs = strings(size(d.names));
-d.bounds = cell(size(d.names));
-for metricIndex = 1:numel(d.names)
-    d.specs(metricIndex) = fdSpecText(d.names(metricIndex),d.units(metricIndex));
-    d.bounds{metricIndex} = fdSpecBounds(d.names(metricIndex),d.units(metricIndex));
-end
-d.requestedRuns = 200;
-d.columns = fdMcSchema();
-d.plotParameters = ["Input differential offset" "Output CM error" ...
-    "Differential DC gain" "Differential UGF" ...
-    "Differential phase margin" "Gain error"];
-d.plotFiles = ["Fig_MC_01_Input_Offset_Histogram.png" ...
-    "Fig_MC_02_Output_CM_Error_Histogram.png" ...
-    "Fig_MC_03_DC_Gain_Histogram.png" "Fig_MC_04_UGF_Histogram.png" ...
-    "Fig_MC_05_Phase_Margin_Histogram.png" "Fig_MC_06_Gain_Error_Histogram.png"];
-end
-
-function columns = fdMcSchema()
-% Compact MC TXT column map; keep this synchronized with the testbench.
-columns.ol = struct('count',6,'run',1,'vos',2,'gainDb',3, ...
-    'ugfHz',4,'phaseUgf',5,'phaseMargin',6);
-columns.cl = struct('count',8,'run',1,'outputCmError',2, ...
-    'gainVV',3,'gainError',4,'fdcBias',5,'cmfbBias',6, ...
-    'totalCurrent',7,'totalPower',8);
-end
-
-function r = fdSummarizeMc(olFile,clFile,mode,d)
-columns = d.columns;
-ol = readMcSummary(olFile,columns.ol.count);
-cl = readMcSummary(clFile,columns.cl.count);
-fdValidateMcRuns(ol(:,columns.ol.run),olFile,d.requestedRuns);
-fdValidateMcRuns(cl(:,columns.cl.run),clFile,d.requestedRuns);
-[runIds,io,ic] = intersect( ...
-    ol(:,columns.ol.run),cl(:,columns.cl.run),'stable');
-if isempty(runIds)
-    error('FDOTA_Analyze:McRunIds', ...
-        '%s and %s have no matching MC run IDs.',olFile,clFile);
-end
-values = [cl(ic,columns.cl.fdcBias)*1e6, ...
-    cl(ic,columns.cl.cmfbBias)*1e6,cl(ic,columns.cl.totalCurrent)*1e3, ...
-    cl(ic,columns.cl.totalPower)*1e3,ol(io,columns.ol.gainDb), ...
-    ol(io,columns.ol.ugfHz)/1e6,ol(io,columns.ol.phaseMargin), ...
-    ol(io,columns.ol.vos)*1e6,cl(ic,columns.cl.gainError), ...
-    cl(ic,columns.cl.outputCmError)*1e3];
-validMask = all(isfinite(values),2) & values(:,6) > 0;
-r.mode = mode;
-r.requested = d.requestedRuns;
-r.runs = runIds(validMask);
-r.values = values(validMask,:);
-r.valid = numel(r.runs);
-r.failed = r.requested-r.valid;
-r.failedRunIds = setdiff((1:r.requested)',r.runs);
-fdWarnOnMcGainCollapse(r,d);
-[r.stats,individualYield,r.overallYield] = fdMcStatistics(r.values,d);
-r.table = table(d.names',d.units',d.specs',r.stats(:,1),r.stats(:,2), ...
-    r.stats(:,3),r.stats(:,4),r.stats(:,5),r.stats(:,6),r.stats(:,7), ...
-    individualYield','VariableNames',{'Parameter','Unit','Spec','Min', ...
-    'MeanMinus3Sigma','MeanMinusSigma','Mean','MeanPlusSigma', ...
-    'MeanPlus3Sigma','Max','Yield_pct'});
-end
-
-function [stats,individualYield,overallYield] = fdMcStatistics(values,d)
-nMetrics = numel(d.names);
-stats = nan(nMetrics,7);
-if isempty(values)
-    individualYield = zeros(1,nMetrics);
-    overallYield = 0;
-    return;
-end
-pass = false(size(values));
-for metricIndex = 1:nMetrics
-    x = values(:,metricIndex); mu = mean(x); sigma = std(x,0);
-    stats(metricIndex,:) = [min(x) mu-3*sigma mu-sigma mu ...
-        mu+sigma mu+3*sigma max(x)];
-    pass(:,metricIndex) = fdSpecPass(d.names(metricIndex),x,d.units(metricIndex));
-end
-individualYield = 100*mean(pass,1);
-overallYield = 100*mean(all(pass,2));
-end
-
-function fdWarnOnMcGainCollapse(result,d)
-metricIndex = find(d.names == "Gain error",1);
-if isempty(metricIndex) || isempty(result.values), return; end
-collapsed = result.values(:,metricIndex) <= -90;
-if any(collapsed)
-    warning('FDOTA_Analyze:McGainCollapse', ...
-        '%s has %d valid sample(s) with gain error <= -90%% (MC run ID(s): %s). Verify circuit collapse versus an ngspice measurement failure before trusting these samples.', ...
-        char(result.mode),nnz(collapsed),char(strjoin(string(result.runs(collapsed)),', ')));
-end
-end
-
-function tf = fdSpecPass(parameter,x,unit)
-bounds = fdSpecBounds(parameter,unit);
-tf = isfinite(x) & x >= bounds(1) & x <= bounds(2);
-end
-
-function specifications = fdSpecStrings(rows)
-specifications = strings(size(rows,1),1);
-for rowIndex = 1:size(rows,1)
-    specifications(rowIndex) = fdSpecText(rows(rowIndex,1),rows(rowIndex,2));
-end
-end
-
-function specification = fdSpecText(parameter,unit)
-switch fdCanonicalParameter(parameter)
-    case "Input differential offset", specification = "±"+fdSpecNumber(3e-3,unit);
-    case "Output CM error", specification = "±"+fdSpecNumber(25e-3,unit);
-    case "Differential DC gain", specification = "≥85";
-    case "Differential UGF", specification = "≥"+fdSpecNumber(8e6,unit);
-    case "Differential phase margin", specification = "≥60";
-    case "Closed-loop differential gain error", specification = "±0.01";
-    case {"FDC bias current","CMFB bias current"}
-        specification = fdSpecNumber(40e-6,unit)+"±"+fdSpecNumber(10e-6,unit);
-    case "Total current", specification = "≤"+fdSpecNumber(2.5e-3,unit);
-    case "Total power", specification = "≤"+fdSpecNumber(9e-3,unit);
-    case {"CMRR @ 60 Hz","CMRR @ 150 Hz"}, specification = "≥80";
-    case {"PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
-            "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}, specification = "≥80";
-    case "Input-referred noise 0.05-150 Hz"
-        specification = "≤"+fdSpecNumber(4e-6,unit);
-    case "Input CM low", specification = "≤"+fdSpecNumber(1.0,unit);
-    case "Input CM high", specification = "≥"+fdSpecNumber(2.3,unit);
-    case "Differential output swing low", specification = "≤"+fdSpecNumber(-1.8,unit);
-    case "Differential output swing high", specification = "≥"+fdSpecNumber(1.8,unit);
-    case {"Differential SR rise","Differential SR fall"}, specification = "≥4";
-    case "Differential settling time", specification = "≤"+fdSpecNumber(300e-9,unit);
-    case "Differential-step CM disturbance", specification = "≤"+fdSpecNumber(60e-3,unit);
-    case {"CMFB SR rise","CMFB SR fall"}, specification = "≥2";
-    case "CMFB settling time", specification = "≤"+fdSpecNumber(1e-6,unit);
-    otherwise, specification = "";
-end
-end
-
-function bounds = fdSpecBounds(parameter,unit)
-% Return numeric specification limits in the requested display unit.
-baseBounds = fdSpecBaseBounds(fdCanonicalParameter(parameter));
-bounds = baseBounds/fdUnitToBase(unit);
-end
-
-function bounds = fdSpecBaseBounds(parameter)
-% Each row is defined once in SI/base units: [lower upper].
-switch string(parameter)
-    case "Input differential offset", bounds = [-3e-3 3e-3];
-    case "Output CM error", bounds = [-25e-3 25e-3];
-    case "Differential DC gain", bounds = [85 Inf];
-    case "Differential UGF", bounds = [8e6 Inf];
-    case "Differential phase margin", bounds = [60 Inf];
-    case "Closed-loop differential gain error", bounds = [-0.01 0.01];
-    case {"FDC bias current","CMFB bias current"}, bounds = [30e-6 50e-6];
-    case "Total current", bounds = [-Inf 2.5e-3];
-    case "Total power", bounds = [-Inf 9e-3];
-    case {"CMRR @ 60 Hz","CMRR @ 150 Hz"}, bounds = [80 Inf];
-    case {"PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
-            "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}, bounds = [80 Inf];
-    case "Input-referred noise 0.05-150 Hz", bounds = [-Inf 4e-6];
-    case "Input CM low", bounds = [-Inf 1.0];
-    case "Input CM high", bounds = [2.3 Inf];
-    case "Differential output swing low", bounds = [-Inf -1.8];
-    case "Differential output swing high", bounds = [1.8 Inf];
-    case {"Differential SR rise","Differential SR fall"}, bounds = [4 Inf];
-    case "Differential settling time", bounds = [-Inf 300e-9];
-    case "Differential-step CM disturbance", bounds = [-Inf 60e-3];
-    case {"CMFB SR rise","CMFB SR fall"}, bounds = [2 Inf];
-    case "CMFB settling time", bounds = [-Inf 1e-6];
-    otherwise, bounds = [-Inf Inf];
-end
-end
-
-function value = fdSpecNumber(baseValue,unit)
-value = string(sprintf('%.6g',baseValue/fdUnitToBase(unit)));
-end
-
-function factor = fdUnitToBase(unit)
-[prefix,~] = splitUnitPrefix(unit);
-switch prefix
-    case "T", factor = 1e12;
-    case "G", factor = 1e9;
-    case "M", factor = 1e6;
-    case "k", factor = 1e3;
-    case "m", factor = 1e-3;
-    case "u", factor = 1e-6;
-    case "n", factor = 1e-9;
-    case "p", factor = 1e-12;
-    case "f", factor = 1e-15;
-    otherwise, factor = 1;
-end
-end
-
-function parameter = fdCanonicalParameter(parameter)
-parameter = string(parameter);
-switch parameter
-    case "Output CM error at nominal", parameter = "Output CM error";
-    case "Gain error", parameter = "Closed-loop differential gain error";
-end
-end
-
-function fdCheckPvtSpecifications(rows,values,corners)
-checkedRows = false(size(rows,1),1);
-passMatrix = true(size(values));
-for rowIndex = 1:size(rows,1)
-    if strlength(fdSpecText(rows(rowIndex,1),rows(rowIndex,2))) == 0, continue; end
-    passMatrix(rowIndex,:) = fdSpecPass(rows(rowIndex,1),values(rowIndex,:),rows(rowIndex,2));
-    checkedRows(rowIndex) = true;
-end
-cornerPass = all(passMatrix(checkedRows,:),1);
-if all(cornerPass)
-    fprintf('\nFDOTA PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
-        nnz(cornerPass),numel(corners));
-else
-    warning('FDOTA_Analyze:PvtSpecFailure', ...
-        'FDOTA PVT specification: FAIL (%d/%d corners): %s', ...
-        nnz(cornerPass),numel(corners),strjoin(corners(~cornerPass),', '));
-end
-end
-
-function fdValidateMcRuns(ids,filePath,requestedRuns)
-if any(~isfinite(ids)) || any(ids ~= round(ids)) || any(ids < 1 | ids > requestedRuns) || ...
-        numel(unique(ids)) ~= numel(ids)
-    error('FDOTA_Analyze:McRunIds','Invalid or duplicate run IDs in %s.',filePath);
-end
-end
-
-function fdPrintMcTable(t)
-fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
-    'Parameter','Unit','Spec','Min','μ-3σ','μ-σ','Mean','μ+σ','μ+3σ','Max','Yield');
-for k = 1:height(t)
-    fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
-        char(t.Parameter(k)),char(t.Unit(k)),char(t.Spec(k)), ...
-        formatFixed(t.Min(k)),formatFixed(t.MeanMinus3Sigma(k)), ...
-        formatFixed(t.MeanMinusSigma(k)),formatFixed(t.Mean(k)), ...
-        formatFixed(t.MeanPlusSigma(k)),formatFixed(t.MeanPlus3Sigma(k)), ...
-        formatFixed(t.Max(k)),sprintf('%.2f%%',t.Yield_pct(k)));
-end
-end
-
-function fdPlotMcHistograms(results,d,plotDir)
-for plotIndex = 1:numel(d.plotParameters)
-    metricIndex = find(d.names == d.plotParameters(plotIndex),1);
-    if isempty(metricIndex)
-        error('FDOTA_Analyze:MissingMcParameter', ...
-            'MC plot parameter is not defined: %s',d.plotParameters(plotIndex));
-    end
-    fdMcHistogram(results,metricIndex,plotDir,d.plotFiles(plotIndex), ...
-        'FDOTA '+d.names(metricIndex)+' Distribution - MM / GL / FULL', ...
-        d.names(metricIndex)+" ("+d.units(metricIndex)+")", ...
-        d.bounds{metricIndex});
-end
-end
-
-function fdMcHistogram(results,metricIndex,plotDir,fileName,titleText,xLabelText,specBounds)
-valueSets = cellfun(@(r) r.values(:,metricIndex),results,'UniformOutput',false);
-allValues = vertcat(valueSets{:});
-if isempty(allValues), return; end
-[lower,upper,fullResult] = fdMcDisplayRange(allValues,results,metricIndex,specBounds);
-edges = linspace(lower,upper,21);
-fig = figure; hold on; colors = lines(numel(results));
-for resultIndex = 1:numel(results)
-    values = results{resultIndex}.values(:,metricIndex);
-    values = values(isfinite(values) & values >= lower & values <= upper);
-    if isempty(values), continue; end
-    probabilityPct = 100*histcounts(values,edges,'Normalization','probability');
-    stairs(edges,[probabilityPct 0],'LineWidth',1.5,'Color',colors(resultIndex,:), ...
-        'DisplayName',char(results{resultIndex}.mode));
-end
-fdAddMcSpecLines(specBounds,lower,upper);
-fdMcAddFullStatMarkers(fullResult,metricIndex);
-xlim([lower upper]); ylabel('Samples (%)');
-stylePlot(xLabelText,titleText); legend('Location','best');
-savePlot(fig,plotDir,fileName);
-end
-
-function [lower,upper,fullResult] = fdMcDisplayRange(values,results,metricIndex,specBounds)
-fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
-fullResult = results{fullIndex};
-center = fullResult.stats(metricIndex,4);
-distances = abs(values(:)-center);
-finiteBounds = specBounds(isfinite(specBounds));
-if ~isempty(finiteBounds)
-    distances = [distances; abs(finiteBounds(:)-center)];
-end
-halfRange = max(distances);
-if ~isfinite(halfRange) || halfRange == 0
-    halfRange = max(abs(center)*0.05,1);
-end
-lower = center-1.05*halfRange;
-upper = center+1.05*halfRange;
-end
-
-function fdMcAddFullStatMarkers(fullResult,metricIndex)
-markers = fullResult.stats(metricIndex,2:6);
-labels = ["-3σ" "-σ" "μ" "+σ" "+3σ"];
-for markerIndex = 1:numel(markers)
-    addCursorLine(markers(markerIndex),0,labels(markerIndex));
-end
-end
-
-function fdAddMcSpecLines(bounds,lower,upper)
-for value = bounds(:)'
-    if isfinite(value) && value >= lower && value <= upper
-        xline(value,'--','HandleVisibility','off');
-    end
-end
-end
+%% Configuration and report definitions
 
 function cfg = analysisConfig
 cfg.nominalCase = "nom";
 cfg.closedLoopTarget_VV = 1;
-cfg.biasTarget_A = 40e-6;
 cfg.trackTolerance_V = 2e-3;
 cfg.settleTolerance_V = 2e-3;
 cfg.cmSettleTolerance_V = 5e-3;
@@ -809,80 +443,113 @@ rows = [
 ];
 end
 
-function files = runFiles(resultDir,process,caseName)
-olPrefix = fullfile(resultDir,process+".ol_"+caseName+"_");
-clPrefix = fullfile(resultDir,process+".cl_"+caseName+"_");
-files.olOp = olPrefix+"op.txt";
-files.diffAc = olPrefix+"diff_ac.txt";
-files.cmAc = olPrefix+"cm_ac.txt";
-files.psrrpAc = olPrefix+"psrrp_ac.txt";
-files.psrrnAc = olPrefix+"psrrn_ac.txt";
-files.vtc = olPrefix+"vtc.txt";
-files.noise = olPrefix+"noise.txt";
-files.clOp = clPrefix+"op.txt";
-files.diffDc = clPrefix+"diff_dc.txt";
-files.icmr = clPrefix+"icmr.txt";
-files.diffTran = clPrefix+"diff_tran.txt";
-files.cmTran = clPrefix+"cm_tran.txt";
+%% Specifications and verification
+
+function tf = specPass(parameter,x,unit)
+bounds = specBounds(parameter,unit);
+tf = isfinite(x) & x >= bounds(1) & x <= bounds(2);
 end
 
-function data = readNumericFile(file,expectedColumns)
-if ~isfile(file)
-    error('FDOTA_Analyze:MissingFile','Missing required file: %s',file);
-end
-data = readmatrix(file,'FileType','text');
-data = data(any(isfinite(data),2),:);
-data = data(:,any(isfinite(data),1));
-if isempty(data)
-    error('FDOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
-end
-if size(data,2) == expectedColumns+1 && ...
-        columnsMatch(data(:,1),data(:,2))
-    data = data(:,2:end);
-end
-if size(data,2) ~= expectedColumns
-    error('FDOTA_Analyze:ColumnCount', ...
-        '%s must contain %d columns; found %d.', ...
-        file,expectedColumns,size(data,2));
-end
-if any(~isfinite(data),'all')
-    error('FDOTA_Analyze:NonfiniteData', ...
-        '%s contains nonfinite numeric samples.',file);
+function specifications = specStrings(rows)
+specifications = strings(size(rows,1),1);
+for rowIndex = 1:size(rows,1)
+    specifications(rowIndex) = specText(rows(rowIndex,1),rows(rowIndex,2));
 end
 end
 
-function data = readMcSummary(file,expectedColumns)
-% Keep nonfinite metric cells so MC can classify their runs as failed.
-if ~isfile(file)
-    error('FDOTA_Analyze:MissingFile','Missing required file: %s',file);
-end
-data = readmatrix(file,'FileType','text');
-data = data(any(isfinite(data),2),:);
-data = data(:,any(isfinite(data),1));
-if isempty(data)
-    error('FDOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
-end
-if size(data,2) == expectedColumns+1 && columnsMatch(data(:,1),data(:,2))
-    data = data(:,2:end);
-end
-if size(data,2) ~= expectedColumns
-    error('FDOTA_Analyze:ColumnCount', ...
-        '%s must contain %d columns; found %d.',file,expectedColumns,size(data,2));
+function specification = specText(parameter,unit)
+switch canonicalParameter(parameter)
+    case "Input differential offset", specification = "±"+specNumber(3e-3,unit);
+    case "Output CM error", specification = "±"+specNumber(20e-3,unit);
+    case "Differential DC gain", specification = "≥85";
+    case "Differential UGF", specification = "≥"+specNumber(8e6,unit);
+    case "Differential phase margin", specification = "≥60";
+    case "Closed-loop differential gain error", specification = "±0.01";
+    case {"FDC bias current","CMFB bias current"}
+        specification = specNumber(40e-6,unit)+"±"+specNumber(10e-6,unit);
+    case "Total current", specification = "≤"+specNumber(2.5e-3,unit);
+    case "Total power", specification = "";
+    case {"CMRR @ 60 Hz","CMRR @ 150 Hz"}, specification = "≥80";
+    case {"PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
+            "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}, specification = "≥80";
+    case "Input-referred noise 0.05-150 Hz"
+        specification = "≤"+specNumber(4e-6,unit);
+    case "Input CM low", specification = "≤"+specNumber(1.0,unit);
+    case "Input CM high", specification = "≥"+specNumber(2.3,unit);
+    case "Differential output swing low", specification = "≤"+specNumber(-1.8,unit);
+    case "Differential output swing high", specification = "≥"+specNumber(1.8,unit);
+    case {"Differential SR rise","Differential SR fall"}, specification = "≥4";
+    case "Differential settling time", specification = "≤"+specNumber(300e-9,unit);
+    case "Differential-step CM disturbance", specification = "≤"+specNumber(60e-3,unit);
+    case {"CMFB SR rise","CMFB SR fall"}, specification = "≥2";
+    case "CMFB settling time", specification = "≤"+specNumber(1e-6,unit);
+    otherwise, specification = "";
 end
 end
 
-function tf = columnsMatch(a,b)
-scale = max([ones(size(a)) abs(a) abs(b)],[],2);
-tf = all(abs(a-b) <= 100*eps(scale));
+function bounds = specBounds(parameter,unit)
+% Return numeric specification limits in the requested display unit.
+baseBounds = specBaseBounds(canonicalParameter(parameter));
+bounds = baseBounds/unitToBase(unit);
 end
 
-function validateFrequency(f,label)
-if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
-    error('FDOTA_Analyze:FrequencyAxis', ...
-        '%s frequency must be finite, positive, and strictly increasing.', ...
-        label);
+function bounds = specBaseBounds(parameter)
+% Each row is defined once in SI/base units: [lower upper].
+switch string(parameter)
+    case "Input differential offset", bounds = [-3e-3 3e-3];
+    case "Output CM error", bounds = [-20e-3 20e-3];
+    case "Differential DC gain", bounds = [85 Inf];
+    case "Differential UGF", bounds = [8e6 Inf];
+    case "Differential phase margin", bounds = [60 Inf];
+    case "Closed-loop differential gain error", bounds = [-0.01 0.01];
+    case {"FDC bias current","CMFB bias current"}, bounds = [30e-6 50e-6];
+    case "Total current", bounds = [-Inf 2.5e-3];
+    case "Total power", bounds = [-Inf Inf];
+    case {"CMRR @ 60 Hz","CMRR @ 150 Hz"}, bounds = [80 Inf];
+    case {"PSRR+ @ 60 Hz","PSRR+ @ 150 Hz", ...
+            "PSRR- @ 60 Hz","PSRR- @ 150 Hz"}, bounds = [80 Inf];
+    case "Input-referred noise 0.05-150 Hz", bounds = [-Inf 4e-6];
+    case "Input CM low", bounds = [-Inf 1.0];
+    case "Input CM high", bounds = [2.3 Inf];
+    case "Differential output swing low", bounds = [-Inf -1.8];
+    case "Differential output swing high", bounds = [1.8 Inf];
+    case {"Differential SR rise","Differential SR fall"}, bounds = [4 Inf];
+    case "Differential settling time", bounds = [-Inf 300e-9];
+    case "Differential-step CM disturbance", bounds = [-Inf 60e-3];
+    case {"CMFB SR rise","CMFB SR fall"}, bounds = [2 Inf];
+    case "CMFB settling time", bounds = [-Inf 1e-6];
+    otherwise, bounds = [-Inf Inf];
 end
 end
+
+function checkPvtSpecifications(rows,values,corners)
+checkedRows = false(size(rows,1),1);
+passMatrix = true(size(values));
+for rowIndex = 1:size(rows,1)
+    if strlength(specText(rows(rowIndex,1),rows(rowIndex,2))) == 0, continue; end
+    passMatrix(rowIndex,:) = specPass(rows(rowIndex,1),values(rowIndex,:),rows(rowIndex,2));
+    checkedRows(rowIndex) = true;
+end
+cornerPass = all(passMatrix(checkedRows,:),1);
+if all(cornerPass)
+    fprintf('\nFDOTA PVT SPECIFICATION: PASS (%d/%d corners)\n', ...
+        nnz(cornerPass),numel(corners));
+else
+    warning('FDOTA_Analyze:PvtSpecFailure', ...
+        'FDOTA PVT specification: FAIL (%d/%d corners): %s', ...
+        nnz(cornerPass),numel(corners),strjoin(corners(~cornerPass),', '));
+end
+end
+
+function addMcSpecLines(bounds,lower,upper)
+for value = bounds(:)'
+    if isfinite(value) && value >= lower && value <= upper
+        xline(value,'--','HandleVisibility','off');
+    end
+end
+end
+
+%% PVT measurement extraction
 
 function m = analyzeRun(scriptDir,process,caseName,cfg)
     resultDir = fullfile(scriptDir,process+".Result_txt");
@@ -1015,198 +682,6 @@ function values = metricsToRaw(m,rows,cfg)
     end
 end
 
-function result = buildWorstCaseTable(rows,corners,values,metrics)
-    keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
-        ["AVDD" "Vin,cm" "VREF" "Closed-loop target gain"]);
-    parameters = rows(keep,1); units = rows(keep,2); source = find(keep);
-    specifications = fdSpecStrings(rows);
-    specifications = specifications(keep);
-    selected = nan(numel(source),1); selectedCorner = strings(numel(source),1);
-    lowerIsWorse = ["Differential DC gain" "Differential UGF" ...
-        "Differential phase margin" "CMRR @ 60 Hz" "CMRR @ 150 Hz" ...
-        "PSRR+ @ 60 Hz" "PSRR+ @ 150 Hz" "PSRR- @ 60 Hz" ...
-        "PSRR- @ 150 Hz" "Differential output swing high" ...
-        "Differential SR rise" ...
-        "Differential SR fall" "CMFB SR rise" "CMFB SR fall"];
-    maxLowLimit = ["Input CM low" "Differential output swing low"];
-    for i = 1:numel(source)
-        parameter = parameters(i);
-        candidates = values(source(i),:);   % already numeric double
-        if parameter == "Input CM low"
-            failed = cellfun(@(x)~isfinite(x.icmrLow_V),metrics);
-            if any(failed)
-                index = find(failed,1);
-                selectedCorner(i) = corners(index);
-                continue;
-            end
-        elseif parameter == "Input CM high"
-            failed = cellfun(@(x)~isfinite(x.icmrHigh_V),metrics);
-            if any(failed)
-                index = find(failed,1);
-                selectedCorner(i) = corners(index);
-                continue;
-            end
-        elseif parameter == "Input CM high headroom"
-            failed = cellfun(@(x)~isfinite(x.icmrHighHeadroom_V),metrics);
-            if any(failed)
-                index = find(failed,1);
-                selectedCorner(i) = corners(index);
-                continue;
-            end
-        end
-        valid = find(isfinite(candidates));
-        if isempty(valid), continue; end
-        if parameter == "Input CM high"
-            headroom = cellfun(@(x)x.icmrHighHeadroom_V,metrics);
-            [~,index] = max(headroom);
-            selected(i) = candidates(index);
-        elseif all(isfinite(fdSpecBounds(parameter,units(i))))
-            bounds = fdSpecBounds(parameter,units(i));
-            [~,j] = max(abs(candidates(valid)-mean(bounds)));
-            index = valid(j);
-            selected(i) = candidates(index);
-        elseif ismember(parameter,lowerIsWorse)
-            [selected(i),j] = min(candidates(valid)); index = valid(j);
-        elseif ismember(parameter,maxLowLimit)
-            [selected(i),j] = max(candidates(valid)); index = valid(j);
-        else
-            [selected(i),j] = max(candidates(valid)); index = valid(j);
-        end
-        selectedCorner(i) = corners(index);
-    end
-    formatted = strings(size(selected));
-    for i = 1:numel(selected)
-        formatted(i) = formatOne(selected(i),units(i));
-    end
-    result = table(parameters,units,specifications,formatted,selectedCorner, ...
-        'VariableNames',{'Parameter','Unit','Spec','Value','Corner'});
-end
-
-function printSummaryTable(rows,specifications,columns,values)
-    parameterWidth = max(42,max(strlength(rows(:,1)))+2);
-    fprintf('%-*s %-8s %-14s',parameterWidth,'Parameter','Unit','Spec');
-    for i = 1:numel(columns), fprintf(' %13s',columns(i)); end
-    fprintf('\n%s\n',repmat('-',1,parameterWidth+24+14*numel(columns)));
-    for i = 1:size(rows,1)
-        if rows(i,1) == "" && rows(i,2) == "", fprintf('\n');
-        elseif rows(i,2) == "", fprintf('%-*s\n',parameterWidth,upper(char(rows(i,1))));
-        else
-            fprintf('%-*s %-8s %-14s',parameterWidth,char(rows(i,1)), ...
-                char(rows(i,2)),char(specifications(i)));
-            for j = 1:numel(columns), fprintf(' %13s',values(i,j)); end
-            fprintf('\n');
-        end
-    end
-end
-
-function printWorstCaseTable(result)
-    parameterWidth = max(42,max(strlength(result.Parameter))+2);
-    fprintf('%-*s %-8s %-14s %13s %-10s\n',parameterWidth, ...
-        'Parameter','Unit','Spec','Value','Corner');
-    fprintf('%s\n',repmat('-',1,parameterWidth+49));
-    for i = 1:height(result)
-        fprintf('%-*s %-8s %-14s %13s %-10s\n',parameterWidth, ...
-            char(result.Parameter(i)),char(result.Unit(i)), ...
-            char(result.Spec(i)),char(result.Value(i)),char(result.Corner(i)));
-    end
-end
-
-function [f,A] = transferFromFile(file)
-    D = readNumericFile(file,5);
-    f = D(:,1);
-    validateFrequency(f,file);
-    vin = D(:,2) + 1j*D(:,3);
-    vout = D(:,4) + 1j*D(:,5);
-    A = vout ./ vin;
-end
-
-function [gain_dB,phase_deg,ugf_Hz,phaseMargin_deg,f3dB_Hz] = ...
-        acMetrics(f,A)
-    gain_dB = 20*log10(max(abs(A),realmin));
-    phase_deg = unwrap(angle(A))*180/pi;
-    if abs(phase_deg(1)) > 90
-        A = -A;
-        phase_deg = unwrap(angle(A))*180/pi;
-    end
-    f3dB_Hz = gainCross(f,gain_dB,gain_dB(1)-3);
-    ugf_Hz = gainCross(f,gain_dB,0);
-    phaseMargin_deg = 180 + interpAtFreq(f,phase_deg,ugf_Hz);
-end
-
-function f0 = gainCross(f,g,target)
-    k = find(g(1:end-1) >= target & g(2:end) <= target,1);
-    if isempty(k)
-        f0 = NaN;
-    else
-        f0 = 10^interp1(g(k:k+1),log10(f(k:k+1)),target,'linear',NaN);
-    end
-end
-
-function y0 = interpAtFreq(f,y,f0)
-    y0 = NaN(size(f0));
-    ok = isfinite(f0);
-    if any(ok)
-        y0(ok) = interp1(log10(f),y,log10(f0(ok)),'linear',NaN);
-    end
-end
-
-function rDb = rejectionDb(fAd,Ad,fDist,Adist)
-    adHere = interpAtFreq(fAd,abs(Ad),fDist);
-    rDb = 20*log10(max(adHere,realmin) ./ max(abs(Adist),realmin));
-end
-
-function labelFreqSet(f,y,fSet)
-    for f0 = fSet
-        y0 = interpAtFreq(f,y,f0);
-        addCursorLine(f0,y0, ...
-            sprintf('%s: %.4g dB',frequencyText(f0),y0));
-    end
-end
-
-function vn = integrateNoise(f,en,band)
-    validateFrequency(f,'Noise');
-    ok = isfinite(f) & isfinite(en) & f > 0 & en >= 0;
-    f = f(ok);
-    en = en(ok);
-    if numel(f) < 2
-        vn = NaN;
-        return;
-    end
-    f1 = max(band(1),min(f));
-    f2 = min(band(2),max(f));
-    if f1 >= f2
-        vn = NaN;
-        return;
-    end
-    use = f > f1 & f < f2;
-    fUse = [f1; f(use); f2];
-    enUse = interpAtFreq(f,en,fUse);
-    vn = sqrt(trapz(fUse,enUse.^2));
-end
-
-function x0 = zeroNoJump(x,y,maxJump)
-    [x,idx] = sort(x);
-    y = y(idx);
-    k = find(y(1:end-1).*y(2:end) <= 0 & abs(diff(y)) <= maxJump,1);
-    if isempty(k)
-        x0 = NaN;
-    else
-        x0 = interp1(y(k:k+1),x(k:k+1),0,'linear',NaN);
-    end
-end
-
-function g = localSlope(x,y,x0)
-    [x,idx] = sort(x);
-    y = y(idx);
-    [x,idx] = unique(x);
-    y = y(idx);
-    if numel(x) < 3 || ~isfinite(x0)
-        g = NaN;
-    else
-        g = interp1(x,gradient(y,x),x0,'linear',NaN);
-    end
-end
-
 function [lo,hi,icmr] = analyzeICMRSweep(vcm,command,voutcm,voutdiff, ...
         vref,idd,vinCmNom,gainErrorTol,cmTol,currentTol)
     [vcmSorted,order] = sort(vcm);
@@ -1278,6 +753,594 @@ function [lo,hi,icmr] = analyzeICMRSweep(vcm,command,voutcm,voutdiff, ...
         'incrementalCmErrorPos_V',incrementalCmErrorPos_V, ...
         'currentAtCenter_A',currentAtCenter_A, ...
         'currentDeviation_pct',currentDeviation_pct,'valid',valid);
+end
+
+%% PVT tables and terminal output
+
+function result = buildWorstCaseTable(rows,corners,values,metrics)
+    keep = rows(:,2) ~= "" & ~ismember(rows(:,1), ...
+        ["AVDD" "Vin,cm" "VREF" "Closed-loop target gain"]);
+    parameters = rows(keep,1); units = rows(keep,2); source = find(keep);
+    specifications = specStrings(rows);
+    specifications = specifications(keep);
+    selected = nan(numel(source),1); selectedCorner = strings(numel(source),1);
+    lowerIsWorse = ["Differential DC gain" "Differential UGF" ...
+        "Differential phase margin" "CMRR @ 60 Hz" "CMRR @ 150 Hz" ...
+        "PSRR+ @ 60 Hz" "PSRR+ @ 150 Hz" "PSRR- @ 60 Hz" ...
+        "PSRR- @ 150 Hz" "Differential output swing high" ...
+        "Differential SR rise" ...
+        "Differential SR fall" "CMFB SR rise" "CMFB SR fall"];
+    maxLowLimit = ["Input CM low" "Differential output swing low"];
+    for i = 1:numel(source)
+        parameter = parameters(i);
+        candidates = values(source(i),:);   % already numeric double
+        if parameter == "Input CM low"
+            failed = cellfun(@(x)~isfinite(x.icmrLow_V),metrics);
+            if any(failed)
+                index = find(failed,1);
+                selectedCorner(i) = corners(index);
+                continue;
+            end
+        elseif parameter == "Input CM high"
+            failed = cellfun(@(x)~isfinite(x.icmrHigh_V),metrics);
+            if any(failed)
+                index = find(failed,1);
+                selectedCorner(i) = corners(index);
+                continue;
+            end
+        elseif parameter == "Input CM high headroom"
+            failed = cellfun(@(x)~isfinite(x.icmrHighHeadroom_V),metrics);
+            if any(failed)
+                index = find(failed,1);
+                selectedCorner(i) = corners(index);
+                continue;
+            end
+        end
+        valid = find(isfinite(candidates));
+        if isempty(valid), continue; end
+        if parameter == "Input CM high"
+            headroom = cellfun(@(x)x.icmrHighHeadroom_V,metrics);
+            [~,index] = max(headroom);
+            selected(i) = candidates(index);
+        elseif all(isfinite(specBounds(parameter,units(i))))
+            bounds = specBounds(parameter,units(i));
+            [~,j] = max(abs(candidates(valid)-mean(bounds)));
+            index = valid(j);
+            selected(i) = candidates(index);
+        elseif ismember(parameter,lowerIsWorse)
+            [selected(i),j] = min(candidates(valid)); index = valid(j);
+        elseif ismember(parameter,maxLowLimit)
+            [selected(i),j] = max(candidates(valid)); index = valid(j);
+        else
+            [selected(i),j] = max(candidates(valid)); index = valid(j);
+        end
+        selectedCorner(i) = corners(index);
+    end
+    formatted = strings(size(selected));
+    for i = 1:numel(selected)
+        formatted(i) = formatOne(selected(i),units(i));
+    end
+    result = table(parameters,units,specifications,formatted,selectedCorner, ...
+        'VariableNames',{'Parameter','Unit','Spec','Value','Corner'});
+end
+
+function printSummaryTable(rows,specifications,columns,values)
+    parameterWidth = max(42,max(strlength(rows(:,1)))+2);
+    fprintf('%-*s %-8s %-14s',parameterWidth,'Parameter','Unit','Spec');
+    for i = 1:numel(columns), fprintf(' %13s',columns(i)); end
+    fprintf('\n%s\n',repmat('-',1,parameterWidth+24+14*numel(columns)));
+    for i = 1:size(rows,1)
+        if rows(i,1) == "" && rows(i,2) == "", fprintf('\n');
+        elseif rows(i,2) == "", fprintf('%-*s\n',parameterWidth,upper(char(rows(i,1))));
+        else
+            fprintf('%-*s %-8s %-14s',parameterWidth,char(rows(i,1)), ...
+                char(rows(i,2)),char(specifications(i)));
+            for j = 1:numel(columns), fprintf(' %13s',values(i,j)); end
+            fprintf('\n');
+        end
+    end
+end
+
+function printWorstCaseTable(result)
+    parameterWidth = max(42,max(strlength(result.Parameter))+2);
+    fprintf('%-*s %-8s %-14s %13s %-10s\n',parameterWidth, ...
+        'Parameter','Unit','Spec','Value','Corner');
+    fprintf('%s\n',repmat('-',1,parameterWidth+49));
+    for i = 1:height(result)
+        fprintf('%-*s %-8s %-14s %13s %-10s\n',parameterWidth, ...
+            char(result.Parameter(i)),char(result.Unit(i)), ...
+            char(result.Spec(i)),char(result.Value(i)),char(result.Corner(i)));
+    end
+end
+
+%% Monte Carlo analysis and reporting
+
+function runMcSection(scriptDir,plotDir,reportDir)
+definitions = mcDefinitions();
+modes = ["MM" "GL" "FULL"];
+results = cell(numel(modes),1);
+missing = strings(0,1);
+for modeIndex = 1:numel(modes)
+    token = lower(modes(modeIndex));
+    resultDir = fullfile(scriptDir,token+".Result_txt");
+    olFile = fullfile(resultDir,token+".ol_mc_summary.txt");
+    clFile = fullfile(resultDir,token+".cl_mc_summary.txt");
+    if ~isfile(olFile) || ~isfile(clFile)
+        missing(end+1) = modes(modeIndex)+": "+olFile+" | "+clFile; %#ok<AGROW>
+        continue;
+    end
+    results{modeIndex} = summarizeMc(olFile,clFile,modes(modeIndex),definitions);
+end
+if ~isempty(missing)
+    warning('FDOTA_Analyze:MissingMcFiles','FDOTA MC files missing:\n%s', ...
+        strjoin(cellstr(missing),newline));
+end
+results = results(~cellfun(@isempty,results));
+if isempty(results), return; end
+fprintf('\nFDOTA MONTE CARLO SUMMARY\n');
+for resultIndex = 1:numel(results)
+    r = results{resultIndex};
+    fprintf('\n%s MONTE CARLO SUMMARY\n',r.mode);
+    fprintf('Requested: %d   Valid: %d   Failed: %d   Overall yield: %.2f%%\n', ...
+        r.requested,r.valid,r.failed,r.overallYield);
+    if ~isempty(r.failedRunIds)
+        fprintf('Failed run IDs: %s\n',strjoin(string(r.failedRunIds),', '));
+    end
+    printMcSummary(r.table);
+    writetable(r.table,fullfile(reportDir,r.mode+'_FDOTA_MC_Summary.csv'));
+end
+modeValues = string(cellfun(@(r) r.mode,results,'UniformOutput',false));
+requestedValues = cellfun(@(r) r.requested,results);
+validValues = cellfun(@(r) r.valid,results);
+failedValues = cellfun(@(r) r.failed,results);
+yieldValues = cellfun(@(r) r.overallYield,results);
+runTable = table(modeValues(:),requestedValues(:),validValues(:), ...
+    failedValues(:),yieldValues(:), ...
+    'VariableNames',{'Mode','RequestedRuns','ValidRuns','FailedRuns', ...
+    'OverallYield_pct'});
+writetable(runTable,fullfile(reportDir,'FDOTA_MC_Run_Summary.csv'));
+fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
+if isempty(fullIndex) || results{fullIndex}.valid == 0
+    warning('FDOTA_Analyze:MissingFullMc', ...
+        'MC tables were written, but MC plots require valid FULL data.');
+    return;
+end
+plotMcHistograms(results,definitions,plotDir);
+end
+
+function d = mcDefinitions()
+d.names = ["FDC bias current" "CMFB bias current" "Total current" ...
+    "Total power" "Differential DC gain" "Differential UGF" ...
+    "Differential phase margin" "Input differential offset" ...
+    "Gain error" "Output CM error"];
+d.units = ["uA" "uA" "mA" "mW" "dB" "MHz" "deg" "uV" "%" "mV"];
+d.specs = strings(size(d.names));
+d.bounds = cell(size(d.names));
+for metricIndex = 1:numel(d.names)
+    d.specs(metricIndex) = specText(d.names(metricIndex),d.units(metricIndex));
+    d.bounds{metricIndex} = specBounds(d.names(metricIndex),d.units(metricIndex));
+end
+d.requestedRuns = 200;
+d.columns = mcSchema();
+d.plotParameters = ["Input differential offset" "Output CM error" ...
+    "Differential DC gain" "Differential UGF" ...
+    "Differential phase margin" "Gain error"];
+d.plotFiles = ["Fig_MC_01_Input_Offset_Histogram.png" ...
+    "Fig_MC_02_Output_CM_Error_Histogram.png" ...
+    "Fig_MC_03_DC_Gain_Histogram.png" "Fig_MC_04_UGF_Histogram.png" ...
+    "Fig_MC_05_Phase_Margin_Histogram.png" "Fig_MC_06_Gain_Error_Histogram.png"];
+end
+
+function columns = mcSchema()
+% Compact MC TXT column map; keep this synchronized with the testbench.
+columns.ol = struct('count',6,'run',1,'vos',2,'gainDb',3, ...
+    'ugfHz',4,'phaseUgf',5,'phaseMargin',6);
+columns.cl = struct('count',8,'run',1,'outputCmError',2, ...
+    'gainVV',3,'gainError',4,'fdcBias',5,'cmfbBias',6, ...
+    'totalCurrent',7,'totalPower',8);
+end
+
+function r = summarizeMc(olFile,clFile,mode,d)
+columns = d.columns;
+ol = readMcSummary(olFile,columns.ol.count);
+cl = readMcSummary(clFile,columns.cl.count);
+validateMcRunIds(ol(:,columns.ol.run),olFile,d.requestedRuns);
+validateMcRunIds(cl(:,columns.cl.run),clFile,d.requestedRuns);
+[runIds,io,ic] = intersect( ...
+    ol(:,columns.ol.run),cl(:,columns.cl.run),'stable');
+if isempty(runIds)
+    error('FDOTA_Analyze:McRunIds', ...
+        '%s and %s have no matching MC run IDs.',olFile,clFile);
+end
+values = [cl(ic,columns.cl.fdcBias)*1e6, ...
+    cl(ic,columns.cl.cmfbBias)*1e6,cl(ic,columns.cl.totalCurrent)*1e3, ...
+    cl(ic,columns.cl.totalPower)*1e3,ol(io,columns.ol.gainDb), ...
+    ol(io,columns.ol.ugfHz)/1e6,ol(io,columns.ol.phaseMargin), ...
+    ol(io,columns.ol.vos)*1e6,cl(ic,columns.cl.gainError), ...
+    cl(ic,columns.cl.outputCmError)*1e3];
+validMask = all(isfinite(values),2) & values(:,6) > 0;
+r.mode = mode;
+r.requested = d.requestedRuns;
+r.runs = runIds(validMask);
+r.values = values(validMask,:);
+r.valid = numel(r.runs);
+r.failed = r.requested-r.valid;
+r.failedRunIds = setdiff((1:r.requested)',r.runs);
+warnOnMcGainCollapse(r,d);
+[r.stats,individualYield,r.overallYield] = mcStatistics(r.values,d);
+r.table = table(d.names',d.units',d.specs',r.stats(:,1),r.stats(:,2), ...
+    r.stats(:,3),r.stats(:,4),r.stats(:,5),r.stats(:,6),r.stats(:,7), ...
+    individualYield','VariableNames',{'Parameter','Unit','Spec','Min', ...
+    'MeanMinus3Sigma','MeanMinusSigma','Mean','MeanPlusSigma', ...
+    'MeanPlus3Sigma','Max','Yield_pct'});
+end
+
+function [stats,individualYield,overallYield] = mcStatistics(values,d)
+nMetrics = numel(d.names);
+stats = nan(nMetrics,7);
+if isempty(values)
+    individualYield = zeros(1,nMetrics);
+    overallYield = 0;
+    return;
+end
+pass = false(size(values));
+for metricIndex = 1:nMetrics
+    x = values(:,metricIndex); mu = mean(x); sigma = std(x,0);
+    stats(metricIndex,:) = [min(x) mu-3*sigma mu-sigma mu ...
+        mu+sigma mu+3*sigma max(x)];
+    pass(:,metricIndex) = specPass(d.names(metricIndex),x,d.units(metricIndex));
+end
+individualYield = 100*mean(pass,1);
+required = strlength(d.specs) > 0;
+individualYield(~required) = NaN;
+overallYield = 100*mean(all(pass(:,required),2));
+end
+
+function warnOnMcGainCollapse(result,d)
+metricIndex = find(d.names == "Gain error",1);
+if isempty(metricIndex) || isempty(result.values), return; end
+collapsed = result.values(:,metricIndex) <= -90;
+if any(collapsed)
+    warning('FDOTA_Analyze:McGainCollapse', ...
+        '%s has %d valid sample(s) with gain error <= -90%% (MC run ID(s): %s). Verify circuit collapse versus an ngspice measurement failure before trusting these samples.', ...
+        char(result.mode),nnz(collapsed),char(strjoin(string(result.runs(collapsed)),', ')));
+end
+end
+
+function validateMcRunIds(ids,filePath,requestedRuns)
+if any(~isfinite(ids)) || any(ids ~= round(ids)) || any(ids < 1 | ids > requestedRuns) || ...
+        numel(unique(ids)) ~= numel(ids)
+    error('FDOTA_Analyze:McRunIds','Invalid or duplicate run IDs in %s.',filePath);
+end
+end
+
+function printMcSummary(t)
+fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
+    'Parameter','Unit','Spec','Min','μ-3σ','μ-σ','Mean','μ+σ','μ+3σ','Max','Yield');
+for k = 1:height(t)
+    yieldText = '';
+    if isfinite(t.Yield_pct(k)), yieldText = sprintf('%.2f%%',t.Yield_pct(k)); end
+    fprintf('%-40s %-6s %-14s %10s %10s %10s %10s %10s %10s %10s %8s\n', ...
+        char(t.Parameter(k)),char(t.Unit(k)),char(t.Spec(k)), ...
+        formatFixed(t.Min(k)),formatFixed(t.MeanMinus3Sigma(k)), ...
+        formatFixed(t.MeanMinusSigma(k)),formatFixed(t.Mean(k)), ...
+        formatFixed(t.MeanPlusSigma(k)),formatFixed(t.MeanPlus3Sigma(k)), ...
+        formatFixed(t.Max(k)),yieldText);
+end
+end
+
+function [lower,upper,fullResult] = mcDisplayRange(values,results,metricIndex,specBounds)
+fullIndex = find(cellfun(@(r) r.mode == "FULL",results),1);
+fullResult = results{fullIndex};
+center = fullResult.stats(metricIndex,4);
+distances = abs(values(:)-center);
+finiteBounds = specBounds(isfinite(specBounds));
+if ~isempty(finiteBounds)
+    distances = [distances; abs(finiteBounds(:)-center)];
+end
+halfRange = max(distances);
+if ~isfinite(halfRange) || halfRange == 0
+    halfRange = max(abs(center)*0.05,1);
+end
+lower = center-1.05*halfRange;
+upper = center+1.05*halfRange;
+end
+
+%% Plots and annotations
+
+function plotMcHistograms(results,d,plotDir)
+for plotIndex = 1:numel(d.plotParameters)
+    metricIndex = find(d.names == d.plotParameters(plotIndex),1);
+    if isempty(metricIndex)
+        error('FDOTA_Analyze:MissingMcParameter', ...
+            'MC plot parameter is not defined: %s',d.plotParameters(plotIndex));
+    end
+    mcHistogram(results,metricIndex,plotDir,d.plotFiles(plotIndex), ...
+        'FDOTA '+d.names(metricIndex)+' Distribution - MM / GL / FULL', ...
+        d.names(metricIndex)+" ("+d.units(metricIndex)+")", ...
+        d.bounds{metricIndex});
+end
+end
+
+function mcHistogram(results,metricIndex,plotDir,fileName,titleText,xLabelText,specBounds)
+valueSets = cellfun(@(r) r.values(:,metricIndex),results,'UniformOutput',false);
+allValues = vertcat(valueSets{:});
+if isempty(allValues), return; end
+[lower,upper,fullResult] = mcDisplayRange(allValues,results,metricIndex,specBounds);
+edges = linspace(lower,upper,21);
+fig = figure; hold on; colors = lines(numel(results));
+for resultIndex = 1:numel(results)
+    values = results{resultIndex}.values(:,metricIndex);
+    values = values(isfinite(values) & values >= lower & values <= upper);
+    if isempty(values), continue; end
+    probabilityPct = 100*histcounts(values,edges,'Normalization','probability');
+    stairs(edges,[probabilityPct 0],'LineWidth',1.5,'Color',colors(resultIndex,:), ...
+        'DisplayName',char(results{resultIndex}.mode));
+end
+addMcSpecLines(specBounds,lower,upper);
+addFullStatMarkers(fullResult,metricIndex);
+xlim([lower upper]); ylabel('Samples (%)');
+stylePlot(xLabelText,titleText); legend('Location','best');
+savePlot(fig,plotDir,fileName);
+end
+
+function addFullStatMarkers(fullResult,metricIndex)
+markers = fullResult.stats(metricIndex,2:6);
+labels = ["-3σ" "-σ" "μ" "+σ" "+3σ"];
+for markerIndex = 1:numel(markers)
+    addCursorLine(markers(markerIndex),0,labels(markerIndex));
+end
+end
+
+function labelFreqSet(f,y,fSet)
+    for f0 = fSet
+        y0 = interpAtFreq(f,y,f0);
+        addCursorLine(f0,y0, ...
+            sprintf('%s: %.4g dB',frequencyText(f0),y0));
+    end
+end
+
+function addSrCursor(point,labelText)
+    addCursor(point(1),point(2),labelText);
+end
+
+function addMetricBox(lines)
+    text(0.02,0.94,strjoin(lines,newline),'Units','normalized', ...
+        'BackgroundColor','w','Color','k','Margin',4, ...
+        'VerticalAlignment','top','HorizontalAlignment','left', ...
+        'HandleVisibility','off');
+end
+
+function labelRange(lo,hi)
+    if isfinite(lo)
+        xline(lo,'--',sprintf('Lo: %.4g V',lo), ...
+            'HandleVisibility','off');
+    end
+    if isfinite(hi)
+        xline(hi,'--',sprintf('Hi: %.4g V',hi), ...
+            'HandleVisibility','off');
+    end
+end
+
+function addCursor(x,y,labelText)
+    if ~isfinite(x) || ~isfinite(y)
+        return;
+    end
+    xline(x,':','HandleVisibility','off');
+    plot(x,y,'o','MarkerFaceColor','r','MarkerEdgeColor','r', ...
+        'MarkerSize',6,'HandleVisibility','off');
+    text(x,y," " + string(labelText),'BackgroundColor','w','Color','k', ...
+        'Margin',2,'VerticalAlignment','bottom','HorizontalAlignment','left', ...
+        'Clipping','on');
+end
+
+function addCursorLine(x,y,labelText)
+    if ~isfinite(x) || ~isfinite(y)
+        return;
+    end
+    xline(x,':'," " + string(labelText),'HandleVisibility','off', ...
+        'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
+end
+
+function addCursorHLine(x,y,labelText)
+    if ~isfinite(x) || ~isfinite(y)
+        return;
+    end
+    yline(y,':'," " + string(labelText),'HandleVisibility','off', ...
+        'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
+end
+
+function stylePlot(xLabelText,titleText)
+    grid on;
+    if strlength(string(xLabelText)) > 0
+        xlabel(xLabelText);
+    end
+    if strlength(string(titleText)) > 0
+        title(titleText);
+    end
+end
+
+function savePlot(fig,plotDir,fileName)
+    drawnow;
+    fig.PaperUnits = 'inches';
+    fig.PaperPosition = [0 0 10 4];
+    fig.PaperSize = [10 4];
+    print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
+end
+
+%% File input and validation
+
+function files = runFiles(resultDir,process,caseName)
+olPrefix = fullfile(resultDir,process+".ol_"+caseName+"_");
+clPrefix = fullfile(resultDir,process+".cl_"+caseName+"_");
+files.olOp = olPrefix+"op.txt";
+files.diffAc = olPrefix+"diff_ac.txt";
+files.cmAc = olPrefix+"cm_ac.txt";
+files.psrrpAc = olPrefix+"psrrp_ac.txt";
+files.psrrnAc = olPrefix+"psrrn_ac.txt";
+files.vtc = olPrefix+"vtc.txt";
+files.noise = olPrefix+"noise.txt";
+files.clOp = clPrefix+"op.txt";
+files.diffDc = clPrefix+"diff_dc.txt";
+files.icmr = clPrefix+"icmr.txt";
+files.diffTran = clPrefix+"diff_tran.txt";
+files.cmTran = clPrefix+"cm_tran.txt";
+end
+
+function data = readNumericFile(file,expectedColumns)
+if ~isfile(file)
+    error('FDOTA_Analyze:MissingFile','Missing required file: %s',file);
+end
+data = readmatrix(file,'FileType','text');
+data = data(any(isfinite(data),2),:);
+data = data(:,any(isfinite(data),1));
+if isempty(data)
+    error('FDOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
+end
+if size(data,2) == expectedColumns+1 && ...
+        columnsMatch(data(:,1),data(:,2))
+    data = data(:,2:end);
+end
+if size(data,2) ~= expectedColumns
+    error('FDOTA_Analyze:ColumnCount', ...
+        '%s must contain %d columns; found %d.', ...
+        file,expectedColumns,size(data,2));
+end
+if any(~isfinite(data),'all')
+    error('FDOTA_Analyze:NonfiniteData', ...
+        '%s contains nonfinite numeric samples.',file);
+end
+end
+
+function data = readMcSummary(file,expectedColumns)
+% Keep nonfinite metric cells so MC can classify their runs as failed.
+if ~isfile(file)
+    error('FDOTA_Analyze:MissingFile','Missing required file: %s',file);
+end
+data = readmatrix(file,'FileType','text');
+data = data(any(isfinite(data),2),:);
+data = data(:,any(isfinite(data),1));
+if isempty(data)
+    error('FDOTA_Analyze:EmptyFile','No numeric data found in %s.',file);
+end
+if size(data,2) == expectedColumns+1 && columnsMatch(data(:,1),data(:,2))
+    data = data(:,2:end);
+end
+if size(data,2) ~= expectedColumns
+    error('FDOTA_Analyze:ColumnCount', ...
+        '%s must contain %d columns; found %d.',file,expectedColumns,size(data,2));
+end
+end
+
+function tf = columnsMatch(a,b)
+scale = max([ones(size(a)) abs(a) abs(b)],[],2);
+tf = all(abs(a-b) <= 100*eps(scale));
+end
+
+function validateFrequency(f,label)
+if any(~isfinite(f)) || any(f <= 0) || any(diff(f) <= 0)
+    error('FDOTA_Analyze:FrequencyAxis', ...
+        '%s frequency must be finite, positive, and strictly increasing.', ...
+        label);
+end
+end
+
+%% Numerical helpers
+
+function parameter = canonicalParameter(parameter)
+parameter = string(parameter);
+switch parameter
+    case "Output CM error at nominal", parameter = "Output CM error";
+    case "Gain error", parameter = "Closed-loop differential gain error";
+end
+end
+
+function [f,A] = transferFromFile(file)
+    D = readNumericFile(file,5);
+    f = D(:,1);
+    validateFrequency(f,file);
+    vin = D(:,2) + 1j*D(:,3);
+    vout = D(:,4) + 1j*D(:,5);
+    A = vout ./ vin;
+end
+
+function [gain_dB,phase_deg,ugf_Hz,phaseMargin_deg,f3dB_Hz] = ...
+        acMetrics(f,A)
+    gain_dB = 20*log10(max(abs(A),realmin));
+    phase_deg = unwrap(angle(A))*180/pi;
+    if abs(phase_deg(1)) > 90
+        A = -A;
+        phase_deg = unwrap(angle(A))*180/pi;
+    end
+    f3dB_Hz = gainCross(f,gain_dB,gain_dB(1)-3);
+    ugf_Hz = gainCross(f,gain_dB,0);
+    phaseMargin_deg = 180 + interpAtFreq(f,phase_deg,ugf_Hz);
+end
+
+function f0 = gainCross(f,g,target)
+    k = find(g(1:end-1) >= target & g(2:end) <= target,1);
+    if isempty(k)
+        f0 = NaN;
+    else
+        f0 = 10^interp1(g(k:k+1),log10(f(k:k+1)),target,'linear',NaN);
+    end
+end
+
+function y0 = interpAtFreq(f,y,f0)
+    y0 = NaN(size(f0));
+    ok = isfinite(f0);
+    if any(ok)
+        y0(ok) = interp1(log10(f),y,log10(f0(ok)),'linear',NaN);
+    end
+end
+
+function rDb = rejectionDb(fAd,Ad,fDist,Adist)
+    adHere = interpAtFreq(fAd,abs(Ad),fDist);
+    rDb = 20*log10(max(adHere,realmin) ./ max(abs(Adist),realmin));
+end
+
+function vn = integrateNoise(f,en,band)
+    validateFrequency(f,'Noise');
+    ok = isfinite(f) & isfinite(en) & f > 0 & en >= 0;
+    f = f(ok);
+    en = en(ok);
+    if numel(f) < 2
+        vn = NaN;
+        return;
+    end
+    f1 = max(band(1),min(f));
+    f2 = min(band(2),max(f));
+    if f1 >= f2
+        vn = NaN;
+        return;
+    end
+    use = f > f1 & f < f2;
+    fUse = [f1; f(use); f2];
+    enUse = interpAtFreq(f,en,fUse);
+    vn = sqrt(trapz(fUse,enUse.^2));
+end
+
+function x0 = zeroNoJump(x,y,maxJump)
+    [x,idx] = sort(x);
+    y = y(idx);
+    k = find(y(1:end-1).*y(2:end) <= 0 & abs(diff(y)) <= maxJump,1);
+    if isempty(k)
+        x0 = NaN;
+    else
+        x0 = interp1(y(k:k+1),x(k:k+1),0,'linear',NaN);
+    end
+end
+
+function g = localSlope(x,y,x0)
+    [x,idx] = sort(x);
+    y = y(idx);
+    [x,idx] = unique(x);
+    y = y(idx);
+    if numel(x) < 3 || ~isfinite(x0)
+        g = NaN;
+    else
+        g = interp1(x,gradient(y,x),x0,'linear',NaN);
+    end
 end
 
 function [iLow,iHigh] = continuousIndices(valid,iCenter)
@@ -1397,74 +1460,6 @@ function y = maxFinite(x)
     if isempty(x), y = NaN; else, y = max(x); end
 end
 
-function addSrCursor(point,labelText)
-    addCursor(point(1),point(2),labelText);
-end
-
-function addMetricBox(lines)
-    text(0.02,0.94,strjoin(lines,newline),'Units','normalized', ...
-        'BackgroundColor','w','Color','k','Margin',4, ...
-        'VerticalAlignment','top','HorizontalAlignment','left', ...
-        'HandleVisibility','off');
-end
-
-function labelRange(lo,hi)
-    if isfinite(lo)
-        xline(lo,'--',sprintf('Lo: %.4g V',lo), ...
-            'HandleVisibility','off');
-    end
-    if isfinite(hi)
-        xline(hi,'--',sprintf('Hi: %.4g V',hi), ...
-            'HandleVisibility','off');
-    end
-end
-
-function addCursor(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y)
-        return;
-    end
-    xline(x,':','HandleVisibility','off');
-    plot(x,y,'o','MarkerFaceColor','r','MarkerEdgeColor','r', ...
-        'MarkerSize',6,'HandleVisibility','off');
-    text(x,y," " + string(labelText),'BackgroundColor','w','Color','k', ...
-        'Margin',2,'VerticalAlignment','bottom','HorizontalAlignment','left', ...
-        'Clipping','on');
-end
-
-function addCursorLine(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y)
-        return;
-    end
-    xline(x,':'," " + string(labelText),'HandleVisibility','off', ...
-        'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
-end
-
-function addCursorHLine(x,y,labelText)
-    if ~isfinite(x) || ~isfinite(y)
-        return;
-    end
-    yline(y,':'," " + string(labelText),'HandleVisibility','off', ...
-        'LabelVerticalAlignment','middle','LabelHorizontalAlignment','left');
-end
-
-function stylePlot(xLabelText,titleText)
-    grid on;
-    if strlength(string(xLabelText)) > 0
-        xlabel(xLabelText);
-    end
-    if strlength(string(titleText)) > 0
-        title(titleText);
-    end
-end
-
-function savePlot(fig,plotDir,fileName)
-    drawnow;
-    fig.PaperUnits = 'inches';
-    fig.PaperPosition = [0 0 10 4];
-    fig.PaperSize = [10 4];
-    print(fig,fullfile(plotDir,fileName),'-dpng','-r250');
-end
-
 function [tsRise,tsFall] = settleToFinal(t,command,out,tolerance)
     events = stepEvents(command);
     riseTimes = []; fallTimes = [];
@@ -1487,6 +1482,28 @@ function [tsRise,tsFall] = settleToFinal(t,command,out,tolerance)
     end
     tsRise = maxFinite(riseTimes);
     tsFall = maxFinite(fallTimes);
+end
+
+%% Units and formatting
+
+function value = specNumber(baseValue,unit)
+value = string(sprintf('%.6g',baseValue/unitToBase(unit)));
+end
+
+function factor = unitToBase(unit)
+[prefix,~] = splitUnitPrefix(unit);
+switch prefix
+    case "T", factor = 1e12;
+    case "G", factor = 1e9;
+    case "M", factor = 1e6;
+    case "k", factor = 1e3;
+    case "m", factor = 1e-3;
+    case "u", factor = 1e-6;
+    case "n", factor = 1e-9;
+    case "p", factor = 1e-12;
+    case "f", factor = 1e-15;
+    otherwise, factor = 1;
+end
 end
 
 function s = formatFixed(x)
@@ -1514,11 +1531,11 @@ end
 function [rows,scaledValues] = adaptReportUnits(rows,rawValues)
 scaledValues = rawValues;
 for rowIndex = 1:size(rows,1)
-    sharedUnit = fdCommonDisplayUnit(rows(rowIndex,1));
+    sharedUnit = commonDisplayUnit(rows(rowIndex,1));
     if sharedUnit ~= ""
-        baseValues = rawValues(rowIndex,:)*fdUnitToBase(rows(rowIndex,2));
+        baseValues = rawValues(rowIndex,:)*unitToBase(rows(rowIndex,2));
         rows(rowIndex,2) = sharedUnit;
-        scaledValues(rowIndex,:) = baseValues/fdUnitToBase(sharedUnit);
+        scaledValues(rowIndex,:) = baseValues/unitToBase(sharedUnit);
         continue;
     end
     [rows(rowIndex,2),scaledValues(rowIndex,:)] = ...
@@ -1526,8 +1543,8 @@ for rowIndex = 1:size(rows,1)
 end
 end
 
-function unit = fdCommonDisplayUnit(parameter)
-switch fdCanonicalParameter(parameter)
+function unit = commonDisplayUnit(parameter)
+switch canonicalParameter(parameter)
     case {"Input differential offset"}, unit = "uV";
     case {"Output CM error"}, unit = "mV";
     case {"Differential DC gain"}, unit = "dB";

@@ -1,0 +1,5 @@
+Parameter,Value,Unit,Process,Condition,Temp_C,VDD_V,Total
+Worst startup time,3701.808,us,SS,TLVL,-40.000,3.000,
+Startup failures,0,count,,,,,45
+Startup coverage,45/45,cases,,,,,45
+Verification status,PASS,,,,,,

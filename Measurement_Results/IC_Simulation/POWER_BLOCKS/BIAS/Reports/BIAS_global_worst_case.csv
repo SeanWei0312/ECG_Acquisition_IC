@@ -1,0 +1,10 @@
+Parameter,Unit,Value,Process,Temp_C,VDD_V
+Ibias minimum,uA,31.071,SS,-40.000,3.000
+Ibias maximum,uA,49.466,FF,125.000,3.600
+Worst |Ibias error|,%,23.665,FF,125.000,3.600
+BP minimum,V,1.137,FS,125.000,3.000
+BP maximum,V,2.145,SF,-40.000,3.600
+Maximum |mirror error|,%,1.491e-01,FS,125.000,3.000
+Minimum MST margin,V,7.420e-01,FF,125.000,3.600
+Maximum IDD,uA,148.377,FF,125.000,3.600
+Maximum power,uW,534.156,FF,125.000,3.600

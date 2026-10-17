@@ -24,7 +24,9 @@ The schematic shows the differential input stage, single-ended second stage, bia
 
 ![SEOTA circuit schematic](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/SEOTA/SEOTA.png>)
 
-## 2. Audited sizing method
+## 2. Sizing assumptions and method
+
+The following hand calculations retain the first-pass sizing assumptions. They explain design choices; they are not a new device-level extraction. Current acceptance limits and simulation values are listed in the verification snapshot below.
 
 The supplied sizing worksheet provided the correct overall flow: specification, $g_m$, current, current density, width, estimated performance, and simulation. Its transistor polarities did not match the implemented SEOTA, and its fixed second-stage multiplier was not a general two-stage OTA equation. The calculation below uses the actual NMOS-input topology and treats the second-stage requirement as a pole/phase-margin constraint.
 
@@ -119,7 +121,7 @@ The nominal design specification is intentionally tighter than the formal PVT li
 | Total current | 1.0 mA | $\le1.0$ mA | $\le1.25$ mA |
 | Bias reference | 40 µA | 40 µA nominal | $40\pm10$ µA |
 
-The 10-MHz nominal UGF target gives 25% margin over the 8-MHz PVT requirement. The implemented nominal result is 12.835 MHz, so the design target remains conservative without overstating the required bandwidth.
+The 10-MHz nominal UGF target gives 25% margin over the 8-MHz PVT requirement. The implemented nominal result is 12.842 MHz, so the design target remains conservative without overstating the required bandwidth.
 
 Each result becomes the input to the next sizing step:
 
@@ -207,7 +209,7 @@ W_{3,calc}=\frac{6.283\ \mu\text{A}}
 =33.5\ \mu\text{m}.
 $$
 
-The nearest integer is 34 µm. The implemented value is 60 µm per device. The larger area improves M3/M4 matching and accommodates the final branch current. Its added node capacitance is accepted because the simulated nominal UGF remains 12.835 MHz.
+The nearest integer is 34 µm. The implemented value is 60 µm per device. The larger area improves M3/M4 matching and accommodates the final branch current. Its added node capacitance is accepted because the simulated nominal UGF remains 12.842 MHz.
 
 ### 3.5 M5/M8 mirror sizing
 
@@ -306,14 +308,14 @@ PM_{2pole}\approx90^\circ-\tan^{-1}\left(\frac{10}{79.58}\right)
 =82.84^\circ.
 $$
 
-This is a screening bound, not a signoff prediction. At the simulated 12.835-MHz crossover, the same two-pole model gives
+This is a screening bound, not a signoff prediction. At the simulated 12.842-MHz crossover, the same two-pole model gives
 
 $$
-PM_{2pole,sim\ f_u}=90^\circ-\tan^{-1}\left(\frac{12.835}{79.58}\right)
+PM_{2pole,sim\ f_u}=90^\circ-\tan^{-1}\left(\frac{12.842}{79.58}\right)
 =80.84^\circ.
 $$
 
-The 21.9-MHz LHP zero contributes about $\tan^{-1}(12.835/21.9)=30.4^\circ$ of lead. The simulated phase margin is 67.767°, so the remaining internal poles contribute about $80.84+30.4-67.767=43.5^\circ$ of lag. Their net effect relative to the two-pole model is 13.07° of additional lag. The analytical model therefore sets the initial sizes; the complete transistor-level return ratio provides final stability signoff.
+The 21.9-MHz LHP zero contributes about $\tan^{-1}(12.842/21.9)=30.4^\circ$ of lead. The simulated phase margin is 67.773°, so the remaining internal poles contribute about $80.84+30.4-67.773=43.5^\circ$ of lag. Their net effect relative to the two-pole model is 13.07° of additional lag. The analytical model therefore sets the initial sizes; the complete transistor-level return ratio provides final stability signoff.
 
 ### 4.4 Nulling resistor
 
@@ -388,104 +390,174 @@ M1/M2 and M3/M4 must be laid out as matched pairs. M5/M8 must preserve the 1:2 m
 | Metric | First-order estimate | Nominal simulation | Specification |
 | :--- | ---: | ---: | ---: |
 | DC gain | 95.45 dB | 96.522 dB | $\ge88$ dB |
-| UGF | 10 MHz sizing target | 12.835 MHz | $\ge8$ MHz |
-| Phase margin | 80.84° at simulated UGF | 67.767° | $\ge55^\circ$ |
-| Slew rate | 10.02 V/µs | 9.814 / 7.966 V/µs | $\ge6.5/5.0$ V/µs |
+| UGF | 10 MHz sizing target | 12.842 MHz | $\ge8$ MHz |
+| Phase margin | 80.84° at simulated UGF | 67.773° | $\ge55^\circ$ |
+| Slew rate | 10.02 V/µs | 9.819 / 7.971 V/µs | $\ge6.5/5.0$ V/µs |
 | Output range | Must be simulated | 0.108–3.235 V | Low $\le0.6$ V; high $\ge2.75$ V |
 
 The gain estimate differs from simulation by 1.07 dB, and the slew estimate tracks the simulated edges. The UGF exceeds its nominal design target. The first-order phase model is 13.07° optimistic at the actual crossover because it omits internal poles and the exact compensation path. The transistor-level loop result is therefore the stability signoff value. The square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ is not used for range signoff because it omits body effect and real terminal-voltage dependence.
 
-## 5. Integrated SEOTA verification
+## Verification snapshot
 
-All 45 process, supply, and temperature corners pass.
+Updated 2026-10-17 from archived analyzer CSV exports. This documentation update did not rerun simulations.
 
-| Metric | Specification | Nominal | Full-PVT worst case | Corner |
-| :--- | :---: | ---: | ---: | :---: |
-| Total current | ≤1.25 mA | 0.825 mA | 1.106 mA | `FFVHTH` |
-| Total power | ≤4.5 mW | 2.721 mW | 3.982 mW | `FFVHTH` |
-| DC gain | ≥88 dB | 96.522 dB | 93.988 dB | `FSVLTH` |
-| UGF | ≥8 MHz | 12.835 MHz | 8.762 MHz | `SSVLTH` |
-| Phase margin | ≥55° | 67.767° | 56.368° | `FFVLTH` |
-| Input offset | ±2 mV | 3.193 µV | 12.092 µV | `FSVLTH` |
-| CMRR, 60 / 150 Hz | ≥105 / 105 dB | 111.957 / 111.957 dB | 109.711 / 109.711 dB | `SSVLTH` |
-| PSRR+, 60 / 150 Hz | ≥100 / 95 dB | 103.379 / 99.232 dB | 101.385 / 96.565 dB | `SSVLTL` / `SSVLTH` |
-| PSRR−, 60 / 150 Hz | ≥100 / 95 dB | 103.379 / 99.232 dB | 101.385 / 96.565 dB | `SSVLTL` / `SSVLTH` |
-| Input noise, 0.05–150 Hz | ≤2.5 µVrms | 1.873 µVrms | 2.189 µVrms | `SSVLTH` |
-| Gain error | ±0.01% | −0.001% | −0.001% | `FSVLTH` |
-| Input range | Low ≤0.6 V; high ≥2.75 V | 0.106–3.237 V | 0.429–2.815 V | `SSVHTL` / `FSVLTH` |
-| Output range | Low ≤0.6 V; high ≥2.75 V | 0.108–3.235 V | 0.431–2.813 V | `SSVHTL` / `FSVLTH` |
-| Slew rate, rise / fall | ≥6.5 / 5.0 V/µs | 9.814 / 7.966 V/µs | 6.927 / 5.636 V/µs | `SSVLTL` |
-| Settling time | ≤225 ns | 163.4 ns | 213.4 ns | `SSVLTL` |
+Blank specification cells mean report-only. Exported worst-case values meet their listed limits; this is pre-layout block verification, not post-layout or silicon signoff.
 
-### 5.1 Open-loop response
+The PVT campaign uses NOM/FF/SS/FS/SF, 3.0/3.3/3.6 V, and −40/27/125°C: 45 operating conditions.
 
-At nominal conditions, the SEOTA provides 96.522 dB gain, 12.835 MHz UGF, and 67.767° phase margin. Full-PVT minima are 93.988 dB, 8.762 MHz, and 56.368°.
+Nominal columns refer to NOM process, 3.3 V, and 27°C. Compact corner names encode process, supply, and temperature. Sweep labels identify a fixed supply or temperature rather than a single corner.
 
-![SEOTA open-loop gain and phase](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.open_loop_gain_phase.png)
+OL and CL testbenches each use five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files plus one `*_MC.sch`. Each MC file runs MM, GL, and FULL separately.
 
-The nominal zero crossing gives 3.193 µV input offset. The largest deterministic offset is 12.092 µV, well inside the ±2-mV limit.
+### Operating point
 
-![SEOTA open-loop VTC](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.open_loop_vtc.png)
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Bias current | uA | 40±10 | 40.113 | 49.606 | FFVHTH |
+| Total current | mA | ≤1.25 | 0.825 | 1.107 | FFVHTH |
+| Total power | mW |  | 2.723 | 3.984 | FFVHTH |
 
-### 5.2 Rejection and noise
+### Frequency response
 
-CMRR is 111.957 dB at 60 and 150 Hz nominal, with a 109.711-dB full-PVT minimum.
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| DC gain | dB | ≥88 | 96.522 | 93.985 | FSVLTH |
+| UGF | MHz | ≥8 | 12.842 | 8.767 | SSVLTH |
+| Phase margin | deg | ≥55 | 67.773 | 56.371 | FFVLTH |
 
-![SEOTA CMRR](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.cmrr.png)
+Phase margin: nominal 67.773 deg; full-PVT worst 56.371 deg at `FFVLTH`.
 
-Nominal PSRR is 103.379 dB at 60 Hz and 99.232 dB at 150 Hz. The worst PVT values remain 101.385 dB and 96.565 dB for both supply polarities.
+![NOM.open loop gain phase](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.open_loop_gain_phase.png)
 
-![SEOTA PSRR](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.psrr.png)
+### Accuracy and usable range
 
-Integrated input noise is 1.873 µVrms nominal and 2.189 µVrms worst case over 0.05–150 Hz.
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Input offset | uV | ±2000 | 3.198 | 12.101 | FSVLTH |
+| Closed-loop gain | dB |  | -1.048e-04 | -9.634e-05 | FFVHNOM |
+| Gain error | % | ±0.01 | -0.001 | -0.001 | FSVLTH |
+| Vout,DC error | uV |  | -3.164 | 6.133 | SSVLTL |
+| Input low | mV | ≤600 | 154 | 430 | SSVHTL |
+| Input high | V | ≥2.75 | 3.237 | 2.814 | FSVLTH |
+| Input high headroom | mV |  | 63 | 186 | FSVLTH |
+| Output low | mV | ≤600 | 155.998 | 431.884 | SSVHTL |
+| Output high | V | ≥2.75 | 3.235 | 2.812 | FSVLTH |
+| Output high headroom | mV |  | 64.884 | 187.861 | FSVLTH |
 
-![SEOTA input-referred noise](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.input_referred_noise_density.png)
+Input high: nominal 3.237 V; full-PVT worst 2.814 V at `FSVLTH`.
 
-### 5.3 Input and output range
+![NOM.open loop vtc](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.open_loop_vtc.png)
 
-At nominal conditions, the usable input range is 0.106–3.237 V and the output range is 0.108–3.235 V. Every headroom limit passes across PVT.
+Input high: nominal 3.237 V; full-PVT worst 2.814 V at `FSVLTH`.
 
-![SEOTA closed-loop usable range](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.closed_loop_usable_range.png)
+![NOM.closed loop usable range](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.closed_loop_usable_range.png)
 
-### 5.4 Transient response
+### Common-mode and supply rejection
 
-With a 10-pF load, settling is 163.4 ns nominal and 213.4 ns worst case. Nominal rise/fall slew rates are 9.814/7.966 V/µs; worst-case values are 6.927/5.636 V/µs.
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| CMRR @ 60 Hz | dB | ≥105 | 111.956 | 109.709 | SSVLTH |
+| CMRR @ 150 Hz | dB | ≥105 | 111.956 | 109.709 | SSVLTH |
+| PSRR+ @ 60 Hz | dB | ≥100 | 103.38 | 101.386 | SSVLTL |
+| PSRR+ @ 150 Hz | dB | ≥95 | 99.235 | 96.57 | SSVLTH |
+| PSRR- @ 60 Hz | dB | ≥100 | 103.38 | 101.386 | SSVLTL |
+| PSRR- @ 150 Hz | dB | ≥95 | 99.235 | 96.57 | SSVLTH |
 
-![SEOTA closed-loop step response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.closed_loop_step_response.png)
+CMRR @ 60 Hz: nominal 111.956 dB; full-PVT worst 109.709 dB at `SSVLTH`.
 
-## 6. Monte Carlo verification
+![NOM.cmrr](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.cmrr.png)
 
-MM applies local mismatch, GL applies global variation, and FULL combines both. All 600 runs are valid and pass the joint limits.
+PSRR+ @ 60 Hz: nominal 103.38 dB; full-PVT worst 101.386 dB at `SSVLTL`.
 
-| Mode | Valid runs | Current maximum (mA) | Gain minimum (dB) | UGF minimum (MHz) | PM minimum (°) | Offset range (µV) | Yield |
-| :---: | ---: | ---: | ---: | ---: | ---: | :---: | ---: |
-| MM | 200/200 | 0.869 | 96.382 | 12.285 | 67.374 | −976.478 to +1182.960 | 100% |
-| GL | 200/200 | 0.871 | 95.477 | 11.947 | 64.251 | −11.636 to +15.683 | 100% |
-| FULL | 200/200 | 0.895 | 95.488 | 11.764 | 64.231 | −970.439 to +1177.630 | 100% |
+![NOM.psrr](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.psrr.png)
 
-FULL-MC offset spans −970.439 to +1177.630 µV. The $\mu\pm3\sigma$ interval is −1.234 to +1.243 mV against the ±2-mV limit.
+### Noise and distortion
 
-![SEOTA MC input offset](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_01_Vos_Histogram.png)
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Input-referred noise 0.05-150 Hz | uVrms | ≤2.5 | 1.873 | 2.189 | SSVLTH |
 
-FULL-MC gain spans 95.488–97.396 dB. Its $\mu-3\sigma$ value is 95.256 dB against the 88-dB minimum.
+Input-referred noise 0.05-150 Hz: nominal 1.873 uVrms; full-PVT worst 2.189 uVrms at `SSVLTH`.
 
-![SEOTA MC DC gain](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_02_DC_Gain_Histogram.png)
+![NOM.input referred noise density](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.input_referred_noise_density.png)
 
-FULL-MC UGF spans 11.764–13.961 MHz. Its $\mu-3\sigma$ value is 11.613 MHz against the 8-MHz minimum.
+### Transient response
 
-![SEOTA MC UGF](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_03_UGF_Histogram.png)
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| SR rise | V/us | ≥6.5 | 9.819 | 6.931 | SSVLTL |
+| SR fall | V/us | ≥5.0 | 7.971 | 5.64 | SSVLTL |
+| Settling time | ns | ≤225 | 162.9 | 213.4 | SSVLTL |
 
-FULL-MC phase margin spans 64.231–73.006°. Its $\mu-3\sigma$ value is 63.334° against the 55° minimum.
+Settling time: nominal 162.9 ns; full-PVT worst 213.4 ns at `SSVLTL`.
 
-![SEOTA MC phase margin](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_04_Phase_Margin_Histogram.png)
+![NOM.closed loop step response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/NOM.closed_loop_step_response.png)
 
-FULL-MC gain error spans −0.0025% to 0%, within the ±0.01% limit.
+## Monte Carlo verification
 
-![SEOTA MC gain error](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_05_Gain_Error_Histogram.png)
+MM applies local mismatch; GL applies global variation; FULL combines both. These are nominal-supply/temperature MC campaigns, not combined worst-PVT-plus-mismatch yield.
 
-## 7. References and generated artifacts
+| Mode | Requested | Valid | Failed | Overall yield |
+| :--- | :--- | :--- | :--- | :--- |
+| MM | 200 | 200 | 0 | 100% |
+| GL | 200 | 200 | 0 | 100% |
+| FULL | 200 | 200 | 0 | 100% |
 
-### Design-method references
+“Failed” is the analyzer’s exported non-valid count; it may include missing or invalid measurements and must not automatically be interpreted as demonstrated circuit failures. Sample yield applies only to measured MC metrics, not production yield.
+
+### FULL sampled statistics
+
+| Parameter | Unit | Spec | Min | Mean | Max | Yield |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Bias current | uA | 40±10 | 38.614 | 40.077 | 41.433 | 100% |
+| Total current | mA | ≤1.25 | 0.789 | 0.833 | 0.896 | 100% |
+| Total power | mW |  | 2.605 | 2.75 | 2.956 |  |
+| DC gain | dB | ≥88 | 95.487 | 96.415 | 97.395 | 100% |
+| UGF | MHz | ≥8 | 11.77 | 12.842 | 13.969 | 100% |
+| Phase margin | deg | ≥55 | 64.236 | 67.835 | 73.013 | 100% |
+| Input offset | uV | ±2000 | -970.398 | 4.155 | 1177.57 | 100% |
+| Gain error | % | ±0.01 | -0.003 | -0.001 | 0 | 100% |
+
+The source CSVs retain μ±σ and μ±3σ. Those statistical extrapolations are not additional simulated extrema.
+
+FULL Input offset: -970.398 to 1177.57 uV; mean 4.155 uV.
+
+![Fig MC 01 Vos Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_01_Vos_Histogram.png)
+
+FULL DC gain: 95.487 to 97.395 dB; mean 96.415 dB.
+
+![Fig MC 02 DC Gain Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_02_DC_Gain_Histogram.png)
+
+FULL UGF: 11.77 to 13.969 MHz; mean 12.842 MHz.
+
+![Fig MC 03 UGF Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_03_UGF_Histogram.png)
+
+FULL Phase margin: 64.236 to 73.013 deg; mean 67.835 deg.
+
+![Fig MC 04 Phase Margin Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_04_Phase_Margin_Histogram.png)
+
+FULL Gain error: -0.003 to 0 %; mean -0.001 %.
+
+![Fig MC 05 Gain Error Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Plots/Fig_MC_05_Gain_Error_Histogram.png)
+
+## Sources and reproduction
+
+- [MATLAB analyzer](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/SEOTA_Analyze.m)
+- [Representative-corner comparison](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_table_report.csv)
+- [Full-PVT worst cases](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_worst_case_report.csv)
+- [MM statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/MM_SEOTA_MC_Summary.csv)
+- [GL statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/GL_SEOTA_MC_Summary.csv)
+- [FULL statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/FULL_SEOTA_MC_Summary.csv)
+- [MC coverage and yield](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_MC_Run_Summary.csv)
+- [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/ANALOG_BLOCKS/SEOTA)
+
+Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
+
+## Scope and next checks
+
+These results exclude extracted parasitics, package effects, switched-ADC loading, and silicon measurements. Repeat the same limits after layout; do not infer integrated AFE signoff from individual block passes.
+
+## Design-method references
 
 - F. Silveira, D. Flandre, and P. G. A. Jespers, “A $g_m/I_D$ Based Methodology for the Design of CMOS Analog Circuits and Its Application to the Synthesis of a Silicon-on-Insulator Micropower OTA,” *IEEE Journal of Solid-State Circuits*, 1996. [DOI: 10.1109/4.535416](https://doi.org/10.1109/4.535416)
 - P. G. A. Jespers and B. Murmann, “Basic Sizing Using the $g_m/I_D$ Methodology,” in *Systematic Design of Analog CMOS Circuits*, Cambridge University Press, 2017. [DOI: 10.1017/9781108125840.003](https://doi.org/10.1017/9781108125840.003)
@@ -496,16 +568,3 @@ FULL-MC gain error spans −0.0025% to 0%, within the ±0.01% limit.
 - P. E. Allen, “Compensation of Op Amps—I,” Georgia Institute of Technology, ECE 6412 lecture notes. [PDF](https://www.pallen.ece.gatech.edu/Academic/ECE_6412/Spring_2004/L120-CompOpAmpsI%282UP%29.pdf)
 - University of California, Berkeley, “CMOS Op Amp Compensation,” EE 140 Lecture 22. [PDF](https://www-inst.cs.berkeley.edu/~ee140/sp12/lectures/Lec22w.CMOSOpAmpCompensation.ee140.s12.ctn.pdf)
 - D. A. Johns and K. Martin, *Analog Integrated Circuit Design*, Chapter 6 course copy hosted by the University of Minnesota Duluth. [PDF](https://www.d.umn.edu/~htang/ECE5211_doc_files/ECE5211_files/Chapter6.pdf)
-
-### Generated artifacts
-
-- [SEOTA analyzer](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/SEOTA_Analyze.m)
-- [Nominal and representative-corner results](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/NOM.SEOTA_summary.csv)
-- [Full-PVT worst-case results](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_worst_case_report.csv)
-- [Representative PVT table](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_table_report.csv)
-- [Monte Carlo run summary](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/SEOTA_MC_Run_Summary.csv)
-- [MM](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/MM_SEOTA_MC_Summary.csv), [GL](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/GL_SEOTA_MC_Summary.csv), and [FULL](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/SEOTA/Reports/FULL_SEOTA_MC_Summary.csv) statistical summaries
-
-## 8. Scope
-
-These are schematic-level results. Layout parasitics, package effects, extracted verification, and measured-silicon behavior are not included.

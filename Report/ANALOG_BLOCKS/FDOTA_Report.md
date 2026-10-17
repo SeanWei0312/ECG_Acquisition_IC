@@ -23,7 +23,9 @@ The top-level schematic shows the FDC, output common-mode sensor, and CMFB loop 
 
 ![FDOTA top-level circuit schematic](<../../Design_Files/IC Design/Schematic/ANALOG_BLOCKS/FDOTA/FDOTA/FDOTA.png>)
 
-## 2. Audited sizing method
+## 2. Sizing assumptions and method
+
+The following hand calculations retain the first-pass sizing assumptions. They explain design choices; they are not a new device-level extraction. Current acceptance limits and simulation values are listed in the verification snapshot below.
 
 The supplied FDC and CMFB worksheets provided a useful sequence, but several assumptions did not match the implemented circuits. The FDC uses 2.5-pF compensation per side and 0.5-µm output devices, not the worksheet's 2-pF and 1-µm values. The CMFB amplifier is a single-stage error amplifier, not a two-stage Miller OTA. The calculations below use the implemented topologies and dimensions.
 
@@ -125,7 +127,7 @@ The nominal specification is the design-stage target. The PVT specification is t
 
 The current FDC differential and integrated FDOTA testbenches instantiate 40 pF at each output. A legacy `NOM.FDC_summary.csv` condition row still labels 10 pF; this report follows the schematic value. The separate common-mode plant test uses 10 pF and is not the differential-load signoff bench.
 
-The 10-MHz UGF target is 25% above the PVT minimum. The implemented integrated nominal result is 14.576 MHz, leaving additional transistor-level margin.
+The 10-MHz UGF target is 25% above the PVT minimum. The implemented integrated nominal result is 14.586 MHz, leaving additional transistor-level margin.
 
 Each result becomes the input to the next sizing step:
 
@@ -186,7 +188,7 @@ $$
 \frac{W_{used}}{W_{calc}}=\frac{200}{105.1}=1.90.
 $$
 
-The implemented $W_{eff}=200$ µm reduces flicker noise and mismatch and lowers current density, which supports higher transconductance efficiency at the final branch current. The trade-offs are increased input capacitance, first-stage-node capacitance, area, and potentially lower high-frequency pole locations. The 14.576-MHz nominal UGF confirms adequate bandwidth, while the 3.083-µVrms nominal and 3.513-µVrms worst-PVT noise results remain below the 4-µVrms limit.
+The implemented $W_{eff}=200$ µm reduces flicker noise and mismatch and lowers current density, which supports higher transconductance efficiency at the final branch current. The trade-offs are increased input capacitance, first-stage-node capacitance, area, and potentially lower high-frequency pole locations. The 14.586-MHz nominal UGF confirms adequate bandwidth, while the 3.083-µVrms nominal and 3.513-µVrms worst-PVT noise results remain below the 4-µVrms limit.
 
 ### 3.4 M3/M4 active-load width
 
@@ -346,11 +348,11 @@ $$
 
 Thus 2.5 pF provides stability margin without consuming all of the slew budget. Each MIM device uses $35.36\times35.36$ µm, or about 1250 µm² at 2 fF/µm². Cc1 and Cc2 are identical because any differential mismatch would create unequal poles and convert differential motion into common-mode error.
 
-Rz1 and Rz2 are also identical. Each poly resistor has $L/W=7/4=1.75$ squares, giving approximately 3.5 kΩ with a 2-kΩ/square layer. The matched pair places the two compensation zeros at the same frequency. The value is larger than $1/g_{mP}$, so the first-order zero is in the left half-plane; transistor-level loop simulation confirms 77.135° nominal phase margin.
+Rz1 and Rz2 are also identical. Each poly resistor has $L/W=7/4=1.75$ squares, giving approximately 3.5 kΩ with a 2-kΩ/square layer. The matched pair places the two compensation zeros at the same frequency. The value is larger than $1/g_{mP}$, so the first-order zero is in the left half-plane; transistor-level loop simulation confirms 77.134° nominal phase margin.
 
 ### 4.6 Complete component-size audit
 
-`W_{calc}` is obtained from the preceding current-density calculation or from the fixed mirror ratio. `W_{round}` is the closest whole-micrometre width. `W_{used}=W\times m$ because the listed devices use `nf=1`.
+`W_{calc}` is obtained from the preceding current-density calculation or from the fixed mirror ratio. `W_{round}` is the closest whole-micrometre width. `W_used = W × m` because the listed devices use `nf=1`.
 
 | Component(s) | Function | $L_{used}$ (µm) | $W_{calc}$ (µm) | $W_{round}$ (µm) | Schematic geometry | Implemented value |
 | :---: | :--- | ---: | ---: | ---: | :---: | ---: |
@@ -370,18 +372,26 @@ The passive calculations and implemented geometries are:
 | Cc1/Cc2 | $A=2.5\text{pF}/(2\text{fF}/\mu\text{m}^2)=1250\ \mu\text{m}^2$ | Square side $35.355$ µm | $35.36\times35.36$ µm each |
 | Rz1/Rz2 | $N_\square=3.5\text{k}/2\text{k}=1.75$; choose $W=4$ µm | $L=1.75(4)=7.0$ µm | $W/L=4/7$ µm each |
 
-M1/M2 and M3/M4 use $L=2$ µm for higher intrinsic gain and matching than minimum-length devices, while retaining more speed than a 4-µm choice. Their final widths are larger than the first-pass result to improve noise and matching. M5/M10 use the same 1:2 mirror rule as the SEOTA. The 0.5-µm output devices trade intrinsic gain for current density and speed; their calculated and implemented widths agree within 0.1%. The matched Cc/Rz branches preserve differential symmetry. Square MIM capacitors avoid unequal orientation and aspect-ratio effects; the 4-µm resistor width reduces current density and mismatch at the cost of area.
+M1/M2 and M3/M4 use $L=2$ µm for higher intrinsic gain and matching than minimum-length devices, while retaining more speed than a 4-µm choice. Their final widths are larger than the first-pass result to improve noise and matching.
+
+M5/M10 use the same 1:2 mirror rule as the SEOTA. The 0.5-µm output devices trade intrinsic gain for current density and speed; their calculated and implemented widths agree within 0.1%.
+
+The matched Cc/Rz branches preserve differential symmetry. Square MIM capacitors avoid unequal orientation and aspect-ratio effects; the 4-µm resistor width reduces current density and mismatch at the cost of area.
 
 ### 4.7 Estimate-to-simulation comparison
 
 | Metric | First-order estimate | Nominal simulation | Specification |
 | :--- | ---: | ---: | ---: |
 | DC gain | 93.13 dB | 92.064 dB | $\ge85$ dB |
-| UGF | 10 MHz sizing target | 14.576 MHz | $\ge8$ MHz |
-| Phase margin | 67.82° two-pole screen | 77.135° | $\ge60^\circ$ |
-| Slew rate | 8.02 V/µs | 7.204 V/µs | $\ge4$ V/µs |
+| UGF | 10 MHz sizing target | 14.586 MHz | $\ge8$ MHz |
+| Phase margin | 67.82° two-pole screen | 77.134° | $\ge60^\circ$ |
+| Slew rate | 8.02 V/µs | 7.208 V/µs | $\ge4$ V/µs |
 
-The gain estimate is within 1.07 dB of the integrated result, and the slew estimate is within 11.3%. The nominal UGF exceeds its 10-MHz target. The 67.82° two-pole result is conservative because it excludes the intended LHP zeros. At the 14.576-MHz simulated crossover, a 19.0-MHz LHP zero provides about 37.5° of lead; internal poles remove part of that lead, yielding 77.135°. The full transistor-level return ratio is therefore used for signoff. Output swing is not signed off with the square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ because it omits body effect, real saturation voltage, and terminal-voltage dependence.
+The gain estimate is within 1.07 dB of the integrated result, and the slew estimate is within 11.3%. The nominal UGF exceeds its 10-MHz target.
+
+The 67.82° two-pole result is conservative because it excludes the intended LHP zeros. At the 14.586-MHz simulated crossover, a 19.0-MHz LHP zero provides about 37.5° of lead; internal poles remove part of that lead, yielding 77.134°.
+
+The full transistor-level return ratio is therefore used for signoff. Output swing is not signed off with the square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ because it omits body effect, real saturation voltage, and terminal-voltage dependence.
 
 ### 4.8 Nominal FDC verification
 
@@ -420,7 +430,7 @@ The `VCMFB` sweep confirms the control polarity and the 2.483-V nominal control 
 
 ![FDC VCMFB sweep](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.vcmfb_sweep.png)
 
-With CMFB open, a differential step creates a 2.383-V common-mode excursion. The integrated closed-loop FDOTA reduces it to 37.043 mV.
+With CMFB open, a differential step creates a 2.383-V common-mode excursion. The integrated closed-loop FDOTA reduces it to 37.052 mV.
 
 ![FDC differential-step common-mode disturbance](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.diff_step_cm_disturbance.png)
 
@@ -557,10 +567,10 @@ $$
 
 Therefore 45.137 dB, 967.213 MHz, and 71.900° are metrics of that ideal-plant loop. They must not be inserted into $g_m/(2\pi C)$ as if 967.213 MHz were the isolated amplifier UGF. The 3.89-MHz output-pole reference from Section 5.2 is the valid first-order device-sizing check.
 
-The ideal-plant closed-loop test settles in 5.2 ns. The integrated transistor-level FDOTA settles its common-mode loop in 309.737 ns nominally and 418.338 ns at the worst PVT corner. These correspond to first-order equivalent bandwidths of
+The ideal-plant closed-loop test settles in 5.2 ns. The integrated transistor-level FDOTA settles its common-mode loop in 309.735 ns nominally and 418.338 ns at the worst PVT corner. These correspond to first-order equivalent bandwidths of
 
 $$
-f_{eq,nom}=\frac{4.6}{2\pi(309.737\ \text{ns})}=2.36\ \text{MHz},
+f_{eq,nom}=\frac{4.6}{2\pi(309.735\ \text{ns})}=2.36\ \text{MHz},
 $$
 
 $$
@@ -595,7 +605,15 @@ The sensor geometries are calculated from the process sheet resistance and MIM d
 | R1/R2 | $N_\square=100\text{k}/2\text{k}=50$; choose $W=2$ µm | $L=50(2)=100$ µm | $W/L=2/100$ µm each |
 | C1/C2 | $A=50\text{fF}/(2\text{fF}/\mu\text{m}^2)=25\ \mu\text{m}^2$ | Square side $5$ µm | $5\times5$ µm each |
 
-M5 and M10 use equal $W/L$, so the 40-µA reference is copied 1:1 into the CMFB tail. Their $L=2$ µm reduces mirror channel-length modulation; the trade-off is area and parasitic capacitance. R1/R2 use $100/2=50$ squares of 2-kΩ/square poly. The 2-µm width balances matching area against parasitic capacitance. The large 100-kΩ value minimizes differential-output loading, while a still larger value would increase thermal noise and parasitic sensitivity. C1/C2 use square $5\times5$-µm MIM geometries, giving 25 µm² at 2 fF/µm². The square form supports matched orientation. Each 50-fF capacitor is only 0.125% of the verified 40-pF load per FDOTA output, so symmetry is improved without materially reducing bandwidth. Lower sensor capacitance supports GBW and slew rate, consistent with the continuous-time CMFB trade-off reported by [Hernandez-Garduno and Silva-Martinez](https://doi.org/10.1109/JSSC.2005.852047).
+M5 and M10 use equal $W/L$, so the 40-µA reference is copied 1:1 into the CMFB tail. Their $L=2$ µm reduces mirror channel-length modulation; the trade-off is area and parasitic capacitance.
+
+R1/R2 use $100/2=50$ squares of 2-kΩ/square poly. The 2-µm width balances matching area against parasitic capacitance.
+
+The large 100-kΩ value minimizes differential-output loading, while a still larger value would increase thermal noise and parasitic sensitivity. C1/C2 use square $5\times5$-µm MIM geometries, giving 25 µm² at 2 fF/µm².
+
+The square form supports matched orientation. Each 50-fF capacitor is only 0.125% of the verified 40-pF load per FDOTA output, so symmetry is improved without materially reducing bandwidth.
+
+Lower sensor capacitance supports GBW and slew rate, consistent with the continuous-time CMFB trade-off reported by [Hernandez-Garduno and Silva-Martinez](https://doi.org/10.1109/JSSC.2005.852047).
 
 ### 5.7 Estimate-to-simulation comparison
 
@@ -603,10 +621,10 @@ M5 and M10 use equal $W/L$, so the 40-µA reference is copied 1:1 into the CMFB 
 | :--- | ---: | ---: | ---: |
 | Intrinsic error-amplifier gain | 47.69 dB | Not isolated | $\ge40$ dB internal check |
 | Error-amplifier output-pole reference | 3.89 MHz into 10 pF | Not isolated | $\ge1.83$ MHz design target |
-| Integrated settling | 400-ns design target | 309.737 ns | $\le400$ ns nominal |
+| Integrated settling | 400-ns design target | 309.735 ns | $\le400$ ns nominal |
 | Equivalent settling bandwidth | 1.83-MHz design target | 2.36 MHz | $\ge1.83$ MHz nominal |
 
-The intrinsic 47.69-dB gain estimate and the ideal-plant 45.137-dB return ratio are not one-to-one quantities; their numerical proximity is not used as validation. The ideal-plant loop metrics are reported separately in Section 5.8. The causal validation is the integrated 309.737-ns settling result versus the 400-ns design target, followed by the 418.338-ns worst-corner result versus the 1-µs specification.
+The intrinsic 47.69-dB gain estimate and the ideal-plant 45.137-dB return ratio are not one-to-one quantities; their numerical proximity is not used as validation. The ideal-plant loop metrics are reported separately in Section 5.8. The causal validation is the integrated 309.735-ns settling result versus the 400-ns design target, followed by the 418.338-ns worst-corner result versus the 1-µs specification.
 
 ### 5.8 Nominal CMFB verification
 
@@ -632,121 +650,192 @@ Both closed-loop CMFB transitions settle in 5.2 ns.
 
 ![CMFB closed-loop transient response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Plots/NOM.cl_tran.png)
 
-## 6. Integrated FDOTA verification
+## Verification snapshot
 
-All 45 process, supply, and temperature corners pass.
+Updated 2026-10-17 from archived analyzer CSV exports. This documentation update did not rerun simulations.
 
-| Metric | Specification | Nominal | Full-PVT worst case | Corner |
-| :--- | :---: | ---: | ---: | :---: |
-| Total current | ≤2.5 mA | 1.604 mA | 2.194 mA | `FFVHTH` |
-| Total power | ≤9 mW | 5.293 mW | 7.900 mW | `FFVHTH` |
-| Differential gain | ≥85 dB | 92.064 dB | 90.321 dB | `FFVLTH` |
-| Differential UGF | ≥8 MHz | 14.576 MHz | 9.409 MHz | `SSVLTH` |
-| Differential phase margin | ≥60° | 77.135° | 69.170° | `FFVLTH` |
-| Differential input offset | ±3 mV | Below resolution | Below resolution | — |
-| CMRR, 60 / 150 Hz | ≥80 / 80 dB | 310.521 / 310.557 dB | 228.347 / 228.347 dB | `NOMVHNOM` |
-| PSRR+, 60 / 150 Hz | ≥80 / 80 dB | 307.375 / 307.346 dB | 220.817 / 220.817 dB | `SFNOMNOM` |
-| PSRR−, 60 / 150 Hz | ≥80 / 80 dB | 292.936 / 304.677 dB | 232.233 / 232.212 dB | `SFNOMNOM` |
-| Input noise, 0.05–150 Hz | ≤4 µVrms | 3.083 µVrms | 3.513 µVrms | `SSVHTH` |
-| Gain error | ±0.01% | −0.002% | −0.003% | `FFVLTH` |
-| Output CM error | ±25 mV | −0.134 mV | 11.978 mV | `SSVHTH` |
-| Input common-mode range | Low ≤1.0 V; high ≥2.3 V | 0.870–3.300 V | 0.975–2.945 V | `SSVHNOM` / `FSVLTH` |
-| Differential output swing | ≤−1.8 V; ≥+1.8 V | −3.248 / +3.248 V | −2.898 / +2.898 V | `FSVLTH` |
-| Differential slew rate | ≥4 V/µs | 7.204 V/µs | 5.096 V/µs | `SSVLTL` |
-| Differential settling | ≤300 ns | 175.868 ns | 246.550 ns | `SSVLTL` |
-| Step-induced CM disturbance | ≤60 mV | 37.043 mV | 47.404 mV | `SSNOMTH` |
-| CMFB slew, rise / fall | ≥2 / 2 V/µs | 3.555 / 3.496 V/µs | 2.473 / 2.576 V/µs | `SSVLTL` / `SSVLTH` |
-| CMFB settling | ≤1000 ns | 309.737 ns | 418.338 ns | `SSVLTH` |
+Blank specification cells mean report-only. Exported worst-case values meet their listed limits; this is pre-layout block verification, not post-layout or silicon signoff.
 
-### 6.1 Open-loop response
+Very large deterministic CMRR/PSRR values reflect schematic symmetry and numerical cancellation. Use mismatch results to assess imbalance sensitivity; neither dataset guarantees extracted-layout or silicon rejection.
 
-Nominal gain is 92.064 dB, UGF is 14.576 MHz, and phase margin is 77.135°. Full-PVT minima are 90.321 dB, 9.409 MHz, and 69.170°.
+The PVT campaign uses NOM/FF/SS/FS/SF, 3.0/3.3/3.6 V, and −40/27/125°C: 45 operating conditions.
 
-![FDOTA open-loop gain and phase](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.open_loop_gain_phase.png)
+Nominal columns refer to NOM process, 3.3 V, and 27°C. Compact corner names encode process, supply, and temperature. Sweep labels identify a fixed supply or temperature rather than a single corner.
 
-The deterministic input offset is below reporting resolution because the PVT models preserve device symmetry; mismatch is covered by Monte Carlo.
+OL and CL testbenches each use five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files plus one `*_MC.sch`. Each MC file runs MM, GL, and FULL separately.
 
-![FDOTA open-loop VTC](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.open_loop_vtc.png)
+### Operating point
 
-### 6.2 Rejection and noise
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| FDC bias current | uA | 40±10 | 40.113 | 49.606 | FFVHTH |
+| CMFB bias current | uA | 40±10 | 40.113 | 49.606 | FFVHTH |
+| Total current | mA | ≤2.5 | 1.605 | 2.196 | FFVHTH |
+| Total power | mW |  | 5.296 | 7.904 | FFVHTH |
+| Output common mode, DC | V |  | 1.65 | 1.812 | SSVHTH |
+| Output CM error | mV | ±20 | -0.132 | 11.982 | SSVHTH |
 
-Nominal CMRR is 310.521 dB at 60 Hz and 310.557 dB at 150 Hz. The full-PVT minimum is 228.347 dB at both frequencies.
+### Frequency response
 
-![FDOTA CMRR](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.cmrr.png)
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Differential DC gain | dB | ≥85 | 92.064 | 90.321 | FFVLTH |
+| Differential UGF | MHz | ≥8 | 14.586 | 9.415 | SSVLTH |
+| Differential phase margin | deg | ≥60 | 77.134 | 69.171 | FFVLTH |
 
-Nominal PSRR+ is 307.375/307.346 dB at 60/150 Hz; PSRR− is 292.936/304.677 dB. Every PVT result exceeds 220 dB.
+Differential phase margin: nominal 77.134 deg; full-PVT worst 69.171 deg at `FFVLTH`.
 
-![FDOTA PSRR](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.psrr.png)
+![NOM.open loop gain phase](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.open_loop_gain_phase.png)
 
-These very large rejection values reflect ideal schematic symmetry. Layout mismatch and parasitic imbalance will set practical silicon rejection.
+### Accuracy and usable range
 
-Integrated input noise is 3.083 µVrms nominal and 3.513 µVrms worst case over 0.05–150 Hz.
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Input differential offset | uV | ±3000 | 0 | 0 | SFVHNOM |
+| Closed-loop differential gain | dB |  | -2.156e-04 | -1.967e-04 | SFVHTL |
+| Gain error | % | ±0.01 | -0.002 | -0.003 | FFVLTH |
+| Input CM low | mV | ≤1000 | 870 | 975 | SSVHNOM |
+| Input CM high | V | ≥2.3 | 3.3 | 2.945 | FSVLTH |
+| Input CM high headroom | mV |  | 0 | 55 | FSVLTH |
+| Differential output swing low | V | ≤-1.8 | -3.248 | -2.898 | FSVLTH |
+| Differential output swing high | V | ≥1.8 | 3.248 | 2.898 | FSVLTH |
 
-![FDOTA input-referred noise](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.input_referred_noise_density.png)
+Differential output swing high: nominal 3.248 V; full-PVT worst 2.898 V at `FSVLTH`.
 
-### 6.3 Input and output range
+![NOM.open loop vtc](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.open_loop_vtc.png)
 
-The nominal input common-mode range is 0.870–3.300 V. Across PVT, the limiting low and high values are 0.975 V and 2.945 V.
+Differential output swing high: nominal 3.248 V; full-PVT worst 2.898 V at `FSVLTH`.
 
-![FDOTA input common-mode range](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.input_common_mode_range.png)
+![NOM.input common mode range](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.input_common_mode_range.png)
 
-Nominal differential swing is ±3.248 V, with ±2.898 V available at the limiting corner. Nominal closed-loop gain error is −0.002%.
+Differential output swing high: nominal 3.248 V; full-PVT worst 2.898 V at `FSVLTH`.
 
-![FDOTA output swing and closed-loop VTC](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
+![NOM.output swing and closed loop vtc](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.output_swing_and_closed_loop_vtc.png)
 
-### 6.4 Transient response
+### Common-mode and supply rejection
 
-Nominal differential slew rate is 7.204 V/µs and settling time is 175.868 ns. Worst-case values are 5.096 V/µs and 246.550 ns.
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| CMRR @ 60 Hz | dB | ≥80 | 311.857 | 206.212 | SFVLTH |
+| CMRR @ 150 Hz | dB | ≥80 | 312.608 | 206.212 | SFVLTH |
+| PSRR+ @ 60 Hz | dB | ≥80 | 282.189 | 187.596 | SFVLTH |
+| PSRR+ @ 150 Hz | dB | ≥80 | 282.095 | 187.596 | SFVLTH |
+| PSRR- @ 60 Hz | dB | ≥80 | 292.288 | 197.663 | SFVLTH |
+| PSRR- @ 150 Hz | dB | ≥80 | 291.04 | 197.662 | SFVLTH |
 
-![FDOTA closed-loop step response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.closed_loop_step_response.png)
+CMRR @ 60 Hz: nominal 311.857 dB; full-PVT worst 206.212 dB at `SFVLTH`.
 
-Differential-step common-mode disturbance is 37.043 mV nominal and 47.404 mV worst case.
+![NOM.cmrr](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.cmrr.png)
 
-![FDOTA differential-step common-mode disturbance](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.diff_step_cm_disturbance.png)
+PSRR+ @ 60 Hz: nominal 282.189 dB; full-PVT worst 187.596 dB at `SFVLTH`.
 
-The integrated CMFB response settles in 309.737 ns nominal and 418.338 ns worst case.
+![NOM.psrr](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.psrr.png)
 
-![FDOTA output common-mode transient](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.output_cm_transient.png)
+### Noise and distortion
 
-## 7. Monte Carlo verification
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Input-referred noise 0.05-150 Hz | uVrms | ≤4 | 3.083 | 3.513 | SSVHTH |
 
-MM applies local mismatch, GL applies global variation, and FULL combines both. All 600 runs are valid and pass the joint limits.
+Input-referred noise 0.05-150 Hz: nominal 3.083 uVrms; full-PVT worst 3.513 uVrms at `SSVHTH`.
 
-| Mode | Valid runs | Gain minimum (dB) | UGF minimum (MHz) | PM minimum (°) | Offset range (µV) | CM-error range (mV) | Yield |
-| :---: | ---: | ---: | ---: | ---: | :---: | :---: | ---: |
-| MM | 200/200 | 92.046 | 13.801 | 76.450 | −2094.94 to +2353.51 | −10.145 to +10.915 | 100% |
-| GL | 200/200 | 91.143 | 13.075 | 73.583 | −0.0006 to +0.00004 | −4.023 to +4.823 | 100% |
-| FULL | 200/200 | 91.143 | 12.851 | 73.407 | −2094.09 to +2352.45 | −10.459 to +13.114 | 100% |
+![NOM.input referred noise density](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.input_referred_noise_density.png)
 
-FULL-MC maximum current is 1.745 mA and maximum power is 5.758 mW. Both remain below specification.
+### Transient response
 
-FULL-MC offset has a 30.522-µV mean and spans −2094.09 to +2352.45 µV.
+| Parameter | Unit | Spec | NOM | Full-PVT worst | Corner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Differential SR rise | V/us | ≥4 | 7.208 | 5.099 | SSVLTL |
+| Differential SR fall | V/us | ≥4 | 7.208 | 5.099 | SSVLTL |
+| Differential settling time | ns | ≤300 | 175.867 | 246.549 | SSVLTL |
+| Differential-step CM disturbance | mV | ≤60 | 37.052 | 47.416 | SSNOMTH |
+| CMFB SR rise | V/us | ≥2 | 3.556 | 2.475 | SSVLTL |
+| CMFB SR fall | V/us | ≥2 | 3.498 | 2.577 | SSVLTH |
+| CMFB settling time | ns | ≤1000 | 309.735 | 418.338 | SSVLTH |
 
-![FDOTA MC input offset](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_01_Input_Offset_Histogram.png)
+Differential settling time: nominal 175.867 ns; full-PVT worst 246.549 ns at `SSVLTL`.
 
-FULL-MC output common-mode error has a −0.456-mV mean and spans −10.459 to +13.114 mV.
+![NOM.closed loop step response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.closed_loop_step_response.png)
 
-![FDOTA MC output common-mode error](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_02_Output_CM_Error_Histogram.png)
+Differential-step CM disturbance: nominal 37.052 mV; full-PVT worst 47.416 mV at `SSNOMTH`.
 
-FULL-MC differential gain has a 92.032-dB mean and spans 91.143–93.000 dB.
+![NOM.diff step cm disturbance](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.diff_step_cm_disturbance.png)
 
-![FDOTA MC differential gain](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_03_DC_Gain_Histogram.png)
+Differential settling time: nominal 175.867 ns; full-PVT worst 246.549 ns at `SSVLTL`.
 
-FULL-MC UGF has a 14.618-MHz mean and spans 12.851–16.829 MHz.
+![NOM.output cm transient](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/NOM.output_cm_transient.png)
 
-![FDOTA MC UGF](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_04_UGF_Histogram.png)
+## Monte Carlo verification
 
-FULL-MC phase margin has a 77.077° mean and spans 73.407–80.552°.
+MM applies local mismatch; GL applies global variation; FULL combines both. These are nominal-supply/temperature MC campaigns, not combined worst-PVT-plus-mismatch yield.
 
-![FDOTA MC phase margin](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_05_Phase_Margin_Histogram.png)
+| Mode | Requested | Valid | Failed | Overall yield |
+| :--- | :--- | :--- | :--- | :--- |
+| MM | 200 | 200 | 0 | 100% |
+| GL | 200 | 200 | 0 | 100% |
+| FULL | 200 | 200 | 0 | 100% |
 
-FULL-MC gain error has a −0.002505% mean and spans −0.00277% to −0.00224%.
+“Failed” is the analyzer’s exported non-valid count; it may include missing or invalid measurements and must not automatically be interpreted as demonstrated circuit failures. Sample yield applies only to measured MC metrics, not production yield.
 
-![FDOTA MC gain error](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_06_Gain_Error_Histogram.png)
+### FULL sampled statistics
 
-## 8. References and generated artifacts
+| Parameter | Unit | Spec | Min | Mean | Max | Yield |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| FDC bias current | uA | 40±10 | 38.743 | 40.101 | 41.738 | 100% |
+| CMFB bias current | uA | 40±10 | 38.732 | 40.109 | 41.627 | 100% |
+| Total current | mA | ≤2.5 | 1.52 | 1.607 | 1.746 | 100% |
+| Total power | mW |  | 5.016 | 5.302 | 5.761 |  |
+| Differential DC gain | dB | ≥85 | 91.143 | 92.032 | 93 | 100% |
+| Differential UGF | MHz | ≥8 | 12.859 | 14.628 | 16.843 | 100% |
+| Differential phase margin | deg | ≥60 | 73.403 | 77.075 | 80.543 | 100% |
+| Input differential offset | uV | ±3000 | -2094.05 | 30.523 | 2352.39 | 100% |
+| Gain error | % | ±0.01 | -0.003 | -0.003 | -0.002 | 100% |
+| Output CM error | mV | ±20 | -10.457 | -0.453 | 13.117 | 100% |
 
-### Design-method references
+The source CSVs retain μ±σ and μ±3σ. Those statistical extrapolations are not additional simulated extrema.
+
+FULL Input differential offset: -2094.05 to 2352.39 uV; mean 30.523 uV.
+
+![Fig MC 01 Input Offset Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_01_Input_Offset_Histogram.png)
+
+FULL Differential DC gain: 91.143 to 93 dB; mean 92.032 dB.
+
+![Fig MC 02 Output CM Error Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_02_Output_CM_Error_Histogram.png)
+
+FULL Differential DC gain: 91.143 to 93 dB; mean 92.032 dB.
+
+![Fig MC 03 DC Gain Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_03_DC_Gain_Histogram.png)
+
+FULL Differential UGF: 12.859 to 16.843 MHz; mean 14.628 MHz.
+
+![Fig MC 04 UGF Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_04_UGF_Histogram.png)
+
+FULL Differential phase margin: 73.403 to 80.543 deg; mean 77.075 deg.
+
+![Fig MC 05 Phase Margin Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_05_Phase_Margin_Histogram.png)
+
+FULL Gain error: -0.003 to -0.002 %; mean -0.003 %.
+
+![Fig MC 06 Gain Error Histogram](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Plots/Fig_MC_06_Gain_Error_Histogram.png)
+
+## Sources and reproduction
+
+- [MATLAB analyzer](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDOTA_Analyze.m)
+- [Representative-corner comparison](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_table_report.csv)
+- [Full-PVT worst cases](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_worst_case_report.csv)
+- [MM statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/MM_FDOTA_MC_Summary.csv)
+- [GL statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/GL_FDOTA_MC_Summary.csv)
+- [FULL statistics](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FULL_FDOTA_MC_Summary.csv)
+- [MC coverage and yield](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_MC_Run_Summary.csv)
+- [Xschem testbenches](../../Design_Files/IC%20Design/Testbench/ANALOG_BLOCKS/FDOTA)
+
+Regenerate SPICE netlists after schematic edits, finish the simulation jobs, then run the analyzer from its own directory. MATLAB reads exports; it does not launch ngspice.
+
+## Scope and next checks
+
+These results exclude extracted parasitics, package effects, switched-ADC loading, and silicon measurements. Repeat the same limits after layout; do not infer integrated AFE signoff from individual block passes.
+
+## Design-method references
 
 - F. Silveira, D. Flandre, and P. G. A. Jespers, “A $g_m/I_D$ Based Methodology for the Design of CMOS Analog Circuits and Its Application to the Synthesis of a Silicon-on-Insulator Micropower OTA,” *IEEE Journal of Solid-State Circuits*, 1996. [DOI: 10.1109/4.535416](https://doi.org/10.1109/4.535416)
 - P. G. A. Jespers and B. Murmann, “Basic Sizing Using the $g_m/I_D$ Methodology,” in *Systematic Design of Analog CMOS Circuits*, Cambridge University Press, 2017. [DOI: 10.1017/9781108125840.003](https://doi.org/10.1017/9781108125840.003)
@@ -761,18 +850,3 @@ FULL-MC gain error has a −0.002505% mean and spans −0.00277% to −0.00224%.
 - P. E. Allen, “Compensation of Op Amps—I,” Georgia Institute of Technology, ECE 6412 lecture notes. [PDF](https://www.pallen.ece.gatech.edu/Academic/ECE_6412/Spring_2004/L120-CompOpAmpsI%282UP%29.pdf)
 - University of California, Berkeley, “CMOS Op Amp Compensation,” EE 140 Lecture 22. [PDF](https://www-inst.cs.berkeley.edu/~ee140/sp12/lectures/Lec22w.CMOSOpAmpCompensation.ee140.s12.ctn.pdf)
 - D. A. Johns and K. Martin, *Analog Integrated Circuit Design*, Chapter 6 course copy hosted by the University of Minnesota Duluth. [PDF](https://www.d.umn.edu/~htang/ECE5211_doc_files/ECE5211_files/Chapter6.pdf)
-
-### Generated artifacts
-
-- [FDOTA analyzer](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDOTA_Analyze.m)
-- [Nominal and representative-corner results](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/NOM.FDOTA_summary.csv)
-- [Full-PVT worst-case results](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_worst_case_report.csv)
-- [Representative PVT table](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_table_report.csv)
-- [Monte Carlo run summary](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FDOTA_MC_Run_Summary.csv)
-- [MM](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/MM_FDOTA_MC_Summary.csv), [GL](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/GL_FDOTA_MC_Summary.csv), and [FULL](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/Results/FULL_FDOTA_MC_Summary.csv) statistical summaries
-- [FDC block summary](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.FDC_summary.csv)
-- [CMFB block summary](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.CMFB_summary.csv)
-
-## 9. Scope
-
-These are schematic-level results. Layout parasitics, package effects, extracted verification, and measured-silicon behavior are not included.

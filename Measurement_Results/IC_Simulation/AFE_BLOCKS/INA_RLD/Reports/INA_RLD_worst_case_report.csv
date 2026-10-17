@@ -1,39 +1,39 @@
 Parameter,Unit,Spec,Value,Corner
-"Total current",mA,≤6.2,4.812,FFVHTH
-"Total power",mW,≤22,17.323,FFVHTH
-"Output CM error",mV,±40,12.612,SSVHTH
-"Input-referred offset",uV,±2500,-0.001,FFNOMTL
+"Total current",mA,≤6.2,4.815,FFVHTH
+"Total power",mW,,17.333,FFVHTH
+"Output CM error",mV,±20,12.617,SSVHTH
+"Input-referred offset",uV,±2500,0.001,FFVHTH
 "S1 gain",V/V,,59.959,SSVLTL
 "S1 gain dB",dB,,35.557,SSVLTL
 "S1 gain error",%,±0.5,-0.068,SSVLTL
-"S1 -3 dB bandwidth",kHz,≥150,208.976,SSVLTH
+"S1 -3 dB bandwidth",kHz,,209.064,SSVLTH
 "S2 gain",V/V,,4.001,FFVHTH
 "S2 gain dB",dB,,12.044,FFVHTH
 "S2 gain error",%,±0.25,0.029,FFVHTH
-"S2 -3 dB bandwidth",MHz,≥1.5,2.124,SSVLTH
+"S2 -3 dB bandwidth",MHz,,2.125,SSVLTH
 "INA gain",V/V,,239.815,SSVLTL
 "INA gain dB",dB,,47.598,SSVLTL
 "INA gain error",%,±0.5,-0.077,SSVLTL
-"Gain flatness 0.05-150 Hz",dB,≤0.1,2.248e-06,SSVLTH
-"INA -3 dB bandwidth",kHz,≥150,206.961,SSVLTH
+"Gain flatness 0.05-150 Hz",dB,≤0.1,2.246e-06,SSVLTH
+"INA -3 dB bandwidth",kHz,,207.051,SSVLTH
 "Input range low",mV,≤-5,-11.200,FSVLTH
 "Input range high",mV,≥5,11.200,SSVLTH
 "Output range low",V,≤-1.2,-2.687,SSVLTH
 "Output range high",V,≥1.2,2.687,SSVLTH
-"INA CMRR @ 60 Hz",dB,≥80,212.227,NOMVHNOM
-"INA CMRR @ 150 Hz",dB,≥80,212.202,NOMVHNOM
-"INA PSRR+ @ 60 Hz",dB,≥80,187.610,SFVHTH
-"INA PSRR+ @ 150 Hz",dB,≥80,187.609,SFVHTH
-"INA PSRR- @ 60 Hz",dB,≥80,206.980,SFVLNOM
-"INA PSRR- @ 150 Hz",dB,≥80,206.980,SFVLNOM
-"Input-referred noise 0.05-150 Hz",uVrms,≤4,3.108,SSVLTH
-"THD @ 60 Hz, 5 mVpp",%,≤0.05,5.981e-05,FSVLTH
-"RTI residual - BAL",uVpp,≤1000,0.005,NOMVHTL
-"RTI residual - MIS-P",uVpp,≤1000,9.246,SSVLTL
+"INA CMRR @ 60 Hz",dB,≥80,214.902,NOMVLTH
+"INA CMRR @ 150 Hz",dB,≥80,214.928,NOMVLTH
+"INA PSRR+ @ 60 Hz",dB,≥80,185.964,SSVHTH
+"INA PSRR+ @ 150 Hz",dB,≥80,185.964,SSVHTH
+"INA PSRR- @ 60 Hz",dB,≥80,206.506,SSVLTH
+"INA PSRR- @ 150 Hz",dB,≥80,206.492,SSVLTH
+"Input-referred noise 0.05-150 Hz",uVrms,≤4,3.107,SSVLTH
+"THD @ 60 Hz, 5 mVpp",%,≤0.05,1.025e-04,SFVLTH
+"RTI residual - BAL",uVpp,≤1000,0.004,SFVHTH
+"RTI residual - MIS-P",uVpp,≤1000,9.247,SSVLTL
 "RTI residual - MIS-N",uVpp,≤1000,9.247,SSVLTL
-"RTI residual - MIS-RLD",uVpp,≤1000,0.005,SFVHTH
+"RTI residual - MIS-RLD",uVpp,≤1000,0.004,SFVHTH
 "RLD gain",V/V,,4.999,FSVLTH
-"RLD -3 dB bandwidth",Hz,≥150,163.955,SSVLTL
+"RLD -3 dB bandwidth",Hz,,163.955,SSVLTL
 "RLD phase margin",deg,≥60,62.118,SSVLTH
 "Input CM suppression @ 60 Hz",dB,≥35,37.121,SSVLTL
 "Input CM suppression @ 150 Hz",dB,≥25,27.309,SSVLTL

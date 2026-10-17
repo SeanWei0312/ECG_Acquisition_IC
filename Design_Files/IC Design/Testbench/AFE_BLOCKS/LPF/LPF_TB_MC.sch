@@ -367,7 +367,7 @@ C {lab_wire.sym} 1480 -600 2 0 {name=CLN2 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 1480 -740 2 1 {name=p31 sig_type=std_logic lab=OUTN}
 C {lab_wire.sym} 1360 -860 0 1 {name=p3 sig_type=std_logic lab=OUTP}
 C {lab_wire.sym} 1360 -740 2 0 {name=p4 sig_type=std_logic lab=OUTN}
-C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/BIAS/BIAS.sym} 560 -1000 0 0 {name=xBIAS1}
+C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/POWER_BLOCKS/BIAS/BIAS.sym} 560 -1000 0 0 {name=xBIAS1}
 C {lab_wire.sym} 640 -1000 2 1 {name=p13 sig_type=std_logic lab=AVDD}
 C {lab_wire.sym} 680 -1000 2 1 {name=p33 sig_type=std_logic lab=AGND}
 C {lab_wire.sym} 760 -1120 0 1 {name=p37 sig_type=std_logic lab=BP}
