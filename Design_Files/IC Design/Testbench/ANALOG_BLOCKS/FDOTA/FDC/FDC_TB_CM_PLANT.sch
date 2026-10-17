@@ -42,11 +42,11 @@ C {vdd.sym} 40 -800 0 0 {name=l4 lab=AVDD}
 C {gnd.sym} 40 -740 0 0 {name=l5 lab=0}
 C {capa.sym} 580 -1010 0 0 {name=CLP
 m=1
-value=40p
+value=\{CL_SET\}
 footprint=1206
 device="ceramic capacitor"}
 C {vsource.sym} 200 -770 0 0 {name=VVCM        value="dc \{VCM_SET\} ac 0"        savecurrent=false}
-C {vsource.sym} 200 -630 0 0 {name=VDIFF       value="dc \{VOSDC\} ac 1"          savecurrent=false}
+C {vsource.sym} 200 -630 0 0 {name=VDIFF       value="dc 0 ac 0"                savecurrent=false}
 C {lab_wire.sym} 360 -820 0 0 {name=p1 sig_type=std_logic lab=B}
 C {lab_wire.sym} 280 -1020 0 0 {name=p2 sig_type=std_logic lab=B}
 C {lab_wire.sym} 200 -820 0 0 {name=p3 sig_type=std_logic lab=VCM}
@@ -54,10 +54,11 @@ C {lab_wire.sym} 280 -1060 0 0 {name=p4 sig_type=std_logic lab=INP}
 C {lab_wire.sym} 200 -680 0 0 {name=p5 sig_type=std_logic lab=VDIFF}
 C {lab_wire.sym} 280 -980 0 0 {name=p6 sig_type=std_logic lab=INN}
 C {lab_wire.sym} 580 -1060 0 1 {name=p7 sig_type=std_logic lab=OUTP}
-C {devices/code_shown.sym} 80 -520 0 0 {name=MODELS
+C {devices/code_shown.sym} 80 90 0 0 {name=MODELS
 only_toplevel=true
 format="tcleval( @value )"
 value="
+* Nominal-only FDOTA design support; no PVT or Monte Carlo campaign.
 .include $::180MCU_MODELS/design.ngspice
 
 .param sw_stat_global=0
@@ -69,64 +70,62 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
 .lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
 
-.csparam PROC_ID=0
 "}
-C {devices/code_shown.sym} 880 -970 0 0 {name=NGSPICE only_toplevel=true
+C {devices/code_shown.sym} 1200 90 0 0 {name=NGSPICE only_toplevel=true
 value="
 .control
 destroy all
 save all
+set noaskquit
 set wr_vecnames
 set wr_singlescale
 option numdgt=15
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt
 
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.vcmfb_sweep.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/plant_ac.txt
 
-let avdd_run = 3.3
-let vcm_run  = avdd_run/2
-let vos_run  = 0
+alter @VAVDD[ACMAG]  = 0
+alter @VAVSS[ACMAG]  = 0
+alter @VVCM[ACMAG]   = 0
+alter @VDIFF[ACMAG]  = 0
 
-alter @VAVDD[DC] = $&avdd_run
-alter @VVCM[DC]  = $&vcm_run
-alter @VDIFF[DC] = $&vos_run
+alter @VCMFB[ACMAG]   = 1
+alter @VCMFB[ACPHASE] = 0
 
-alter @VVCM[ACMAG]  = 0
-alter @VDIFF[ACMAG] = 0
-alter @VAVDD[ACMAG] = 0
-alter @VAVSS[ACMAG] = 0
+ac dec 200 0.1 1G
 
-* VCMFB sweep
-dc VCMFBBIAS 0 $&avdd_run 1e-4
+let vcmfb_ac  = v(cmfb)-v(agnd)
+let voutp_ac  = v(outp)-v(agnd)
+let voutn_ac  = v(outn)-v(agnd)
+let voutcm_ac = (voutp_ac+voutn_ac)/2
 
-let sweep_vcmfb  = v(cmfb)-v(agnd)
-let sweep_voutp  = v(outp)-v(agnd)
-let sweep_voutn  = v(outn)-v(agnd)
-let sweep_voutcm = (sweep_voutp+sweep_voutn)/2
-let sweep_vod    = sweep_voutp-sweep_voutn
+let plant_ac   = voutcm_ac/vcmfb_ac
+let plant_real = real(plant_ac)
+let plant_imag = imag(plant_ac)
 
-setscale sweep_vcmfb
+setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.vcmfb_sweep.txt sweep_voutp sweep_voutn sweep_voutcm sweep_vod
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/plant_ac.txt plant_real plant_imag
 
 quit
 .endc
 "}
-C {devices/code_shown.sym} 80 -420 0 0 {name=SETUP only_toplevel=true
+C {devices/code_shown.sym} 640 90 0 0 {name=SETUP only_toplevel=true
 value="
 .param AVDD_SET=3.3
 .param AVSS_SET=0
 .param TEMP_SET=27
+.param CL_SET=10p
 .param VCM_SET=\{AVDD_SET/2\}
 
-.param VOSDC=0
-.param CMFB_BIAS=\{VCM_SET\}
+.param CMFB_OP=2.4832
 
 .temp \{TEMP_SET\}
 
-.options gmin=1e-12 rshunt=1e12 method=gear
-.nodeset v(B)=2.3 v(CMFB)=\{CMFB_BIAS\} v(OUTP)=\{VCM_SET\} v(OUTN)=\{VCM_SET\}
+.options gmin=1e-12 rshunt=1e12 method=gear plotwinsize=0
+.nodeset v(B)=2.3 v(CMFB)=\{CMFB_OP\}
++ v(OUTP)=\{VCM_SET\} v(OUTN)=\{VCM_SET\}
 "}
 C {vsource.sym} 40 -630 0 0 {name=VAVSS       value="dc \{AVSS_SET\} ac 0"       savecurrent=true}
 C {gnd.sym} 40 -600 0 0 {name=l11 lab=0}
@@ -149,7 +148,7 @@ C {lab_wire.sym} 560 -650 0 0 {name=p20 sig_type=std_logic lab=VDIFF}
 C {lab_wire.sym} 560 -790 0 0 {name=p21 sig_type=std_logic lab=VDIFF}
 C {capa.sym} 680 -1010 0 0 {name=CLN
 m=1
-value=40p
+value=\{CL_SET\}
 footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 680 -960 2 0 {name=CLN2 sig_type=std_logic lab=AGND}
@@ -157,7 +156,7 @@ C {lab_wire.sym} 480 -1100 0 1 {name=p22 sig_type=std_logic lab=OUTP}
 C {lab_wire.sym} 680 -1060 0 1 {name=p25 sig_type=std_logic lab=OUTN}
 C {lab_wire.sym} 480 -940 0 1 {name=p26 sig_type=std_logic lab=OUTN}
 C {lab_wire.sym} 380 -900 2 0 {name=p27 sig_type=std_logic lab=CMFB}
-C {vsource.sym} 360 -630 0 0 {name=VCMFBBIAS   value="dc \{CMFB_BIAS\} ac 0"      savecurrent=false}
+C {vsource.sym} 360 -630 0 0 {name=VCMFB       value="dc \{CMFB_OP\} ac 1"        savecurrent=false}
 C {lab_wire.sym} 360 -580 2 0 {name=VCMFB2 sig_type=std_logic lab=AGND
 value="dc \{CMFB_BIAS\} ac 0"}
 C {lab_wire.sym} 360 -680 0 0 {name=p34 sig_type=std_logic lab=CMFB}

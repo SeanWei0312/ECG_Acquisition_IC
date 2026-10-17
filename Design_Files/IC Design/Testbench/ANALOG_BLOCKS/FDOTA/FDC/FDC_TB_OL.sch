@@ -58,7 +58,7 @@ C {vdd.sym} 40 -820 0 0 {name=l4 lab=AVDD}
 C {gnd.sym} 40 -760 0 0 {name=l5 lab=0}
 C {capa.sym} 580 -1030 0 0 {name=CLP
 m=1
-value=40p
+value=\{CL_SET\}
 footprint=1206
 device="ceramic capacitor"}
 C {vsource.sym} 200 -790 0 0 {name=VVCM        value="dc \{VCM_SET\} ac 0"        savecurrent=false}
@@ -70,10 +70,11 @@ C {lab_wire.sym} 280 -1080 0 0 {name=p4 sig_type=std_logic lab=INP}
 C {lab_wire.sym} 200 -700 0 0 {name=p5 sig_type=std_logic lab=VDIFF}
 C {lab_wire.sym} 280 -1000 0 0 {name=p6 sig_type=std_logic lab=INN}
 C {lab_wire.sym} 580 -1080 0 1 {name=p7 sig_type=std_logic lab=OUTP}
-C {devices/code_shown.sym} 80 -540 0 0 {name=MODELS
+C {devices/code_shown.sym} 80 90 0 0 {name=MODELS
 only_toplevel=true
 format="tcleval( @value )"
 value="
+* Nominal-only FDOTA design support; no PVT or Monte Carlo campaign.
 .include $::180MCU_MODELS/design.ngspice
 
 .param sw_stat_global=0
@@ -85,9 +86,8 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
 .lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
 
-.csparam PROC_ID=0
 "}
-C {devices/code_shown.sym} 1120 -2650 0 0 {name=NGSPICE
+C {devices/code_shown.sym} 1200 90 0 0 {name=NGSPICE
 only_toplevel=true
 value="
 
@@ -96,27 +96,25 @@ value="
 destroy all
 save all
 
+set noaskquit
 set wr_vecnames
 set wr_singlescale
 
 option numdgt=15
 
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt
-
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_op.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_diff_ac.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_offset.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_noise.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_noise_integrated.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_diff_tran.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_diff_cm_disturbance.txt
-
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_op.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_diff_ac.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_offset.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_noise.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_noise_integrated.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_diff_tran.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_diff_cm_disturbance.txt
 
 let avdd_run = 3.3
 let vcm_run  = avdd_run/2
 let vos_run  = 0
-
 
 * OP
 
@@ -146,8 +144,7 @@ let op_idd     = -vavdd#branch
 let op_power   = -(v(avdd)*vavdd#branch+v(agnd)*vavss#branch)
 let op_cmfb    = v(cmfb)-v(agnd)
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_op.txt op_vdd op_vinp op_vinn op_vid op_voutp op_voutn op_voutcm op_vod op_ibias op_idd op_power op_cmfb
-
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_op.txt op_vdd op_vinp op_vinn op_vid op_voutp op_voutn op_voutcm op_vod op_ibias op_idd op_power op_cmfb
 
 * Differential AC
 
@@ -170,8 +167,7 @@ let ad_imag = imag(ad_ac)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_diff_ac.txt ad_real ad_imag
-
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_diff_ac.txt ad_real ad_imag
 
 * Offset
 
@@ -198,8 +194,7 @@ let off_cmfb   = v(cmfb)-v(agnd)
 
 setscale off_vdiff
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_offset.txt off_vinp off_vinn off_voutp off_voutn off_voutcm off_vod off_idd off_cmfb
-
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_offset.txt off_vinp off_vinn off_voutp off_voutn off_voutcm off_vod off_idd off_cmfb
 
 * Integrated noise
 
@@ -219,9 +214,8 @@ setplot noise2
 let input_noise_Vrms  = inoise_total
 let output_noise_Vrms = onoise_total
 
-echo f_low_Hz f_high_Hz input_noise_Vrms output_noise_Vrms > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_noise_integrated.txt
-echo 0.05 150 $&input_noise_Vrms $&output_noise_Vrms >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_noise_integrated.txt
-
+echo f_low_Hz f_high_Hz input_noise_Vrms output_noise_Vrms > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_noise_integrated.txt
+echo 0.05 150 $&input_noise_Vrms $&output_noise_Vrms >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_noise_integrated.txt
 
 * Noise density
 
@@ -234,8 +228,7 @@ let output_noise_VrtHz = onoise_spectrum
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_noise.txt input_noise_VrtHz output_noise_VrtHz
-
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_noise.txt input_noise_VrtHz output_noise_VrtHz
 
 * Differential-step CM disturbance
 
@@ -270,21 +263,21 @@ meas tran cm_disturbance MAX tr_cm_delta FROM=1u TO=31.1u
 
 setscale time
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_diff_tran.txt tr_vdiff tr_vid tr_voutp tr_voutn tr_voutcm tr_vod tr_cm_base tr_cm_delta tr_idd tr_cmfb
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_diff_tran.txt tr_vdiff tr_vid tr_voutp tr_voutn tr_voutcm tr_vod tr_cm_base tr_cm_delta tr_idd tr_cmfb
 
-echo cm_base_V cm_disturbance_V > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_diff_cm_disturbance.txt
-echo $&cm_base $&cm_disturbance >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/NOM.Result_txt/NOM.ol_diff_cm_disturbance.txt
-
+echo cm_base_V cm_disturbance_V > /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_diff_cm_disturbance.txt
+echo $&cm_base $&cm_disturbance >> /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Result_txt/ol_diff_cm_disturbance.txt
 
 quit
 
 .endc
 "}
-C {devices/code_shown.sym} 80 -440 0 0 {name=SETUP only_toplevel=true
+C {devices/code_shown.sym} 640 90 0 0 {name=SETUP only_toplevel=true
 value="
 .param AVDD_SET=3.3
 .param AVSS_SET=0
 .param TEMP_SET=27
+.param CL_SET=40p
 .param VCM_SET=\{AVDD_SET/2\}
 
 .param VOSDC=0
@@ -316,7 +309,7 @@ C {lab_wire.sym} 560 -670 0 0 {name=p20 sig_type=std_logic lab=VDIFF}
 C {lab_wire.sym} 560 -810 0 0 {name=p21 sig_type=std_logic lab=VDIFF}
 C {capa.sym} 680 -1030 0 0 {name=CLN
 m=1
-value=40p
+value=\{CL_SET\}
 footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 680 -980 2 0 {name=CLN2 sig_type=std_logic lab=AGND}

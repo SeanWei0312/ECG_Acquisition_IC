@@ -1,13 +1,21 @@
-% CMFB nominal analysis
+%% CMFB nominal design-support analysis
+% Internal diagnostics only. FDOTA_Analyze owns integrated PVT/MC reporting.
+% Run the corresponding support testbenches before using these plots.
+% Testbenches: CMFB_TB_OL_sch and CMFB_TB_CL_sch,
+% directly under Testbench/.../FDOTA/CMFB.
 clear; clc; close all;
 
 scriptDir = fileparts(mfilename('fullpath'));
-baseDir = fullfile(scriptDir,'NOM.Result_txt');
+baseDir = fullfile(scriptDir,'Result_txt');
 plotDir = fullfile(scriptDir,'Plots');
-if ~exist(plotDir,'dir'), mkdir(plotDir); end
+if ~isfolder(plotDir)
+    mkdir(plotDir);
+end
+
+%% Nominal fixture settings
 
 VOUT_CM_TARGET = 1.65;
-CLOAD_pF = 10;
+CLOAD_pF = 10; % Error-amplifier fixture load, not FDOTA output load
 VIN_DIFF_V = 0;
 REG_ERROR_LIMIT = 10e-3;
 SETTLE_ERROR = 1e-3;
@@ -15,7 +23,7 @@ VCMFB_LIMIT = [0.3 3.0];
 MIN_USEFUL_LOOP_GAIN_DB = 20;
 
 %% Operating point
-D = numdata(fullfile(baseDir,'NOM.cl_op.txt'));
+D = numdata(fullfile(baseDir,'cl_op.txt'));
 op = D(end,:);
 
 vdd_V     = op(2);
@@ -28,7 +36,7 @@ idd_A     = op(8);
 power_W   = op(9);
 
 %% Open-loop response
-D = numdata(fullfile(baseDir,'NOM.ol_ac.txt'));
+D = numdata(fullfile(baseDir,'ol_ac.txt'));
 f_Hz = D(:,1);
 Aloop = D(:,2) + 1j*D(:,3);
 [gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f_Hz,Aloop);
@@ -52,10 +60,10 @@ phaseUGF_deg = interpAtFreq(f_Hz,phase_deg,ugf_Hz);
 addCursor(ugf_Hz,phaseUGF_deg,sprintf('PM: %.4g deg',pm_deg));
 ylabel('Loop phase (deg)');
 stylePlot('Frequency (Hz)','CMFB Open-Loop Response');
-saveFig(plotDir,'NOM.ol_ac.png');
+saveFig(plotDir,'ol_ac.png');
 
 %% Closed-loop DC
-D = numdata(fullfile(baseDir,'NOM.cl_dc.txt'));
+D = numdata(fullfile(baseDir,'cl_dc.txt'));
 clRef_V = D(:,1);
 clVoutcm_V = D(:,2);
 clIdeal_V = D(:,3);
@@ -87,10 +95,10 @@ end
 ylabel('VCMFB,IN (V)');
 legend('VCMFB,IN','Ideal','Location','best');
 stylePlot('VCMFB,REF (V)','CMFB Closed-Loop DC');
-saveFig(plotDir,'NOM.cl_dc.png');
+saveFig(plotDir,'cl_dc.png');
 
 %% Closed-loop transient
-D = numdata(fullfile(baseDir,'NOM.cl_tran.txt'));
+D = numdata(fullfile(baseDir,'cl_tran.txt'));
 
 time_s     = D(:,1);
 trRef_V    = D(:,2);
@@ -115,10 +123,9 @@ addCursor(tHigh_s*1e6,interp1(time_s*1e6,trVoutcm_V,tHigh_s*1e6,'linear'), ...
 ylabel('VCMFB,IN (V)');
 legend('Reference','VCMFB,IN','Location','best');
 stylePlot('Time (us)','CMFB Closed-Loop Transient');
-saveFig(plotDir,'NOM.cl_tran.png');
+saveFig(plotDir,'cl_tran.png');
 
-
-%% Summary table
+%% Nominal design-support terminal report
 rows = [
     "Set conditions",        "",      ""
     "AVDD",                  "V",     fmt(vdd_V)
@@ -148,10 +155,11 @@ rows = [
     "tsettle high",          "ns",    fmt(settlingHigh_s*1e9)
 ];
 
-Result = table(rows(:,1),rows(:,2),rows(:,3), ...
+diagnostics = table(rows(:,1),rows(:,2),rows(:,3), ...
     'VariableNames',{'Parameter','Unit','Value'});
-disp(Result);
-writetable(Result,fullfile(scriptDir,'NOM.CMFB_summary.csv'));
+fprintf('\nCMFB DESIGN-SUPPORT SUMMARY\n\n');
+disp(diagnostics);
+% Nominal design diagnostics only; integrated signoff belongs to FDOTA.
 
 if idd_A < 1e-6
     warning('CMFB IDD is %.3g A. This is far below the expected bias current.',idd_A);
@@ -162,8 +170,12 @@ if abs(voutcm_V - VOUT_CM_TARGET) > REG_ERROR_LIMIT
         voutcm_V,VOUT_CM_TARGET);
 end
 
-%% Functions
+%% Local data and measurement helpers
 function D = numdata(file)
+    if ~isfile(file)
+        error('CMFB_Analyze:MissingExport', ...
+            'Run the nominal design-support testbench first: %s',file);
+    end
     D = readmatrix(file,'FileType','text');
     D = D(any(isfinite(D),2),:);
     D = D(:,any(isfinite(D),1));

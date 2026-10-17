@@ -166,22 +166,9 @@ FDC supplies the differential forward path. Its isolated characterization uses a
 
 ![FDC circuit schematic](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/FDOTA/FDC/FDC.png)
 
-| Isolated-bench quantity | Unit | Archived NOM |
-| :--- | :--- | :--- |
-| Differential DC gain | dB | 93.377 |
-| Differential UGF | MHz | 14.571 |
-| Differential PM | ° | 77.084 |
-| Input noise, 1-150 Hz | µVrms | 2.439 |
-| Required VCMFB | V | 2.483 |
-| Plant gain | V/V | 762.583 |
+FDC nominal testbenches and MATLAB diagnostics support FDOTA sizing and debugging. Standalone fixture results are not project-level verification results. Integrated FDOTA nominal, PVT, and MC results are reported in Section 3.2.
 
-The archived summary labels 10 pF, while the current differential FDC schematic specifies 40 pF. This provenance mismatch is retained explicitly; rerun isolated FDC characterization before treating these older results as current-load signoff.
-
-The isolated FDC gain/phase trace belongs to its own testbench. The FDOTA section above contains the integrated PVT limits.
-
-![FDC nominal gain and phase](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.diff_ac.png)
-
-[Detailed design, measurements, plots, and source exports](Report/ANALOG_BLOCKS/FDOTA_Report.md).
+[Detailed circuit sizing and integrated results](Report/ANALOG_BLOCKS/FDOTA_Report.md).
 
 ### 3.4 CMFB — common-mode regulation
 
@@ -191,20 +178,9 @@ CMFB senses the average output and adjusts the FDC load bias. The isolated bench
 
 ![CMFB circuit schematic](Design_Files/IC%20Design/Schematic/ANALOG_BLOCKS/FDOTA/CMFB/CMFB.png)
 
-| Isolated-bench quantity | Unit | Archived NOM |
-| :--- | :--- | :--- |
-| DC gain | dB | 45.137 |
-| UGF | MHz | 967.213 |
-| PM | ° | 71.9 |
-| Valid VCMFB,REF | V | 1.05-3.01 |
-| tsettle low | ns | 5.2 |
-| tsettle high | ns | 5.2 |
+CMFB nominal testbenches and MATLAB diagnostics support FDOTA sizing and debugging. Standalone fixture results are not project-level verification results. Integrated FDOTA nominal, PVT, and MC results are reported in Section 3.2.
 
-The isolated CMFB gain/phase trace belongs to its own testbench. The FDOTA section above contains the integrated PVT limits.
-
-![CMFB nominal gain and phase](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Plots/NOM.ol_ac.png)
-
-[Detailed design, measurements, plots, and source exports](Report/ANALOG_BLOCKS/FDOTA_Report.md).
+[Detailed circuit sizing and integrated results](Report/ANALOG_BLOCKS/FDOTA_Report.md).
 
 ## 4. ECG signal-conditioning blocks
 
@@ -448,7 +424,9 @@ The OTA reports retain the step-by-step $g_m/I_D$ sizing flow: specification →
 - [Device characterization and lookup plots](Report/SIZING/Gm_Id_Report.md)
 - [Integrated AFE verification scope](Report/AFE_BLOCKS/AFE_Report.md)
 
-Regenerate netlists after editing schematics. OL/CL amplifier benches each have five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files and one `*_MC.sch`, which runs MM/GL/FULL separately. BIAS and MIRROR are under `POWER_BLOCKS` in schematic, testbench, and measurement folders.
+Regenerate netlists after editing schematics. Integrated SEOTA and FDOTA OL/CL verification benches each have five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files and one `*_MC.sch`, which runs MM/GL/FULL separately. BIAS and MIRROR are under `POWER_BLOCKS` in schematic, testbench, and measurement folders.
+
+FDC and CMFB support testbenches are directly inside their respective `Testbench/ANALOG_BLOCKS/FDOTA/FDC/` and `CMFB/` folders. They have no `NOM` filename qualifier or PVT/MC campaign. Their analyzers read `Result_txt/`, print design diagnostics, and generate local plots. See the [FDC directory guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/README.md) and [CMFB directory guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/README.md). Standalone fixture outputs are not reported as block verification results.
 
 Run ngspice to completion before invoking MATLAB. The analyzers read existing files; they do not launch simulations. Detailed CSVs and block reports are the source for the summaries above. No result files, specifications, circuits, or analyzers were changed for this document.
 
@@ -456,7 +434,6 @@ Run ngspice to completion before invoking MATLAB. The analyzers read existing fi
 
 The project has a documented transistor-level AFE hierarchy, numerical block verification, and nominal functional traces. The current evidence supports continued AFE implementation and integration work; it does not establish extracted-layout or silicon performance.
 
-1. Refresh the isolated FDC characterization to resolve its recorded load mismatch.
-2. Simulate the integrated AFE at every programmed gain with the intended output loads.
-3. Complete layout and extraction, then repeat the existing acceptance limits.
-4. Track phase margin, offset, noise, usable swing, and settling across the extracted hierarchy.
+1. Simulate the integrated AFE at every programmed gain with the intended output loads.
+2. Complete layout and extraction, then repeat the existing acceptance limits.
+3. Track phase margin, offset, noise, usable swing, and settling across the extracted hierarchy.

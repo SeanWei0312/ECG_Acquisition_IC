@@ -23,7 +23,7 @@ The repository contains transistor-level Xschem designs, ngspice verification te
 | Feedback | [`RLD`](Design_Files/IC%20Design/Schematic/AFE_BLOCKS/RLD/) | Input common-mode suppression | Mains/common-mode reduction; see current report |
 | Support | [`BIAS`](Design_Files/IC%20Design/Schematic/POWER_BLOCKS/BIAS/) / [`MIRROR`](Design_Files/IC%20Design/Schematic/POWER_BLOCKS/MIRROR/) | Master reference and bias distribution | $40\,\mu\text{A}$ target |
 
-The verified block-level gain plan gives nominal AFE signal-path gains from $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$).
+The nominal block gain plan gives AFE signal-path gains from $480$ to $3840\text{ V/V}$ ($53.6$ to $71.7\text{ dB}$). These are design values, not measured integrated-chain gains.
 
 ## Verification status
 
@@ -40,6 +40,8 @@ The verified block-level gain plan gives nominal AFE signal-path gains from $480
 BIAS additionally includes a 50,630-point DC grid. PGA covers four gains; FDBUF covers four loads. All seven measured blocks have 200/200 valid samples and 100% measured yield in each MM/GL/FULL campaign at nominal supply and temperature. Detailed counts and limits are listed in the block reports. Integrated AFE verification remains pending.
 
 Current values and specifications are summarized in the [project report](Project_Report.md). Blank specification fields are report-only. All results are pre-layout schematic simulations.
+
+FDC and CMFB are FDOTA design-support circuits, not separate PVT/MC verification campaigns. Their MATLAB scripts retain terminal diagnostics and plots; Markdown reports present their schematics and sizing, with simulation results reported for the integrated FDOTA only.
 
 ## Repository layout
 
@@ -124,13 +126,23 @@ ECG_Acquisition_IC/
 Run the analyzers from the repository root after generating the corresponding ngspice TXT exports:
 
 ```bash
-matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','BIAS')); BIAS_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','POWER_BLOCKS','BIAS')); BIAS_Analyze"
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','SEOTA')); SEOTA_Analyze"
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','FDOTA')); FDOTA_Analyze"
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','INA_RLD')); INA_RLD_Analyze"
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','LPF')); LPF_Analyze"
 matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','PGA')); PGA_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','AFE_BLOCKS','FDBUF')); FDBUF_Analyze"
 ```
+
+FDOTA design-support diagnostics:
+
+```bash
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','FDOTA','FDC')); FDC_Analyze"
+matlab -batch "addpath(fullfile(pwd,'Measurement_Results','IC_Simulation','ANALOG_BLOCKS','FDOTA','CMFB')); CMFB_Analyze"
+```
+
+The [FDC guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/README.md) and [CMFB guide](Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/README.md) list the required support testbenches. Their filenames have no `NOM` suffix; exports use `Result_txt/`, and generated figures use `Plots/`. Historical outputs are preserved in `Archive/` and are not current verification evidence.
 
 Device-characterization utilities:
 
@@ -143,8 +155,7 @@ Each analyzer keeps calculations in double precision and applies unit scaling on
 
 ## Next steps
 
-1. Complete FDBUF reporting and full-chain AFE verification.
+1. Verify the integrated AFE at every gain setting and intended output load.
 2. Implement matching-critical layout, followed by DRC and LVS.
 3. Run extracted PVT and selected FULL Monte Carlo verification.
 4. Prepare the evaluation PCB and laboratory characterization plan.
-5. Complete integrated AFE verification under its intended output load.

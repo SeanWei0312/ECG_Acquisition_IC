@@ -1,21 +1,30 @@
-% FDC nominal analysis
+%% FDC nominal design-support analysis
+% Internal diagnostics only. FDOTA_Analyze owns integrated PVT/MC reporting.
+% Run the corresponding support testbenches before using these plots.
+% Testbenches: FDC_TB_OL_sch, FDC_TB_VCMFB_SWEEP_sch,
+% and FDC_TB_CM_PLANT_sch, directly under Testbench/.../FDOTA/FDC.
 clear; clc; close all;
 
 scriptDir = fileparts(mfilename('fullpath'));
-baseDir = fullfile(scriptDir,'NOM.Result_txt');
+baseDir = fullfile(scriptDir,'Result_txt');
 plotDir = fullfile(scriptDir,'Plots');
-if ~exist(plotDir,'dir'), mkdir(plotDir); end
+if ~isfolder(plotDir)
+    mkdir(plotDir);
+end
+
+%% Nominal fixture settings
 
 VOUT_CM_TARGET = 1.65;
 VIN_CM_V = 1.65;
-CLOAD_PER_OUTPUT_pF = 10;
+CLOAD_PER_OUTPUT_pF = 40; % Differential and VCMFB fixtures
+PLANT_CLOAD_PER_OUTPUT_pF = 10; % Separate common-mode plant fixture
 VOUT_LIMIT = [0.3 3.0];
 NOISE_BAND_HZ = [1 150];
 NOISE_MARK_HZ = [1 60 150];
 VCMFB_WARN_ERROR = 0.5;
 
 %% Operating point
-op = numdata(fullfile(baseDir,'NOM.ol_op.txt'));
+op = numdata(fullfile(baseDir,'ol_op.txt'));
 op = op(end,end-11:end);
 
 vdd_V      = op(1);
@@ -28,7 +37,7 @@ idd_A      = op(10);
 power_W    = op(11);
 
 %% Differential open-loop gain
-D = numdata(fullfile(baseDir,'NOM.ol_diff_ac.txt'));
+D = numdata(fullfile(baseDir,'ol_diff_ac.txt'));
 f_Hz = D(:,1);
 Ad = D(:,2) + 1j*D(:,3);
 [gain_dB,phase_deg,ugf_Hz,pm_deg,f3dB_Hz] = acMetrics(f_Hz,Ad);
@@ -49,10 +58,10 @@ phaseUGF_deg = interpAtFreq(f_Hz,phase_deg,ugf_Hz);
 addCursor(ugf_Hz,phaseUGF_deg,sprintf('PM: %.4g deg',pm_deg));
 ylabel('Differential phase (deg)');
 stylePlot('Frequency (Hz)','FDC Differential Open-Loop Response');
-saveFig(plotDir,'NOM.diff_ac.png');
+saveFig(plotDir,'diff_ac.png');
 
 %% Input offset
-D = numdata(fullfile(baseDir,'NOM.ol_offset.txt'));
+D = numdata(fullfile(baseDir,'ol_offset.txt'));
 vinDiff_V = D(:,1);
 voutDiff_V = D(:,7);
 offset_V = zeroCross(vinDiff_V,voutDiff_V,0);
@@ -63,10 +72,10 @@ yline(0,'--');
 addCursor(offset_V*1e3,0,sprintf('Vos: %.4g mV',offset_V*1e3));
 ylabel('Differential output (V)');
 stylePlot('Differential input (mV)','FDC Input Offset');
-saveFig(plotDir,'NOM.offset.png');
+saveFig(plotDir,'offset.png');
 
 %% Input-referred noise, 1 Hz to 150 Hz
-D = numdata(fullfile(baseDir,'NOM.ol_noise.txt'));
+D = numdata(fullfile(baseDir,'ol_noise.txt'));
 noiseFreq_Hz = D(:,1);
 inputNoise_VrtHz = D(:,2);
 noiseBand = noiseFreq_Hz >= NOISE_BAND_HZ(1) & noiseFreq_Hz <= NOISE_BAND_HZ(2);
@@ -82,10 +91,10 @@ for fMark_Hz = NOISE_MARK_HZ
 end
 ylabel('Input noise (nV/\surdHz)');
 stylePlot('Frequency (Hz)','FDC Input-Referred Noise, 1 Hz to 150 Hz');
-saveFig(plotDir,'NOM.noise.png');
+saveFig(plotDir,'noise.png');
 
 %% Output voltages versus VCMFB
-D = numdata(fullfile(baseDir,'NOM.vcmfb_sweep.txt'));
+D = numdata(fullfile(baseDir,'vcmfb_sweep.txt'));
 vcmfb_V = D(:,1);
 voutpSweep_V = D(:,2);
 voutnSweep_V = D(:,3);
@@ -100,8 +109,6 @@ if abs(requiredVCMFBErr_V) >= VCMFB_WARN_ERROR
     warning('FDC Required VCMFB is approximate: VOUT,CM error = %.6g V.', ...
         requiredVCMFBErr_V);
 end
-
-
 
 figure;
 yyaxis left;
@@ -125,10 +132,10 @@ end
 
 legend('VOUT,CM','Target VOUT,CM','VOUT,diff','Location','best');
 stylePlot('VCMFB (V)','FDC Outputs versus VCMFB');
-saveFig(plotDir,'NOM.vcmfb_sweep.png');
+saveFig(plotDir,'vcmfb_sweep.png');
 
 %% Plant gain at 1 Hz
-D = numdata(fullfile(baseDir,'NOM.plant_ac.txt'));
+D = numdata(fullfile(baseDir,'plant_ac.txt'));
 plantFreq_Hz = D(:,1);
 Aplant = D(:,2) + 1j*D(:,3);
 plantGain1Hz_VV = abs(interpAtFreq(plantFreq_Hz,Aplant,1));
@@ -137,9 +144,9 @@ plantGain1Hz_VV = abs(interpAtFreq(plantFreq_Hz,Aplant,1));
 % For the standalone, open-loop FDC, use the pre-step output CM as the
 % reference: max(abs(VOUT,CM(t) - VOUT,CM,pre-step)).  This is distinct
 % from the closed-loop FDOTA metric, which compares VOUT,CM with VREF.
-% NOM.ol_diff_tran.txt columns are time, VDIFF, Vin,diff, VOUTP, VOUTN,
+% ol_diff_tran.txt columns are time, VDIFF, Vin,diff, VOUTP, VOUTN,
 % VOUT,CM, VOUT,diff, VOUT,CM baseline, |CM delta|, IDD, and CMFB.
-fdcDiffTranFile = fullfile(baseDir,'NOM.ol_diff_tran.txt');
+fdcDiffTranFile = fullfile(baseDir,'ol_diff_tran.txt');
 D = numdata(fdcDiffTranFile);
 if size(D,2) ~= 11
     error('FDC_Analyze:DiffTranColumnCount', ...
@@ -191,14 +198,15 @@ addCursor(diffStepTime_s(worstCmIndex)*1e6, ...
     sprintf('Worst |CM error|: %.4g mV',diffStepCmDisturbance_V*1e3));
 ylabel('VOUT,CM - pre-step VOUT,CM (mV)');
 stylePlot('Time (us)','');
-saveFig(plotDir,'NOM.diff_step_cm_disturbance.png');
+saveFig(plotDir,'diff_step_cm_disturbance.png');
 
-%% Summary table
+%% Nominal design-support terminal report
 rows = [
     "Set conditions",        "",      ""
     "AVDD",                  "V",     fmt(vdd_V)
     "Bias current",          "uA",    fmt(ibias_A*1e6)
-    "CLoad per output",      "pF",    fmt(CLOAD_PER_OUTPUT_pF)
+    "Differential load per output", "pF", fmt(CLOAD_PER_OUTPUT_pF)
+    "Plant load per output", "pF", fmt(PLANT_CLOAD_PER_OUTPUT_pF)
     "Vin,cm",                "V",     fmt(VIN_CM_V)
     "Vout,cm target",        "V",     fmt(VOUT_CM_TARGET)
     "",                      "",      ""
@@ -223,13 +231,18 @@ rows = [
     "Input noise, 1-150 Hz", "uVrms", fmt(inputNoise_Vrms*1e6)
 ];
 
-Result = table(rows(:,1),rows(:,2),rows(:,3), ...
+diagnostics = table(rows(:,1),rows(:,2),rows(:,3), ...
     'VariableNames',{'Parameter','Unit','Value'});
-disp(Result);
-writetable(Result,fullfile(scriptDir,'NOM.FDC_summary.csv'));
+fprintf('\nFDC DESIGN-SUPPORT SUMMARY\n\n');
+disp(diagnostics);
+% Nominal design diagnostics only; integrated signoff belongs to FDOTA.
 
-%% Functions
+%% Local data and measurement helpers
 function D = numdata(file)
+    if ~isfile(file)
+        error('FDC_Analyze:MissingExport', ...
+            'Run the nominal design-support testbench first: %s',file);
+    end
     D = readmatrix(file,'FileType','text');
     D = D(any(isfinite(D),2),:);
     D = D(:,any(isfinite(D),1));

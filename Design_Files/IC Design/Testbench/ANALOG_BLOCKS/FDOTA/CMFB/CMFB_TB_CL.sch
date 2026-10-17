@@ -28,16 +28,17 @@ C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {vdd.sym} 560 -1640 0 0 {name=l2 lab=AVDD}
 C {capa.sym} 720 -1550 0 0 {name=CL
 m=1
-value=10p
+value=\{CL_SET\}
 footprint=1206
 device="ceramic capacitor"}
 C {lab_wire.sym} 460 -1580 0 0 {name=p2 sig_type=std_logic lab=B}
 C {lab_wire.sym} 460 -1540 0 0 {name=p4 sig_type=std_logic lab=CMFB_REF}
 C {lab_wire.sym} 720 -1580 0 1 {name=p7 sig_type=std_logic lab=CMFB_OUT}
-C {devices/code_shown.sym} 80 -950 0 0 {name=MODELS
+C {devices/code_shown.sym} 80 90 0 0 {name=MODELS
 only_toplevel=true
 format="tcleval( @value )"
 value="
+* Nominal-only FDOTA design support; no PVT or Monte Carlo campaign.
 .include $::180MCU_MODELS/design.ngspice
 
 .param sw_stat_global=0
@@ -49,22 +50,22 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
 .lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
 
-.csparam PROC_ID=0
 "}
-C {devices/code_shown.sym} 640 -950 0 0 {name=NGSPICE only_toplevel=true
+C {devices/code_shown.sym} 1200 90 0 0 {name=NGSPICE only_toplevel=true
 value="
 .control
 destroy all
 save all
+set noaskquit
 set wr_vecnames
 set wr_singlescale
 option numdgt=15
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt
 
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.cl_op.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.cl_dc.txt
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.cl_tran.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/cl_op.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/cl_dc.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/cl_tran.txt
 
 let avdd_run = 3.3
 let vcm_run  = avdd_run/2
@@ -89,7 +90,7 @@ let op_ibias   = 40e-6
 let op_idd     = -vavdd#branch
 let op_power   = op_vdd*op_idd
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.cl_op.txt op_vdd op_ref op_voutcm op_vcmfb op_error op_ibias op_idd op_power
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/cl_op.txt op_vdd op_ref op_voutcm op_vcmfb op_error op_ibias op_idd op_power
 
 * Closed-loop DC
 dc VREF 0 3.3 0.01
@@ -102,7 +103,7 @@ let cl_error   = cl_voutcm-cl_ref
 
 setscale cl_ref
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.cl_dc.txt cl_voutcm cl_ideal cl_vcmfb cl_error
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/cl_dc.txt cl_voutcm cl_ideal cl_vcmfb cl_error
 
 reset
 save all
@@ -117,16 +118,17 @@ let tr_error   = tr_voutcm-tr_ref
 
 setscale time
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.cl_tran.txt tr_ref tr_voutcm tr_vcmfb tr_error
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/cl_tran.txt tr_ref tr_voutcm tr_vcmfb tr_error
 
 quit
 .endc
 "}
-C {devices/code_shown.sym} 80 -620 0 0 {name=SETUP only_toplevel=true
+C {devices/code_shown.sym} 640 90 0 0 {name=SETUP only_toplevel=true
 value="
 .param AVDD_SET=3.3
 .param AVSS_SET=0
 .param TEMP_SET=27
+.param CL_SET=10p
 
 .param VCM_REF_DC=\{AVDD_SET/2\}
 .param VOUT_CM_BIAS=\{AVDD_SET/2\}

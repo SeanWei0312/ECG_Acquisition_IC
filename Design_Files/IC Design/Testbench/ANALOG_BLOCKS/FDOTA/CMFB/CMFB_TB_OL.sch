@@ -43,7 +43,7 @@ C {vdd.sym} 220 -1020 0 0 {name=l4 lab=AVDD}
 C {gnd.sym} 220 -960 0 0 {name=l5 lab=0}
 C {capa.sym} 740 -1210 0 0 {name=CL
 m=1
-value=10p
+value=\{CL_SET\}
 footprint=1206
 device="ceramic capacitor"}
 C {vsource.sym} 380 -990 0 0 {name=VVCM              value="dc \{VCM_SET\} ac 0"                savecurrent=false}
@@ -55,10 +55,11 @@ C {lab_wire.sym} 480 -1280 0 0 {name=p4 sig_type=std_logic lab=CMFB_IN}
 C {lab_wire.sym} 380 -900 0 0 {name=p5 sig_type=std_logic lab=VDIFF}
 C {lab_wire.sym} 480 -1200 0 0 {name=p6 sig_type=std_logic lab=CMFB_REF}
 C {lab_wire.sym} 740 -1240 0 1 {name=p7 sig_type=std_logic lab=CMFB_OUT}
-C {devices/code_shown.sym} 80 -670 0 0 {name=MODELS
+C {devices/code_shown.sym} 80 90 0 0 {name=MODELS
 only_toplevel=true
 format="tcleval( @value )"
 value="
+* Nominal-only FDOTA design support; no PVT or Monte Carlo campaign.
 .include $::180MCU_MODELS/design.ngspice
 
 .param sw_stat_global=0
@@ -70,20 +71,20 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice cap_mim
 .lib $::180MCU_MODELS/sm141064.ngspice bjt_typical
 
-.csparam PROC_ID=0
 "}
-C {devices/code_shown.sym} 840 -670 0 0 {name=NGSPICE only_toplevel=true
+C {devices/code_shown.sym} 1200 90 0 0 {name=NGSPICE only_toplevel=true
 value="
 .control
 destroy all
 save all
+set noaskquit
 set wr_vecnames
 set wr_singlescale
 option numdgt=15
 
-shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt
+shell mkdir -p /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt
 
-shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.ol_ac.txt
+shell rm -f /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/ol_ac.txt
 
 let avdd_run = 3.3
 let vcm_run  = avdd_run/2
@@ -109,16 +110,17 @@ let loop_imag = imag(loop_ac)
 
 setscale frequency
 
-wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/NOM.Result_txt/NOM.ol_ac.txt loop_real loop_imag
+wrdata /foss/designs/ECG_Acquisition_IC/Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Result_txt/ol_ac.txt loop_real loop_imag
 
 quit
 .endc
 "}
-C {devices/code_shown.sym} 80 -380 0 0 {name=SETUP only_toplevel=true
+C {devices/code_shown.sym} 640 90 0 0 {name=SETUP only_toplevel=true
 value="
 .param AVDD_SET=3.3
 .param AVSS_SET=0
 .param TEMP_SET=27
+.param CL_SET=10p
 
 .param VCM_SET=\{AVDD_SET/2\}
 .param VOUT_CM_BIAS=\{AVDD_SET/2\}

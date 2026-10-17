@@ -110,7 +110,7 @@ The FDC schematic shows the symmetric signal paths and the matched compensation 
 
 ### 3.1 Design targets and sizing flow
 
-The nominal specification is the design-stage target. The PVT specification is the formal 45-corner signoff limit.
+These targets allocate the FDC design within the integrated FDOTA. PVT requirements apply to the complete FDOTA, not to a separate FDC verification campaign.
 
 | Quantity | Design target | Nominal specification | PVT specification |
 | :--- | ---: | ---: | ---: |
@@ -125,7 +125,7 @@ The nominal specification is the design-stage target. The PVT specification is t
 | Total integrated current | 2.0 mA | $\le2.0$ mA | $\le2.5$ mA |
 | FDC bias reference | 40 µA | 40 µA nominal | $40\pm10$ µA |
 
-The current FDC differential and integrated FDOTA testbenches instantiate 40 pF at each output. A legacy `NOM.FDC_summary.csv` condition row still labels 10 pF; this report follows the schematic value. The separate common-mode plant test uses 10 pF and is not the differential-load signoff bench.
+The differential design-support fixture and integrated FDOTA use 40 pF per output. The separate common-mode plant fixture uses 10 pF. These nominal fixtures support sizing and control-polarity checks; only integrated FDOTA results are reported.
 
 The 10-MHz UGF target is 25% above the PVT minimum. The implemented integrated nominal result is 14.586 MHz, leaving additional transistor-level margin.
 
@@ -393,47 +393,6 @@ The 67.82° two-pole result is conservative because it excludes the intended LHP
 
 The full transistor-level return ratio is therefore used for signoff. Output swing is not signed off with the square-law shortcut $V_{OV}\approx2/(g_m/I_D)$ because it omits body effect, real saturation voltage, and terminal-voltage dependence.
 
-### 4.8 Nominal FDC verification
-
-| Metric | Nominal result |
-| :--- | ---: |
-| Total current | 1.400 mA |
-| Total power | 4.622 mW |
-| Differential gain | 93.377 dB |
-| Differential UGF | 14.571 MHz |
-| Phase margin | 77.084° |
-| Input noise, 1–150 Hz | 2.439 µVrms |
-| Required `VCMFB` | 2.483 V |
-| Common-mode plant gain | 762.583 V/V |
-
-The isolated FDC achieves 93.377 dB gain, 14.571 MHz UGF, and 77.084° phase margin.
-
-![FDC differential gain and phase](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.diff_ac.png)
-
-The input offset is below reporting resolution.
-
-![FDC input-offset extraction](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.offset.png)
-
-Integrated input noise is 2.439 µVrms from 1 to 150 Hz.
-
-![FDC input-referred noise](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.noise.png)
-
-The common-mode plant gain is 762.583 V/V.
-
-![FDC common-mode plant AC response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.plant_ac.png)
-
-The nominal operating point requires `VCMFB = 2.483 V` for a 1.650-V output common mode.
-
-![FDC common-mode plant DC response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.plant_dc.png)
-
-The `VCMFB` sweep confirms the control polarity and the 2.483-V nominal control point.
-
-![FDC VCMFB sweep](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.vcmfb_sweep.png)
-
-With CMFB open, a differential step creates a 2.383-V common-mode excursion. The integrated closed-loop FDOTA reduces it to 37.052 mV.
-
-![FDC differential-step common-mode disturbance](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/FDC/Plots/NOM.diff_step_cm_disturbance.png)
-
 ## 5. Common-mode feedback block
 
 The CMFB schematic shows the error amplifier that converts sensed common-mode error into the `VCMFB` control voltage.
@@ -442,7 +401,7 @@ The CMFB schematic shows the error amplifier that converts sensed common-mode er
 
 ### 5.1 Design targets and sizing flow
 
-The CMFB signoff requirements are an output common-mode error within ±25 mV and integrated settling within 1 µs. For a first-order 1% response,
+CMFB sizing is driven by the integrated FDOTA requirements: output common-mode error within ±20 mV and common-mode settling within 1 µs. These are not separate standalone-CMFB signoff limits. For a first-order 1% response,
 
 $$
 t_s\approx\frac{4.6}{2\pi f_{CL}},
@@ -459,7 +418,7 @@ The implemented CMFB is a single-stage NMOS differential pair with a PMOS active
 | Quantity | Design target | Nominal specification | PVT specification |
 | :--- | ---: | ---: | ---: |
 | Output common mode | $V_{DD}/2$ | 1.65 V at nominal | $V_{DD}/2$ |
-| Output CM error | 0 V | $\le\pm10$ mV | $\le\pm25$ mV |
+| Output CM error | 0 V | $\le\pm10$ mV | $\le\pm20$ mV |
 | Step-induced CM disturbance | $\le40$ mV | $\le40$ mV | $\le60$ mV |
 | CMFB slew, rise/fall | 3/3 V/µs | $\ge3/3$ V/µs | $\ge2/2$ V/µs |
 | Integrated CMFB settling | 400 ns | $\le400$ ns | $\le1000$ ns |
@@ -565,9 +524,9 @@ $$
 T_{CM}(s)=\frac{V_{OUTCM}(s)}{V_{CMFB,REF}(s)-V_{CMFB,IN}(s)}.
 $$
 
-Therefore 45.137 dB, 967.213 MHz, and 71.900° are metrics of that ideal-plant loop. They must not be inserted into $g_m/(2\pi C)$ as if 967.213 MHz were the isolated amplifier UGF. The 3.89-MHz output-pole reference from Section 5.2 is the valid first-order device-sizing check.
+The ideal-plant return ratio is a design diagnostic, not the intrinsic CMFB amplifier gain or the integrated FDOTA loop response. The 3.89-MHz output-pole reference from Section 5.2 is the valid first-order device-sizing check.
 
-The ideal-plant closed-loop test settles in 5.2 ns. The integrated transistor-level FDOTA settles its common-mode loop in 309.735 ns nominally and 418.338 ns at the worst PVT corner. These correspond to first-order equivalent bandwidths of
+The integrated transistor-level FDOTA settles its common-mode loop in 309.735 ns nominally and 418.338 ns at the worst PVT corner. These correspond to first-order equivalent bandwidths of
 
 $$
 f_{eq,nom}=\frac{4.6}{2\pi(309.735\ \text{ns})}=2.36\ \text{MHz},
@@ -624,33 +583,9 @@ Lower sensor capacitance supports GBW and slew rate, consistent with the continu
 | Integrated settling | 400-ns design target | 309.735 ns | $\le400$ ns nominal |
 | Equivalent settling bandwidth | 1.83-MHz design target | 2.36 MHz | $\ge1.83$ MHz nominal |
 
-The intrinsic 47.69-dB gain estimate and the ideal-plant 45.137-dB return ratio are not one-to-one quantities; their numerical proximity is not used as validation. The ideal-plant loop metrics are reported separately in Section 5.8. The causal validation is the integrated 309.735-ns settling result versus the 400-ns design target, followed by the 418.338-ns worst-corner result versus the 1-µs specification.
+The intrinsic gain estimate and an ideal-plant return ratio are different quantities; numerical proximity is not validation. Standalone testbench outputs are internal design diagnostics and are not reported here. The causal validation is the integrated 309.735-ns settling result versus the 400-ns design target, followed by the 418.338-ns worst-corner result versus the 1-µs specification.
 
-### 5.8 Nominal CMFB verification
-
-| Metric | Nominal result |
-| :--- | ---: |
-| Total current | 39.824 µA |
-| Total power | 0.131 mW |
-| Ideal-plant loop gain | 45.137 dB |
-| Ideal-plant loop UGF | 967.213 MHz |
-| Ideal-plant loop phase margin | 71.900° |
-| Valid reference range | 1.05–3.01 V |
-| Closed-loop settling | 5.2 ns |
-
-With the ideal gain-500 plant, the CMFB test loop provides 45.137 dB low-frequency return ratio, 967.213 MHz UGF, and 71.900° phase margin.
-
-![CMFB open-loop gain and phase](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Plots/NOM.ol_ac.png)
-
-The valid reference range is 1.05–3.01 V. Nominal input error is −0.0586 mV.
-
-![CMFB closed-loop DC response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Plots/NOM.cl_dc.png)
-
-Both closed-loop CMFB transitions settle in 5.2 ns.
-
-![CMFB closed-loop transient response](../../Measurement_Results/IC_Simulation/ANALOG_BLOCKS/FDOTA/CMFB/Plots/NOM.cl_tran.png)
-
-## Verification conditions
+## Integrated FDOTA verification conditions
 
 Checked 2026-10-17 against the latest analyzer CSV exports. No simulations were rerun for this documentation update.
 
@@ -662,7 +597,9 @@ The PVT campaign uses NOM/FF/SS/FS/SF, 3.0/3.3/3.6 V, and −40/27/125°C: 45 op
 
 Nominal columns refer to NOM process, 3.3 V, and 27°C. Compact corner names encode process, supply, and temperature. Sweep labels identify a fixed supply or temperature rather than a single corner.
 
-OL and CL testbenches each use five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files plus one `*_MC.sch`. Each MC file runs MM, GL, and FULL separately.
+Integrated FDOTA OL and CL verification benches each use five `*_PVT_{NOM,FF,SS,FS,SF}.sch` files plus one `*_MC.sch`. Each MC file runs MM, GL, and FULL separately.
+
+FDC and CMFB testbenches are design-support fixtures only. They have no `NOM` filename qualifier or PVT/MC campaign. Their MATLAB terminal summaries and local plots support sizing and debugging; standalone fixture results are intentionally excluded from this report.
 
 ## Nominal and full-PVT results
 
