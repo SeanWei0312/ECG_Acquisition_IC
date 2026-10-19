@@ -1,6 +1,11 @@
 .DS_Store
 *.txt
 
+# Keep schematic sources, symbols, and MATLAB code local only.
+*.sch
+*.sym
+*.m
+
 # Keep SAR ADC design, verification, results, and report files local only.
 Design_Files/IC Design/Schematic/SAR_ADC_BLOCKS/
 Design_Files/IC Design/Testbench/SAR_ADC_BLOCKS/
