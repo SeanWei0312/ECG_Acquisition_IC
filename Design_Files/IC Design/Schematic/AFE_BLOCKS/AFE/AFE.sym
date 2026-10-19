@@ -1,0 +1,125 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=xAFE1"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 -680 -80 680 -80 {}
+L 4 680 -80 680 80 {}
+L 4 -680 80 680 80 {}
+L 4 -680 -80 -680 80 {}
+L 4 600 -120 600 -80 {}
+L 4 440 -120 440 -80 {}
+L 4 280 -120 280 -80 {}
+L 4 520 -120 520 -80 {}
+L 4 360 -120 360 -80 {}
+L 4 120 80 120 120 {}
+L 4 -440 80 -440 120 {}
+L 4 -200 80 -200 120 {}
+L 4 -40 80 -40 120 {}
+L 4 -360 80 -360 120 {}
+L 4 -280 80 -280 120 {}
+L 4 -120 80 -120 120 {}
+L 4 -720 -40 -680 -40 {}
+L 4 -440 -120 -440 -80 {}
+L 4 200 80 200 120 {}
+L 4 40 80 40 120 {}
+L 4 120 -120 120 -80 {}
+L 4 -200 -120 -200 -80 {}
+L 4 -720 40 -680 40 {}
+L 4 -40 -120 -40 -80 {}
+L 4 -360 -120 -360 -80 {}
+L 4 40 -120 40 -80 {}
+L 4 -280 -120 -280 -80 {}
+L 4 200 -120 200 -80 {}
+L 4 -120 -120 -120 -80 {}
+L 4 680 -40 720 -40 {}
+L 4 280 80 280 120 {}
+L 4 680 40 720 40 {}
+L 4 -520 -120 -520 -80 {}
+L 4 520 80 520 120 {}
+L 4 440 80 440 120 {}
+L 4 -520 80 -520 120 {}
+L 4 600 80 600 120 {}
+L 4 360 80 360 120 {}
+L 7 -600 -120 -600 -80 {}
+L 7 -600 80 -600 120 {}
+B 5 597.5 -122.5 602.5 -117.5 {name=FDBUF_SEL dir=in}
+B 5 437.5 -122.5 442.5 -117.5 {name=LPF_SEL dir=in}
+B 5 277.5 -122.5 282.5 -117.5 {name=BIAS_SEL dir=in}
+B 5 517.5 -122.5 522.5 -117.5 {name=PGA_SEL dir=in}
+B 5 -602.5 -122.5 -597.5 -117.5 {name=AVDD dir=inout}
+B 5 357.5 -122.5 362.5 -117.5 {name=INA_SEL dir=in}
+B 5 -602.5 117.5 -597.5 122.5 {name=AGND dir=inout}
+B 5 117.5 117.5 122.5 122.5 {name=FDBUF_OUTP dir=out}
+B 5 -442.5 117.5 -437.5 122.5 {name=BPINT dir=out}
+B 5 -202.5 117.5 -197.5 122.5 {name=LPF_OUTP dir=out}
+B 5 -42.5 117.5 -37.5 122.5 {name=PGA_OUTP dir=out}
+B 5 -362.5 117.5 -357.5 122.5 {name=INA_OUTP dir=out}
+B 5 -282.5 117.5 -277.5 122.5 {name=INA_OUTN dir=out}
+B 5 -122.5 117.5 -117.5 122.5 {name=LPF_OUTN dir=out}
+B 5 -722.5 -42.5 -717.5 -37.5 {name=INP dir=in}
+B 5 -442.5 -122.5 -437.5 -117.5 {name=BPEXT dir=in}
+B 5 197.5 117.5 202.5 122.5 {name=FDBUF_OUTN dir=out}
+B 5 37.5 117.5 42.5 122.5 {name=PGA_OUTN dir=out}
+B 5 117.5 -122.5 122.5 -117.5 {name=FDBUF_EXTP dir=in}
+B 5 -202.5 -122.5 -197.5 -117.5 {name=LPF_EXTP dir=in}
+B 5 -722.5 37.5 -717.5 42.5 {name=INN dir=in}
+B 5 -42.5 -122.5 -37.5 -117.5 {name=PGA_EXTP dir=in}
+B 5 -362.5 -122.5 -357.5 -117.5 {name=INA_EXTP dir=in}
+B 5 37.5 -122.5 42.5 -117.5 {name=PGA_EXTN dir=in}
+B 5 -282.5 -122.5 -277.5 -117.5 {name=INA_EXTN dir=in}
+B 5 197.5 -122.5 202.5 -117.5 {name=FDBUF_EXTN dir=in}
+B 5 -122.5 -122.5 -117.5 -117.5 {name=LPF_EXTN dir=in}
+B 5 717.5 -42.5 722.5 -37.5 {name=OUTP dir=out}
+B 5 277.5 117.5 282.5 122.5 {name=REF dir=in}
+B 5 717.5 37.5 722.5 42.5 {name=OUTN dir=out}
+B 5 -522.5 -122.5 -517.5 -117.5 {name=S1 dir=in}
+B 5 517.5 117.5 522.5 122.5 {name=SEOP dir=out}
+B 5 437.5 117.5 442.5 122.5 {name=IB dir=out}
+B 5 -522.5 117.5 -517.5 122.5 {name=S0 dir=in}
+B 5 597.5 117.5 602.5 122.5 {name=SEON dir=out}
+B 5 357.5 117.5 362.5 122.5 {name=RLD dir=out}
+T {@symname} 0 0 0 0 0.5 0.5 {hcenter=true vcenter=true}
+T {@name} 640 -100 0 0 0.2 0.2 {hcenter=true}
+T {FDBUF_SEL} 600 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {LPF_SEL} 440 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {BIAS_SEL} 280 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {PGA_SEL} 520 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {AVDD} -600 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {INA_SEL} 360 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {AGND} -600 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {FDBUF_OUTP} 120 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {BPINT} -440 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {LPF_OUTP} -200 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {PGA_OUTP} -40 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {INA_OUTP} -360 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {INA_OUTN} -280 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {LPF_OUTN} -120 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {INP} -670 -40 0 0 0.15 0.15 {vcenter=true}
+T {BPEXT} -440 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {FDBUF_OUTN} 200 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {PGA_OUTN} 40 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {FDBUF_EXTP} 120 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {LPF_EXTP} -200 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {INN} -670 40 0 0 0.15 0.15 {vcenter=true}
+T {PGA_EXTP} -40 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {INA_EXTP} -360 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {PGA_EXTN} 40 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {INA_EXTN} -280 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {FDBUF_EXTN} 200 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {LPF_EXTN} -120 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {OUTP} 670 -40 0 1 0.15 0.15 {vcenter=true}
+T {REF} 280 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {OUTN} 670 40 0 1 0.15 0.15 {vcenter=true}
+T {S1} -520 -60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {SEOP} 520 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {IB} 440 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {S0} -520 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {SEON} 600 60 0 0 0.15 0.15 {hcenter=true vcenter=true}
+T {RLD} 360 60 0 0 0.15 0.15 {hcenter=true vcenter=true}

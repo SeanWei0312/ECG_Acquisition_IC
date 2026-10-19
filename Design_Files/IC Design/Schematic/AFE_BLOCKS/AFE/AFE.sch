@@ -80,7 +80,6 @@ N 2820 -680 2820 -600 {lab=#net15}
 N 2860 -680 2860 -600 {lab=#net16}
 N 360 -760 360 -720 {lab=AVDD}
 N 400 -760 400 -680 {lab=AGND}
-N 480 -920 480 -800 {lab=BP}
 N 160 -680 400 -680 {lab=AGND}
 N 120 -720 440 -720 {lab=AVDD}
 N 120 -760 120 -320 {lab=AVDD}
@@ -112,10 +111,8 @@ N 160 -1280 180 -1280 {lab=INP}
 N 160 -1240 180 -1240 {lab=INN}
 N 440 -1320 460 -1320 {lab=BPINT}
 N 440 -1280 460 -1280 {lab=BPEXT}
-N 440 -1240 460 -1240 {lab=REFEXT}
 N 440 -1360 460 -1360 {lab=BIAS_SEL}
-N 440 -1200 460 -1200 {lab=BP}
-N 440 -1160 460 -1160 {lab=REF}
+N 440 -1240 460 -1240 {lab=REF}
 N 720 -1360 740 -1360 {lab=INA_SEL}
 N 1000 -1360 1020 -1360 {lab=LPF_SEL}
 N 1280 -1360 1300 -1360 {lab=PGA_SEL}
@@ -124,7 +121,7 @@ N 1280 -1120 1300 -1120 {lab=S0}
 N 1560 -1360 1580 -1360 {lab=FDBUF_SEL}
 N 160 -1200 180 -1200 {lab=OUTP}
 N 160 -1160 180 -1160 {lab=OUTN}
-N 440 -1120 460 -1120 {lab=IB}
+N 440 -1200 460 -1200 {lab=IB}
 N 520 -920 520 -800 {lab=IB}
 N 400 -920 400 -880 {lab=BIAS_SEL}
 N 80 -540 480 -540 {lab=INP}
@@ -167,10 +164,11 @@ N 3040 -420 3120 -420 {lab=FDBUF_EXTN}
 N 480 -680 480 -600 {lab=#net17}
 N 240 -600 480 -600 {lab=#net17}
 N 240 -600 240 -520 {lab=#net17}
-N 440 -840 480 -840 {lab=BP}
+N 440 -840 480 -840 {lab=#net18}
 N 360 -240 400 -240 {lab=SEOP}
 N 360 -200 440 -200 {lab=SEON}
 N 440 -460 440 -200 {lab=SEON}
+N 480 -840 480 -800 {lab=#net18}
 C {title.sym} 160 -40 0 0 {name=l1 author="Yi-Hsiang Wei"}
 C {lab_wire.sym} 80 -540 0 0 {name=p6 sig_type=std_logic lab=INP}
 C {lab_wire.sym} 80 -420 0 0 {name=p7 sig_type=std_logic lab=INN}
@@ -216,7 +214,6 @@ C {lab_wire.sym} 400 -920 0 0 {name=p33 sig_type=std_logic lab=BIAS_SEL}
 C {lab_wire.sym} 280 -920 0 0 {name=p36 sig_type=std_logic lab=BPEXT}
 C {lab_wire.sym} 240 -920 0 0 {name=p53 sig_type=std_logic lab=BPINT}
 C {lab_wire.sym} 80 -640 0 0 {name=p34 sig_type=std_logic lab=REF}
-C {lab_wire.sym} 480 -920 0 0 {name=p35 sig_type=std_logic lab=BP}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/POWER_BLOCKS/MIRROR/MIRROR.sym} 0 -600 0 0 {name=xMIRROR1}
 C {opin.sym} 720 -1320 0 1 {name=p102 lab=INA_OUTP}
 C {opin.sym} 720 -1280 0 1 {name=p103 lab=INA_OUTN}
@@ -267,15 +264,11 @@ C {lab_wire.sym} 180 -1240 0 1 {name=p4 sig_type=std_logic lab=INN}
 C {opin.sym} 440 -1320 0 1 {name=p5 lab=BPINT}
 C {lab_wire.sym} 460 -1320 0 1 {name=p9 sig_type=std_logic lab=BPINT}
 C {ipin.sym} 440 -1280 0 0 {name=p11 lab=BPEXT}
-C {ipin.sym} 440 -1240 0 0 {name=p12 lab=REFEXT}
 C {lab_wire.sym} 460 -1280 0 1 {name=p13 sig_type=std_logic lab=BPEXT}
-C {lab_wire.sym} 460 -1240 0 1 {name=p14 sig_type=std_logic lab=REFEXT}
 C {ipin.sym} 440 -1360 0 0 {name=p15 lab=BIAS_SEL}
 C {lab_wire.sym} 460 -1360 0 1 {name=p16 sig_type=std_logic lab=BIAS_SEL}
-C {opin.sym} 440 -1200 0 1 {name=p17 lab=BP}
-C {opin.sym} 440 -1160 0 1 {name=p18 lab=REF}
-C {lab_wire.sym} 460 -1200 0 1 {name=p19 sig_type=std_logic lab=BP}
-C {lab_wire.sym} 460 -1160 0 1 {name=p22 sig_type=std_logic lab=REF}
+C {ipin.sym} 440 -1240 0 0 {name=p18 lab=REF}
+C {lab_wire.sym} 460 -1240 0 1 {name=p22 sig_type=std_logic lab=REF}
 C {ipin.sym} 720 -1360 0 0 {name=p23 lab=INA_SEL}
 C {lab_wire.sym} 740 -1360 0 1 {name=p24 sig_type=std_logic lab=INA_SEL}
 C {ipin.sym} 1000 -1360 0 0 {name=p25 lab=LPF_SEL}
@@ -292,8 +285,8 @@ C {opin.sym} 160 -1200 0 1 {name=p42 lab=OUTP}
 C {opin.sym} 160 -1160 0 1 {name=p44 lab=OUTN}
 C {lab_wire.sym} 180 -1200 0 1 {name=p45 sig_type=std_logic lab=OUTP}
 C {lab_wire.sym} 180 -1160 0 1 {name=p50 sig_type=std_logic lab=OUTN}
-C {opin.sym} 440 -1120 0 1 {name=p52 lab=IB}
-C {lab_wire.sym} 460 -1120 0 1 {name=p54 sig_type=std_logic lab=IB}
+C {opin.sym} 440 -1200 0 1 {name=p52 lab=IB}
+C {lab_wire.sym} 460 -1200 0 1 {name=p54 sig_type=std_logic lab=IB}
 C {lab_wire.sym} 520 -920 0 0 {name=p55 sig_type=std_logic lab=IB}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/DIGITAL_BLOCKS/MUX/MUX.sym} 240 -640 0 0 {name=xMUX1}
 C {ECG_Acquisition_IC/Design_Files/IC Design/Schematic/AFE_BLOCKS/FDBUF/FDBUF.sym} 2580 -320 0 0 {name=xFDBUF1}

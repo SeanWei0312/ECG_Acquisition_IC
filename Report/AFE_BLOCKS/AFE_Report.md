@@ -84,6 +84,33 @@ The inverter uses NMOS W/L = 1/0.5 µm and PMOS W/L = 2/0.5 µm. Its longer chan
 
 These are inherited cell choices, not independently optimized widths for every selector. Correct static selection does not establish glitch-free gain switching or break-before-make behavior.
 
+#### Selector integration at G2
+
+The complete internal chain retains the four-gain performance suite. A separate, lightweight routing group drives each signal selector in INT and EXT while leaving the other selectors INT, in every PVT corner and MM/GL/FULL sample. The same statistical realization is retained across gain settings and routing configurations.
+
+| Selected external path | Downstream path | Expected gain at G2 |
+| :--- | :--- | :---: |
+| INA EXT | LPF → PGA → FDBUF | 2 V/V |
+| LPF EXT | PGA → FDBUF | 2 V/V |
+| PGA EXT | FDBUF | 1 V/V |
+| FDBUF EXT | Final selector/output load | 1 V/V |
+
+Each EXT pair has an independent source centered on REF rather than a permanent short to REF. A 10 Hz main-input response and 25 Hz external-input response identify the active and rejected paths. At nominal target gain their functional output peaks are 0.2 V and 0.3 V, respectively. The selected-path gain uses the proposed +/-3% AFE tolerance. Leakage is reported relative to the same source's selected-path transfer; no extra isolation limit is invented.
+
+The DC operating point and single-ended AC excursions provide a conservative headroom screen, not proof of nonlinear clipping or safe switching transients. The nominal routing figure is a labeled linear AC reconstruction. These ideal external sources verify routing only, not an unmodeled external amplifier or filter. No DCB routing result is claimed.
+
+Very small schematic AC leakage values must not be interpreted as measured isolation: parasitic coupling, switching feedthrough and layout effects require transient and extracted-circuit checks.
+
+| Selector verification | Full PVT | MM / GL / FULL MC |
+| :--- | :---: | :---: |
+| INA INT/EXT | Pending | Pending |
+| LPF INT/EXT | Pending | Pending |
+| PGA INT/EXT | Pending | Pending |
+| FDBUF INT/EXT | Pending | Pending |
+| DCB selection | N/A | N/A |
+
+The [AFE analyzer](../../Measurement_Results/IC_Simulation/AFE_BLOCKS/AFE/AFE_Analyze.m) includes selector reporting and counts missing or malformed exports as incomplete coverage, never as passing samples. Selector pass masks must be combined with the main performance pass masks before declaring complete AFE yield. Pilot runs are not full-PVT or 200-sample signoff evidence.
+
 ### 6. Verify the load envelope at the delivered output
 
 FDBUF drives 40–100 pF per side, with 60 pF nominal. The preceding PGA should see the buffer input network rather than the full output capacitance.
@@ -98,12 +125,13 @@ The next comparison is planned gain and noise versus integrated results at every
 
 ## Verification status
 
-Updated 2026-10-17. The current AFE measurement folder contains the analyzer but no generated full-chain result tables or plots. This is a coverage statement, not a failed circuit result.
+Updated 2026-10-19. The current AFE measurement folder has no generated full-chain signoff tables or plots. Selector pilots and analyzer tests are kept separate from verification exports. This is a coverage statement, not a failed circuit result.
 
 | Item | Status |
 | :--- | :---: |
 | Top-level schematic | Available |
-| MATLAB analyzer | Available; integrated exports pending |
+| PVT/MC testbenches | Available, including lightweight selector checks |
+| MATLAB analyzer | Selector reporting implemented; new performance-reader migration pending |
 | Full-chain PVT results | Pending |
 | Full-chain Monte Carlo | Pending |
 | Generated tables and plots | Pending |

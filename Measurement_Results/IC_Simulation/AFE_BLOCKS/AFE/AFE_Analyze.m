@@ -1,9 +1,17 @@
-% PATH nominal analysis
+% AFE analysis
 clear; clc; close all;
 analysisTimer = tic;
 
 scriptDir = fileparts(mfilename('fullpath'));
 baseDir = fullfile(scriptDir,'NOM.Result_txt');
+selectorResults = analyzeSelectorIntegration(scriptDir);
+if isfile(fullfile(baseDir,'NOM.g2_nom.op.txt')) || ...
+        ~isfile(fullfile(baseDir,'NOM.op.txt'))
+    warning('AFE_Analyze:PerformanceReaderPending', ...
+        ['AFE performance report pending: the new-format reader is not yet migrated. ' ...
+         'Only selector verification is reported.']);
+    return;
+end
 plotDir = fullfile(scriptDir,'Plots');
 if ~exist(plotDir,'dir'), mkdir(plotDir); end
 
@@ -106,7 +114,7 @@ acPlotCases = buildAcPlotCases(diffAcData,cmrrAcData,psrrpAcData,psrrnAcData,[2 
 
 %% Plots
 plotDiffAcCases(acPlotCases,diffTranAll,plotDir);
-plotRejectionCases(acPlotCases,cmrrTranAll,'cmrr','PATH CMRR','CMRR (dB)','NOM.cmrr.png',plotDir);
+plotRejectionCases(acPlotCases,cmrrTranAll,'cmrr','AFE CMRR','CMRR (dB)','NOM.cmrr.png',plotDir);
 plotPsrrCases(acPlotCases,psrrpTranAll,psrrnTranAll,plotDir);
 plotNoise(noise,NOISE_PLOT_FREQ_HZ,plotDir);
 plotOffsetPairs(cmOffsetData,'cm,os',plotDir,'NOM.vcmdcoffset');
@@ -219,7 +227,7 @@ rows = [rows; transientSummaryRows(diffTranAll,cmrrTranAll,psrrpTranAll, ...
     psrrnTranAll,cmOffset,diffOffset,thd)];
 
 summary = array2table(rows,'VariableNames',{'Category','Parameter','Unit','Value'});
-writetable(summary,fullfile(scriptDir,'PATH_summary.csv'));
+writetable(summary,fullfile(scriptDir,'AFE_summary.csv'));
 
 reportRows = tableReportRows(opData,diffAcData,cmrrAcData,psrrpAcData, ...
     psrrnAcData,noiseData,diffTranAll,rld,thd);
@@ -239,9 +247,9 @@ terminalRows = [terminalRows
 ];
 tableReport = array2table(terminalRows, ...
     'VariableNames',{'Parameter','Unit','Value'});
-disp(tableReport);
-writetable(tableReport,fullfile(scriptDir,'PATH_table_report.csv'));
-fprintf('PATH analysis completed in %.2f s.\n',toc(analysisTimer));
+printLegacyAfeTable(tableReport);
+writetable(tableReport,fullfile(scriptDir,'AFE_table_report.csv'));
+fprintf('AFE analysis completed in %.2f s.\n',toc(analysisTimer));
 
 %% Local functions
 function data = readTxt(file)
@@ -723,7 +731,7 @@ function plotDiffAcCases(cases,tranAll,plotDir)
         yyaxis right; hold on;
         semilogx(c.f_Hz,c.phase_deg,'LineWidth',1.5,'DisplayName','AC phase');
         ylabel('Phase (deg)');
-        stylePlot('Frequency (Hz)',sprintf('PATH Differential Response - %s',c.label));
+        stylePlot('Frequency (Hz)',sprintf('AFE Differential Response - %s',c.label));
         set(gca,'XScale','log'); xlim([1e-3 1e4]); legend('Location','best');
     end
     saveFig(plotDir,'NOM.diff_response.png');
@@ -747,9 +755,9 @@ function plotPsrrCases(cases,pTranAll,nTranAll,plotDir)
     figure; tiledlayout(numel(cases),2,'TileSpacing','compact');
     for k = 1:numel(cases)
         nexttile; plotPsrrOne(cases(k).psrrp,metricGain(pTranAll,cases(k).gain), ...
-            sprintf('PATH PSRR+ - %s',cases(k).label),'PSRR+ (dB)');
+            sprintf('AFE PSRR+ - %s',cases(k).label),'PSRR+ (dB)');
         nexttile; plotPsrrOne(cases(k).psrrn,metricGain(nTranAll,cases(k).gain), ...
-            sprintf('PATH PSRR- - %s',cases(k).label),'PSRR- (dB)');
+            sprintf('AFE PSRR- - %s',cases(k).label),'PSRR- (dB)');
     end
     saveFig(plotDir,'NOM.psrr.png');
 end
@@ -772,7 +780,7 @@ function plotNoise(noise,marks,plotDir)
         y = interpAtFreq(noise.f_Hz,noise.in_VrtHz,f0)*1e9;
         addNoisePoint(f0,y,sprintf('%s: %.4g nV/rtHz',freqText(f0),y));
     end
-    stylePlot('Frequency (Hz)','PATH Input-Referred Noise Density');
+    stylePlot('Frequency (Hz)','AFE Input-Referred Noise Density');
     ylabel('Input-referred noise (nV/rtHz)');
     legend('Location','best');
     saveFig(plotDir,'NOM.noise.png');
@@ -817,7 +825,7 @@ function plotOffsetPairs(d,offsetName,plotDir,filePrefix)
             plot(rstSeg(:,1),rstSeg(:,6),'--','LineWidth',1.1,'DisplayName','RST');
         end
         ylabel('RST (V)'); ylim([-0.1 3.4]);
-        title(sprintf('PATH %s, %.4g mVpp input, With Reset',offsetName,inputPp*1e3),'Interpreter','none');
+        title(sprintf('AFE %s, %.4g mVpp input, With Reset',offsetName,inputPp*1e3),'Interpreter','none');
         grid on; legend('Location','bestoutside');
         nexttile; yyaxis left; hold on;
         inDiffVals_mV = [];
@@ -914,7 +922,7 @@ function plotStartupCompare(withReset,withoutReset,plotDir)
     plot(t*1e3,rst,'LineWidth',1.2,'DisplayName','RST'); hold on;
     plot(t*1e3,clk,'LineWidth',1.0,'DisplayName','CLK');
     addTimeCursor(riseT*1e3,'RST rise'); addTimeCursor(fallT*1e3,'RST fall');
-    title('PATH Reset Operation: RST and CLK','Interpreter','none');
+    title('AFE Reset Operation: RST and CLK','Interpreter','none');
     ylabel('Voltage (V)'); grid on; legend('Location','best');
 
     nexttile;
@@ -944,7 +952,7 @@ function plotStartupCompare(withReset,withoutReset,plotDir)
     plot(withReset(:,1)*1e3,withReset(:,5),':','LineWidth',1.1,'DisplayName','VIN,diff');
     ylabel('RST / VIN,diff (V)');
     ylim([-0.1 3.4]);
-    title('PATH Startup: With Reset vs No Reset','Interpreter','none');
+    title('AFE Startup: With Reset vs No Reset','Interpreter','none');
     xlabel('Time (ms)'); grid on; legend('Location','best');
     xlim([0 max([withReset(:,1); withoutReset(:,1)])*1e3]);
     saveFig(plotDir,'NOM.startup_reset_compare.png');
@@ -962,7 +970,7 @@ function plotRld(off,on,plotDir)
     plot(on(:,1),on(:,3),':','LineWidth',1.0,'DisplayName','VIN,CM on');
     plot(off(:,1),off(:,7),'--','LineWidth',1.0,'DisplayName','VOUT,CM off');
     plot(on(:,1),on(:,7),'--','LineWidth',1.0,'DisplayName','VOUT,CM on');
-    title('PATH RLD Off/On','Interpreter','none'); ylabel('Common-mode voltage (V)'); grid on; legend('Location','best');
+    title('AFE RLD Off/On','Interpreter','none'); ylabel('Common-mode voltage (V)'); grid on; legend('Location','best');
     nexttile;
     yyaxis left; plot(off(:,1),off(:,8),'LineWidth',1.2,'DisplayName','VOUT,diff off'); hold on;
     plot(on(:,1),on(:,8),'LineWidth',1.2,'DisplayName','VOUT,diff on'); ylabel('VOUT,diff (V)');
@@ -992,7 +1000,7 @@ function plotThd(thd,plotDir)
         xticks(2:10); xticklabels(compose('H%d',2:10));
         xlabel('Harmonic number'); ylabel('Amplitude (dBc)');
         ylim([-100 0]);
-        title(sprintf(['PATH Output Harmonics at %.4g Hz | H1 = 0 dBc | ' ...
+        title(sprintf(['AFE Output Harmonics at %.4g Hz | H1 = 0 dBc | ' ...
             'THD: %.4g%% (G16), %.4g%% (G2)'],f0,thdPct(1),thdPct(2)), ...
             'Interpreter','none');
         grid on; legend(caseLabels,'Location','best');
@@ -1344,4 +1352,410 @@ end
 
 function s = fmt(x)
     if ~isfinite(x), s = "NaN"; else, s = string(sprintf('%.6g',x)); end
+end
+
+%% Selector integration
+function results = analyzeSelectorIntegration(resultDir,makePlots)
+% Selector calculations are unchanged; terminal formatting follows LPF/PGA.
+if nargin < 1, resultDir = fileparts(mfilename('fullpath')); end
+if nargin < 2, makePlots = true; end
+cfg.Paths = {'ina','lpf','pga','fdbuf'};
+cfg.Expected = [2 2 1 1];
+cfg.GainTolerance_pct = 3;
+cfg.McRuns = 200;
+processes = {'NOM','FF','SS','FS','SF'};
+environments = {'nom','vl','vh','tl','th','vltl','vlth','vhtl','vhth'};
+proc = repelem(processes,9);
+env = repmat(environments,1,5);
+caseLabels = {'NOMNOM','VLNOM','VHNOM','NOMTL','NOMTH', ...
+    'VLTL','VLTH','VHTL','VHTH'};
+labels = strcat(proc,repmat(caseLabels,1,5));
+[pvt,nominal] = selectorAnalyzeDataset(resultDir,proc,env,cfg);
+complete = all(pvt.Available == 1,2);
+passing = complete & all(pvt.Pass,2);
+measuredFailure = any(pvt.Available == 1 & ~pvt.Pass,2);
+status = selectorVerificationStatus(complete,passing,measuredFailure);
+selectorPrintVerification(status,passing,complete,pvt.Available, ...
+    measuredFailure,'PVT',45);
+rows = selectorReportRows(cfg);
+
+fprintf('\nAFE SELECTOR COMPARISON SUMMARY\n\n');
+selectorPrintComparison(rows,pvt);
+fprintf('\nAFE SELECTOR FULL-PVT WORST CASE\n\n');
+selectorPrintWorstCase(rows,pvt,labels);
+
+results.PVT = pvt;
+results.PVTLabels = labels;
+results.PVTPassMask = passing;
+results.PVTStatus = status;
+results.GainTolerance_pct = cfg.GainTolerance_pct;
+modes = {'MM','GL','FULL'};
+for m = 1:3
+    mode = modes{m};
+    [mc,~] = selectorAnalyzeDataset(resultDir,repmat({mode},1,cfg.McRuns), ...
+        arrayfun(@(i)sprintf('mc%d',i),1:cfg.McRuns,'UniformOutput',false),cfg);
+    valid = all(mc.Available == 1,2);
+    passed = valid & all(mc.Pass,2);
+    measuredFailure = any(mc.Available == 1 & ~mc.Pass,2);
+    selectorPrintMc(rows,mc,mode,valid,passed,measuredFailure,cfg.McRuns);
+    results.(mode) = mc;
+    results.([mode 'PassMask']) = passed;
+end
+if makePlots && all(pvt.Available(1,:) == 1)
+    plotDir = fullfile(resultDir,'Plots');
+    if ~exist(plotDir,'dir'), mkdir(plotDir); end
+    selectorPlotRouting(nominal,plotDir);
+end
+end
+
+function [data,nominal] = selectorAnalyzeDataset(root,processes,environments,cfg)
+n = numel(processes);
+data.Available = zeros(n,4); % 0 missing, -1 malformed, 1 valid.
+data.Gain = nan(n,4,2);
+data.Error = nan(n,4,2);
+data.Leakage = nan(n,4,2);
+data.OutputPeak = nan(n,4,2);
+data.Headroom = false(n,4,2);
+data.Pass = false(n,4);
+nominal = cell(4,2);
+for i = 1:n
+    for p = 1:4
+        pair = cell(1,2);
+        available = ones(1,2);
+        selections = {'int','ext'};
+        for s = 1:2
+            prefix = fullfile(root,[processes{i} '.Result_txt'], ...
+                sprintf('%s.selector_%s_%s_%s',processes{i}, ...
+                cfg.Paths{p},selections{s},environments{i}));
+            [pair{s},available(s)] = selectorReadSelection(prefix);
+        end
+        if any(available == 0), continue; end
+        if any(available < 0)
+            data.Available(i,p) = -1;
+            continue;
+        end
+        data.Available(i,p) = 1;
+        for s = 1:2
+            d = pair{s};
+            main = d.MainP-d.MainN;
+            ext = d.ExtP-d.ExtN;
+            if s == 1
+                gain = abs(main);
+                expected = 480;
+                reference = abs(pair{2}.ExtP-pair{2}.ExtN);
+                leakage = abs(ext)/max(reference,realmin);
+                dominance = gain/480 > abs(ext)/cfg.Expected(p);
+            else
+                gain = abs(ext);
+                expected = cfg.Expected(p);
+                reference = abs(pair{1}.MainP-pair{1}.MainN);
+                leakage = abs(main)/max(reference,realmin);
+                dominance = gain/cfg.Expected(p) > abs(main)/480;
+            end
+            err = 100*(gain/expected-1);
+            % Conservative two-tone sum bounds each single-ended output.
+            peakP = abs(d.MainP)*d.MainPeak+abs(d.ExtP)*d.ExtPeak;
+            peakN = abs(d.MainN)*d.MainPeak+abs(d.ExtN)*d.ExtPeak;
+            headroom = d.OutP-peakP > 0 && d.OutP+peakP < d.Vdd && ...
+                d.OutN-peakN > 0 && d.OutN+peakN < d.Vdd;
+            data.Gain(i,p,s) = gain;
+            data.Error(i,p,s) = err;
+            data.Leakage(i,p,s) = 100*leakage;
+            data.OutputPeak(i,p,s) = abs(main)*d.MainPeak+abs(ext)*d.ExtPeak;
+            data.Headroom(i,p,s) = headroom;
+            pair{s}.Pass = abs(err) <= cfg.GainTolerance_pct && dominance && headroom;
+        end
+        data.Pass(i,p) = pair{1}.Pass && pair{2}.Pass;
+        if i == 1, nominal(p,:) = pair; end
+    end
+end
+end
+
+function [d,status] = selectorReadSelection(prefix)
+d = struct;
+files = strcat(prefix,{'.op.txt','.main_ac.txt','.ext_ac.txt'});
+if ~all(cellfun(@isfile,files)), status = 0; return; end
+status = -1;
+try
+    op = selectorReadNumeric(files{1},7);
+    main = selectorReadNumeric(files{2},5);
+    ext = selectorReadNumeric(files{3},5);
+    if size(op,2) ~= 7 || size(op,1) ~= 1 || ...
+            size(main,2) ~= 5 || size(ext,2) ~= 5 || ...
+            any(~isfinite([op(:);main(:);ext(:)]))
+        return;
+    end
+    im = find(abs(main(:,1)-10) < 1e-6,1);
+    ie = find(abs(ext(:,1)-25) < 1e-6,1);
+    if isempty(im) || isempty(ie) || op(2) <= 0 || any(op(6:7) <= 0), return; end
+    d.Vdd = op(2); d.Ref = op(3); d.OutP = op(4); d.OutN = op(5);
+    d.MainPeak = op(6); d.ExtPeak = op(7);
+    d.MainP = complex(main(im,2),main(im,3));
+    d.MainN = complex(main(im,4),main(im,5));
+    d.ExtP = complex(ext(ie,2),ext(ie,3));
+    d.ExtN = complex(ext(ie,4),ext(ie,5));
+    status = 1;
+catch
+    % A malformed export is invalid, never a zero measurement or PASS.
+end
+end
+
+function data = selectorReadNumeric(file,width)
+% ngspice pads columns with variable whitespace; delimiter inference adds NaNs.
+lines = splitlines(string(fileread(file)));
+lines = strip(lines);
+lines(strlength(lines) == 0) = [];
+data = nan(numel(lines),width);
+for i = 1:numel(lines)
+    tokens = regexp(char(lines(i)),'\s+','split');
+    if numel(tokens) ~= width
+        error('analyzeSelectorIntegration:InvalidColumns','Invalid columns in %s.',file);
+    end
+    data(i,:) = str2double(tokens);
+end
+end
+
+function status = selectorVerificationStatus(complete,passed,measuredFailure)
+if any(measuredFailure) || any(complete & ~passed)
+    status = 'FAIL';
+elseif ~all(complete)
+    status = 'INCOMPLETE';
+else
+    status = 'PASS';
+end
+end
+
+function label = selectorCornerLabel(labels,index)
+if isempty(index), label = 'MISSING'; else, label = labels{index}; end
+end
+
+function rows = selectorReportRows(cfg)
+% Name, unit, spec, data field, block index, selection index, nominal, worst.
+rows = cell(44,8);
+i = 0;
+for p = 1:4
+    stage = upper(cfg.Paths{p});
+    i = i+1;
+    rows(i,:) = {[stage ' INT/EXT path'],'-','PASS','Pass',p,1,1,'status'};
+    for s = 1:2
+        selection = {'INT','EXT'};
+        prefix = [stage ' ' selection{s} ' '];
+        target = 480;
+        if s == 2, target = cfg.Expected(p); end
+        fields = { ...
+            'gain','V/V','','Gain',target,'target'; ...
+            'gain error','%',sprintf('±%.1f',cfg.GainTolerance_pct),'Error',0,'absolute'; ...
+            'output peak','V','','OutputPeak',NaN,'maximum'; ...
+            'unselected leakage','%','','Leakage',NaN,'maximum'; ...
+            'AC headroom screen','-','PASS','Headroom',1,'status'};
+        for k = 1:size(fields,1)
+            i = i+1;
+            rows(i,:) = {[prefix fields{k,1}],fields{k,2},fields{k,3}, ...
+                fields{k,4},p,s,fields{k,5},fields{k,6}};
+        end
+    end
+end
+end
+
+function selectorPrintVerification(status,passing,complete,available,failed,mode,requested)
+missing = sum(any(available == 0,2));
+invalid = sum(any(available < 0,2));
+if strcmp(mode,'PVT')
+    headline = sprintf('AFE SELECTOR FULL-PVT VERIFICATION: %s (%d/%d corners)', ...
+        status,sum(passing),requested);
+else
+    headline = sprintf('%s selector verification: %s',mode,status);
+end
+if strcmp(status,'PASS')
+    fprintf('\n%s\n',headline);
+else
+    warning('AFE_Analyze:SelectorVerification', ...
+        '%s. Completed: %d/%d; missing: %d; invalid: %d; measured failures: %d.', ...
+        headline,sum(complete),requested,missing,invalid,sum(failed));
+end
+end
+
+function selectorPrintComparison(rows,data)
+width = max(42,max(cellfun(@numel,rows(:,1)))+2);
+columns = {'NOM','FF','SS','FS','SF','VL','VH','TL','TH'};
+indices = [1 10 19 28 37 2 3 4 5];
+fprintf('%-*s %-8s %-14s',width,'Parameter','Unit','Spec');
+fprintf(' %13s',columns{:});
+fprintf('\n%s\n',repmat('-',1,width+24+14*numel(columns)));
+fprintf('%-*s\n',width,'SET CONDITIONS');
+conditions = { ...
+    'AVDD','V',[3.3 3.3 3.3 3.3 3.3 3.0 3.6 3.3 3.3]; ...
+    'Temperature','C',[27 27 27 27 27 27 27 -40 125]; ...
+    'PGA target gain','V/V',repmat(2,1,9); ...
+    'Main signal frequency','Hz',repmat(10,1,9); ...
+    'External signal frequency','Hz',repmat(25,1,9); ...
+    'Output load per side','pF',repmat(60,1,9)};
+for k = 1:size(conditions,1)
+    fprintf('%-*s %-8s %-14s',width,conditions{k,1},conditions{k,2},'');
+    for c = 1:9, fprintf(' %13s',selectorFormat(conditions{k,3}(c))); end
+    fprintf('\n');
+end
+fprintf('\n%-*s\n',width,'SELECTOR INTEGRATION (G2)');
+for r = 1:size(rows,1)
+    if r > 1 && strcmp(rows{r,4},'Pass'), fprintf('\n'); end
+    values = selectorRowValues(data,rows(r,:));
+    fprintf('%-*s %-8s %-14s',width,rows{r,1},rows{r,2},rows{r,3});
+    for c = indices
+        fprintf(' %13s',selectorDisplayValue(values(c),rows{r,8}));
+    end
+    fprintf('\n');
+end
+fprintf('%-*s %-8s %-14s',width,'DCB selection','-','');
+notApplicable = repmat({'N/A'},1,9);
+fprintf(' %13s',notApplicable{:});
+fprintf('\n');
+end
+
+function selectorPrintWorstCase(rows,data,corners)
+width = max(42,max(cellfun(@numel,rows(:,1)))+2);
+fprintf('%-*s %-8s %-14s %13s %-10s\n', ...
+    width,'Parameter','Unit','Spec','Value','Corner');
+fprintf('%s\n',repmat('-',1,width+49));
+for r = 1:size(rows,1)
+    values = selectorRowValues(data,rows(r,:));
+    indices = find(isfinite(values));
+    index = [];
+    value = NaN;
+    mode = rows{r,8};
+    if strcmp(mode,'status')
+        index = find(isfinite(values) & values == 0,1);
+        if isempty(index), index = find(~isfinite(values),1); end
+        if isempty(index), value = 1; else, value = values(index); end
+    elseif ~isempty(indices)
+        score = values(indices);
+        if strcmp(mode,'absolute'), score = abs(score); end
+        if strcmp(mode,'target'), score = abs(score-rows{r,7}); end
+        [~,k] = max(score);
+        index = indices(k);
+        value = values(index);
+    end
+    if isempty(index) && value == 1
+        corner = 'ALL';
+    else
+        corner = selectorCornerLabel(corners,index);
+    end
+    fprintf('%-*s %-8s %-14s %13s %-10s\n', ...
+        width,rows{r,1},rows{r,2},rows{r,3}, ...
+        selectorDisplayValue(value,mode),corner);
+end
+fprintf('%-*s %-8s %-14s %13s %-10s\n',width,'DCB selection','-','','N/A','N/A');
+end
+
+function selectorPrintMc(rows,data,mode,valid,passed,failed,requested)
+fprintf('\n%s MONTE CARLO SUMMARY\n',mode);
+fprintf('Requested: %d  Valid: %d  Failed: %d  Overall yield: %.2f%%\n', ...
+    requested,sum(valid),sum(failed),100*sum(passed)/requested);
+fprintf('SELECTOR INTEGRATION (G2; AC headroom screen)\n');
+status = selectorVerificationStatus(valid,passed,failed);
+if ~strcmp(status,'PASS')
+    selectorPrintVerification(status,passed,valid,data.Available,failed,mode,requested);
+end
+width = max(40,max(cellfun(@numel,rows(:,1)))+2);
+fprintf('%-*s %-8s %-12s %10s %10s %10s %10s %10s %10s %10s %9s\n', ...
+    width,'Parameter','Unit','Spec','Min','μ-3σ','μ-σ','Mean', ...
+    'μ+σ','μ+3σ','Max','Yield');
+fprintf('%s\n',repmat('-',1,width+110));
+for r = 1:size(rows,1)
+    values = selectorRowValues(data,rows(r,:));
+    v = values(isfinite(values));
+    stats = nan(1,7);
+    if ~isempty(v)
+        mu = mean(v); sigma = std(v);
+        stats = [min(v),mu-3*sigma,mu-sigma,mu,mu+sigma,mu+3*sigma,max(v)];
+    end
+    yield = '';
+    if strcmp(rows{r,8},'status')
+        yield = sprintf('%.2f%%',100*sum(v == 1)/requested);
+    elseif ~isempty(rows{r,3})
+        bound = str2double(strrep(rows{r,3},'±',''));
+        yield = sprintf('%.2f%%',100*sum(abs(v) <= bound)/requested);
+    end
+    fprintf('%-*s %-8s %-12s',width,rows{r,1},rows{r,2},rows{r,3});
+    for k = 1:7, fprintf(' %10s',selectorFormat(stats(k))); end
+    fprintf(' %9s\n',yield);
+end
+fprintf('%-*s %-8s %-12s %10s\n',width,'DCB selection','-','','N/A');
+end
+
+function values = selectorRowValues(data,row)
+p = row{5};
+if strcmp(row{4},'Pass')
+    values = double(data.Pass(:,p));
+else
+    values = double(data.(row{4})(:,p,row{6}));
+end
+values(data.Available(:,p) ~= 1) = NaN;
+end
+
+function value = selectorDisplayValue(value,mode)
+if strcmp(mode,'status')
+    if ~isfinite(value)
+        value = 'INCOMPLETE';
+    elseif value == 1
+        value = 'PASS';
+    else
+        value = 'FAIL';
+    end
+else
+    value = selectorFormat(value);
+end
+end
+
+function value = selectorFormat(value)
+if ~isfinite(value)
+    value = 'N/A';
+elseif value ~= 0 && (abs(value) < 1e-3 || abs(value) >= 1e4)
+    value = sprintf('%.3e',value);
+else
+    value = sprintf('%.3f',value);
+end
+end
+
+function printLegacyAfeTable(t)
+fprintf('\nAFE LEGACY NOMINAL SUMMARY\n\n');
+width = max(42,max(strlength(string(t.Parameter)))+2);
+fprintf('%-*s %-8s %-14s %13s\n',width,'Parameter','Unit','Spec','NOM');
+fprintf('%s\n',repmat('-',1,width+49));
+for i = 1:height(t)
+    name = string(t.Parameter(i));
+    unit = string(t.Unit(i));
+    if name == "" && unit == ""
+        fprintf('\n');
+    elseif unit == ""
+        fprintf('%-*s\n',width,upper(name));
+    else
+        fprintf('%-*s %-8s %-14s %13s\n',width,name,unit,'',string(t.Value(i)));
+    end
+end
+end
+
+function selectorPlotRouting(nominal,plotDir)
+t = (0:4095)'/10240;
+fig = figure('Name','AFE selector routing','NumberTitle','on');
+ax = axes(fig); hold(ax,'on');
+paths = {'INA','LPF','PGA','FDBUF'};
+d = nominal{1,1};
+plot(ax,t*1e3,selectorResponse(d,t),'DisplayName','All INT','LineWidth',1.3);
+for p = 1:4
+    d = nominal{p,2};
+    plot(ax,t*1e3,selectorResponse(d,t),'DisplayName',[paths{p} ' EXT'],'LineWidth',1.1);
+end
+xlabel(ax,'Time (ms)'); ylabel(ax,'Final differential output (V)');
+title(ax,{'NOM AFE Selector Routing - G2', ...
+    'Linear AC reconstruction: main 10 Hz, external 25 Hz (not transient simulation)'});
+grid(ax,'on'); legend(ax,'Location','eastoutside');
+saveas(fig,fullfile(plotDir,'AFE_selector_routing.png'));
+if ~usejava('desktop'), close(fig); end
+end
+
+function y = selectorResponse(d,t)
+main = d.MainP-d.MainN;
+ext = d.ExtP-d.ExtN;
+y = d.OutP-d.OutN + d.MainPeak*abs(main)*sin(2*pi*10*t+angle(main)) + ...
+    d.ExtPeak*abs(ext)*sin(2*pi*25*t+angle(ext));
 end
